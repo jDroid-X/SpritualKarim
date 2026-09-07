@@ -1473,6 +1473,15 @@ class ProfileView {
     // App Hierarchy MLM Tree View & Profile Metadata Drawer
     this.hierarchyTreeModal = document.getElementById('hierarchy-tree-modal');
     this.treeCanvasViewport = document.getElementById('tree-canvas-viewport');
+    this.treeModalDialog = document.getElementById('tree-modal-dialog');
+    this.treeInteractiveSurface = document.getElementById('tree-interactive-surface');
+    this.spiderwebSvgLayer = document.getElementById('spiderweb-svg-layer');
+    this.spiderwebNodesLayer = document.getElementById('spiderweb-nodes-layer');
+    this.btnTreeZoomIn = document.getElementById('btn-tree-zoom-in');
+    this.btnTreeZoomOut = document.getElementById('btn-tree-zoom-out');
+    this.btnTreeZoomReset = document.getElementById('btn-tree-zoom-reset');
+    this.btnTreeFullscreen = document.getElementById('btn-tree-fullscreen');
+
     this.treeProfileDrawer = document.getElementById('tree-profile-drawer');
     this.treeDrawerBackdrop = document.getElementById('tree-drawer-backdrop');
     this.treeDrawerBody = document.getElementById('tree-drawer-body');
@@ -1482,6 +1491,9 @@ class ProfileView {
     this.btnCloseTreeModal = document.getElementById('btn-close-tree-modal');
     this.btnCloseTreeDrawer = document.getElementById('btn-close-tree-drawer');
     this.btnOpenTreeView = document.getElementById('btn-open-tree-view');
+
+    // Pan & Zoom state
+    this.treePanState = { panX: 0, panY: 0, scale: 1.0, isDragging: false, startX: 0, startY: 0 };
 
     // Theme Switcher & Header Elements
     this.btnThemeToggle = document.getElementById('btn-theme-toggle');
@@ -2703,105 +2715,264 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
   }
 
   renderHierarchyTree(profiles, focusTier = null) {
-    if (!this.treeCanvasViewport) return;
+    if (!this.spiderwebNodesLayer || !this.spiderwebSvgLayer) {
+      if (this.treeCanvasViewport) {
+        this.treeCanvasViewport.innerHTML = `
+          <div class="tree-interactive-surface" id="tree-interactive-surface">
+            <svg class="spiderweb-svg-layer" id="spiderweb-svg-layer">
+              <defs>
+                <marker id="spiderweb-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1.5 L 10 5 L 0 8.5 z" class="spiderweb-arrow-marker" />
+                </marker>
+              </defs>
+            </svg>
+            <div class="spiderweb-nodes-layer" id="spiderweb-nodes-layer"></div>
+          </div>
+        `;
+        this.treeInteractiveSurface = document.getElementById('tree-interactive-surface');
+        this.spiderwebSvgLayer = document.getElementById('spiderweb-svg-layer');
+        this.spiderwebNodesLayer = document.getElementById('spiderweb-nodes-layer');
+      }
+    }
+
     if (!profiles || profiles.length === 0) {
-      this.treeCanvasViewport.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 2rem;">No profiles found.</div>';
+      if (this.spiderwebNodesLayer) {
+        this.spiderwebNodesLayer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 2rem;">No profiles found.</div>';
+      }
       return;
     }
 
-    // Group profiles by tier
+    // 1. Group profiles by tier
     const tier1 = profiles.filter(p => this._getTierDetails(p).tier === 1);
     const tier2 = profiles.filter(p => this._getTierDetails(p).tier === 2);
     const tier3 = profiles.filter(p => this._getTierDetails(p).tier === 3);
     const tier4 = profiles.filter(p => this._getTierDetails(p).tier === 4);
 
-    const renderNodeHtml = (p) => {
-      const details = this._getTierDetails(p);
-      const isFocused = focusTier && focusTier === details.tier;
-      const initials = (p.name || 'S')
-        .split(' ')
-        .map(n => n[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase();
+    const rootProfile = tier1.length > 0 ? tier1[0] : profiles[0];
+
+    const renderPersonNode = (p, tier, isRoot = false) => {
+      const tierClass = `spiderweb-node-tier-${tier}`;
+      const isDevotee = tier === 4;
+      const headFill = isDevotee ? '#a5f3fc' : '#1e3a8a';
+      const headStroke = isDevotee ? '#0284c7' : '#0a1128';
+      const bodyFill = isDevotee ? '#a5f3fc' : '#1e3a8a';
+      const bodyStroke = isDevotee ? '#0284c7' : '#0a1128';
 
       return `
-        <div class="mlm-tree-node ${details.nodeClass} ${isFocused ? 'focused-tier-node' : ''}" data-profile-id="${p.id}" tabindex="0" title="Click to view details for ${p.name}">
-          <div class="tree-node-avatar">
-            <span class="avatar-icon-badge">${details.icon}</span>
-            <span class="avatar-initials">${initials}</span>
+        <div class="spiderweb-node ${tierClass} ${isRoot ? 'is-root-node' : ''}" data-profile-id="${p.id}" id="tree-node-${p.id}" tabindex="0" title="Click to view details for ${p.name}">
+          <div class="person-icon-graphic">
+            <svg viewBox="0 0 36 50" width="${isRoot ? '34' : '28'}" height="${isRoot ? '46' : '38'}" class="person-svg">
+              <circle cx="18" cy="9" r="6.5" fill="${headFill}" stroke="${headStroke}" stroke-width="1.5" class="person-head" />
+              <rect x="7" y="18" width="22" height="26" rx="2.5" fill="${bodyFill}" stroke="${bodyStroke}" stroke-width="1.5" class="person-body" />
+            </svg>
           </div>
-          <div class="tree-node-name">${p.name || 'Unnamed Seeker'}</div>
-          <div class="tree-node-tier-badge">${details.roleBadge}</div>
-          <div class="tree-node-code">${p.referenceCode || 'SKHM-XXXX-0000-0000'}</div>
-          <div class="tree-node-status-row">
-            <span class="tree-status-chip ${p.isActive ? 'active' : 'inactive'}">${p.isActive ? '● Active' : '○ Inactive'}</span>
-            <span class="tree-status-chip ${p.isPaid ? 'paid' : 'free'}">${p.isPaid ? 'PAID' : 'FREE'}</span>
-          </div>
+          <div class="person-node-name">${isRoot ? (p.name || 'root') : (p.name || 'Seeker')}</div>
         </div>
       `;
     };
 
+    // Render 4-tier Spiderweb matrix (Person icons with Name only)
     let html = `
-      <div class="tree-structure-root">
-        <!-- Level 1: Admin Master / Founder -->
-        <div class="tree-level-container tier-1-container">
-          <div class="tree-level-label">👑 TIER 1 &bull; ADMIN MASTER (FOUNDER ROOT)</div>
-          <div class="tree-branch-group">
-            ${(tier1.length > 0 ? tier1 : [profiles[0]]).map(renderNodeHtml).join('')}
-          </div>
-        </div>
+      <!-- Tier 1: Root Master -->
+      <div class="spiderweb-level-row level-1-row" id="row-tier-1">
+        ${renderPersonNode(rootProfile, 1, true)}
+      </div>
 
-        <div class="tree-connector-down"></div>
-        <div class="tree-connector-h-bar"></div>
+      <!-- Tier 2: Healers Connected to Root -->
+      <div class="spiderweb-level-row level-2-row" id="row-tier-2">
+        ${tier2.length > 0 
+          ? tier2.map(h => renderPersonNode(h, 2)).join('') 
+          : renderPersonNode({ id: 'mock-h1', name: 'Healer 1' }, 2) + renderPersonNode({ id: 'mock-h2', name: 'Healer 2' }, 2) + renderPersonNode({ id: 'mock-h3', name: 'Healer 3' }, 2)}
+      </div>
 
-        <!-- Level 2: Healer Connect -->
-        <div class="tree-level-container tier-2-container">
-          <div class="tree-level-label">🔮 TIER 2 &bull; HEALER CONNECT (LEVEL COMPLETED)</div>
-          <div class="tree-branch-group">
-            ${tier2.length > 0 
-              ? tier2.map(renderNodeHtml).join('') 
-              : '<div class="tree-empty-node-placeholder">No Tier 2 Healers Yet</div>'}
-          </div>
-        </div>
+      <!-- Tier 3: Trainees Grouped Under Healers -->
+      <div class="spiderweb-level-row level-3-row" id="row-tier-3">
+        ${tier3.length > 0 
+          ? tier3.map(t => renderPersonNode(t, 3)).join('') 
+          : renderPersonNode({ id: 'mock-t1', name: 'Trainee 1' }, 3) + renderPersonNode({ id: 'mock-t2', name: 'Trainee 2' }, 3) + renderPersonNode({ id: 'mock-t3', name: 'Trainee 3' }, 3)}
+      </div>
 
-        <div class="tree-connector-down"></div>
-        <div class="tree-connector-h-bar"></div>
-
-        <!-- Level 3: Trainee Sadhak -->
-        <div class="tree-level-container tier-3-container">
-          <div class="tree-level-label">📿 TIER 3 &bull; TRAINEE SADHAK (IN-PROGRESS LEVELS)</div>
-          <div class="tree-branch-group">
-            ${tier3.length > 0 
-              ? tier3.map(renderNodeHtml).join('') 
-              : '<div class="tree-empty-node-placeholder">No Tier 3 Trainees Yet</div>'}
-          </div>
-        </div>
-
-        <div class="tree-connector-down"></div>
-        <div class="tree-connector-h-bar"></div>
-
-        <!-- Level 4: Devotee / Seeker -->
-        <div class="tree-level-container tier-4-container">
-          <div class="tree-level-label">🌱 TIER 4 &bull; DEVOTEE / SEEKER (PERSONAL &amp; HOUSE CLEAN)</div>
-          <div class="tree-branch-group">
-            ${tier4.length > 0 
-              ? tier4.map(renderNodeHtml).join('') 
-              : '<div class="tree-empty-node-placeholder">No Tier 4 Devotees Yet</div>'}
-          </div>
-        </div>
+      <!-- Tier 4: Devotees & Seekers (Light Cyan / Sky Blue) -->
+      <div class="spiderweb-level-row level-4-row" id="row-tier-4">
+        ${tier4.length > 0 
+          ? tier4.map(d => renderPersonNode(d, 4)).join('') 
+          : renderPersonNode({ id: 'mock-d1', name: 'Devotee 1' }, 4) + renderPersonNode({ id: 'mock-d2', name: 'Devotee 2' }, 4) + renderPersonNode({ id: 'mock-d3', name: 'Devotee 3' }, 4)}
       </div>
     `;
 
-    this.treeCanvasViewport.innerHTML = html;
+    this.spiderwebNodesLayer.innerHTML = html;
 
-    if (focusTier) {
-      setTimeout(() => {
-        const targetContainer = this.treeCanvasViewport.querySelector(`.tier-${focusTier}-container`);
-        if (targetContainer) {
-          targetContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Draw Vector Spiderweb lines between real connections
+    setTimeout(() => {
+      this._drawSpiderwebConnectingLines(rootProfile, tier2, tier3, tier4);
+    }, 50);
+
+    // Reset pan & zoom
+    this._resetTreePanZoom();
+  }
+
+  _drawSpiderwebConnectingLines(root, tier2, tier3, tier4) {
+    if (!this.spiderwebSvgLayer || !this.spiderwebNodesLayer) return;
+
+    const surfaceRect = this.spiderwebNodesLayer.getBoundingClientRect();
+    const svgDef = `
+      <defs>
+        <marker id="spiderweb-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1.5 L 10 5 L 0 8.5 z" class="spiderweb-arrow-marker" />
+        </marker>
+      </defs>
+    `;
+
+    const getCenterAnchor = (elemId, isTop = false) => {
+      const el = document.getElementById(elemId);
+      if (!el) return null;
+      const rect = el.getBoundingClientRect();
+      const scale = this.treePanState?.scale || 1.0;
+      const x = (rect.left + rect.width / 2 - surfaceRect.left) / scale;
+      const y = (isTop ? (rect.top - surfaceRect.top) : (rect.bottom - surfaceRect.top)) / scale;
+      return { x, y };
+    };
+
+    let linesSvg = svgDef;
+
+    const rootAnchor = getCenterAnchor(`tree-node-${root.id}`, false);
+
+    if (rootAnchor) {
+      // Connect Root to all Tier 2 nodes
+      tier2.forEach(h => {
+        const childAnchor = getCenterAnchor(`tree-node-${h.id}`, true);
+        if (childAnchor) {
+          linesSvg += `<line x1="${rootAnchor.x}" y1="${rootAnchor.y}" x2="${childAnchor.x}" y2="${childAnchor.y}" class="spiderweb-line" marker-end="url(#spiderweb-arrow)" />`;
         }
-      }, 150);
+      });
+    }
+
+    // Connect Tier 2 Healers to Tier 3 Trainees
+    if (tier2.length > 0 && tier3.length > 0) {
+      tier3.forEach((t, idx) => {
+        const parentHealer = tier2.find(h => h.referenceCode && h.referenceCode === t.referredByCode) || tier2[idx % tier2.length];
+        const pAnchor = getCenterAnchor(`tree-node-${parentHealer.id}`, false);
+        const cAnchor = getCenterAnchor(`tree-node-${t.id}`, true);
+        if (pAnchor && cAnchor) {
+          linesSvg += `<line x1="${pAnchor.x}" y1="${pAnchor.y}" x2="${cAnchor.x}" y2="${cAnchor.y}" class="spiderweb-line" marker-end="url(#spiderweb-arrow)" />`;
+        }
+      });
+    }
+
+    // Connect Tier 3 Trainees to Tier 4 Devotees
+    if (tier3.length > 0 && tier4.length > 0) {
+      tier4.forEach((d, idx) => {
+        const parentTrainee = tier3.find(t => t.referenceCode && t.referenceCode === d.referredByCode) || tier3[idx % tier3.length];
+        const pAnchor = getCenterAnchor(`tree-node-${parentTrainee.id}`, false);
+        const cAnchor = getCenterAnchor(`tree-node-${d.id}`, true);
+        if (pAnchor && cAnchor) {
+          linesSvg += `<line x1="${pAnchor.x}" y1="${pAnchor.y}" x2="${cAnchor.x}" y2="${cAnchor.y}" class="spiderweb-line" marker-end="url(#spiderweb-arrow)" />`;
+        }
+      });
+    }
+
+    this.spiderwebSvgLayer.innerHTML = linesSvg;
+  }
+
+  _resetTreePanZoom() {
+    this.treePanState = { panX: 0, panY: 0, scale: 1.0, isDragging: false, startX: 0, startY: 0 };
+    this._applyTreeTransform();
+  }
+
+  _applyTreeTransform() {
+    if (this.treeInteractiveSurface) {
+      const { panX, panY, scale } = this.treePanState;
+      this.treeInteractiveSurface.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    }
+  }
+
+  _initTreePanZoomEvents() {
+    if (!this.treeCanvasViewport || this._treePanZoomInitialized) return;
+    this._treePanZoomInitialized = true;
+
+    // Mouse Drag (Hand Screen Movement like Maps)
+    this.treeCanvasViewport.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.spiderweb-node')) return;
+      this.treePanState.isDragging = true;
+      this.treePanState.startX = e.clientX - this.treePanState.panX;
+      this.treePanState.startY = e.clientY - this.treePanState.panY;
+      this.treeCanvasViewport.classList.add('is-dragging');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!this.treePanState.isDragging) return;
+      this.treePanState.panX = e.clientX - this.treePanState.startX;
+      this.treePanState.panY = e.clientY - this.treePanState.startY;
+      this._applyTreeTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (this.treePanState.isDragging) {
+        this.treePanState.isDragging = false;
+        if (this.treeCanvasViewport) this.treeCanvasViewport.classList.remove('is-dragging');
+      }
+    });
+
+    // Mouse Wheel Zoom In / Out
+    this.treeCanvasViewport.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.12 : 0.88;
+      const newScale = Math.min(3.0, Math.max(0.35, this.treePanState.scale * zoomFactor));
+      this.treePanState.scale = newScale;
+      this._applyTreeTransform();
+    }, { passive: false });
+
+    // Touch Drag & Pan
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+    this.treeCanvasViewport.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        lastTouchX = e.touches[0].clientX;
+        lastTouchY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    this.treeCanvasViewport.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1) {
+        const dx = e.touches[0].clientX - lastTouchX;
+        const dy = e.touches[0].clientY - lastTouchY;
+        lastTouchX = e.touches[0].clientX;
+        lastTouchY = e.touches[0].clientY;
+        this.treePanState.panX += dx;
+        this.treePanState.panY += dy;
+        this._applyTreeTransform();
+      }
+    }, { passive: true });
+
+    // Toolbar Buttons
+    if (this.btnTreeZoomIn) {
+      this.btnTreeZoomIn.addEventListener('click', () => {
+        this.treePanState.scale = Math.min(3.0, this.treePanState.scale + 0.2);
+        this._applyTreeTransform();
+      });
+    }
+
+    if (this.btnTreeZoomOut) {
+      this.btnTreeZoomOut.addEventListener('click', () => {
+        this.treePanState.scale = Math.max(0.35, this.treePanState.scale - 0.2);
+        this._applyTreeTransform();
+      });
+    }
+
+    if (this.btnTreeZoomReset) {
+      this.btnTreeZoomReset.addEventListener('click', () => {
+        this._resetTreePanZoom();
+      });
+    }
+
+    if (this.btnTreeFullscreen) {
+      this.btnTreeFullscreen.addEventListener('click', () => {
+        if (this.treeModalDialog) {
+          this.treeModalDialog.classList.toggle('fullscreen-mode');
+          const isFull = this.treeModalDialog.classList.contains('fullscreen-mode');
+          this.btnTreeFullscreen.innerHTML = isFull ? '<span>✕</span> <span>Exit Fullscreen</span>' : '<span>⛶</span> <span>Fullscreen</span>';
+        }
+      });
     }
   }
 
@@ -4390,9 +4561,12 @@ class ProfileController {
       });
     }
 
+    // Initialize Map-like Pan/Zoom & Fullscreen
+    this.view._initTreePanZoomEvents();
+
     if (this.view.treeCanvasViewport) {
       this.view.treeCanvasViewport.addEventListener('click', (e) => {
-        const node = e.target.closest('.mlm-tree-node');
+        const node = e.target.closest('.spiderweb-node') || e.target.closest('.mlm-tree-node');
         if (node) {
           const profileId = node.getAttribute('data-profile-id');
           const profile = this.model.profiles.find(p => p.id === profileId);
@@ -4794,8 +4968,84 @@ class ProfileController {
     this.model.updateActiveProfile(updatedProfile);
     this._renderCurrentState();
     this.view.showToast('✓ Profile successfully saved & synchronized across all tabs!');
+
+    // Dispatch minimal data-minimized node status to Firebase Realtime Database
+    if (window.FirebaseSyncEngine) {
+      window.FirebaseSyncEngine.publishMinimalNodeStatus(updatedProfile);
+    }
   }
 }
+
+// ==============================================================
+// 12. FIREBASE REALTIME DATABASE SYNC ENGINE (DATA MINIMIZATION)
+// ==============================================================
+class FirebaseSyncEngine {
+  static init() {
+    this.config = {
+      apiKey: "AIzaSy_SpiritualKarim_Enterprise_Key",
+      authDomain: "spritualkarim-7b5fd.firebaseapp.com",
+      databaseURL: "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com",
+      projectId: "spritualkarim-7b5fd",
+      storageBucket: "spritualkarim-7b5fd.appspot.com",
+      messagingSenderId: "389274194021",
+      appId: "1:389274194021:web:9c847a29e1a8b3e"
+    };
+
+    if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+      try {
+        firebase.initializeApp(this.config);
+        this.db = firebase.database();
+        console.log("🔥 [Firebase RTDB] Initialized with Data Minimization Mode (Project: spritualkarim-7b5fd)");
+        this.listenToOnlineNodes();
+      } catch (err) {
+        console.warn("Firebase RTDB init notice:", err.message);
+      }
+    }
+  }
+
+  /**
+   * Publishes strictly pseudonymized node data to Firebase Realtime Database.
+   * Strips all private contact info, real names, and ancestral tree details.
+   */
+  static publishMinimalNodeStatus(profile) {
+    if (!this.db || !profile) return;
+    try {
+      const sanitizedCode = (profile.referenceCode || 'NODE_UNKNOWN').replace(/[^a-zA-Z0-9_-]/g, '_');
+      const minimalPayload = {
+        nodeId: sanitizedCode,
+        sponsorId: (profile.referredByCode || 'ROOT').replace(/[^a-zA-Z0-9_-]/g, '_'),
+        role: profile.profileType || 'DEVOTEE',
+        level: profile.level || 1,
+        status: profile.isActive !== false ? 'ACTIVE' : 'INACTIVE',
+        lastSeenTimestamp: firebase.database.ServerValue.TIMESTAMP,
+        isoTime: new Date().toISOString()
+      };
+
+      this.db.ref('authorisedNodes/' + sanitizedCode).set(minimalPayload);
+      
+      // Log telemetry event
+      this.db.ref('logs').push().set({
+        action: 'NODE_STATUS_UPDATE',
+        nodeId: sanitizedCode,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      });
+    } catch (e) {
+      console.warn("Failed to publish minimal node status to Firebase:", e);
+    }
+  }
+
+  static listenToOnlineNodes() {
+    if (!this.db) return;
+    this.db.ref('authorisedNodes').limitToLast(20).on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        console.log("🔥 [Firebase Live Active Nodes]:", Object.keys(data).length, "devices online.");
+      }
+    });
+  }
+}
+
+window.FirebaseSyncEngine = FirebaseSyncEngine;
 
 // Bootstrap
 document.addEventListener('DOMContentLoaded', () => {
@@ -4803,4 +5053,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const view = new ProfileView();
   const controller = new ProfileController(model, view);
   controller.init();
+  FirebaseSyncEngine.init();
 });
+

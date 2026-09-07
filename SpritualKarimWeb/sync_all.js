@@ -10,20 +10,55 @@ const treeModalAndDrawerSnippet = `
        MODAL: VISUAL MLM APP HIERARCHY TREE
        ============================================================== -->
   <div id="hierarchy-tree-modal" class="admin-modal-overlay">
-    <div class="admin-modal-dialog tree-modal-dialog">
+    <div class="admin-modal-dialog tree-modal-dialog" id="tree-modal-dialog">
       <div class="modal-header">
         <div class="modal-header-title">
           <span class="modal-icon">🌳</span>
           <div>
-            <h3>App Hierarchy Genealogy Tree • Multi-Tier Downlines</h3>
-            <p class="modal-subtitle">Visual MLM-style lineage matrix. Click any member node to slide out detailed metadata and jump directly to their profile.</p>
+            <h3>App Hierarchy Genealogy Tree • Spiderweb Lineage Matrix</h3>
+            <p class="modal-subtitle">Interactive map-like pan &amp; zoom canvas. Click any member icon to slide out profile details and jump to profile.</p>
           </div>
         </div>
         <button type="button" class="modal-close" id="btn-close-tree-modal" aria-label="Close Modal">&times;</button>
       </div>
-      <div class="modal-body" style="padding: 1rem;">
+
+      <!-- Canvas Toolbar: Zoom & Pan Controls -->
+      <div class="tree-canvas-toolbar">
+        <div class="tree-toolbar-left">
+          <button type="button" class="tree-tool-btn" id="btn-tree-zoom-in" title="Zoom In (or use Mouse Wheel)">
+            <span>➕</span> <span>Zoom In</span>
+          </button>
+          <button type="button" class="tree-tool-btn" id="btn-tree-zoom-out" title="Zoom Out (or use Mouse Wheel)">
+            <span>➖</span> <span>Zoom Out</span>
+          </button>
+          <button type="button" class="tree-tool-btn" id="btn-tree-zoom-reset" title="Reset View &amp; Center">
+            <span>🔄</span> <span>Reset 100%</span>
+          </button>
+          <span class="tree-drag-badge" title="Click and drag anywhere on the canvas to move the screen like in Maps">
+            <span>✋</span> <span>Hand Drag Active (Pan Anywhere)</span>
+          </span>
+        </div>
+        <div class="tree-toolbar-right">
+          <button type="button" class="tree-tool-btn" id="btn-tree-fullscreen" title="Toggle Fullscreen View">
+            <span>⛶</span> <span>Fullscreen</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding: 0; position: relative; overflow: hidden;">
         <div class="tree-canvas-viewport" id="tree-canvas-viewport">
-          <!-- Injected dynamically by ProfileView.renderHierarchyTree -->
+          <div class="tree-interactive-surface" id="tree-interactive-surface">
+            <svg class="spiderweb-svg-layer" id="spiderweb-svg-layer">
+              <defs>
+                <marker id="spiderweb-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1.5 L 10 5 L 0 8.5 z" class="spiderweb-arrow-marker" />
+                </marker>
+              </defs>
+            </svg>
+            <div class="spiderweb-nodes-layer" id="spiderweb-nodes-layer">
+              <!-- Injected dynamically by ProfileView.renderHierarchyTree -->
+            </div>
+          </div>
         </div>
       </div>
     </div>

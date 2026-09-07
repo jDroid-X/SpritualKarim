@@ -90,6 +90,30 @@ object AppSettingsRepository {
             isEditable = true,
             validationRegex = "^[0-9]+$",
             description = "Validity duration for device pairing link before expiring (Default: 24 Hours)."
+        ),
+        DynamicSystemVariable(
+            key = "FIREBASE_DATABASE_URL",
+            label = "Firebase Realtime Database URL",
+            value = "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com",
+            category = "Firebase & Telemetry",
+            isEditable = true,
+            description = "Endpoint URL for Firebase Realtime Database cloud instance (Project: spritualkarim-7b5fd)."
+        ),
+        DynamicSystemVariable(
+            key = "FIREBASE_PROJECT_ID",
+            label = "Firebase Project ID",
+            value = "spritualkarim-7b5fd",
+            category = "Firebase & Telemetry",
+            isEditable = true,
+            description = "Google Cloud & Firebase Project Identifier."
+        ),
+        DynamicSystemVariable(
+            key = "DATA_MINIMIZATION_ENABLED",
+            label = "Strict Data Minimization (Privacy)",
+            value = "true",
+            category = "Security & Privacy",
+            isEditable = true,
+            description = "Ensures only authorized pseudonyms and connection tokens sync online without sensitive personal data."
         )
     )
 

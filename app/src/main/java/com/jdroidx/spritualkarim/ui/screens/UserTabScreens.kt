@@ -16,9 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -882,7 +880,7 @@ fun UserTabContent(
                 item {
                     SpiritualGlassCard {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.FormatListBulleted, contentDescription = null, tint = SpiritualGold, modifier = Modifier.size(18.dp))
+                            Icon(Icons.AutoMirrored.Filled.FormatListBulleted, contentDescription = null, tint = SpiritualGold, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(6.dp))
                             Text("Enrolled / Specific Interest Queue (${enrolledRemedyIds.size} Ticked)", style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
                         }
@@ -3653,7 +3651,7 @@ fun getDevoteeRemediesCatalog(): List<DevoteeCatalogItem> = listOf(
         tag = "Remedy • Debt Alleviation Fire",
         category = "Divine Remedy",
         domain = "remedies",
-        icon = Icons.Default.ReceiptLong,
+        icon = Icons.AutoMirrored.Filled.ReceiptLong,
         summary = "Rin-Mukti ancestral debt alleviation protocol designed to dissolve relentless monetary loans.",
         mantra = "ॐ ॠणमुक्तेश्वराय महादेवाय नमः ॥",
         timing = "Tuesday Morning or Pradosh Sandhya",

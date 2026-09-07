@@ -3237,143 +3237,251 @@ input:checked + .toggle-slider:before {
 }
 
 /* Tree Modal Canvas */
+/* ==========================================================================
+   SPIDERWEB GENEALOGY HIERARCHY TREE (MAP-LIKE PAN/ZOOM & PERSON ICONS)
+   ========================================================================== */
 .tree-modal-dialog {
-  max-width: 1100px;
-  width: 95vw;
-  max-height: 92vh;
+  max-width: 96vw;
+  width: 96vw;
+  height: 94vh;
+  max-height: 94vh;
   display: flex;
   flex-direction: column;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #090610;
 }
 
-.tree-canvas-viewport {
-  width: 100%;
-  min-height: 520px;
-  max-height: 65vh;
-  overflow: auto;
-  background: radial-gradient(circle at center, rgba(32, 24, 54, 0.7) 0%, rgba(12, 9, 20, 0.95) 100%);
+.tree-modal-dialog.fullscreen-mode {
+  max-width: 100vw !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+.tree-canvas-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: rgba(18, 12, 32, 0.95);
+  border-bottom: 1px solid var(--border-subtle);
+  z-index: 20;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.tree-toolbar-left,
+.tree-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tree-tool-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 2.5rem 1.5rem;
-  position: relative;
-  display: flex;
-  justify-content: center;
-}
-
-html[data-theme="light"] .tree-canvas-viewport {
-  background: radial-gradient(circle at center, #ffffff 0%, #f1f5f9 100%);
-}
-
-.tree-structure-root {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2.5rem;
-  min-width: max-content;
-}
-
-.tree-level-container {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  position: relative;
-}
-
-.tree-branch-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
-/* MLM Node Card */
-.mlm-tree-node {
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 0.6rem 0.85rem;
-  min-width: 130px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-  position: relative;
-  z-index: 2;
-  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
 }
 
-.mlm-tree-node:hover {
-  transform: translateY(-4px) scale(1.04);
-  box-shadow: 0 8px 24px var(--gold-glow);
+.tree-tool-btn:hover {
+  background: var(--gold-500);
+  color: #0b0714;
   border-color: var(--gold-400);
 }
 
-.mlm-tree-node.is-active-profile {
-  border-color: var(--gold-400) !important;
-  box-shadow: 0 0 16px var(--gold-glow) !important;
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), var(--bg-card));
+.tree-drag-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(37, 99, 235, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
-.tree-node-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
+/* Map-like Viewport */
+.tree-canvas-viewport {
+  flex: 1;
+  width: 100%;
+  height: calc(94vh - 120px);
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #15102a 0%, #080511 100%);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.tree-canvas-viewport.is-dragging {
+  cursor: grabbing !important;
+}
+
+html[data-theme="light"] .tree-canvas-viewport {
+  background: radial-gradient(circle at center, #ffffff 0%, #e2e8f0 100%);
+}
+
+/* Interactive Pan/Zoom Surface */
+.tree-interactive-surface {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* SVG Line Layer for Spiderweb Connectors */
+.spiderweb-svg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4000px;
+  height: 4000px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.spiderweb-line {
+  stroke: #1e3a8a;
+  stroke-width: 2;
+  stroke-linecap: round;
+  transition: stroke 0.2s ease;
+}
+
+html[data-theme="dark"] .spiderweb-line {
+  stroke: #3b82f6;
+}
+
+.spiderweb-arrow-marker {
+  fill: #1e3a8a;
+}
+
+html[data-theme="dark"] .spiderweb-arrow-marker {
+  fill: #3b82f6;
+}
+
+/* Spiderweb Nodes Layer */
+.spiderweb-nodes-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4000px;
+  height: 4000px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
+}
+
+/* The Spiderweb Person Profile Node */
+.spiderweb-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  position: relative;
+  user-select: none;
+  padding: 4px;
+}
+
+.spiderweb-node:hover {
+  transform: scale(1.18);
+  z-index: 100;
+}
+
+.spiderweb-node:hover .person-svg {
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.8));
+}
+
+.spiderweb-node.is-root-node {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Person Icon Graphic (Circle Head + Rounded Rectangular Torso) */
+.person-icon-graphic {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #ffffff;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.mlm-node-tier-1 .tree-node-avatar { background: linear-gradient(135deg, #7A1C37, #b82c54); border-color: #d4af37; }
-.mlm-node-tier-2 .tree-node-avatar { background: linear-gradient(135deg, #FCB900, #b38400); }
-.mlm-node-tier-3 .tree-node-avatar { background: linear-gradient(135deg, #00D084, #008751); }
-.mlm-node-tier-4 .tree-node-avatar { background: linear-gradient(135deg, #0088CC, #005f8f); }
+.person-svg {
+  display: block;
+  transition: all 0.2s ease;
+}
 
-.tree-node-name {
-  font-size: 0.82rem;
+/* Upper levels: Deep Blue (#1e3a8a / #1d4ed8) */
+.spiderweb-node-tier-1 .person-head,
+.spiderweb-node-tier-1 .person-body,
+.spiderweb-node-tier-2 .person-head,
+.spiderweb-node-tier-2 .person-body,
+.spiderweb-node-tier-3 .person-head,
+.spiderweb-node-tier-3 .person-body {
+  fill: #1e3a8a;
+  stroke: #0a1128;
+  stroke-width: 1.5;
+}
+
+/* Lower level / Devotees: Sky Blue / Light Cyan (#a5f3fc / #7dd3fc) */
+.spiderweb-node-tier-4 .person-head,
+.spiderweb-node-tier-4 .person-body {
+  fill: #a5f3fc;
+  stroke: #0284c7;
+  stroke-width: 1.5;
+}
+
+/* Person Node Name (Text Only) */
+.person-node-name {
+  font-size: 0.76rem;
   font-weight: 700;
   color: var(--text-primary);
+  margin-top: 0.2rem;
   text-align: center;
-  max-width: 140px;
+  max-width: 90px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
-.tree-node-tier-badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 0.1rem 0.45rem;
-  border-radius: var(--radius-full);
+.is-root-node .person-node-name {
+  margin-top: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--gold-300);
 }
 
-.mlm-node-tier-1 .tree-node-tier-badge { background: rgba(122, 28, 55, 0.3); color: #f5d365; border: 1px solid #7A1C37; }
-.mlm-node-tier-2 .tree-node-tier-badge { background: rgba(252, 185, 0, 0.2); color: #FCB900; border: 1px solid #FCB900; }
-.mlm-node-tier-3 .tree-node-tier-badge { background: rgba(0, 208, 132, 0.2); color: #00D084; border: 1px solid #00D084; }
-.mlm-node-tier-4 .tree-node-tier-badge { background: rgba(0, 136, 204, 0.2); color: #0088CC; border: 1px solid #0088CC; }
-
-/* Connector Branch Lines */
-.tree-connector-down {
-  width: 2px;
-  height: 24px;
-  background: var(--gold-500);
-  opacity: 0.6;
+/* Level Rows & Sub-branches */
+.spiderweb-level-row {
+  display: flex;
+  justify-content: center;
+  gap: 3.5rem;
+  margin-bottom: 4.5rem;
+  position: relative;
 }
 
-.tree-connector-h-bar {
-  height: 2px;
-  background: var(--gold-500);
-  opacity: 0.6;
-  position: absolute;
-  top: -12px;
+.spiderweb-branch-cluster {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
 }
 
 /* ==========================================================================
