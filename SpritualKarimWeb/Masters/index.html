@@ -227,9 +227,10 @@
     <main class="admin-canvas">
       <div class="profile-form-container">
         
-        <!-- 1st Box: Master Profile Identity Card (Reference code box cleanly hidden from home view) -->
+        <!-- 1st Box: Master Profile Identity Card (With Genealogy Tab in 3rd Column) -->
         <div class="card profile-header-card" id="main-profile-box-1">
           <div class="card-header-flex">
+            <!-- 1st Column: Avatar & Profile Title -->
             <div class="user-avatar-block">
               <div class="avatar-circle" id="profile-avatar-initials">SK</div>
               <div>
@@ -242,10 +243,24 @@
               </div>
             </div>
 
-            <div class="ref-code-box" style="display: none;">
-              <div class="ref-label">16-Digit Reference Code</div>
-              <div class="ref-code-value" id="display-ref-code">SKHM-ADM1-7788-9900</div>
-              <div class="ref-sub" id="display-sponsor-code">Sponsor: ROOT-0000-0000-0000</div>
+            <!-- 2nd Column: Reference Meta -->
+            <div class="header-col-meta" id="header-col-meta">
+              <div class="ref-code-box" style="display: none;">
+                <div class="ref-label">16-Digit Reference Code</div>
+                <div class="ref-code-value" id="display-ref-code">SKHM-ADM1-7788-9900</div>
+                <div class="ref-sub" id="display-sponsor-code">Sponsor: ROOT-0000-0000-0000</div>
+              </div>
+            </div>
+
+            <!-- 3rd Column: Top Right Genealogy Tab -->
+            <div class="header-col-genealogy-tab">
+              <button type="button" class="main-tab-btn header-genealogy-tab-btn" data-main-tab="tab-genealogy-tree" id="main-tab-tree-btn" title="Open Organization Hierarchy &amp; Genealogy Spiderweb Tree">
+                <span class="tab-icon">🌳</span>
+                <div class="tab-label-wrap">
+                  <span class="tab-main-title">Genealogy Tree</span>
+                  <span class="tab-sub-title">Visual MLM &bull; Spiderweb Canvas</span>
+                </div>
+              </button>
             </div>
           </div>
         </div>
@@ -283,14 +298,6 @@
             <div class="tab-label-wrap">
               <span class="tab-main-title">4. Healer Connect</span>
               <span class="tab-sub-title">Siddhi Completed &bull; Seekers Guided</span>
-            </div>
-          </button>
-
-          <button type="button" class="main-tab-btn" data-main-tab="tab-genealogy-tree" id="main-tab-tree-btn">
-            <span class="tab-icon">🌳</span>
-            <div class="tab-label-wrap">
-              <span class="tab-main-title">5. Genealogy Tree</span>
-              <span class="tab-sub-title">Visual MLM &bull; Spiderweb Canvas</span>
             </div>
           </button>
         </div>

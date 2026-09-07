@@ -4578,6 +4578,68 @@ class ProfileController {
     });
   }
 
+  switchMainTab(tabId) {
+    const allTabBtns = document.querySelectorAll('.main-tab-btn');
+    const allPanels = document.querySelectorAll('.main-tab-content-panel');
+
+    allTabBtns.forEach(btn => {
+      if (btn.getAttribute('data-main-tab') === tabId) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    allPanels.forEach(p => {
+      if (p.id === tabId) {
+        p.classList.add('active');
+      } else {
+        p.classList.remove('active');
+      }
+    });
+
+    if (tabId === 'tab-genealogy-tree') {
+      const activeProf = this.model.getActiveProfile();
+      this.view.renderInBodyHierarchyTree(this.model.profiles, null, '', this.view.inBodyTreePanState?.layoutMode || 'cluster');
+      if (typeof this.view.renderRespectiveTreeSection === 'function') {
+        this.view.renderRespectiveTreeSection(activeProf, this.model.profiles);
+      }
+      setTimeout(() => {
+        if (typeof this.view.smartFitInBodyTree === 'function') {
+          this.view.smartFitInBodyTree();
+        }
+      }, 100);
+    }
+  }
+
+  _bindNavigationTabs() {
+    // Delegated click on any .main-tab-btn (including Box 1 Header 3rd Column Genealogy Tab and lower 4 nav bar tabs)
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.main-tab-btn');
+      if (btn) {
+        const tabId = btn.getAttribute('data-main-tab');
+        if (tabId) {
+          this.switchMainTab(tabId);
+        }
+      }
+
+      // Sub-tab button switching
+      const subBtn = e.target.closest('.sub-tab-btn');
+      if (subBtn) {
+        const subTabId = subBtn.getAttribute('data-sub-tab');
+        const parentPanel = subBtn.closest('.main-tab-content-panel');
+        if (parentPanel && subTabId) {
+          parentPanel.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+          subBtn.classList.add('active');
+          parentPanel.querySelectorAll('.sub-tab-panel').forEach(p => {
+            if (p.id === subTabId) p.classList.add('active');
+            else p.classList.remove('active');
+          });
+        }
+      }
+    });
+  }
+
   _bindSadhanaCatalogEvents() {
     // 1. Delegated Click on Sadhana/Remedy Card Option / Eye Trigger -> Open Slide-out Drawer
     document.addEventListener('click', (e) => {
