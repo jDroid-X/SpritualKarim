@@ -1892,6 +1892,7 @@ class ProfileView {
     this.btnBodyFullscreen = document.getElementById('btn-body-fullscreen');
     this.bodyTreeSearchInput = document.getElementById('body-tree-search-input');
     this.treePanState = { panX: 0, panY: 0, scale: 1.0, isDragging: false, startX: 0, startY: 0 };
+    this.inBodyTreePanState = { panX: 0, panY: 0, scale: 1.0, isDragging: false, startX: 0, startY: 0, layoutMode: 'cluster' };
     this.sharePairingModalBody = document.getElementById('share-pairing-modal-body');
 
     // Settings Modal Elements & Controls
@@ -3909,14 +3910,14 @@ Installation & Activation Steps:
     });
 
     window.addEventListener('mousemove', (e) => {
-      if (!this.inBodyTreePanState.isDragging) return;
+      if (!this.inBodyTreePanState || !this.inBodyTreePanState.isDragging) return;
       this.inBodyTreePanState.panX = e.clientX - this.inBodyTreePanState.startX;
       this.inBodyTreePanState.panY = e.clientY - this.inBodyTreePanState.startY;
       this._applyInBodyTreeTransform(false);
     });
 
     window.addEventListener('mouseup', () => {
-      if (this.inBodyTreePanState.isDragging) {
+      if (this.inBodyTreePanState && this.inBodyTreePanState.isDragging) {
         this.inBodyTreePanState.isDragging = false;
         if (this.bodyTreeCanvasViewport) this.bodyTreeCanvasViewport.classList.remove('is-dragging');
       }
