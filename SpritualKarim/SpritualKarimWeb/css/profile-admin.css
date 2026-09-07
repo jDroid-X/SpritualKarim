@@ -3794,5 +3794,514 @@ html[data-theme="dark"] .spiderweb-arrow-marker {
   color: #ef4444;
 }
 
+/* ==========================================================================
+   IN-BODY TREE CANVAS & SMART-FIT GENEALOGY MATRIX (TAB 5)
+   ========================================================================== */
+.body-tree-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 1.5rem;
+}
 
+.body-tree-title-bar {
+  padding: 0.85rem 1.25rem;
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
+.body-tree-quick-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stat-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.stat-badge.stat-gold {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--text-gold);
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+/* In-Body Canvas Toolbar */
+.body-tree-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding: 0.65rem 1.25rem;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.body-tree-toolbar-left,
+.body-tree-toolbar-right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.btn-smart-fit {
+  font-weight: 800;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+  transition: all 0.2s ease;
+}
+
+.btn-smart-fit:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.7);
+}
+
+/* Search Box Inside Toolbar */
+.tree-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.tree-search-wrap .search-icon {
+  position: absolute;
+  left: 0.55rem;
+  font-size: 0.75rem;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.tree-search-input {
+  padding-left: 1.8rem !important;
+  padding-right: 1.6rem !important;
+  height: 31px !important;
+  font-size: 0.8rem !important;
+  width: 170px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.3) !important;
+  transition: width 0.25s ease, border-color 0.25s ease;
+}
+
+.tree-search-input:focus {
+  width: 220px;
+  border-color: var(--gold-400) !important;
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 0.45rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px;
+  display: none;
+}
+
+.tree-search-input:not(:placeholder-shown) + .clear-search-btn {
+  display: block;
+}
+
+.tree-filter-select {
+  height: 31px !important;
+  font-size: 0.8rem !important;
+  padding: 0.15rem 0.5rem !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-radius: var(--radius-sm);
+  width: 155px;
+}
+
+/* Segmented Buttons Toggle (Left/Right) */
+.segmented-toggle-group {
+  display: inline-flex;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.segmented-btn {
+  padding: 0.22rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.segmented-btn.active {
+  background: linear-gradient(135deg, var(--gold-500), var(--gold-600));
+  color: #0b0714;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* In-Body Viewport Container */
+.body-tree-canvas-viewport {
+  width: 100%;
+  height: 650px;
+  min-height: 520px;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #16102e 0%, #080512 100%);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.body-tree-canvas-viewport.is-dragging {
+  cursor: grabbing !important;
+}
+
+.body-tree-canvas-viewport.is-fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 99999 !important;
+  border-radius: 0 !important;
+}
+
+html[data-theme="light"] .body-tree-canvas-viewport {
+  background: radial-gradient(circle at center, #ffffff 0%, #edf2f7 100%);
+}
+
+.body-tree-surface {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 0 0;
+  will-change: transform;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.body-tree-surface.no-transition {
+  transition: none !important;
+}
+
+.body-spiderweb-svg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5000px;
+  height: 5000px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.body-spiderweb-nodes-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5000px;
+  height: 5000px;
+  z-index: 2;
+  padding: 40px 100px;
+}
+
+.body-spiderweb-arrow-marker {
+  fill: #3b82f6;
+}
+
+html[data-theme="light"] .body-spiderweb-arrow-marker {
+  fill: #1e3a8a;
+}
+
+.spiderweb-bezier-line {
+  stroke: #3b82f6;
+  stroke-width: 2.2;
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke 0.25s ease, stroke-width 0.25s ease;
+}
+
+.spiderweb-bezier-line.highlighted {
+  stroke: var(--gold-400) !important;
+  stroke-width: 3.5 !important;
+  filter: drop-shadow(0 0 6px rgba(245, 211, 101, 0.8));
+}
+
+html[data-theme="light"] .spiderweb-bezier-line {
+  stroke: #1d4ed8;
+}
+
+/* ==========================================================================
+   TRUE HIERARCHICAL CLUSTER TREE ARCHITECTURE
+   ========================================================================== */
+.tree-hierarchy-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.tree-cluster-node-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.tree-sub-branches-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2.5rem;
+  margin-top: 3.5rem;
+  position: relative;
+}
+
+.tree-sub-branch-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.tree-leaves-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin-top: 3.5rem;
+  position: relative;
+}
+
+/* Node Highlighting & Search Match */
+.spiderweb-node.search-match {
+  animation: pulseGoldGlow 1.2s infinite alternate;
+}
+
+.spiderweb-node.search-match .person-svg {
+  filter: drop-shadow(0 0 14px #f5d365) !important;
+}
+
+.spiderweb-node.dimmed {
+  opacity: 0.22;
+  filter: grayscale(80%);
+}
+
+@keyframes pulseGoldGlow {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1.24);
+  }
+}
+
+/* Footer Helper Bar */
+.body-tree-footer-bar {
+  padding: 0.6rem 1.25rem;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 0.78rem;
+}
+
+.tree-legend-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.chip-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-tier-1 { background: #7A1C37; }
+.dot-tier-2 { background: #FCB900; }
+.dot-tier-3 { background: #00D084; }
+.dot-tier-4 { background: #0088CC; }
+
+.tree-footer-hint {
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   BOTTOM-RIGHT SLIDE-IN TOAST NOTIFICATION STACK
+   ========================================================================== */
+.toast-notifications-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: none;
+  max-width: 380px;
+  width: 90vw;
+}
+
+.toast-notification {
+  pointer-events: auto;
+  background: var(--drawer-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+  transform: translateX(120%);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.toast-notification.toast-visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast-notification.toast-hiding {
+  transform: translateX(120%);
+  opacity: 0;
+}
+
+.toast-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.toast-content {
+  flex: 1;
+}
+
+.toast-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.toast-message {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.toast-action-btn {
+  margin-top: 0.4rem;
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-gold);
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.toast-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.toast-close-btn:hover {
+  color: var(--text-primary);
+}
+
+.toast-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold-400), var(--gold-600));
+  width: 100%;
+  transform-origin: left;
+}
+
+.toast-success { border-left: 4px solid #10b981; }
+.toast-error { border-left: 4px solid #ef4444; }
+.toast-warning { border-left: 4px solid #f59e0b; }
+.toast-info { border-left: 4px solid #3b82f6; }
+
+/* ==========================================================================
+   NODE ACTION OPTIONS DIALOG
+   ========================================================================== */
+.node-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.node-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.node-option-btn:hover {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: var(--gold-400);
+  transform: translateX(4px);
+}
+
+.node-option-btn span:first-child {
+  font-size: 1.2rem;
+}

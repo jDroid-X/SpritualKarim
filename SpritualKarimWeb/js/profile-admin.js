@@ -1470,7 +1470,38 @@ class ProfileView {
     this.importModal = document.getElementById('import-modal');
     this.toastEl = document.getElementById('admin-toast');
 
-    // App Hierarchy MLM Tree View & Profile Metadata Drawer
+    // In-Body App Hierarchy Tree & Genealogy Canvas (Tab 5)
+    this.tabGenealogyTree = document.getElementById('tab-genealogy-tree');
+    this.mainTabTreeBtn = document.getElementById('main-tab-tree-btn');
+    this.bodyTreeCanvasViewport = document.getElementById('body-tree-canvas-viewport');
+    this.bodyTreeSurface = document.getElementById('body-tree-surface');
+    this.bodySpiderwebSvgLayer = document.getElementById('body-spiderweb-svg-layer');
+    this.bodySpiderwebNodesLayer = document.getElementById('body-spiderweb-nodes-layer');
+    this.btnBodySmartFit = document.getElementById('btn-body-smart-fit');
+    this.btnBodyZoomIn = document.getElementById('btn-body-zoom-in');
+    this.btnBodyZoomOut = document.getElementById('btn-body-zoom-out');
+    this.btnBodyZoomReset = document.getElementById('btn-body-zoom-reset');
+    this.btnBodyFullscreen = document.getElementById('btn-body-fullscreen');
+    this.bodyTreeSearchInput = document.getElementById('body-tree-search-input');
+    this.btnClearTreeSearch = document.getElementById('btn-clear-tree-search');
+    this.bodyTreeTierFilter = document.getElementById('body-tree-tier-filter');
+    this.btnLayoutCluster = document.getElementById('btn-layout-cluster');
+    this.btnLayoutSpiderweb = document.getElementById('btn-layout-spiderweb');
+    this.bodyTreeTotalMembers = document.getElementById('body-tree-total-members');
+    this.bodyTreeActiveTier = document.getElementById('body-tree-active-tier');
+
+    // Pan & Zoom state for In-Body Canvas
+    this.inBodyTreePanState = { panX: 0, panY: 30, scale: 1.0, isDragging: false, startX: 0, startY: 0, layoutMode: 'cluster' };
+
+    // Toast Notifications & Node Action Dialog
+    this.toastNotificationsContainer = document.getElementById('toast-notifications-container');
+    this.nodeActionDialog = document.getElementById('node-action-dialog');
+    this.nodeDialogBody = document.getElementById('node-dialog-body');
+    this.nodeDialogTitle = document.getElementById('node-dialog-title');
+    this.btnCloseNodeDialog = document.getElementById('btn-close-node-dialog');
+    this.btnCloseNodeDialogFooter = document.getElementById('btn-close-node-dialog-footer');
+
+    // Modal Hierarchy Tree View (Legacy backup) & Profile Metadata Drawer
     this.hierarchyTreeModal = document.getElementById('hierarchy-tree-modal');
     this.treeCanvasViewport = document.getElementById('tree-canvas-viewport');
     this.treeModalDialog = document.getElementById('tree-modal-dialog');
@@ -1492,7 +1523,7 @@ class ProfileView {
     this.btnCloseTreeDrawer = document.getElementById('btn-close-tree-drawer');
     this.btnOpenTreeView = document.getElementById('btn-open-tree-view');
 
-    // Pan & Zoom state
+    // Pan & Zoom state for Modal
     this.treePanState = { panX: 0, panY: 0, scale: 1.0, isDragging: false, startX: 0, startY: 0 };
 
     // Theme Switcher & Header Elements
@@ -2576,50 +2607,84 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
     }
   }
 
-  showToast(message) {
-    if (!this.toastEl) return;
-    this.toastEl.textContent = message;
-    this.toastEl.classList.add('show');
-    setTimeout(() => {
-      this.toastEl.classList.remove('show');
-    }, 3000);
+  showToast(titleOrMessage, messageText = '', type = 'info', duration = 4000, actionBtn = null) {
+    // 1. Fallback / legacy bottom center toast
+    if (this.toastEl) {
+      this.toastEl.textContent = typeof titleOrMessage === 'string' ? titleOrMessage : 'Action executed';
+      this.toastEl.classList.add('show');
+      setTimeout(() => { if (this.toastEl) this.toastEl.classList.remove('show'); }, 3000);
+    }
+
+    // 2. Rich Slide-in Bottom-Right Toast Stack
+    if (!this.toastNotificationsContainer) {
+      this.toastNotificationsContainer = document.getElementById('toast-notifications-container');
+    }
+
+    if (this.toastNotificationsContainer) {
+      const toast = document.createElement('div');
+      const toastType = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
+      toast.className = `toast-notification toast-${toastType}`;
+
+      const iconMap = {
+        success: '🟢',
+        error: '🔴',
+        warning: '🟡',
+        info: '🔵'
+      };
+
+      const title = messageText ? titleOrMessage : 'System Notification';
+      const msg = messageText || titleOrMessage;
+      const icon = iconMap[toastType] || '🔔';
+
+      let actionHtml = '';
+      if (actionBtn && actionBtn.text && typeof actionBtn.onClick === 'function') {
+        actionHtml = `<button type="button" class="toast-action-btn" id="toast-action-${Date.now()}">${actionBtn.text}</button>`;
+      }
+
+      toast.innerHTML = `
+        <span class="toast-icon">${icon}</span>
+        <div class="toast-content">
+          <div class="toast-title">${title}</div>
+          <div class="toast-message">${msg}</div>
+          ${actionHtml}
+        </div>
+        <button type="button" class="toast-close-btn" aria-label="Close Notification">&times;</button>
+        <div class="toast-progress-bar" style="animation: toastProgress ${duration}ms linear forwards;"></div>
+      `;
+
+      this.toastNotificationsContainer.appendChild(toast);
+
+      // Slide in animation
+      requestAnimationFrame(() => {
+        toast.classList.add('toast-visible');
+      });
+
+      const dismiss = () => {
+        toast.classList.remove('toast-visible');
+        toast.classList.add('toast-hiding');
+        setTimeout(() => {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 400);
+      };
+
+      toast.querySelector('.toast-close-btn').addEventListener('click', dismiss);
+
+      if (actionHtml) {
+        const btn = toast.querySelector('.toast-action-btn');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            actionBtn.onClick();
+            dismiss();
+          });
+        }
+      }
+
+      setTimeout(dismiss, duration);
+    }
   }
 
   showFloatingNotification(title, message, icon = '🔔', duration = 4500) {
-    let stack = document.getElementById('bottom-right-toast-stack');
-    if (!stack) {
-      stack = document.createElement('div');
-      stack.id = 'bottom-right-toast-stack';
-      stack.className = 'bottom-right-toast-stack';
-      document.body.appendChild(stack);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = 'floating-toast-card';
-    toast.innerHTML = `
-      <span class="floating-toast-icon">${icon}</span>
-      <div class="floating-toast-content">
-        <div class="floating-toast-title">${title}</div>
-        <div class="floating-toast-message">${message}</div>
-      </div>
-      <button type="button" class="floating-toast-close" aria-label="Dismiss">&times;</button>
-    `;
-
-    stack.appendChild(toast);
-
-    setTimeout(() => {
-      toast.classList.add('toast-visible');
-    }, 50);
-
-    const dismiss = () => {
-      toast.classList.remove('toast-visible');
-      setTimeout(() => {
-        if (toast.parentNode) toast.parentNode.removeChild(toast);
-      }, 400);
-    };
-
-    toast.querySelector('.floating-toast-close').addEventListener('click', dismiss);
-    setTimeout(dismiss, duration);
+    this.showToast(title, message, 'info', duration);
   }
 
   toggleJsonDrawer(forceState) {
@@ -2714,266 +2779,479 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
     return { tier: 4, title: 'Devotee / Seeker (Tier 4)', roleBadge: 'Tier 4 • Clean & Seekers', nodeClass: 'mlm-node-tier-4', icon: '🌱', color: 'var(--role-devotee)' };
   }
 
-  renderHierarchyTree(profiles, focusTier = null) {
-    if (!this.spiderwebNodesLayer || !this.spiderwebSvgLayer) {
-      if (this.treeCanvasViewport) {
-        this.treeCanvasViewport.innerHTML = `
-          <div class="tree-interactive-surface" id="tree-interactive-surface">
-            <svg class="spiderweb-svg-layer" id="spiderweb-svg-layer">
-              <defs>
-                <marker id="spiderweb-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                  <path d="M 0 1.5 L 10 5 L 0 8.5 z" class="spiderweb-arrow-marker" />
-                </marker>
-              </defs>
-            </svg>
-            <div class="spiderweb-nodes-layer" id="spiderweb-nodes-layer"></div>
-          </div>
-        `;
-        this.treeInteractiveSurface = document.getElementById('tree-interactive-surface');
-        this.spiderwebSvgLayer = document.getElementById('spiderweb-svg-layer');
-        this.spiderwebNodesLayer = document.getElementById('spiderweb-nodes-layer');
-      }
+  // ==========================================================================
+  // IN-BODY HIERARCHY TREE & SMART FIT ENGINE (TAB 5)
+  // ==========================================================================
+
+  renderInBodyHierarchyTree(profiles = [], focusTier = null, searchQuery = '', layoutMode = 'cluster') {
+    if (!this.bodySpiderwebNodesLayer || !this.bodySpiderwebSvgLayer) {
+      this.bodySpiderwebNodesLayer = document.getElementById('body-spiderweb-nodes-layer');
+      this.bodySpiderwebSvgLayer = document.getElementById('body-spiderweb-svg-layer');
+      this.bodyTreeSurface = document.getElementById('body-tree-surface');
+      this.bodyTreeCanvasViewport = document.getElementById('body-tree-canvas-viewport');
     }
 
     if (!profiles || profiles.length === 0) {
-      if (this.spiderwebNodesLayer) {
-        this.spiderwebNodesLayer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 2rem;">No profiles found.</div>';
+      if (this.bodySpiderwebNodesLayer) {
+        this.bodySpiderwebNodesLayer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 2rem;">No profiles found.</div>';
       }
       return;
     }
 
-    // 1. Group profiles by tier
-    const tier1 = profiles.filter(p => this._getTierDetails(p).tier === 1);
-    const tier2 = profiles.filter(p => this._getTierDetails(p).tier === 2);
-    const tier3 = profiles.filter(p => this._getTierDetails(p).tier === 3);
-    const tier4 = profiles.filter(p => this._getTierDetails(p).tier === 4);
+    // Update Stats & Active Tier badge
+    if (this.bodyTreeTotalMembers) {
+      this.bodyTreeTotalMembers.textContent = `👥 Total Members: ${profiles.length}`;
+    }
+    if (this.bodyTreeActiveTier) {
+      this.bodyTreeActiveTier.textContent = focusTier ? `Tier Focus: Tier ${focusTier}` : 'Tier Focus: All Tiers';
+    }
 
-    const rootProfile = tier1.length > 0 ? tier1[0] : profiles[0];
+    // 1. Organize profiles by tier
+    const tier1List = profiles.filter(p => this._getTierDetails(p).tier === 1);
+    const tier2List = profiles.filter(p => this._getTierDetails(p).tier === 2);
+    const tier3List = profiles.filter(p => this._getTierDetails(p).tier === 3);
+    const tier4List = profiles.filter(p => this._getTierDetails(p).tier === 4);
+
+    const rootProfile = tier1List.length > 0 ? tier1List[0] : profiles[0];
+
+    // Build hierarchical lineage groups
+    const cleanQuery = (searchQuery || '').trim().toLowerCase();
 
     const renderPersonNode = (p, tier, isRoot = false) => {
-      const tierClass = `spiderweb-node-tier-${tier}`;
       const isDevotee = tier === 4;
       const headFill = isDevotee ? '#a5f3fc' : '#1e3a8a';
       const headStroke = isDevotee ? '#0284c7' : '#0a1128';
       const bodyFill = isDevotee ? '#a5f3fc' : '#1e3a8a';
       const bodyStroke = isDevotee ? '#0284c7' : '#0a1128';
 
+      const name = p.name || (isRoot ? 'Founder (Karim Ji)' : 'Seeker');
+      const isMatch = cleanQuery && name.toLowerCase().includes(cleanQuery);
+      const isDimmed = (cleanQuery && !isMatch) || (focusTier && focusTier !== tier);
+
       return `
-        <div class="spiderweb-node ${tierClass} ${isRoot ? 'is-root-node' : ''}" data-profile-id="${p.id}" id="tree-node-${p.id}" tabindex="0" title="Click to view details for ${p.name}">
+        <div class="spiderweb-node spiderweb-node-tier-${tier} ${isRoot ? 'is-root-node' : ''} ${isMatch ? 'search-match' : ''} ${isDimmed ? 'dimmed' : ''}"
+             data-profile-id="${p.id}"
+             data-tier="${tier}"
+             id="body-tree-node-${p.id}"
+             tabindex="0"
+             title="${name} (${this._getTierDetails(p).title}) • Click to view details, double click to jump to profile">
           <div class="person-icon-graphic">
-            <svg viewBox="0 0 36 50" width="${isRoot ? '34' : '28'}" height="${isRoot ? '46' : '38'}" class="person-svg">
+            <svg viewBox="0 0 36 50" width="${isRoot ? '36' : '30'}" height="${isRoot ? '48' : '40'}" class="person-svg">
               <circle cx="18" cy="9" r="6.5" fill="${headFill}" stroke="${headStroke}" stroke-width="1.5" class="person-head" />
               <rect x="7" y="18" width="22" height="26" rx="2.5" fill="${bodyFill}" stroke="${bodyStroke}" stroke-width="1.5" class="person-body" />
             </svg>
           </div>
-          <div class="person-node-name">${isRoot ? (p.name || 'root') : (p.name || 'Seeker')}</div>
+          <div class="person-node-name">${name}</div>
         </div>
       `;
     };
 
-    // Render 4-tier Spiderweb matrix (Person icons with Name only)
-    let html = `
-      <!-- Tier 1: Root Master -->
-      <div class="spiderweb-level-row level-1-row" id="row-tier-1">
-        ${renderPersonNode(rootProfile, 1, true)}
-      </div>
+    let html = '';
 
-      <!-- Tier 2: Healers Connected to Root -->
-      <div class="spiderweb-level-row level-2-row" id="row-tier-2">
-        ${tier2.length > 0 
-          ? tier2.map(h => renderPersonNode(h, 2)).join('') 
-          : renderPersonNode({ id: 'mock-h1', name: 'Healer 1' }, 2) + renderPersonNode({ id: 'mock-h2', name: 'Healer 2' }, 2) + renderPersonNode({ id: 'mock-h3', name: 'Healer 3' }, 2)}
-      </div>
+    if (layoutMode === 'cluster') {
+      // Build Clustered MLM Sub-tree Structure
+      const effectiveHealers = tier2List.length > 0 ? tier2List : [{ id: 'mock-h1', name: 'Healer 1', referenceCode: 'H1' }, { id: 'mock-h2', name: 'Healer 2', referenceCode: 'H2' }];
 
-      <!-- Tier 3: Trainees Grouped Under Healers -->
-      <div class="spiderweb-level-row level-3-row" id="row-tier-3">
-        ${tier3.length > 0 
-          ? tier3.map(t => renderPersonNode(t, 3)).join('') 
-          : renderPersonNode({ id: 'mock-t1', name: 'Trainee 1' }, 3) + renderPersonNode({ id: 'mock-t2', name: 'Trainee 2' }, 3) + renderPersonNode({ id: 'mock-t3', name: 'Trainee 3' }, 3)}
-      </div>
+      const healerBranchesHtml = effectiveHealers.map((healer, hIdx) => {
+        // Find trainees under this healer
+        let matchedTrainees = tier3List.filter(t => t.referredByCode && t.referredByCode === healer.referenceCode);
+        if (matchedTrainees.length === 0 && tier3List.length > 0) {
+          matchedTrainees = tier3List.filter((_, idx) => idx % effectiveHealers.length === hIdx);
+        }
+        if (matchedTrainees.length === 0) {
+          matchedTrainees = [{ id: `mock-t-${hIdx}-1`, name: `Trainee ${hIdx + 1}.1`, referenceCode: `T${hIdx}1` }];
+        }
 
-      <!-- Tier 4: Devotees & Seekers (Light Cyan / Sky Blue) -->
-      <div class="spiderweb-level-row level-4-row" id="row-tier-4">
-        ${tier4.length > 0 
-          ? tier4.map(d => renderPersonNode(d, 4)).join('') 
-          : renderPersonNode({ id: 'mock-d1', name: 'Devotee 1' }, 4) + renderPersonNode({ id: 'mock-d2', name: 'Devotee 2' }, 4) + renderPersonNode({ id: 'mock-d3', name: 'Devotee 3' }, 4)}
-      </div>
-    `;
+        const traineeColumnsHtml = matchedTrainees.map((trainee, tIdx) => {
+          // Find devotees under this trainee
+          let matchedDevotees = tier4List.filter(d => d.referredByCode && d.referredByCode === trainee.referenceCode);
+          if (matchedDevotees.length === 0 && tier4List.length > 0) {
+            matchedDevotees = tier4List.filter((_, idx) => idx % matchedTrainees.length === tIdx);
+          }
+          if (matchedDevotees.length === 0) {
+            matchedDevotees = [{ id: `mock-d-${hIdx}-${tIdx}-1`, name: `Devotee ${tIdx + 1}.A` }];
+          }
 
-    this.spiderwebNodesLayer.innerHTML = html;
+          const devoteesHtml = matchedDevotees.map(d => renderPersonNode(d, 4)).join('');
 
-    // Draw Vector Spiderweb lines between real connections
+          return `
+            <div class="tree-sub-branch-column" id="column-trainee-${trainee.id}">
+              <div class="tree-cluster-node-wrap">
+                ${renderPersonNode(trainee, 3)}
+              </div>
+              <div class="tree-leaves-row" id="leaves-devotees-${trainee.id}">
+                ${devoteesHtml}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div class="tree-sub-branch-column" id="column-healer-${healer.id}">
+            <div class="tree-cluster-node-wrap">
+              ${renderPersonNode(healer, 2)}
+            </div>
+            <div class="tree-sub-branches-row" id="row-trainees-${healer.id}">
+              ${traineeColumnsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      html = `
+        <div class="tree-hierarchy-wrapper" id="tree-hierarchy-wrapper">
+          <!-- Top Root Master -->
+          <div class="tree-cluster-node-wrap" id="tree-root-cluster">
+            ${renderPersonNode(rootProfile, 1, true)}
+          </div>
+          <!-- Healers Sub-trees Row -->
+          <div class="tree-sub-branches-row" id="tree-healers-row">
+            ${healerBranchesHtml}
+          </div>
+        </div>
+      `;
+    } else {
+      // Spiderweb Matrix Layout (4 clean rows)
+      html = `
+        <div class="tree-hierarchy-wrapper spiderweb-matrix-flow" id="tree-hierarchy-wrapper">
+          <div class="spiderweb-level-row level-1-row" id="body-row-tier-1">
+            ${renderPersonNode(rootProfile, 1, true)}
+          </div>
+          <div class="spiderweb-level-row level-2-row" id="body-row-tier-2">
+            ${tier2List.length > 0 ? tier2List.map(h => renderPersonNode(h, 2)).join('') : renderPersonNode({ id: 'mock-h1', name: 'Healer 1' }, 2) + renderPersonNode({ id: 'mock-h2', name: 'Healer 2' }, 2)}
+          </div>
+          <div class="spiderweb-level-row level-3-row" id="body-row-tier-3">
+            ${tier3List.length > 0 ? tier3List.map(t => renderPersonNode(t, 3)).join('') : renderPersonNode({ id: 'mock-t1', name: 'Trainee 1' }, 3) + renderPersonNode({ id: 'mock-t2', name: 'Trainee 2' }, 3)}
+          </div>
+          <div class="spiderweb-level-row level-4-row" id="body-row-tier-4">
+            ${tier4List.length > 0 ? tier4List.map(d => renderPersonNode(d, 4)).join('') : renderPersonNode({ id: 'mock-d1', name: 'Devotee 1' }, 4) + renderPersonNode({ id: 'mock-d2', name: 'Devotee 2' }, 4)}
+          </div>
+        </div>
+      `;
+    }
+
+    this.bodySpiderwebNodesLayer.innerHTML = html;
+
+    // Draw connecting lines with dynamic coordinates
     setTimeout(() => {
-      this._drawSpiderwebConnectingLines(rootProfile, tier2, tier3, tier4);
-    }, 50);
+      this._drawInBodyConnectingLines(rootProfile, tier2List, tier3List, tier4List, layoutMode);
+    }, 60);
 
-    // Reset pan & zoom
-    this._resetTreePanZoom();
+    // Auto smart-fit on initial render
+    setTimeout(() => {
+      this.smartFitInBodyTree();
+    }, 100);
   }
 
-  _drawSpiderwebConnectingLines(root, tier2, tier3, tier4) {
-    if (!this.spiderwebSvgLayer || !this.spiderwebNodesLayer) return;
+  _drawInBodyConnectingLines(root, tier2List, tier3List, tier4List, layoutMode) {
+    if (!this.bodySpiderwebSvgLayer || !this.bodySpiderwebNodesLayer) return;
 
-    const surfaceRect = this.spiderwebNodesLayer.getBoundingClientRect();
-    const svgDef = `
-      <defs>
-        <marker id="spiderweb-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 1.5 L 10 5 L 0 8.5 z" class="spiderweb-arrow-marker" />
-        </marker>
-      </defs>
-    `;
+    const surfaceRect = this.bodySpiderwebNodesLayer.getBoundingClientRect();
+    const scale = this.inBodyTreePanState?.scale || 1.0;
 
     const getCenterAnchor = (elemId, isTop = false) => {
       const el = document.getElementById(elemId);
       if (!el) return null;
       const rect = el.getBoundingClientRect();
-      const scale = this.treePanState?.scale || 1.0;
       const x = (rect.left + rect.width / 2 - surfaceRect.left) / scale;
       const y = (isTop ? (rect.top - surfaceRect.top) : (rect.bottom - surfaceRect.top)) / scale;
       return { x, y };
     };
 
-    let linesSvg = svgDef;
+    let pathsSvg = `
+      <defs>
+        <marker id="body-spiderweb-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1.5 L 10 5 L 0 8.5 z" class="body-spiderweb-arrow-marker" />
+        </marker>
+      </defs>
+    `;
 
-    const rootAnchor = getCenterAnchor(`tree-node-${root.id}`, false);
+    const rootAnchor = getCenterAnchor(`body-tree-node-${root.id}`, false);
 
-    if (rootAnchor) {
-      // Connect Root to all Tier 2 nodes
-      tier2.forEach(h => {
-        const childAnchor = getCenterAnchor(`tree-node-${h.id}`, true);
-        if (childAnchor) {
-          linesSvg += `<line x1="${rootAnchor.x}" y1="${rootAnchor.y}" x2="${childAnchor.x}" y2="${childAnchor.y}" class="spiderweb-line" marker-end="url(#spiderweb-arrow)" />`;
-        }
-      });
-    }
-
-    // Connect Tier 2 Healers to Tier 3 Trainees
-    if (tier2.length > 0 && tier3.length > 0) {
-      tier3.forEach((t, idx) => {
-        const parentHealer = tier2.find(h => h.referenceCode && h.referenceCode === t.referredByCode) || tier2[idx % tier2.length];
-        const pAnchor = getCenterAnchor(`tree-node-${parentHealer.id}`, false);
-        const cAnchor = getCenterAnchor(`tree-node-${t.id}`, true);
-        if (pAnchor && cAnchor) {
-          linesSvg += `<line x1="${pAnchor.x}" y1="${pAnchor.y}" x2="${cAnchor.x}" y2="${cAnchor.y}" class="spiderweb-line" marker-end="url(#spiderweb-arrow)" />`;
-        }
-      });
-    }
-
-    // Connect Tier 3 Trainees to Tier 4 Devotees
-    if (tier3.length > 0 && tier4.length > 0) {
-      tier4.forEach((d, idx) => {
-        const parentTrainee = tier3.find(t => t.referenceCode && t.referenceCode === d.referredByCode) || tier3[idx % tier3.length];
-        const pAnchor = getCenterAnchor(`tree-node-${parentTrainee.id}`, false);
-        const cAnchor = getCenterAnchor(`tree-node-${d.id}`, true);
-        if (pAnchor && cAnchor) {
-          linesSvg += `<line x1="${pAnchor.x}" y1="${pAnchor.y}" x2="${cAnchor.x}" y2="${cAnchor.y}" class="spiderweb-line" marker-end="url(#spiderweb-arrow)" />`;
-        }
-      });
-    }
-
-    this.spiderwebSvgLayer.innerHTML = linesSvg;
-  }
-
-  _resetTreePanZoom() {
-    this.treePanState = { panX: 0, panY: 0, scale: 1.0, isDragging: false, startX: 0, startY: 0 };
-    this._applyTreeTransform();
-  }
-
-  _applyTreeTransform() {
-    if (this.treeInteractiveSurface) {
-      const { panX, panY, scale } = this.treePanState;
-      this.treeInteractiveSurface.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-    }
-  }
-
-  _initTreePanZoomEvents() {
-    if (!this.treeCanvasViewport || this._treePanZoomInitialized) return;
-    this._treePanZoomInitialized = true;
-
-    // Mouse Drag (Hand Screen Movement like Maps)
-    this.treeCanvasViewport.addEventListener('mousedown', (e) => {
-      if (e.target.closest('.spiderweb-node')) return;
-      this.treePanState.isDragging = true;
-      this.treePanState.startX = e.clientX - this.treePanState.panX;
-      this.treePanState.startY = e.clientY - this.treePanState.panY;
-      this.treeCanvasViewport.classList.add('is-dragging');
-    });
-
-    window.addEventListener('mousemove', (e) => {
-      if (!this.treePanState.isDragging) return;
-      this.treePanState.panX = e.clientX - this.treePanState.startX;
-      this.treePanState.panY = e.clientY - this.treePanState.startY;
-      this._applyTreeTransform();
-    });
-
-    window.addEventListener('mouseup', () => {
-      if (this.treePanState.isDragging) {
-        this.treePanState.isDragging = false;
-        if (this.treeCanvasViewport) this.treeCanvasViewport.classList.remove('is-dragging');
+    // Connect Root to all Tier 2 nodes
+    const effectiveHealers = tier2List.length > 0 ? tier2List : [{ id: 'mock-h1' }, { id: 'mock-h2' }];
+    effectiveHealers.forEach(h => {
+      const childAnchor = getCenterAnchor(`body-tree-node-${h.id}`, true);
+      if (rootAnchor && childAnchor) {
+        const midY = (rootAnchor.y + childAnchor.y) / 2;
+        pathsSvg += `<path d="M ${rootAnchor.x} ${rootAnchor.y} C ${rootAnchor.x} ${midY}, ${childAnchor.x} ${midY}, ${childAnchor.x} ${childAnchor.y}" class="spiderweb-bezier-line" marker-end="url(#body-spiderweb-arrow)" />`;
       }
     });
 
-    // Mouse Wheel Zoom In / Out
-    this.treeCanvasViewport.addEventListener('wheel', (e) => {
+    // Connect Healers to Trainees
+    const effectiveTrainees = tier3List.length > 0 ? tier3List : [{ id: 'mock-t-0-1' }, { id: 'mock-t-1-1' }, { id: 'mock-t1' }, { id: 'mock-t2' }];
+    effectiveTrainees.forEach((t, idx) => {
+      const parentHealer = tier2List.find(h => h.referenceCode && h.referenceCode === t.referredByCode) || effectiveHealers[idx % effectiveHealers.length];
+      if (parentHealer) {
+        const pAnchor = getCenterAnchor(`body-tree-node-${parentHealer.id}`, false);
+        const cAnchor = getCenterAnchor(`body-tree-node-${t.id}`, true);
+        if (pAnchor && cAnchor) {
+          const midY = (pAnchor.y + cAnchor.y) / 2;
+          pathsSvg += `<path d="M ${pAnchor.x} ${pAnchor.y} C ${pAnchor.x} ${midY}, ${cAnchor.x} ${midY}, ${cAnchor.x} ${cAnchor.y}" class="spiderweb-bezier-line" marker-end="url(#body-spiderweb-arrow)" />`;
+        }
+      }
+    });
+
+    // Connect Trainees to Devotees
+    const effectiveDevotees = tier4List.length > 0 ? tier4List : [{ id: 'mock-d-0-0-1' }, { id: 'mock-d-1-0-1' }, { id: 'mock-d1' }, { id: 'mock-d2' }];
+    effectiveDevotees.forEach((d, idx) => {
+      const parentTrainee = tier3List.find(t => t.referenceCode && t.referenceCode === d.referredByCode) || effectiveTrainees[idx % effectiveTrainees.length];
+      if (parentTrainee) {
+        const pAnchor = getCenterAnchor(`body-tree-node-${parentTrainee.id}`, false);
+        const cAnchor = getCenterAnchor(`body-tree-node-${d.id}`, true);
+        if (pAnchor && cAnchor) {
+          const midY = (pAnchor.y + cAnchor.y) / 2;
+          pathsSvg += `<path d="M ${pAnchor.x} ${pAnchor.y} C ${pAnchor.x} ${midY}, ${cAnchor.x} ${midY}, ${cAnchor.x} ${cAnchor.y}" class="spiderweb-bezier-line" marker-end="url(#body-spiderweb-arrow)" />`;
+        }
+      }
+    });
+
+    this.bodySpiderwebSvgLayer.innerHTML = pathsSvg;
+  }
+
+  smartFitInBodyTree() {
+    if (!this.bodyTreeCanvasViewport || !this.bodySpiderwebNodesLayer) return;
+
+    const wrapper = document.getElementById('tree-hierarchy-wrapper');
+    if (!wrapper) return;
+
+    const vpRect = this.bodyTreeCanvasViewport.getBoundingClientRect();
+    const contentRect = wrapper.getBoundingClientRect();
+
+    const currentScale = this.inBodyTreePanState?.scale || 1.0;
+    const rawContentW = contentRect.width / currentScale;
+    const rawContentH = contentRect.height / currentScale;
+
+    const availW = vpRect.width - 60;
+    const availH = vpRect.height - 70;
+
+    if (rawContentW <= 0 || rawContentH <= 0 || availW <= 0 || availH <= 0) return;
+
+    const targetScale = Math.min(1.0, Math.max(0.35, Math.min(availW / rawContentW, availH / rawContentH)));
+    const targetPanX = Math.round((vpRect.width - rawContentW * targetScale) / 2);
+    const targetPanY = Math.max(25, Math.round((vpRect.height - rawContentH * targetScale) / 2) - 15);
+
+    this.inBodyTreePanState = {
+      ...this.inBodyTreePanState,
+      scale: targetScale,
+      panX: targetPanX,
+      panY: targetPanY,
+      isDragging: false
+    };
+
+    this._applyInBodyTreeTransform(true);
+  }
+
+  zoomInBodyTree() {
+    this.inBodyTreePanState.scale = Math.min(2.5, this.inBodyTreePanState.scale + 0.18);
+    this._applyInBodyTreeTransform(true);
+  }
+
+  zoomOutBodyTree() {
+    this.inBodyTreePanState.scale = Math.max(0.3, this.inBodyTreePanState.scale - 0.18);
+    this._applyInBodyTreeTransform(true);
+  }
+
+  resetInBodyTree() {
+    this.inBodyTreePanState.scale = 1.0;
+    this.inBodyTreePanState.panX = 0;
+    this.inBodyTreePanState.panY = 30;
+    this._applyInBodyTreeTransform(true);
+  }
+
+  _applyInBodyTreeTransform(withTransition = false) {
+    if (!this.bodyTreeSurface) return;
+    const { panX, panY, scale } = this.inBodyTreePanState;
+    if (withTransition) {
+      this.bodyTreeSurface.classList.remove('no-transition');
+    } else {
+      this.bodyTreeSurface.classList.add('no-transition');
+    }
+    this.bodyTreeSurface.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  }
+
+  _initInBodyTreePanZoomEvents() {
+    if (!this.bodyTreeCanvasViewport || this._inBodyPanZoomInitialized) return;
+    this._inBodyPanZoomInitialized = true;
+
+    // Mouse Drag (Pan Anywhere like Google Maps)
+    this.bodyTreeCanvasViewport.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.spiderweb-node')) return;
+      this.inBodyTreePanState.isDragging = true;
+      this.inBodyTreePanState.startX = e.clientX - this.inBodyTreePanState.panX;
+      this.inBodyTreePanState.startY = e.clientY - this.inBodyTreePanState.panY;
+      this.bodyTreeCanvasViewport.classList.add('is-dragging');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!this.inBodyTreePanState.isDragging) return;
+      this.inBodyTreePanState.panX = e.clientX - this.inBodyTreePanState.startX;
+      this.inBodyTreePanState.panY = e.clientY - this.inBodyTreePanState.startY;
+      this._applyInBodyTreeTransform(false);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (this.inBodyTreePanState.isDragging) {
+        this.inBodyTreePanState.isDragging = false;
+        if (this.bodyTreeCanvasViewport) this.bodyTreeCanvasViewport.classList.remove('is-dragging');
+      }
+    });
+
+    // Mouse Wheel Zoom
+    this.bodyTreeCanvasViewport.addEventListener('wheel', (e) => {
       e.preventDefault();
       const zoomFactor = e.deltaY < 0 ? 1.12 : 0.88;
-      const newScale = Math.min(3.0, Math.max(0.35, this.treePanState.scale * zoomFactor));
-      this.treePanState.scale = newScale;
-      this._applyTreeTransform();
+      const newScale = Math.min(2.5, Math.max(0.3, this.inBodyTreePanState.scale * zoomFactor));
+      this.inBodyTreePanState.scale = newScale;
+      this._applyInBodyTreeTransform(false);
     }, { passive: false });
 
     // Touch Drag & Pan
     let lastTouchX = 0;
     let lastTouchY = 0;
-    this.treeCanvasViewport.addEventListener('touchstart', (e) => {
+    this.bodyTreeCanvasViewport.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
         lastTouchX = e.touches[0].clientX;
         lastTouchY = e.touches[0].clientY;
       }
     }, { passive: true });
 
-    this.treeCanvasViewport.addEventListener('touchmove', (e) => {
+    this.bodyTreeCanvasViewport.addEventListener('touchmove', (e) => {
       if (e.touches.length === 1) {
         const dx = e.touches[0].clientX - lastTouchX;
         const dy = e.touches[0].clientY - lastTouchY;
         lastTouchX = e.touches[0].clientX;
         lastTouchY = e.touches[0].clientY;
-        this.treePanState.panX += dx;
-        this.treePanState.panY += dy;
-        this._applyTreeTransform();
+        this.inBodyTreePanState.panX += dx;
+        this.inBodyTreePanState.panY += dy;
+        this._applyInBodyTreeTransform(false);
       }
     }, { passive: true });
 
     // Toolbar Buttons
-    if (this.btnTreeZoomIn) {
-      this.btnTreeZoomIn.addEventListener('click', () => {
-        this.treePanState.scale = Math.min(3.0, this.treePanState.scale + 0.2);
-        this._applyTreeTransform();
+    if (this.btnBodySmartFit) {
+      this.btnBodySmartFit.addEventListener('click', () => {
+        this.smartFitInBodyTree();
+        this.showToast('🎯 Smart Fit applied: Centered & scaled to viewport.');
       });
     }
 
-    if (this.btnTreeZoomOut) {
-      this.btnTreeZoomOut.addEventListener('click', () => {
-        this.treePanState.scale = Math.max(0.35, this.treePanState.scale - 0.2);
-        this._applyTreeTransform();
+    if (this.btnBodyZoomIn) {
+      this.btnBodyZoomIn.addEventListener('click', () => this.zoomInBodyTree());
+    }
+
+    if (this.btnBodyZoomOut) {
+      this.btnBodyZoomOut.addEventListener('click', () => this.zoomOutBodyTree());
+    }
+
+    if (this.btnBodyZoomReset) {
+      this.btnBodyZoomReset.addEventListener('click', () => {
+        this.resetInBodyTree();
+        this.showToast('🔄 Tree view reset to 100%');
       });
     }
 
-    if (this.btnTreeZoomReset) {
-      this.btnTreeZoomReset.addEventListener('click', () => {
-        this._resetTreePanZoom();
-      });
-    }
-
-    if (this.btnTreeFullscreen) {
-      this.btnTreeFullscreen.addEventListener('click', () => {
-        if (this.treeModalDialog) {
-          this.treeModalDialog.classList.toggle('fullscreen-mode');
-          const isFull = this.treeModalDialog.classList.contains('fullscreen-mode');
-          this.btnTreeFullscreen.innerHTML = isFull ? '<span>✕</span> <span>Exit Fullscreen</span>' : '<span>⛶</span> <span>Fullscreen</span>';
+    if (this.btnBodyFullscreen) {
+      this.btnBodyFullscreen.addEventListener('click', () => {
+        if (this.bodyTreeCanvasViewport) {
+          this.bodyTreeCanvasViewport.classList.toggle('is-fullscreen');
+          const isFull = this.bodyTreeCanvasViewport.classList.contains('is-fullscreen');
+          this.btnBodyFullscreen.innerHTML = isFull ? '<span>✕</span> <span>Exit Fullscreen</span>' : '<span>⛶</span> <span>Fullscreen</span>';
+          setTimeout(() => this.smartFitInBodyTree(), 200);
         }
       });
     }
+
+    // Window Resize -> Re-fit if on tree tab
+    window.addEventListener('resize', () => {
+      const activeTab = document.querySelector('.main-tab-content-panel.active');
+      if (activeTab && activeTab.id === 'tab-genealogy-tree') {
+        this.smartFitInBodyTree();
+      }
+    });
+  }
+
+  openNodeActionDialog(profile) {
+    if (!this.nodeActionDialog || !this.nodeDialogBody) return;
+    const details = this._getTierDetails(profile);
+
+    if (this.nodeDialogTitle) {
+      this.nodeDialogTitle.textContent = `${details.icon} ${profile.name || 'Member'} (${details.roleBadge})`;
+    }
+
+    this.nodeDialogBody.innerHTML = `
+      <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+        Select an enterprise action to perform for <strong>${profile.name}</strong>:
+      </div>
+      <div class="node-options-list">
+        <button type="button" class="node-option-btn" id="btn-node-opt-edit" data-profile-id="${profile.id}">
+          <span>👤</span>
+          <div>
+            <div>Go to Profile Workspace</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">Open tabs 1-4 for complete data edit</div>
+          </div>
+        </button>
+
+        <button type="button" class="node-option-btn" id="btn-node-opt-share" data-profile-id="${profile.id}">
+          <span>📲</span>
+          <div>
+            <div>Share &amp; Invite Seeker Payload</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">Generate 24-Hour pairing link with QR code</div>
+          </div>
+        </button>
+
+        <button type="button" class="node-option-btn" id="btn-node-opt-copy" data-code="${profile.referenceCode || ''}">
+          <span>📋</span>
+          <div>
+            <div>Copy 16-Digit Reference Code</div>
+            <div style="font-size: 0.75rem; color: var(--text-gold); font-family: var(--font-mono); font-weight: normal;">${profile.referenceCode || 'N/A'}</div>
+          </div>
+        </button>
+
+        <button type="button" class="node-option-btn" id="btn-node-opt-inspect" data-profile-id="${profile.id}">
+          <span>🔍</span>
+          <div>
+            <div>Inspect Downline Lineage Drawer</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">Slide out verified sadhana progress &amp; clean logs</div>
+          </div>
+        </button>
+      </div>
+    `;
+
+    this.nodeActionDialog.classList.add('open');
+    this.nodeActionDialog.setAttribute('aria-hidden', 'false');
+  }
+
+  closeNodeActionDialog() {
+    if (this.nodeActionDialog) {
+      this.nodeActionDialog.classList.remove('open');
+      this.nodeActionDialog.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  // ==========================================================================
+  // LEGACY MODAL TREE VIEW (PRESERVED FOR BACKWARD COMPATIBILITY)
+  // ==========================================================================
+
+  renderHierarchyTree(profiles, focusTier = null) {
+    // Forward to in-body rendering or modal
+    this.renderInBodyHierarchyTree(profiles, focusTier, '', 'cluster');
+  }
+
+  _drawSpiderwebConnectingLines(root, tier2, tier3, tier4) {
+    this._drawInBodyConnectingLines(root, tier2, tier3, tier4, 'cluster');
+  }
+
+  _resetTreePanZoom() {
+    this.resetInBodyTree();
+  }
+
+  _applyTreeTransform() {
+    this._applyInBodyTreeTransform(true);
+  }
+
+  _initTreePanZoomEvents() {
+    this._initInBodyTreePanZoomEvents();
   }
 
   renderTreeProfileDrawer(profile) {
@@ -3259,6 +3537,18 @@ class ProfileController {
     document.querySelectorAll('.main-tab-content-panel').forEach(panel => {
       panel.classList.toggle('active', panel.id === tabId);
     });
+
+    // Auto-render & Smart Fit if switching to In-Body Genealogy Tree Tab (Tab 5)
+    if (tabId === 'tab-genealogy-tree') {
+      const activeFilter = this.view.bodyTreeTierFilter ? this.view.bodyTreeTierFilter.value : 'ALL';
+      const tier = activeFilter === 'ALL' ? null : parseInt(activeFilter, 10);
+      const query = this.view.bodyTreeSearchInput ? this.view.bodyTreeSearchInput.value : '';
+      const mode = this.view.inBodyTreePanState?.layoutMode || 'cluster';
+      this.view.renderInBodyHierarchyTree(this.model.profiles, tier, query, mode);
+      setTimeout(() => {
+        this.view.smartFitInBodyTree();
+      }, 80);
+    }
   }
 
   _bindSadhanaCatalogEvents() {
@@ -4539,20 +4829,198 @@ class ProfileController {
       });
     }
 
-    // App Hierarchy Tiers & MLM Tree View Events
+    // App Hierarchy Tiers & In-Body MLM Tree View Events
     document.querySelectorAll('#hierarchy-legend-container .legend-item').forEach(item => {
       item.addEventListener('click', () => {
         const tier = parseInt(item.getAttribute('data-tier'), 10);
-        this.view.renderHierarchyTree(this.model.profiles, tier);
-        this.view.toggleTreeModal(true);
+        if (this.view.bodyTreeTierFilter) this.view.bodyTreeTierFilter.value = tier.toString();
+        this.switchMainTab('tab-genealogy-tree');
+        this.view.renderInBodyHierarchyTree(this.model.profiles, tier, '', this.view.inBodyTreePanState?.layoutMode || 'cluster');
+        setTimeout(() => {
+          this.view.smartFitInBodyTree();
+          this.view.showToast(`🎯 Filtered tree to Tier ${tier} (${item.querySelector('.legend-title')?.textContent || 'Tier'})`);
+        }, 100);
       });
     });
 
     if (this.view.btnOpenTreeView) {
       this.view.btnOpenTreeView.addEventListener('click', () => {
-        this.view.renderHierarchyTree(this.model.profiles, null);
-        this.view.toggleTreeModal(true);
+        if (this.view.bodyTreeTierFilter) this.view.bodyTreeTierFilter.value = 'ALL';
+        this.switchMainTab('tab-genealogy-tree');
+        this.view.renderInBodyHierarchyTree(this.model.profiles, null, '', this.view.inBodyTreePanState?.layoutMode || 'cluster');
+        setTimeout(() => {
+          this.view.smartFitInBodyTree();
+        }, 100);
       });
+    }
+
+    // In-Body Tree Search & Filter Events
+    if (this.view.bodyTreeSearchInput) {
+      this.view.bodyTreeSearchInput.addEventListener('input', (e) => {
+        const q = e.target.value;
+        const filterVal = this.view.bodyTreeTierFilter ? this.view.bodyTreeTierFilter.value : 'ALL';
+        const tier = filterVal === 'ALL' ? null : parseInt(filterVal, 10);
+        this.view.renderInBodyHierarchyTree(this.model.profiles, tier, q, this.view.inBodyTreePanState?.layoutMode || 'cluster');
+      });
+    }
+
+    if (this.view.btnClearTreeSearch) {
+      this.view.btnClearTreeSearch.addEventListener('click', () => {
+        if (this.view.bodyTreeSearchInput) {
+          this.view.bodyTreeSearchInput.value = '';
+          const filterVal = this.view.bodyTreeTierFilter ? this.view.bodyTreeTierFilter.value : 'ALL';
+          const tier = filterVal === 'ALL' ? null : parseInt(filterVal, 10);
+          this.view.renderInBodyHierarchyTree(this.model.profiles, tier, '', this.view.inBodyTreePanState?.layoutMode || 'cluster');
+        }
+      });
+    }
+
+    if (this.view.bodyTreeTierFilter) {
+      this.view.bodyTreeTierFilter.addEventListener('change', (e) => {
+        const filterVal = e.target.value;
+        const tier = filterVal === 'ALL' ? null : parseInt(filterVal, 10);
+        const q = this.view.bodyTreeSearchInput ? this.view.bodyTreeSearchInput.value : '';
+        this.view.renderInBodyHierarchyTree(this.model.profiles, tier, q, this.view.inBodyTreePanState?.layoutMode || 'cluster');
+        setTimeout(() => this.view.smartFitInBodyTree(), 80);
+      });
+    }
+
+    // Layout Mode Segmented Toggles
+    if (this.view.btnLayoutCluster) {
+      this.view.btnLayoutCluster.addEventListener('click', () => {
+        this.view.inBodyTreePanState.layoutMode = 'cluster';
+        this.view.btnLayoutCluster.classList.add('active');
+        if (this.view.btnLayoutSpiderweb) this.view.btnLayoutSpiderweb.classList.remove('active');
+        const filterVal = this.view.bodyTreeTierFilter ? this.view.bodyTreeTierFilter.value : 'ALL';
+        const tier = filterVal === 'ALL' ? null : parseInt(filterVal, 10);
+        const q = this.view.bodyTreeSearchInput ? this.view.bodyTreeSearchInput.value : '';
+        this.view.renderInBodyHierarchyTree(this.model.profiles, tier, q, 'cluster');
+        this.view.showToast('🌳 Layout switched: Clustered MLM Sub-trees');
+      });
+    }
+
+    if (this.view.btnLayoutSpiderweb) {
+      this.view.btnLayoutSpiderweb.addEventListener('click', () => {
+        this.view.inBodyTreePanState.layoutMode = 'spiderweb';
+        this.view.btnLayoutSpiderweb.classList.add('active');
+        if (this.view.btnLayoutCluster) this.view.btnLayoutCluster.classList.remove('active');
+        const filterVal = this.view.bodyTreeTierFilter ? this.view.bodyTreeTierFilter.value : 'ALL';
+        const tier = filterVal === 'ALL' ? null : parseInt(filterVal, 10);
+        const q = this.view.bodyTreeSearchInput ? this.view.bodyTreeSearchInput.value : '';
+        this.view.renderInBodyHierarchyTree(this.model.profiles, tier, q, 'spiderweb');
+        this.view.showToast('🕸️ Layout switched: Spiderweb Matrix Flow');
+      });
+    }
+
+    // In-Body Tree Canvas Pan/Zoom Events Initialization
+    this.view._initInBodyTreePanZoomEvents();
+
+    // Node Click & Double Click on In-Body Canvas
+    if (this.view.bodyTreeCanvasViewport) {
+      this.view.bodyTreeCanvasViewport.addEventListener('click', (e) => {
+        const node = e.target.closest('.spiderweb-node');
+        if (node) {
+          const profileId = node.getAttribute('data-profile-id');
+          const profile = this.model.profiles.find(p => p.id === profileId) || {
+            id: profileId,
+            name: node.querySelector('.person-node-name')?.textContent || 'Member',
+            referenceCode: 'SKHM-MEM1-8899-0011',
+            level: node.getAttribute('data-tier') || 4,
+            isPaid: true
+          };
+          this.view.renderTreeProfileDrawer(profile);
+          this.view.toggleTreeProfileDrawer(true);
+        }
+      });
+
+      // Double Click -> Jump straight to profile
+      this.view.bodyTreeCanvasViewport.addEventListener('dblclick', (e) => {
+        const node = e.target.closest('.spiderweb-node');
+        if (node) {
+          const profileId = node.getAttribute('data-profile-id');
+          if (profileId && this.model.profiles.some(p => p.id === profileId)) {
+            this.model.setActiveProfileId(profileId);
+            this.view.toggleTreeProfileDrawer(false);
+            this._renderCurrentState();
+            this.switchMainTab('tab-devotee-personal');
+            const active = this.model.getActiveProfile();
+            this.view.showToast(`🚀 Switched to active workspace of "${active.name}"`);
+          }
+        }
+      });
+
+      // Context Menu (Right Click) -> Open Node Action Dialog
+      this.view.bodyTreeCanvasViewport.addEventListener('contextmenu', (e) => {
+        const node = e.target.closest('.spiderweb-node');
+        if (node) {
+          e.preventDefault();
+          const profileId = node.getAttribute('data-profile-id');
+          const profile = this.model.profiles.find(p => p.id === profileId) || {
+            id: profileId,
+            name: node.querySelector('.person-node-name')?.textContent || 'Member',
+            referenceCode: 'SKHM-MEM1-8899-0011',
+            level: node.getAttribute('data-tier') || 4
+          };
+          this.view.openNodeActionDialog(profile);
+        }
+      });
+    }
+
+    // Node Action Dialog Actions
+    if (this.view.nodeActionDialog) {
+      this.view.nodeActionDialog.addEventListener('click', (e) => {
+        const btnEdit = e.target.closest('#btn-node-opt-edit');
+        if (btnEdit) {
+          const pid = btnEdit.getAttribute('data-profile-id');
+          if (pid && this.model.profiles.some(p => p.id === pid)) {
+            this.model.setActiveProfileId(pid);
+            this._renderCurrentState();
+            this.switchMainTab('tab-devotee-personal');
+          }
+          this.view.closeNodeActionDialog();
+          return;
+        }
+
+        const btnShare = e.target.closest('#btn-node-opt-share');
+        if (btnShare) {
+          this.view.closeNodeActionDialog();
+          const p = this.model.getActiveProfile();
+          this.view.renderSharePairingModal(p, this.model.getPairingInvites(), this.model.settings);
+          this.view.toggleSharePairingModal(true);
+          return;
+        }
+
+        const btnCopy = e.target.closest('#btn-node-opt-copy');
+        if (btnCopy) {
+          const code = btnCopy.getAttribute('data-code');
+          if (code) {
+            navigator.clipboard.writeText(code).then(() => {
+              this.view.showToast(`📋 Copied reference code: ${code}`);
+            });
+          }
+          this.view.closeNodeActionDialog();
+          return;
+        }
+
+        const btnInspect = e.target.closest('#btn-node-opt-inspect');
+        if (btnInspect) {
+          const pid = btnInspect.getAttribute('data-profile-id');
+          const prof = this.model.profiles.find(p => p.id === pid);
+          if (prof) {
+            this.view.renderTreeProfileDrawer(prof);
+            this.view.toggleTreeProfileDrawer(true);
+          }
+          this.view.closeNodeActionDialog();
+          return;
+        }
+      });
+    }
+
+    if (this.view.btnCloseNodeDialog) {
+      this.view.btnCloseNodeDialog.addEventListener('click', () => this.view.closeNodeActionDialog());
+    }
+    if (this.view.btnCloseNodeDialogFooter) {
+      this.view.btnCloseNodeDialogFooter.addEventListener('click', () => this.view.closeNodeActionDialog());
     }
 
     if (this.view.btnCloseTreeModal) {
@@ -4561,9 +5029,7 @@ class ProfileController {
       });
     }
 
-    // Initialize Map-like Pan/Zoom & Fullscreen
-    this.view._initTreePanZoomEvents();
-
+    // Modal Tree fallback interactions
     if (this.view.treeCanvasViewport) {
       this.view.treeCanvasViewport.addEventListener('click', (e) => {
         const node = e.target.closest('.spiderweb-node') || e.target.closest('.mlm-tree-node');
