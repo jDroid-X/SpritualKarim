@@ -1168,7 +1168,7 @@ class ProfileModel {
         seekerDeviceModel: 'Samsung Galaxy SM-G998B',
         hardwareNonce: 'HW-FPRINT-8891-9921',
         telegramLink: 'https://t.me/SpiritualKarimBot?start=pair_SKHMADM177889900',
-        apkDownloadUrl: 'https://github.com/jiten/SpritualKarim/releases/latest/download/app-debug.apk',
+        apkDownloadUrl: 'https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk',
         createdAtMs: Date.now() - 3600000,
         expiresAtMs: Date.now() + 23 * 3600000,
         status: 'PENDING',
@@ -1184,7 +1184,7 @@ class ProfileModel {
         seekerDeviceModel: 'OnePlus 11 5G',
         hardwareNonce: 'HW-FPRINT-1122-3344',
         telegramLink: 'https://t.me/SpiritualKarimBot?start=pair_SKHMADM177889900',
-        apkDownloadUrl: 'https://github.com/jiten/SpritualKarim/releases/latest/download/app-debug.apk',
+        apkDownloadUrl: 'https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk',
         createdAtMs: Date.now() - 86400000,
         expiresAtMs: Date.now() - 1000,
         status: 'EXPIRED',
@@ -1233,7 +1233,7 @@ class ProfileModel {
       seekerDeviceModel: deviceModel || 'Android Device',
       hardwareNonce: hardwareNonce,
       telegramLink: `https://t.me/SpiritualKarimBot?start=pair_${cleanCode}`,
-      apkDownloadUrl: 'https://github.com/jiten/SpritualKarim/releases/latest/download/app-debug.apk',
+      apkDownloadUrl: 'https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk',
       createdAtMs: Date.now(),
       expiresAtMs: Date.now() + 24 * 60 * 60 * 1000,
       status: 'PENDING',
@@ -2330,8 +2330,8 @@ class ProfileView {
     const sponsorCode = profile.referenceCode || 'SK-7842-8921';
     const cleanCode = sponsorCode.replace(/[^a-zA-Z0-9]/g, '');
     const telegramLink = `https://t.me/SpiritualKarimBot?start=pair_${cleanCode}`;
-    const apkDownloadUrl = 'https://github.com/jiten/SpritualKarim/releases/latest/download/app-debug.apk';
-    const repoUrl = 'https://github.com/jiten/SpritualKarim';
+    const apkDownloadUrl = 'https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk';
+    const repoUrl = 'https://github.com/jDroid-X/SpritualKarim';
 
     const payloadText = `🕉️ SPIRITUAL KARIM • SACRED LINEAGE PAIRING INVITE
 
