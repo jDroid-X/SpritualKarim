@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spiritual Karim • Devotee Portal (Self & House Clean)</title>
+  <meta name="description" content="Admin Control Panel for Spiritual Karim Mobile App - Devotee Personal, Seeker Purpose, Trainee Sadhak, and Healer Connect Management">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="../Logo.png">
+
+  <!-- Google Fonts: Cinzel, Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/profile-admin.css">
+</head>
+<body data-portal-mode="DEVOTEE">
+  <!-- Top Admin Control Header (2-Row Smart Fit Layout) -->
+  <header class="admin-topbar multi-row-header">
+    <!-- Row 1: Brand, Status, Global Tools & Theme Switcher -->
+    <div class="topbar-row-primary">
+      <div class="topbar-brand-group">
+        <button type="button" id="btn-mobile-sidebar-toggle" class="mobile-sidebar-toggle" aria-label="Toggle Directory Sidebar">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+        <div class="admin-brand">
+          <img src="../Logo.png" alt="Logo" class="admin-logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'36\' height=\'36\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23d4af37\'/><text x=\'50\' y=\'65\' font-size=\'40\' text-anchor=\'middle\' fill=\'%230b0714\'>ॐ</text></svg>'">
+          <div class="brand-text-block">
+            <div class="brand-title-wrap">
+              <span class="admin-title">SPIRITUAL KARIM ADMIN</span>
+              <span class="header-portal-badge" id="header-portal-badge">🌟 Devotee Portal</span>
+            </div>
+            <span class="admin-subtitle">🌟 Devotee Mode &bull; Personal Profile &amp; House Clean History</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-global-actions">
+        <!-- Live Sync Status Indicator -->
+        <div class="header-status-pill" id="header-cloud-status" title="Real-time Synchronization Active">
+          <span class="status-indicator-dot"></span>
+          <span class="status-pill-text">Live Sync</span>
+        </div>
+
+        <!-- Active Profile Stamp Indicator -->
+        <div class="header-payment-stamp" id="header-payment-stamp" title="Selected Profile Membership Status">
+          <span class="stamp-badge stamp-paid" id="header-stamp-badge">🟢 PAID</span>
+        </div>
+
+        <!-- Light / Dark / Auto Theme Toggle Switcher -->
+        <div class="theme-switch-container">
+          <button type="button" id="btn-theme-toggle" class="theme-toggle-btn" title="Theme Mode: Auto (Device OS) | Click to Toggle Dark/Light/Auto" aria-label="Toggle Theme Mode">
+            <span class="theme-icon" id="theme-icon">💻</span>
+            <span class="theme-label" id="theme-label">Auto</span>
+          </button>
+        </div>
+
+        <!-- Goli Gyan Quick Modal Trigger -->
+        <button type="button" id="btn-quick-goli-gyan" class="btn btn-sm btn-outline header-quick-btn" title="Open Goli Gyan Wisdom Guide">
+          <span>📜</span> <span class="btn-text-desktop">Goli Gyan</span>
+        </button>
+
+        <!-- Share & Invite Seeker Quick Modal Trigger -->
+        <button type="button" id="btn-quick-share-pairing" class="btn btn-sm btn-gold header-quick-btn" title="Share &amp; Invite Seeker (24h Device Pairing Protocol)">
+          <span>📲</span> <span class="btn-text-desktop">Share &amp; Pair</span>
+        </button>
+
+        <!-- Settings Modal Trigger -->
+        <button type="button" id="btn-admin-settings" class="btn btn-sm btn-outline header-quick-btn" title="Admin System &amp; Permission Settings">
+          <span>⚙️</span> <span class="btn-text-desktop">Settings</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Row 2: Operational & Role Navigation Bar -->
+    <div class="topbar-row-secondary">
+      <div class="topbar-selector-group">
+        <div class="role-selector-pill">
+          <span class="selector-icon">🛡️</span>
+          <label for="select-role-mode" class="switch-label">Role:</label>
+          <select id="select-role-mode" class="role-mode-dropdown" title="Switch Access View & Permissions">
+            <option value="MASTER">👑 Master (Full Control)</option>
+            <option value="DEVOTEE" selected>🌟 Devotee (Self View/Edit)</option>
+            <option value="HEALER">🌿 Healer (Self &amp; Team)</option>
+            
+          </select>
+        </div>
+
+        <div class="profile-selector-pill">
+          <span class="selector-icon">👤</span>
+          <label for="select-active-profile" class="switch-label">Profile:</label>
+          <select id="select-active-profile" class="profile-dropdown" title="Select Active Profile"></select>
+        </div>
+      </div>
+
+      <div class="topbar-action-group">
+        <button type="button" id="btn-create-profile" class="btn btn-sm btn-outline" title="Create New End User Profile">
+          <span>+</span> <span class="btn-text-responsive">New Profile</span>
+        </button>
+        <button type="button" id="btn-import-json" class="btn btn-sm btn-outline" title="Import JSON payload from Android App">
+          <span>📥</span> <span class="btn-text-responsive">Import</span>
+        </button>
+        <button type="button" id="btn-export-json" class="btn btn-sm btn-outline" title="Export Profile JSON for Mobile App">
+          <span>📤</span> <span class="btn-text-responsive">Export</span>
+        </button>
+        <button type="button" id="btn-save-profile" class="btn btn-sm btn-gold btn-save-pulse" title="Save & Sync to App State">
+          <span>💾</span> <span class="btn-text-responsive">Save &amp; Sync</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar Backdrop for Mobile -->
+  <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+  <!-- Admin Main Layout -->
+  <div class="admin-layout">
+    <!-- Left Navigation & Directory Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-heading">Profile Directory</div>
+        <div id="profile-directory-list" class="profile-directory-list"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>App Hierarchy Tiers</span>
+          <button type="button" id="btn-open-tree-view" class="btn btn-xs btn-gold" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;" title="Open Visual MLM Hierarchy Tree">🌳 Tree</button>
+        </div>
+        <div class="hierarchy-legend" id="hierarchy-legend-container">
+          <div class="legend-item" data-tier="1" style="border-left-color: var(--role-admin);">
+            <span class="legend-title">Admin Master</span>
+            <span class="legend-level">Tier 1 &bull; Founder</span>
+          </div>
+          <div class="legend-item" data-tier="2" style="border-left-color: var(--role-healer);">
+            <span class="legend-title">Healer Connect</span>
+            <span class="legend-level">Tier 2 &bull; Level Completed</span>
+          </div>
+          <div class="legend-item" data-tier="3" style="border-left-color: var(--role-trainee);">
+            <span class="legend-title">Trainee Sadhak</span>
+            <span class="legend-level">Tier 3 &bull; In-Progress</span>
+          </div>
+          <div class="legend-item" data-tier="4" style="border-left-color: var(--role-devotee);">
+            <span class="legend-title">Devotee / Seeker</span>
+            <span class="legend-level">Tier 4 &bull; Personal &amp; House Clean</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-heading">Dedicated Portals</div>
+        <div class="sub-portal-links">
+          <a href="../Masters/index.html" class="sub-portal-link " title="Open Master Portal">
+            <span>🏛️</span> Masters Portal
+          </a>
+          <a href="../Healers/index.html" class="sub-portal-link " title="Open Healer Portal">
+            <span>🌿</span> Healers Portal
+          </a>
+          <a href="../Devotee/index.html" class="sub-portal-link active" title="Open Devotee Portal">
+            <span>🌟</span> Devotee Portal
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-heading">Quick Actions</div>
+        <button id="btn-copy-ref-code" class="btn btn-sm btn-outline w-100 mb-2">
+          <span>📋</span> Copy 16-Digit Code
+        </button>
+        <button id="btn-gen-ref-code" class="btn btn-sm btn-outline w-100 mb-2">
+          <span>🎲</span> Generate New Code
+        </button>
+        <button id="btn-toggle-json-drawer" class="btn btn-sm btn-outline w-100">
+          <span>⚙️</span> View App JSON
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Canvas Area -->
+    <main class="admin-canvas">
+      <div class="profile-form-container">
+        
+        <!-- 1st Box: Master Profile Identity & Reference Code Header Card -->
+        <div class="card profile-header-card" id="main-profile-box-1">
+          <div class="card-header-flex">
+            <div class="user-avatar-block">
+              <div class="avatar-circle" id="profile-avatar-initials">SK</div>
+              <div>
+                <h2 class="profile-name-title" id="display-profile-name">Karim Ji (Founder)</h2>
+                <div class="profile-role-badge-row">
+                  <span class="role-badge" id="display-role-badge">ADMIN MASTER &bull; LEVEL 1</span>
+                  <span class="status-pill active" id="display-status-pill">Active</span>
+                  <span class="stamp-indicator stamp-paid" id="display-payment-stamp" title="Click to toggle Paid (Green) / Free (Red)">PAID</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ref-code-box" style="display: none;">
+              <div class="ref-label">16-Digit Reference Code</div>
+              <div class="ref-code-value" id="display-ref-code">SKHM-ADM1-7788-9900</div>
+              <div class="ref-sub" id="display-sponsor-code">Sponsor: ROOT-0000-0000-0000</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             4 MAIN NAVIGATION TABS BELOW 1st BOX
+             ============================================================== -->
+        <div class="main-tabs-nav-bar">
+          <button type="button" class="main-tab-btn active" data-main-tab="tab-devotee-personal">
+            <span class="tab-icon">🌟</span>
+            <div class="tab-label-wrap">
+              <span class="tab-main-title">1. Devotee Personal</span>
+              <span class="tab-sub-title">Identity &bull; Lineage &bull; House Clean</span>
+            </div>
+          </button>
+
+          <button type="button" class="main-tab-btn" data-main-tab="tab-seeker-purpose">
+            <span class="tab-icon">🎯</span>
+            <div class="tab-label-wrap">
+              <span class="tab-main-title">2. Seeker Purpose</span>
+              <span class="tab-sub-title">Goals &bull; Clean Logs &bull; Sadhanas</span>
+            </div>
+          </button>
+
+          <button type="button" class="main-tab-btn" data-main-tab="tab-trainee-sadhak">
+            <span class="tab-icon">🌿</span>
+            <div class="tab-label-wrap">
+              <span class="tab-main-title">3. Trainee Sadhak</span>
+              <span class="tab-sub-title">In-Progress Level Wise &bull; Goli Gyan</span>
+            </div>
+          </button>
+
+          <button type="button" class="main-tab-btn" data-main-tab="tab-healer-connect">
+            <span class="tab-icon">👑</span>
+            <div class="tab-label-wrap">
+              <span class="tab-main-title">4. Healer Connect</span>
+              <span class="tab-sub-title">Siddhi Completed &bull; Seekers Guided</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- ==============================================================
+             ACTIVE TAB CONTENT PANELS & EDITABLE FORMS
+             ============================================================== -->
+        <form id="profile-admin-form">
+
+          <!-- ############################################################
+               TAB 1: DEVOTEE PERSONAL
+               ############################################################ -->
+          <div class="main-tab-content-panel active" id="tab-devotee-personal">
+            <!-- Sub-Navigation for Devotee Personal -->
+            <div class="sub-tabs-nav-bar">
+              <button type="button" class="sub-tab-btn active" data-sub-tab="devotee-sub-identity">
+                <span>👤</span> Personal Identity
+              </button>
+              <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-lineage">
+                <span>🌳</span> 3-Gen Ancestral Lineage
+              </button>
+              <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-houseclean">
+                <span>🧹</span> House Clean (All Levels)
+              </button>
+            </div>
+
+            <!-- 1A: Personal Identity -->
+            <div class="sub-tab-panel active" id="devotee-sub-identity">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🏷️</span> Role &amp; Reference Code Config</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-edit-identity" class="btn btn-sm btn-outline">✏️ Edit</button>
+                    <button type="button" id="btn-reset-identity" class="btn btn-sm btn-danger">🗑️ Reset</button>
+                  </div>
+                </div>
+
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label class="form-label" for="input-profile-type">Role Tier *</label>
+                    <select id="input-profile-type" class="form-control" required>
+                      <option value="ADMIN">Admin Master (Level 1)</option>
+                      <option value="HEALER">Spiritual Healer (Level 2)</option>
+                      <option value="TRAINEE">Mentorship Trainee (Level 4)</option>
+                      <option value="DEVOTEE">Devotee Seeker (Level 5)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-level">Organization Level *</label>
+                    <input type="number" id="input-level" class="form-control" min="1" max="10" value="1" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-category-tag">Functional Category Tag</label>
+                    <input type="text" id="input-category-tag" class="form-control" placeholder="e.g. Cleansing &amp; Guidance">
+                  </div>
+                </div>
+
+                <div class="form-grid-3 mt-3">
+                  <div class="form-group">
+                    <label class="form-label" for="input-ref-code">16-Digit Reference Code *</label>
+                    <input type="text" id="input-ref-code" class="form-control font-mono" placeholder="SKHM-XXXX-XXXX-XXXX" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-sponsor-code">Sponsor / Upline Code *</label>
+                    <input type="text" id="input-sponsor-code" class="form-control font-mono" placeholder="ROOT-0000-0000-0000" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-transfer-code">Transfer / Reassignment History Code</label>
+                    <input type="text" id="input-transfer-code" class="form-control font-mono" placeholder="Optional Transfer Code">
+                  </div>
+                </div>
+
+                <div class="form-grid-3 mt-3">
+                  <div class="form-group-checkbox">
+                    <label class="custom-toggle">
+                      <input type="checkbox" id="input-is-active" checked>
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <label for="input-is-active" class="toggle-label">Active Member in Mobile App</label>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-payment-status">Payment / Membership Stamp *</label>
+                    <select id="input-payment-status" class="form-control">
+                      <option value="PAID">🟢 Paid Member (Green Stamp)</option>
+                      <option value="FREE">🔴 Free Member (Red Stamp)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-join-date">Member Join Date</label>
+                    <input type="date" id="input-join-date" class="form-control">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Identity Details Card -->
+              <div class="card mt-3">
+                <div class="card-title"><span class="card-title-icon">👤</span> Personal Contact &amp; Residential Data</div>
+                
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label class="form-label" for="input-name">Full Name *</label>
+                    <input type="text" id="input-name" class="form-control" placeholder="e.g. Karim Ji" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-self-title">Designation Title</label>
+                    <input type="text" id="input-self-title" class="form-control" placeholder="e.g. Founder &amp; Master Guide">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-phone">Contact Phone / WhatsApp *</label>
+                    <input type="tel" id="input-phone" class="form-control" placeholder="+91 XXXXX-XXXXX" required>
+                  </div>
+                </div>
+
+                <div class="form-grid-3 mt-3">
+                  <div class="form-group">
+                    <label class="form-label" for="input-email">Email Address</label>
+                    <input type="email" id="input-email" class="form-control" placeholder="user@spiritualkarim.org">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-city">City / State</label>
+                    <input type="text" id="input-city" class="form-control" placeholder="e.g. Mumbai, Maharashtra">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-address">Address / Ashram Location</label>
+                    <input type="text" id="input-address" class="form-control" placeholder="Full residential address">
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="form-label" for="input-notes">Internal Admin Notes</label>
+                  <textarea id="input-notes" class="form-control" rows="2" placeholder="Private internal observations and remarks"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- 1B: Ancestral Lineage -->
+            <div class="sub-tab-panel" id="devotee-sub-lineage">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🌳</span> 3-Generation Ancestral Lineage Hierarchy</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-lineage-node" class="btn btn-sm btn-gold">+ Add Custom Lineage Node</button>
+                    <button type="button" id="btn-reset-lineage" class="btn btn-sm btn-danger">🗑️ Reset Lineage</button>
+                  </div>
+                </div>
+                <p class="card-desc">Hierarchical family tree data for diagnosing Pitru Dosha and ancestral pacification rituals.</p>
+
+                <!-- Current Family Unit -->
+                <div class="lineage-branch-card">
+                  <div class="branch-header">
+                    <span class="branch-badge current">Generation 1</span>
+                    <h3 class="branch-title">Current Family Unit (Self, Spouse, Children &amp; Siblings)</h3>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label" for="lineage-self-name">Self Name</label>
+                      <input type="text" id="lineage-self-name" class="form-control" placeholder="Self Full Name">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="lineage-spouse-name">Spouse Name</label>
+                      <input type="text" id="lineage-spouse-name" class="form-control" placeholder="Spouse Full Name">
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Children -->
+                  <div class="dynamic-sub-unit mt-3">
+                    <div class="sub-unit-header">
+                      <span class="sub-unit-title">Children</span>
+                      <button type="button" id="btn-add-child" class="btn btn-sm btn-outline">+ Add Child</button>
+                    </div>
+                    <div id="children-list-container" class="dynamic-items-container"></div>
+                  </div>
+
+                  <!-- Dynamic Siblings -->
+                  <div class="dynamic-sub-unit mt-3">
+                    <div class="sub-unit-header">
+                      <span class="sub-unit-title">Brothers &amp; Sisters (Siblings)</span>
+                      <button type="button" id="btn-add-sibling-current" class="btn btn-sm btn-outline">+ Add Sibling</button>
+                    </div>
+                    <div id="siblings-current-container" class="dynamic-items-container"></div>
+                  </div>
+                </div>
+
+                <!-- Husband's Ancestral Branch -->
+                <div class="lineage-branch-card mt-4">
+                  <div class="branch-header">
+                    <span class="branch-badge ancestral">Husband's Side</span>
+                    <h3 class="branch-title">Husband's Ancestral Lineage (Parents &amp; Grandparents)</h3>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label" for="h-father-name">Father's Name</label>
+                      <input type="text" id="h-father-name" class="form-control" placeholder="Father's Full Name">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="h-mother-name">Mother's Name</label>
+                      <input type="text" id="h-mother-name" class="form-control" placeholder="Mother's Full Name">
+                    </div>
+                  </div>
+
+                  <div class="form-grid-2 mt-3">
+                    <div class="grandparent-box">
+                      <div class="grandparent-box-title">Paternal Grandparents (Father's Side)</div>
+                      <div class="form-group mb-2">
+                        <label class="form-label" for="h-paternal-gf">Grandfather (Dada Ji)</label>
+                        <input type="text" id="h-paternal-gf" class="form-control" placeholder="Dada Ji Name">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="h-paternal-gm">Grandmother (Dadi Ji)</label>
+                        <input type="text" id="h-paternal-gm" class="form-control" placeholder="Dadi Ji Name">
+                      </div>
+                    </div>
+
+                    <div class="grandparent-box">
+                      <div class="grandparent-box-title">Maternal Grandparents (Mother's Side)</div>
+                      <div class="form-group mb-2">
+                        <label class="form-label" for="h-maternal-gf">Grandfather (Nana Ji)</label>
+                        <input type="text" id="h-maternal-gf" class="form-control" placeholder="Nana Ji Name">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="h-maternal-gm">Grandmother (Nani Ji)</label>
+                        <input type="text" id="h-maternal-gm" class="form-control" placeholder="Nani Ji Name">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-3">
+                    <label class="form-label" for="h-address">Husband's Family Native Address / Village</label>
+                    <input type="text" id="h-address" class="form-control" placeholder="Ancestral village or residence">
+                  </div>
+
+                  <div class="dynamic-sub-unit mt-3">
+                    <div class="sub-unit-header">
+                      <span class="sub-unit-title">Husband's Branch Siblings (Uncles/Aunts)</span>
+                      <button type="button" id="btn-add-sibling-husband" class="btn btn-sm btn-outline">+ Add Branch Sibling</button>
+                    </div>
+                    <div id="siblings-husband-container" class="dynamic-items-container"></div>
+                  </div>
+                </div>
+
+                <!-- Wife's Ancestral Branch -->
+                <div class="lineage-branch-card mt-4">
+                  <div class="branch-header">
+                    <span class="branch-badge ancestral">Wife's Side</span>
+                    <h3 class="branch-title">Wife's Ancestral Lineage (Parents &amp; Grandparents)</h3>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label" for="w-father-name">Father's Name</label>
+                      <input type="text" id="w-father-name" class="form-control" placeholder="Father's Full Name">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="w-mother-name">Mother's Name</label>
+                      <input type="text" id="w-mother-name" class="form-control" placeholder="Mother's Full Name">
+                    </div>
+                  </div>
+
+                  <div class="form-grid-2 mt-3">
+                    <div class="grandparent-box">
+                      <div class="grandparent-box-title">Paternal Grandparents (Father's Side)</div>
+                      <div class="form-group mb-2">
+                        <label class="form-label" for="w-paternal-gf">Grandfather (Dada Ji)</label>
+                        <input type="text" id="w-paternal-gf" class="form-control" placeholder="Dada Ji Name">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="w-paternal-gm">Grandmother (Dadi Ji)</label>
+                        <input type="text" id="w-paternal-gm" class="form-control" placeholder="Dadi Ji Name">
+                      </div>
+                    </div>
+
+                    <div class="grandparent-box">
+                      <div class="grandparent-box-title">Maternal Grandparents (Mother's Side)</div>
+                      <div class="form-group mb-2">
+                        <label class="form-label" for="w-maternal-gf">Grandfather (Nana Ji)</label>
+                        <input type="text" id="w-maternal-gf" class="form-control" placeholder="Nana Ji Name">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="w-maternal-gm">Grandmother (Nani Ji)</label>
+                        <input type="text" id="w-maternal-gm" class="form-control" placeholder="Nani Ji Name">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-3">
+                    <label class="form-label" for="w-address">Wife's Family Native Address / Village</label>
+                    <input type="text" id="w-address" class="form-control" placeholder="Ancestral village or residence">
+                  </div>
+
+                  <div class="dynamic-sub-unit mt-3">
+                    <div class="sub-unit-header">
+                      <span class="sub-unit-title">Wife's Branch Siblings (Uncles/Aunts)</span>
+                      <button type="button" id="btn-add-sibling-wife" class="btn btn-sm btn-outline">+ Add Branch Sibling</button>
+                    </div>
+                    <div id="siblings-wife-container" class="dynamic-items-container"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 1C: House Clean (All Level Data) -->
+            <div class="sub-tab-panel" id="devotee-sub-houseclean">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🧹</span> House Clean Purification (Levels 1, 2 &amp; 3)</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-houseclean-record" class="btn btn-sm btn-gold">+ Add Level Record</button>
+                    <button type="button" id="btn-reset-houseclean" class="btn btn-sm btn-danger">🗑️ Reset All Levels</button>
+                  </div>
+                </div>
+                <p class="card-desc">Progressive 3-Level cleansing verified by Mentor Level-Up Connection (% Clean rating).</p>
+
+                <div id="devotee-houseclean-container" class="houseclean-cards-grid"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ############################################################
+               TAB 2: SEEKER PURPOSE
+               ############################################################ -->
+          <div class="main-tab-content-panel" id="tab-seeker-purpose">
+            <!-- Sub-Navigation for Seeker Purpose -->
+            <div class="sub-tabs-nav-bar">
+              <button type="button" class="sub-tab-btn active" data-sub-tab="seeker-sub-purpose">
+                <span>🎯</span> Spiritual Purpose &amp; Goals
+              </button>
+              <button type="button" class="sub-tab-btn" data-sub-tab="seeker-sub-houseclean">
+                <span>🧹</span> House Clean Status
+              </button>
+              <button type="button" class="sub-tab-btn" data-sub-tab="seeker-sub-sadhanas">
+                <span>🕉️</span> Sadhanas Interested
+              </button>
+            </div>
+
+            <!-- 2A: Purpose & Inquiries -->
+            <div class="sub-tab-panel active" id="seeker-sub-purpose">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🎯</span> Seeker Purpose &amp; Spiritual Affliction Diagnostics</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-purpose-goal" class="btn btn-sm btn-gold">+ Add Purpose Goal</button>
+                    <button type="button" id="btn-reset-purpose" class="btn btn-sm btn-danger">🗑️ Clear Purpose</button>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="input-objective">Primary Spiritual Objective &amp; Purpose *</label>
+                  <textarea id="input-objective" class="form-control" rows="3" placeholder="e.g. Freedom from ancestral blockages, Third Eye awakening, Kundalini balance"></textarea>
+                </div>
+
+                <div class="form-grid-2 mt-3">
+                  <div class="form-group">
+                    <label class="form-label" for="seeker-affliction-duration">Duration of Energy Affliction / Symptoms</label>
+                    <input type="text" id="seeker-affliction-duration" class="form-control" placeholder="e.g. 18 months, since 2023">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="seeker-kuldevi-issues">Known Ancestral / Kuldevi / Pitru Ritual Pending</label>
+                    <input type="text" id="seeker-kuldevi-issues" class="form-control" placeholder="e.g. Unfulfilled vow at ancestral temple">
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="form-label" for="seeker-target-outcome">Target Spiritual Elevation &amp; Healing Outcome</label>
+                  <textarea id="seeker-target-outcome" class="form-control" rows="2" placeholder="e.g. Total peace in household, financial unblocking, initiation into Sri Yantra"></textarea>
+                </div>
+              </div>
+
+              <!-- Prescribed Remedies & Divine Upayas Catalog Card -->
+              <div class="card mt-3">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🪔</span> Prescribed Remedies &amp; Divine Upayas Catalog</div>
+                  <div class="card-actions">
+                    <button type="button" class="btn btn-sm btn-gold" id="btn-add-custom-remedy-purpose">+ Add Custom Remedy</button>
+                  </div>
+                </div>
+                <p class="card-desc">
+                  💡 <strong>Interactive Upaya &amp; Remedy Catalog:</strong> Click any Remedy card or 👁️ to slide out complete ritual procedures, samagri, and mantras. Tick the checkbox to add it to the Enrolled Queue. Click <strong>"🚀 Send to Trainee"</strong> to immediately transfer the remedy or upaya to the respective section in Trainee Sadhak In-Progress!
+                </p>
+
+                <!-- Live Search Bar & Segmented Toggle Filters -->
+                <div class="remedy-filter-toolbar" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin: 1rem 0;">
+                  <div style="flex: 1; min-width: 220px; position: relative;">
+                    <input type="text" id="input-search-remedies" class="form-control" placeholder="Search remedies, mantras, or deities..." style="padding-left: 2.25rem;">
+                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; color: var(--text-gold);">🔍</span>
+                  </div>
+
+                  <div class="segmented-control" data-target-section="remedies">
+                    <button type="button" class="segmented-item active" data-filter="ALL">All Solutions</button>
+                    <button type="button" class="segmented-item" data-filter="PAID">🟢 Paid Upayas</button>
+                    <button type="button" class="segmented-item" data-filter="FREE">🔴 100% Free</button>
+                  </div>
+                </div>
+
+                <!-- Category 1: Divine Remedies & Havans -->
+                <div class="remedy-category-group">
+                  <div class="remedy-group-title">🪔 Divine Remedies &amp; Fire Havans Catalog</div>
+                  <div class="remedy-checkbox-grid">
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="three_diya">
+                      <div class="option-content" data-sadhana-trigger="three_diya">
+                        <span class="option-title">Three Diya Process</span>
+                        <span class="option-tag">Remedy &bull; 21-Day Fire Cleansing</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="three_diya" id="cb-purp-three_diya" checked>
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="three_diya" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="three_diya" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="court_cases">
+                      <div class="option-content" data-sadhana-trigger="court_cases">
+                        <span class="option-title">Court Cases Remedy</span>
+                        <span class="option-tag">Remedy &bull; Clove &amp; Cardamom Havan</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="court_cases" id="cb-purp-court_cases">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="court_cases" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="court_cases" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="business_money">
+                      <div class="option-content" data-sadhana-trigger="business_money">
+                        <span class="option-title">Business &amp; Wealth Upaya</span>
+                        <span class="option-tag">Remedy &bull; Silver Diya Lakshmi</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="business_money" id="cb-purp-business_money">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="business_money" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="business_money" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="maha_mrityunjaya_havan">
+                      <div class="option-content" data-sadhana-trigger="maha_mrityunjaya_havan">
+                        <span class="option-title">Maha Mrityunjaya Havan</span>
+                        <span class="option-tag">Remedy &bull; Health &amp; Longevity Shield</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="maha_mrityunjaya_havan" id="cb-purp-maha_mrityunjaya_havan">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="maha_mrityunjaya_havan" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="maha_mrityunjaya_havan" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="trilok_nagri">
+                      <div class="option-content" data-sadhana-trigger="trilok_nagri">
+                        <span class="option-title">Trilok Nagri Access</span>
+                        <span class="option-tag">Remedy &bull; Higher Realm Link</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="trilok_nagri" id="cb-purp-trilok_nagri">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="trilok_nagri" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="trilok_nagri" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="vastu_dosh_nivaran">
+                      <div class="option-content" data-sadhana-trigger="vastu_dosh_nivaran">
+                        <span class="option-title">Vastu Dosh Nivaran</span>
+                        <span class="option-tag">Remedy &bull; North-East Pranic Flow</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="vastu_dosh_nivaran" id="cb-purp-vastu_dosh_nivaran">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="vastu_dosh_nivaran" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="vastu_dosh_nivaran" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="santana_gopal">
+                      <div class="option-content" data-sadhana-trigger="santana_gopal">
+                        <span class="option-title">Santana Gopal Havan</span>
+                        <span class="option-tag">Remedy &bull; Lineage &amp; Progeny Peace</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="santana_gopal" id="cb-purp-santana_gopal">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="santana_gopal" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="santana_gopal" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="karmic_debts">
+                      <div class="option-content" data-sadhana-trigger="karmic_debts">
+                        <span class="option-title">Karmic Debts (Rin Mukti)</span>
+                        <span class="option-tag">Remedy &bull; Debt Alleviation Fire</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="karmic_debts" id="cb-purp-karmic_debts">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="karmic_debts" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="karmic_debts" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Category 2: Energy Cleansing & Karmic Healing Upayas -->
+                <div class="remedy-category-group mt-3">
+                  <div class="remedy-group-title">🌿 Energy Cleansing &amp; Karmic Healing Upayas</div>
+                  <div class="remedy-checkbox-grid">
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="negativity">
+                      <div class="option-content" data-sadhana-trigger="negativity">
+                        <span class="option-title">Negativity Cleansing</span>
+                        <span class="option-tag">Cleansing &bull; Bakhoor &amp; Loban</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="negativity" id="cb-purp-negativity">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="negativity" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="negativity" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="nazar_suraksha">
+                      <div class="option-content" data-sadhana-trigger="nazar_suraksha">
+                        <span class="option-title">Nazar Suraksha Shield</span>
+                        <span class="option-tag">Cleansing &bull; Evil Eye Mustard &amp; Salt</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="nazar_suraksha" id="cb-purp-nazar_suraksha">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="nazar_suraksha" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="nazar_suraksha" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="kundalini">
+                      <div class="option-content" data-sadhana-trigger="kundalini">
+                        <span class="option-title">Kundalini &amp; Chakra Balancing</span>
+                        <span class="option-tag">Cleansing &bull; Prana Awakening</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="kundalini" id="cb-purp-kundalini">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="kundalini" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="kundalini" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="material_benefits">
+                      <div class="option-content" data-sadhana-trigger="material_benefits">
+                        <span class="option-title">Material &amp; Karmic Benefits</span>
+                        <span class="option-tag">Cleansing &bull; Pitru Dosha Peace</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="material_benefits" id="cb-purp-material_benefits">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="material_benefits" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="material_benefits" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="healing">
+                      <div class="option-content" data-sadhana-trigger="healing">
+                        <span class="option-title">Spiritual Healing from Illness</span>
+                        <span class="option-tag">Cleansing &bull; Pranic Water Energize</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="healing" id="cb-purp-healing">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="healing" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="healing" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="aura_strengthening">
+                      <div class="option-content" data-sadhana-trigger="aura_strengthening">
+                        <span class="option-title">Aura Strengthening Shield</span>
+                        <span class="option-tag">Cleansing &bull; Sphatik &amp; Herb Bath</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="aura_strengthening" id="cb-purp-aura_strengthening">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="aura_strengthening" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="aura_strengthening" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Enrolled Upayas / Remedies Action Banner -->
+                <div class="dynamic-sub-unit mt-4">
+                  <div class="sub-unit-header">
+                    <span class="sub-unit-title">📋 Prescribed Remedies &amp; Upayas Action Queue</span>
+                  </div>
+                  <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                    Ticked remedies automatically synchronize with the Seeker Queue and Trainee In-Progress workspace with green/red border indicators.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2B: Seeker House Clean -->
+            <div class="sub-tab-panel" id="seeker-sub-houseclean">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🧹</span> Seeker House Clean Verification Logs</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-seeker-clean-log" class="btn btn-sm btn-gold">+ Add Clean Log</button>
+                  </div>
+                </div>
+                <div id="seeker-houseclean-summary-container" class="houseclean-cards-grid"></div>
+              </div>
+            </div>
+
+            <!-- 2C: Sadhanas Interested List -->
+            <div class="sub-tab-panel" id="seeker-sub-sadhanas">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🕉️</span> Interested Sadhanas &amp; Remedy Upayas</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-custom-sadhana" class="btn btn-sm btn-gold">+ Add Custom Sadhana</button>
+                  </div>
+                </div>
+                <p class="card-desc">
+                  💡 <strong>Interactive Catalog:</strong> Click any Sadhana card or 👁️ to slide out its complete rituals &amp; mantras. Ticking any tile automatically synchronizes it to the Trainee In-Progress workspace!
+                </p>
+
+                <!-- Checkbox Catalog with Slide-Out Detail Triggers -->
+                <div class="remedy-category-group">
+                  <div class="remedy-group-title">🕉️ Sacred Sadhanas Catalog</div>
+                  <div class="remedy-checkbox-grid">
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="sri_yantra">
+                      <div class="option-content" data-sadhana-trigger="sri_yantra">
+                        <span class="option-title">Sri Yantra Sadhana</span>
+                        <span class="option-tag">Sadhana &bull; Trataka &amp; Wealth</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="sri_yantra" id="cb-sri_yantra" checked>
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="sri_yantra" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="sri_yantra" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="kalashtami">
+                      <div class="option-content" data-sadhana-trigger="kalashtami">
+                        <span class="option-title">Kalashtami Sadhana</span>
+                        <span class="option-tag">Sadhana &bull; Kaal Bhairav</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="kalashtami" id="cb-kalashtami">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="kalashtami" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="kalashtami" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="navratri">
+                      <div class="option-content" data-sadhana-trigger="navratri">
+                        <span class="option-title">Navratri Chamunda Sadhana</span>
+                        <span class="option-tag">Sadhana &bull; 9-Day Anushthan</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="navratri" id="cb-navratri">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="navratri" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="navratri" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="diwali">
+                      <div class="option-content" data-sadhana-trigger="diwali">
+                        <span class="option-title">Diwali Sadhana Week</span>
+                        <span class="option-tag">Sadhana &bull; Maha Lakshmi</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="diwali" id="cb-diwali">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="diwali" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="diwali" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="remedy-category-group mt-3">
+                  <div class="remedy-group-title">🪔 Divine Remedies &amp; Havans Catalog</div>
+                  <div class="remedy-checkbox-grid">
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="three_diya">
+                      <div class="option-content" data-sadhana-trigger="three_diya">
+                        <span class="option-title">Three Diya Process</span>
+                        <span class="option-tag">Remedy &bull; 21-Day Fire Cleansing</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="three_diya" id="cb-three_diya" checked>
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="three_diya" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="three_diya" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="trilok_nagri">
+                      <div class="option-content" data-sadhana-trigger="trilok_nagri">
+                        <span class="option-title">Trilok Nagri Access</span>
+                        <span class="option-tag">Remedy &bull; Higher Realm Link</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="trilok_nagri" id="cb-trilok_nagri">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="trilok_nagri" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="trilok_nagri" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="court_cases">
+                      <div class="option-content" data-sadhana-trigger="court_cases">
+                        <span class="option-title">Court Cases Remedy</span>
+                        <span class="option-tag">Remedy &bull; Clove &amp; Cardamom Havan</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="court_cases" id="cb-court_cases">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="court_cases" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="court_cases" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="business_money">
+                      <div class="option-content" data-sadhana-trigger="business_money">
+                        <span class="option-title">Business &amp; Wealth Upaya</span>
+                        <span class="option-tag">Remedy &bull; Silver Diya Lakshmi</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="business_money" id="cb-business_money">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="business_money" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="business_money" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="remedy-category-group mt-3">
+                  <div class="remedy-group-title">🌿 Energy Cleansing &amp; Karmic Healing Catalog</div>
+                  <div class="remedy-checkbox-grid">
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="negativity">
+                      <div class="option-content" data-sadhana-trigger="negativity">
+                        <span class="option-title">Negativity Cleansing</span>
+                        <span class="option-tag">Cleansing &bull; Bakhoor &amp; Loban</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="negativity" id="cb-negativity">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="negativity" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="negativity" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="kundalini">
+                      <div class="option-content" data-sadhana-trigger="kundalini">
+                        <span class="option-title">Kundalini &amp; Spiritual Progress</span>
+                        <span class="option-tag">Cleansing &bull; Chakra Awakening</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="kundalini" id="cb-kundalini">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="kundalini" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="kundalini" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="material_benefits">
+                      <div class="option-content" data-sadhana-trigger="material_benefits">
+                        <span class="option-title">Material &amp; Karmic Benefits</span>
+                        <span class="option-tag">Cleansing &bull; Pitru Dosha Peace</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="material_benefits" id="cb-material_benefits">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="material_benefits" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="material_benefits" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="healing">
+                      <div class="option-content" data-sadhana-trigger="healing">
+                        <span class="option-title">Spiritual Healing from Illness</span>
+                        <span class="option-tag">Cleansing &bull; Pranic Restoration</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="healing" id="cb-healing">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="healing" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="healing" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Enrolled / Specific Interest Queue (Ticked Items) -->
+                <div class="dynamic-sub-unit mt-4">
+                  <div class="sub-unit-header">
+                    <span class="sub-unit-title">📋 Enrolled / Specific Interest Queue (Ticked Items)</span>
+                  </div>
+                  <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                    All ticked items are synchronized into the Trainee In-Progress Master-Detail workspace below.
+                  </p>
+                  <div id="interested-sadhanas-container" class="remedy-checkbox-grid"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ############################################################
+               TAB 3: TRAINEE SADHAK (Master-Detail Split Workspace)
+               ############################################################ -->
+          <div class="main-tab-content-panel" id="tab-trainee-sadhak">
+            <div class="card">
+              <div class="card-title-bar">
+                <div class="card-title"><span class="card-title-icon">🌿</span> Trainee Sadhak &bull; In-Progress Dashboard (Level-Wise)</div>
+                <div class="card-actions">
+                  <button type="button" id="btn-add-trainee-sadhana" class="btn btn-sm btn-gold">+ Add In-Progress Sadhana</button>
+                  <button type="button" id="btn-open-goli-gyan" class="btn btn-sm btn-goli-gyan">📜 Goli Gyan Guide</button>
+                </div>
+              </div>
+              <p class="card-desc">Ticked sadhanas and remedies display on the left panel. Select any tile to view real-time graphical progress (%), level stats, and add date-time stamped progress memos on the right.</p>
+
+              <!-- Master-Detail Split Workspace -->
+              <div class="trainee-split-workspace">
+                <!-- Left Panel: Categorized In-Progress Tiles -->
+                <div class="trainee-left-panel">
+                  <!-- Section 3A: Sacred Sadhanas In Progress -->
+                  <div class="trainee-category-block">
+                    <div class="trainee-category-title">
+                      <span>🕉️</span> 1. Sacred Sadhanas In-Progress
+                    </div>
+                    <div id="trainee-sadhanas-group-sadhanas" class="remedy-checkbox-grid"></div>
+                  </div>
+
+                  <!-- Section 3B: Divine Remedies & Havans In Progress -->
+                  <div class="trainee-category-block">
+                    <div class="trainee-category-title">
+                      <span>🪔</span> 2. Divine Remedies &amp; Havans In-Progress
+                    </div>
+                    <div id="trainee-sadhanas-group-remedies" class="remedy-checkbox-grid"></div>
+                  </div>
+
+                  <!-- Section 3C: Energy Cleansing & Healing In Progress -->
+                  <div class="trainee-category-block">
+                    <div class="trainee-category-title">
+                      <span>🌿</span> 3. Energy Cleansing &amp; Healing In-Progress
+                    </div>
+                    <div id="trainee-sadhanas-group-cleansing" class="remedy-checkbox-grid"></div>
+                  </div>
+                </div>
+
+                <!-- Right Panel: Active Sadhana Progress Graphics & Memo Box -->
+                <div class="trainee-right-panel" id="trainee-active-sadhana-detail">
+                  <!-- Rendered dynamically by ProfileView._renderTraineeActiveDetail -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ############################################################
+               TAB 4: HEALER CONNECT
+               ############################################################ -->
+          <div class="main-tab-content-panel" id="tab-healer-connect">
+            <div class="card">
+              <div class="card-title-bar">
+                <div class="card-title"><span class="card-title-icon">🔱</span> Levels of Sadhana Completed with Level Status &amp; Master Certifications</div>
+                <div class="card-actions">
+                  <button type="button" id="btn-add-completed-sadhana" class="btn btn-sm btn-gold">+ Add Completed Sadhana Credential</button>
+                </div>
+              </div>
+              <p class="card-desc">Master level attunements, siddhi certifications, and authorized healer mentorship privileges.</p>
+
+              <div id="healer-completed-sadhanas-container" class="healer-cards-grid"></div>
+
+              <!-- Connected Devotees & Trainees Network -->
+              <div class="card-title-bar mt-4">
+                <div class="card-title"><span class="card-title-icon">👥</span> Mentorship Network (Devotees &amp; Trainees Connected)</div>
+                <div class="card-actions">
+                  <button type="button" id="btn-add-connected-devotee" class="btn btn-sm btn-outline">+ Link Devotee</button>
+                </div>
+              </div>
+              <div id="healer-network-container" class="dynamic-items-container mt-2"></div>
+            </div>
+          </div>
+
+          <!-- Sticky Form Footer Actions -->
+          <div class="form-footer-actions">
+            <div class="footer-left">
+              <span id="save-status-indicator" class="save-status">All changes saved locally</span>
+            </div>
+            <div class="footer-right">
+              <button type="button" id="btn-delete-profile" class="btn btn-danger">Delete Profile</button>
+              <button type="submit" class="btn btn-gold">Save &amp; Sync to Mobile App</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==============================================================
+       SLIDE-OUT RIGHT DRAWER: SADHANA COMPLETE DETAILS
+       ============================================================== -->
+  <div id="sadhana-detail-drawer" class="sadhana-detail-drawer" aria-hidden="true">
+    <div class="sadhana-drawer-header">
+      <div class="sadhana-drawer-title-wrap">
+        <span class="sadhana-drawer-icon" id="sadhana-drawer-icon">🕉️</span>
+        <div>
+          <h3 class="sadhana-drawer-title" id="sadhana-drawer-title">Sri Yantra Sadhana</h3>
+          <span class="sadhana-drawer-category-badge" id="sadhana-drawer-category">Sacred Sadhana &bull; Level 1–4</span>
+        </div>
+      </div>
+      <button id="btn-close-sadhana-drawer" class="icon-btn">✕</button>
+    </div>
+
+    <div class="sadhana-drawer-body" id="sadhana-drawer-body">
+      <!-- Dynamic Content Injected Here -->
+    </div>
+
+    <div class="sadhana-drawer-footer">
+      <button type="button" id="btn-drawer-enroll" class="btn btn-outline">
+        <span>✓</span> Enroll in Queue
+      </button>
+      <button type="button" id="btn-drawer-send-trainee" class="btn btn-drawer-send-trainee">
+        <svg class="send-vector-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z"/></svg>
+        <span>Send to Trainee In-Progress</span>
+      </button>
+    </div>
+  </div>
+  <div id="sadhana-drawer-backdrop" class="drawer-backdrop"></div>
+
+  <!-- ==============================================================
+       MODAL: GOLI GYAN FOR SEEKERS BILINGUAL GUIDE
+       ============================================================== -->
+  <div id="goli-gyan-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card goli-gyan-modal-card">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">📜</span>
+          <h3 class="modal-title">Goli Gyan for Seekers &bull; Sacred Wisdom Guide</h3>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <a href="../GOLI_GYAN_FOR_SEEKERS.html" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline" title="Open in Full Tab">
+            ↗️ Full Tab
+          </a>
+          <button id="btn-close-goli-gyan-modal" class="icon-btn">✕</button>
+        </div>
+      </div>
+      <div class="modal-body goli-gyan-modal-body">
+        <iframe src="GOLI_GYAN_FOR_SEEKERS.html" class="goli-gyan-iframe" title="Goli Gyan Guide"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Mobile App JSON Inspector Drawer -->
+  <div id="json-drawer" class="json-drawer" aria-hidden="true">
+    <div class="json-drawer-header">
+      <div class="json-drawer-title">
+        <span>⚙️</span> Mobile App JSON Payload (`HealerProfile.kt` schema)
+      </div>
+      <button id="btn-close-json-drawer" class="icon-btn">✕</button>
+    </div>
+    <div class="json-drawer-body">
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        Full 4-tier profile data mapped directly to Android Kotlin models.
+      </p>
+      <pre id="json-preview-code" class="json-code-block"></pre>
+    </div>
+    <div class="json-drawer-footer">
+      <button id="btn-copy-json-code" class="btn btn-gold">Copy JSON</button>
+      <button id="btn-download-json-file" class="btn btn-outline">Download JSON File</button>
+    </div>
+  </div>
+  <div id="json-drawer-backdrop" class="drawer-backdrop"></div>
+
+  <!-- Import Modal -->
+  <div id="import-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Import Mobile App Profile JSON</h3>
+        <button id="btn-close-import-modal" class="icon-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <textarea id="import-json-textarea" class="form-control font-mono" rows="10" placeholder="Paste HealerProfile JSON payload here..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-execute-import" class="btn btn-gold">Import Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       ADMIN SETTINGS MODAL (CONFIGURABLE BY MASTER)
+       ============================================================== -->
+  <div id="admin-settings-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card" style="max-width: 680px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">⚙️</span>
+          <h3 class="modal-title">Admin System &amp; RBAC Permission Settings</h3>
+        </div>
+        <button id="btn-close-settings-modal" class="icon-btn">✕</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1.25rem;">
+        
+        <!-- Setting Group 0: Dynamic System & Mentor Parameters -->
+        <div class="remedy-category-group">
+          <div class="remedy-group-title"><span>👑</span> Dynamic Mentor Sponsor &amp; Voice Engine Config</div>
+          <div class="form-grid-2 mt-2">
+            <div class="form-group">
+              <label class="form-label" for="setting-default-mentor-name">Default Mentor Sponsor Name</label>
+              <input type="text" id="setting-default-mentor-name" class="form-control" value="Karim Ji (Founder)">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="setting-default-mentor-code">Default Sponsor Reference Code</label>
+              <input type="text" id="setting-default-mentor-code" class="form-control font-mono" value="SKHM-ADM1-7788-9900">
+            </div>
+          </div>
+          <div class="form-grid-2 mt-2">
+            <div class="form-group">
+              <label class="form-label" for="setting-speech-lang">Voice-to-Text Dictation Language</label>
+              <select id="setting-speech-lang" class="form-control">
+                <option value="en-US">English (United States) - en-US</option>
+                <option value="en-IN">English (India) - en-IN</option>
+                <option value="hi-IN">Hindi (India) - hi-IN</option>
+                <option value="gu-IN">Gujarati (India) - gu-IN</option>
+                <option value="mr-IN">Marathi (India) - mr-IN</option>
+                <option value="bn-IN">Bengali (India) - bn-IN</option>
+                <option value="ta-IN">Tamil (India) - ta-IN</option>
+                <option value="te-IN">Telugu (India) - te-IN</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="setting-default-target-malas">Default Sadhana Daily Target</label>
+              <input type="text" id="setting-default-target-malas" class="form-control" value="11 Malas Daily">
+            </div>
+          </div>
+        </div>
+
+        <!-- Setting Group 1: Devotee Permissions -->
+        <div class="remedy-category-group">
+          <div class="remedy-group-title"><span>🌟</span> Devotee Role Permissions</div>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+            <label class="custom-toggle-label" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+              <span style="font-size: 0.88rem; color: var(--text-primary);">Allow Devotees to Delete Records:</span>
+              <input type="checkbox" id="setting-devotee-can-delete">
+            </label>
+            <label class="custom-toggle-label" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+              <span style="font-size: 0.88rem; color: var(--text-primary);">Allow Devotees to Edit Ancestral Lineage:</span>
+              <input type="checkbox" id="setting-devotee-can-edit-lineage" checked>
+            </label>
+            <label class="custom-toggle-label" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+              <span style="font-size: 0.88rem; color: var(--text-primary);">Allow Devotees to Self-Enroll in Sadhanas:</span>
+              <input type="checkbox" id="setting-devotee-can-enroll" checked>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting Group 2: Healer Scoping -->
+        <div class="remedy-category-group">
+          <div class="remedy-group-title"><span>🌿</span> Healer Role Permissions &amp; Scoping</div>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+            <label class="custom-toggle-label" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+              <span style="font-size: 0.88rem; color: var(--text-primary);">Restrict Healers Strictly to Own &amp; Team Data:</span>
+              <input type="checkbox" id="setting-healer-strict-team" checked>
+            </label>
+            <label class="custom-toggle-label" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+              <span style="font-size: 0.88rem; color: var(--text-primary);">Allow Healers to Issue Completion Seals:</span>
+              <input type="checkbox" id="setting-healer-can-certify" checked>
+            </label>
+            <label class="custom-toggle-label" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+              <span style="font-size: 0.88rem; color: var(--text-primary);">Allow Healers to Delete Scoped Team Items:</span>
+              <input type="checkbox" id="setting-healer-can-delete-team" checked>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting Group 3: App Sync & Firebase -->
+        <div class="remedy-category-group">
+          <div class="remedy-group-title"><span>☁️</span> Mobile App Sync &amp; Endpoints</div>
+          <div class="form-group" style="margin-top: 0.5rem;">
+            <label class="form-label">Firebase Realtime DB URL</label>
+            <input type="text" id="setting-firebase-url" class="form-control font-mono" value="https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/">
+          </div>
+          <div class="form-grid-2 mt-2">
+            <div class="form-group">
+              <label class="form-label">Default Portal View Mode</label>
+              <select id="setting-default-role-mode" class="form-control">
+                <option value="MASTER">👑 Master Mode</option>
+                <option value="HEALER">🌿 Healer Mode</option>
+                <option value="DEVOTEE">🌟 Devotee Mode</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Auto-Save State to Storage</label>
+              <select id="setting-auto-save" class="form-control">
+                <option value="INSTANT">Instant Real-Time</option>
+                <option value="MANUAL">Manual Save Button Only</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between;">
+        <button id="btn-reset-settings" class="btn btn-danger">🔄 Factory Reset</button>
+        <button id="btn-save-settings" class="btn btn-gold">💾 Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share & Invite Seeker Modal (24-Hour Protocol & Multi-Channel) -->
+  <div id="share-pairing-modal" class="admin-modal-overlay">
+    <div class="admin-modal-dialog modal-lg">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="modal-icon">📲</span>
+          <div>
+            <h3>Share &amp; Invite Seeker • 24-Hour Device Pairing</h3>
+            <p class="modal-subtitle">Generate dynamic invite payload with direct APK download, 16-digit sponsor code, Telegram link &amp; 24h countdown.</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" id="btn-close-share-pairing-modal" aria-label="Close Modal">&times;</button>
+      </div>
+      <div class="modal-body" id="share-pairing-modal-body">
+        <!-- Injected dynamically by ProfileView -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="admin-toast" class="admin-toast"></div>
+
+  <script src="../js/profile-admin.js"></script>
+
+  <!-- ==============================================================
+       MODAL: VISUAL MLM APP HIERARCHY TREE
+       ============================================================== -->
+  <div id="hierarchy-tree-modal" class="admin-modal-overlay">
+    <div class="admin-modal-dialog tree-modal-dialog">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="modal-icon">🌳</span>
+          <div>
+            <h3>App Hierarchy Genealogy Tree • Multi-Tier Downlines</h3>
+            <p class="modal-subtitle">Visual MLM-style lineage matrix. Click any member node to slide out detailed metadata and jump directly to their profile.</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" id="btn-close-tree-modal" aria-label="Close Modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1rem;">
+        <div class="tree-canvas-viewport" id="tree-canvas-viewport">
+          <!-- Injected dynamically by ProfileView.renderHierarchyTree -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       RIGHT SLIDE-OUT DRAWER: TREE PROFILE METADATA DETAILS
+       ============================================================== -->
+  <div id="tree-profile-drawer" class="tree-profile-drawer" aria-hidden="true">
+    <div class="tree-drawer-header">
+      <div class="tree-drawer-title-wrap">
+        <span style="font-size: 1.4rem;">👤</span>
+        <div>
+          <h4 style="margin: 0; color: var(--text-primary); font-size: 1.05rem;" id="tree-drawer-profile-name">Profile Details</h4>
+          <span style="font-size: 0.75rem; color: var(--text-gold);" id="tree-drawer-profile-role">Devotee Tier</span>
+        </div>
+      </div>
+      <button type="button" class="icon-btn" id="btn-close-tree-drawer">&times;</button>
+    </div>
+    <div class="tree-drawer-body" id="tree-drawer-body">
+      <!-- Injected dynamically by ProfileView.renderTreeProfileDrawer -->
+    </div>
+    <div class="tree-drawer-footer">
+      <button type="button" class="btn-tree-load-profile" id="btn-tree-load-profile">
+        <span>🚀</span> Go to Actual Profile Page
+      </button>
+    </div>
+  </div>
+  <div id="tree-drawer-backdrop" class="drawer-backdrop"></div>
+
+</body>
+</html>
