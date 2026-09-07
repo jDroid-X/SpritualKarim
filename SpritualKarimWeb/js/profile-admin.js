@@ -1689,10 +1689,12 @@ class ProfileModel {
     const active = activeProfile || this.getActiveProfile();
 
     if (role === 'MASTER' || role === 'ADMIN') {
+      // Top can see all bottoms
       return this.profiles;
     }
 
     if (role === 'HEALER') {
+      // Healer sees self + all downlines below them. Bottom cannot see Level 1 Founder Master.
       const refCode = active.referenceCode || '';
       const downlineCodes = new Set([refCode]);
       let added = true;
@@ -1705,15 +1707,30 @@ class ProfileModel {
           }
         }
       }
-      return this.profiles.filter(p => p.id === active.id || downlineCodes.has(p.referenceCode) || p.referredByCode === refCode);
+      return this.profiles.filter(p => p.id === active.id || downlineCodes.has(p.referenceCode));
     }
 
     if (role === 'TRAINEE') {
-      return this.profiles.filter(p => p.id === active.id || p.referredByCode === active.referenceCode || p.referenceCode === active.referredByCode);
+      // Trainee sees self + all downlines below them. Bottom cannot see Level 1..3 uplines.
+      const refCode = active.referenceCode || '';
+      const downlineCodes = new Set([refCode]);
+      let added = true;
+      while (added) {
+        added = false;
+        for (const p of this.profiles) {
+          if (p.referredByCode && downlineCodes.has(p.referredByCode) && !downlineCodes.has(p.referenceCode)) {
+            downlineCodes.add(p.referenceCode);
+            added = true;
+          }
+        }
+      }
+      return this.profiles.filter(p => p.id === active.id || downlineCodes.has(p.referenceCode));
     }
 
     if (role === 'DEVOTEE') {
-      return this.profiles.filter(p => p.id === active.id || p.referenceCode === active.referredByCode);
+      // Devotee sees self + direct downlines. Cannot see higher upline levels.
+      const refCode = active.referenceCode || '';
+      return this.profiles.filter(p => p.id === active.id || p.referredByCode === refCode);
     }
 
     return this.profiles;
@@ -4442,13 +4459,18 @@ Installation & Activation Steps:
 
     if (levelFilter !== 'ALL') {
       const targetLvl = parseInt(levelFilter, 10);
-      const levelMembers = allProfiles.filter(p => p.level === targetLvl || (targetLvl === 1 && p.profileType === 'ADMIN') || (targetLvl === 2 && p.profileType === 'HEALER') || (targetLvl === 4 && p.profileType === 'TRAINEE') || (targetLvl === 5 && p.profileType === 'DEVOTEE'));
+      const levelRoots = allProfiles.filter(p => p.level === targetLvl || (targetLvl === 1 && p.profileType === 'ADMIN') || (targetLvl === 2 && (p.level === 2 || p.profileType === 'HEALER')) || (targetLvl === 3 && p.level === 3) || (targetLvl === 4 && (p.level === 4 || p.profileType === 'TRAINEE')) || (targetLvl === 5 && (p.level === 5 || p.profileType === 'DEVOTEE')));
+
+      let totalConnectedUnderLevel = 0;
+      levelRoots.forEach(r => {
+        totalConnectedUnderLevel += getDownlineMembers(r.referenceCode).length;
+      });
 
       treeBodyHtml = `
-        <div style="font-weight: 700; color: var(--gold-400); margin-bottom: 0.65rem; font-size: 0.95rem;">
-          Members in Level Generation ${targetLvl} (${levelMembers.length})
+        <div class="tree-scope-title" style="margin-bottom: 0.85rem; color: var(--gold-400);">
+          <span>🌳</span> Level Generation ${targetLvl} Lineages &amp; Downlines (${levelRoots.length} Root Nodes • ${totalConnectedUnderLevel} Connected Downlines)
         </div>
-        ${levelMembers.map(m => this._renderHierarchyNodeCardHtml(m, false, false)).join('')}
+        ${levelRoots.length > 0 ? levelRoots.map(root => this._renderRecursiveTreeBranchHtml(root, allProfiles, 0)).join('') : '<div class="healers-empty-state"><div class="healers-empty-state-icon">🌱</div><div>No members found at Level ' + targetLvl + '</div></div>'}
       `;
     } else if (treeScope === 'downline') {
       // Scoped Downline Tree under Focus Node
@@ -4508,13 +4530,13 @@ Installation & Activation Steps:
 
     return `
       <div class="hierarchy-tree-node-wrapper" data-node-id="${node.id}">
-        ${this._renderHierarchyNodeCardHtml(node, hasChildren, isExpanded)}
+        ${this._renderHierarchyNodeCardHtml(node, hasChildren, isExpanded, children.length, allProfiles)}
         ${childrenHtml}
       </div>
     `;
   }
 
-  _renderHierarchyNodeCardHtml(profile, hasChildren = false, isExpanded = true) {
+  _renderHierarchyNodeCardHtml(profile, hasChildren = false, isExpanded = true, directChildrenCount = 0, allProfiles = []) {
     const getAvatarBg = (p) => {
       if (p.profileType === 'ADMIN' || p.level === 1) return 'linear-gradient(135deg, #7a1c37, #b91c1c)';
       if (p.profileType === 'HEALER' || p.level === 2 || p.level === 3) return 'linear-gradient(135deg, #fcb900, #d97706)';
@@ -4540,9 +4562,10 @@ Installation & Activation Steps:
           <div class="hierarchy-node-title-row">
             <span class="hierarchy-node-name">${profile.name || 'Member'}</span>
             ${profile.isPaid ? '<span style="font-size: 0.65rem; color: #10b981; font-weight: 700;">● PAID</span>' : '<span style="font-size: 0.65rem; color: #ef4444; font-weight: 700;">○ FREE</span>'}
+            ${directChildrenCount > 0 ? `<span style="font-size: 0.65rem; color: var(--gold-400); font-weight: 700; background: rgba(212,175,55,0.12); padding: 0.1rem 0.4rem; border-radius: 999px;">👥 ${directChildrenCount} Direct</span>` : ''}
           </div>
           <div class="hierarchy-node-details">
-            ${profile.profileType || 'DEVOTEE'} • ${profile.referenceCode || 'SKHM-0000'}
+            ${profile.profileType || 'DEVOTEE'} • ${profile.referenceCode || 'SKHM-0000'} ${profile.referredByCode ? '• Sponsor: ' + profile.referredByCode : ''}
           </div>
         </div>
 

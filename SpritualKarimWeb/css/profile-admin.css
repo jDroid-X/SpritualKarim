@@ -97,6 +97,7 @@ html[data-theme="light"],
 }
 
 /* Explicit Light Theme Element Overrides */
+/* Explicit Light Theme Element Overrides */
 html[data-theme="light"] .profile-header-card {
   background: #ffffff !important;
   border: 1.5px solid #d4af37 !important;
@@ -137,6 +138,17 @@ html[data-theme="light"] .main-tab-btn .tab-sub-title {
   color: #475569 !important;
 }
 
+html[data-theme="light"] .header-genealogy-tab-btn {
+  background: linear-gradient(135deg, rgba(180, 130, 20, 0.12), rgba(139, 92, 246, 0.12)) !important;
+  border-color: var(--gold-500) !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .header-genealogy-tab-btn.active {
+  background: linear-gradient(135deg, #d4af37, #b8860b) !important;
+  color: #110d1f !important;
+}
+
 html[data-theme="light"] .card {
   background: #ffffff !important;
   border-color: #cbd5e1 !important;
@@ -155,7 +167,7 @@ html[data-theme="light"] .trainee-category-block {
 html[data-theme="light"] .remedy-card-option,
 html[data-theme="light"] .trainee-card-tile {
   background: #ffffff !important;
-  border-color: #cbd5e1;
+  border-color: #cbd5e1 !important;
 }
 
 html[data-theme="light"] .option-title {
@@ -175,6 +187,357 @@ html[data-theme="light"] .ref-code-box {
 
 html[data-theme="light"] .ref-code-value {
   color: #9e6400 !important;
+}
+
+/* Modal, Dialog & Popups in Light Theme */
+html[data-theme="light"] .admin-modal,
+html[data-theme="light"] .admin-modal-overlay {
+  background: rgba(15, 23, 42, 0.45) !important;
+}
+
+html[data-theme="light"] .modal-card,
+html[data-theme="light"] .admin-modal-dialog,
+html[data-theme="light"] .goli-gyan-modal-card {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+html[data-theme="light"] .modal-header,
+html[data-theme="light"] .modal-footer {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+html[data-theme="light"] .modal-title {
+  color: #8c5800 !important;
+}
+
+html[data-theme="light"] .modal-body {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Admin Settings Modal in Light Theme */
+html[data-theme="light"] .settings-group-card,
+html[data-theme="light"] .settings-card,
+html[data-theme="light"] .settings-field-group {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .settings-section-title {
+  color: #8c5800 !important;
+}
+
+html[data-theme="light"] .settings-field-label {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .settings-field-desc {
+  color: #64748b !important;
+}
+
+/* Share & Pairing Modal in Light Theme */
+html[data-theme="light"] .share-pairing-card,
+html[data-theme="light"] .pending-approvals-card {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-theme="light"] .pending-approvals-table th {
+  background: #f1f5f9 !important;
+  color: #8c5800 !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .pending-approvals-table td {
+  border-bottom: 1px solid #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+html[data-theme="light"] .pairing-qr-box {
+  background: #ffffff !important;
+  border: 2px solid var(--gold-500) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+html[data-theme="light"] .pairing-qr-caption {
+  color: #0f172a !important;
+}
+
+/* Left Flyout Tier Profiles Panel in Light Theme */
+html[data-theme="light"] .tier-profiles-panel {
+  background: #ffffff !important;
+  border-right: 1px solid #cbd5e1 !important;
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.12) !important;
+}
+
+html[data-theme="light"] .tier-panel-header,
+html[data-theme="light"] .tier-panel-search-wrap {
+  background: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .tier-panel-title {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .tier-panel-search-wrap input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .tier-panel-profile-card {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .tier-panel-profile-card:hover {
+  background: rgba(180, 130, 20, 0.1) !important;
+  border-color: var(--gold-500) !important;
+}
+
+html[data-theme="light"] .tier-panel-profile-card.active {
+  background: linear-gradient(90deg, rgba(180, 130, 20, 0.18), rgba(180, 130, 20, 0.06)) !important;
+  border-color: var(--gold-500) !important;
+}
+
+html[data-theme="light"] .tier-card-name {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .tier-card-ref {
+  color: #64748b !important;
+}
+
+/* Drawers & Context Menus in Light Theme */
+html[data-theme="light"] .drawer-panel,
+html[data-theme="light"] .tree-drawer-panel,
+html[data-theme="light"] .sadhana-drawer {
+  background: #ffffff !important;
+  border-left: 1px solid #cbd5e1 !important;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.12) !important;
+}
+
+html[data-theme="light"] .drawer-header,
+html[data-theme="light"] .drawer-footer,
+html[data-theme="light"] .tree-drawer-header,
+html[data-theme="light"] .tree-drawer-footer {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+html[data-theme="light"] .tree-meta-card {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .tree-meta-heading {
+  color: #8c5800 !important;
+}
+
+html[data-theme="light"] .tree-meta-row {
+  border-bottom: 1px dashed #e2e8f0 !important;
+}
+
+html[data-theme="light"] .tree-meta-label {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .tree-meta-value {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .tree-node-action-dialog,
+html[data-theme="light"] .tree-node-action-card {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18) !important;
+}
+
+html[data-theme="light"] .node-action-btn {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .node-action-btn:hover {
+  background: rgba(180, 130, 20, 0.15) !important;
+  color: #8c5800 !important;
+}
+
+html[data-theme="light"] .json-drawer {
+  background: #ffffff !important;
+  border-left: 1px solid #cbd5e1 !important;
+}
+
+/* Hierarchy Tree & Healers Hub Cards in Light Theme */
+html[data-theme="light"] .tree-focus-top-banner {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1.5px solid var(--gold-500) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-theme="light"] .tree-ancestral-breadcrumb {
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .tree-breadcrumb-item {
+  color: #8c5800 !important;
+}
+
+html[data-theme="light"] .tree-breadcrumb-item:hover {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .tree-focus-title {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .tree-focus-sub {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .tree-metric-box {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .tree-metric-label {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .tree-metric-val {
+  color: #8c5800 !important;
+}
+
+html[data-theme="light"] .tree-scope-toggle-bar {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .tree-scope-title {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .hierarchy-node-card-item {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-theme="light"] .hierarchy-node-name {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .hierarchy-node-details {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .hierarchy-node-action-btn {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .healers-hub-banner-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1.5px solid var(--gold-500) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-theme="light"] .healers-banner-title {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .healers-banner-sub {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .metric-pill-item {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .metric-pill-count {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .metric-pill-label {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .healer-member-card {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-theme="light"] .healer-member-name {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .healer-member-contact {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .healer-ref-code-pill {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .healer-filter-chip {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .healer-filter-chip.active {
+  background: #b47500 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] .hierarchy-level-filter-chip {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .hierarchy-level-filter-chip.active {
+  background: #b47500 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] .legend-item {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-left: 4px solid var(--role-admin) !important;
+}
+
+html[data-theme="light"] .legend-item:hover {
+  background: rgba(180, 130, 20, 0.1) !important;
+}
+
+html[data-theme="light"] .legend-item.active {
+  background: rgba(180, 130, 20, 0.18) !important;
+}
+
+html[data-theme="light"] .legend-title {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .legend-level {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .legend-count-badge {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
 }
 
 *, *::before, *::after {
