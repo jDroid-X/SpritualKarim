@@ -69,7 +69,7 @@ object AppSettingsRepository {
         DynamicSystemVariable(
             key = "GITHUB_RELEASE_DOWNLOAD_URL",
             label = "GitHub APK Download URL",
-            value = "https://github.com/jiten/SpritualKarim/releases/latest/download/app-debug.apk",
+            value = "https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk",
             category = "Updates & Distribution",
             isEditable = true,
             description = "Direct download endpoint for latest Spiritual Karim Android APK from GitHub releases."
@@ -77,10 +77,18 @@ object AppSettingsRepository {
         DynamicSystemVariable(
             key = "GITHUB_REPO_URL",
             label = "GitHub Repository URL",
-            value = "https://github.com/jiten/SpritualKarim",
+            value = "https://github.com/jDroid-X/SpritualKarim",
             category = "Updates & Distribution",
             isEditable = true,
             description = "Source code and release repository on GitHub."
+        ),
+        DynamicSystemVariable(
+            key = "WEB_PORTAL_URL",
+            label = "Online Web Portal URL",
+            value = "https://jdroid-x.github.io/SpritualKarim/",
+            category = "Updates & Distribution",
+            isEditable = true,
+            description = "Hosted responsive web portal on GitHub Pages."
         ),
         DynamicSystemVariable(
             key = "UPLINE_APPROVAL_TIMEOUT_HOURS",

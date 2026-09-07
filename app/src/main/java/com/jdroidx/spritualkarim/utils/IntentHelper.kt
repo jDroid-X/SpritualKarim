@@ -1,4 +1,4 @@
-﻿package com.jdroidx.spritualkarim.utils
+package com.jdroidx.spritualkarim.utils
 
 import android.content.Context
 import android.content.Intent
@@ -64,7 +64,7 @@ object IntentHelper {
             }
             context.startActivity(intent)
         } catch (e: Exception) {
-            val webUrl = "https://t.me/share/url?url=${Uri.encode("https://github.com/jiten/SpritualKarim/releases/latest/download/app-debug.apk")}&text=${Uri.encode(text)}"
+            val webUrl = "https://t.me/share/url?url=${Uri.encode("https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk")}&text=${Uri.encode(text)}"
             openUrl(context, webUrl)
         }
     }

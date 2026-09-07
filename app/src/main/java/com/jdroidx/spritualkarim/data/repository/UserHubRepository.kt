@@ -1,4 +1,4 @@
-﻿package com.jdroidx.spritualkarim.data.repository
+package com.jdroidx.spritualkarim.data.repository
 
 import com.jdroidx.spritualkarim.data.model.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,7 @@ data class PairingInvite(
     val seekerPhone: String,
     val seekerDeviceModel: String,
     val telegramLink: String,
-    val apkDownloadUrl: String = "https://github.com/jiten/SpritualKarim/releases/latest/download/app-debug.apk",
+    val apkDownloadUrl: String = "https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk",
     val createdAtMs: Long = System.currentTimeMillis(),
     val expiresAtMs: Long = System.currentTimeMillis() + (24 * 60 * 60 * 1000L), // 24 Hours
     var status: PairingStatus = PairingStatus.PENDING,

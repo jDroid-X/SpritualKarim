@@ -29,21 +29,28 @@ const server = http.createServer((req, res) => {
 
   let candidates = [];
 
-  // 1. Direct path inside base directories
-  for (const base of BASE_DIRS) {
-    let filePath = path.join(base, pathname);
-    candidates.push(filePath);
-    candidates.push(path.join(base, pathname, 'index.html'));
-  }
+  // 1. Prioritize direct files in __dirname
+  candidates.push(path.join(__dirname, pathname));
+  candidates.push(path.join(__dirname, pathname, 'index.html'));
 
   // 2. Strip leading prefixes like /SpritualKarim/SpritulKarimWeb or /SpritualKarim/SpritualKarimWeb
   let stripped = pathname.replace(/^\/SpritualKarim\/SpritulKarimWeb/i, '')
                          .replace(/^\/SpritualKarim\/SpritualKarimWeb/i, '')
                          .replace(/^\/SpritulKarimWeb/i, '')
                          .replace(/^\/SpritualKarimWeb/i, '')
-                         .replace(/^\/SpritualKarim/i, '');
+                         .replace(/^\/SpritualKarim/i, '')
+                         .replace(/^\//, '');
 
+  candidates.push(path.join(__dirname, stripped));
+  candidates.push(path.join(__dirname, stripped, 'index.html'));
+  if (!stripped) {
+    candidates.push(path.join(__dirname, 'index.html'));
+  }
+
+  // 3. Fallback across all BASE_DIRS
   for (const base of BASE_DIRS) {
+    candidates.push(path.join(base, pathname));
+    candidates.push(path.join(base, pathname, 'index.html'));
     candidates.push(path.join(base, stripped));
     candidates.push(path.join(base, stripped, 'index.html'));
   }

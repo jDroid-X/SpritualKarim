@@ -2047,10 +2047,11 @@ fun SharePairingDialog(
     }
 
     val botHandle = remember { AppSettingsRepository.getVariableValue("TELEGRAM_BOT_HANDLE", "SpiritualKarimBot") }
-    val githubDownloadUrl = remember { AppSettingsRepository.getVariableValue("GITHUB_RELEASE_DOWNLOAD_URL", "https://github.com/jiten/SpritualKarim/releases/latest/download/app-debug.apk") }
-    val githubRepoUrl = remember { AppSettingsRepository.getVariableValue("GITHUB_REPO_URL", "https://github.com/jiten/SpritualKarim") }
+    val githubDownloadUrl = remember { AppSettingsRepository.getVariableValue("GITHUB_RELEASE_DOWNLOAD_URL", "https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk") }
+    val githubRepoUrl = remember { AppSettingsRepository.getVariableValue("GITHUB_REPO_URL", "https://github.com/jDroid-X/SpritualKarim") }
+    val webPortalUrl = remember { AppSettingsRepository.getVariableValue("WEB_PORTAL_URL", "https://jdroid-x.github.io/SpritualKarim/") }
 
-    val invitePayload = remember(sourceProfile, selectedConnectionType, selectedTargetRole, selectedVerificationMethod, activePin, botHandle, githubDownloadUrl) {
+    val invitePayload = remember(sourceProfile, selectedConnectionType, selectedTargetRole, selectedVerificationMethod, activePin, botHandle, githubDownloadUrl, githubRepoUrl, webPortalUrl) {
         val roleStr = if (selectedConnectionType == ConnectionType.PARALLEL_HEALER) "Healer (Parallel Co-Mentor)" else selectedTargetRole.displayName
         """
         🕉️ SPIRITUAL KARIM • SACRED LINEAGE PAIRING INVITE
@@ -2066,10 +2067,14 @@ fun SharePairingDialog(
         Telegram Bot Pairing: https://t.me/$botHandle?start=pair_${sourceProfile.referenceCode.replace("-","")}_$activePin
         
         ⏱️ Link Validity: Valid for 24 Hours only (Upline approval required). Multiple resends allowed.
-        📦 GitHub Direct APK Download: $githubDownloadUrl
-        🌐 GitHub Releases & Updates: $githubRepoUrl
+        📦 Direct Release APK: $githubDownloadUrl
+        🌐 Online Web Portal: $webPortalUrl
+        🌐 GitHub Updates & Repo: $githubRepoUrl
         
-        Enter this 16-digit code in your Spiritual Karim app to activate real-time device synchronization with your lineage.
+        Installation & Activation Steps:
+        1. Download and install the Spiritual Karim Android App or open the Web Portal link.
+        2. Enter the 16-Digit Sponsor Reference Code (${sourceProfile.referenceCode}) and 6-Digit Activation PIN ($activePin).
+        3. Once validated, your upline mentor confirms activation to begin real-time lineage synchronization!
         """.trimIndent()
     }
 

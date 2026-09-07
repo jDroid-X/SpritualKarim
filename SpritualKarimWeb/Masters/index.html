@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spiritual Karim • Masters Portal (Full Control)</title>
+  <title>Spiritual Karim • Mobile App Admin Panel - 4-Tier User Management</title>
   <meta name="description" content="Admin Control Panel for Spiritual Karim Mobile App - Devotee Personal, Seeker Purpose, Trainee Sadhak, and Healer Connect Management">
   
   <!-- Favicon -->
@@ -16,7 +16,7 @@
 
   <link rel="stylesheet" href="../css/profile-admin.css">
 </head>
-<body data-portal-mode="MASTER">
+<body data-portal-mode="master">
   <!-- Top Admin Control Header (2-Row Smart Fit Layout) -->
   <header class="admin-topbar multi-row-header">
     <!-- Row 1: Brand, Status, Global Tools & Theme Switcher -->
@@ -34,7 +34,7 @@
               <span class="admin-title">SPIRITUAL KARIM ADMIN</span>
               <span class="header-portal-badge" id="header-portal-badge">👑 Master Control</span>
             </div>
-            <span class="admin-subtitle">👑 Master Mode &bull; Full CRUD, System Rules &amp; All Tiers</span>
+            <span class="admin-subtitle">Mobile App Control &bull; 4-Tier User Management</span>
           </div>
         </div>
       </div>
@@ -121,34 +121,53 @@
     <!-- Left Navigation & Directory Sidebar -->
     <aside class="admin-sidebar">
       <div class="sidebar-section">
-                <div class="sidebar-heading">Profile Directory</div>
-        <div style="padding: 0 0 0.5rem 0;">
-          <input type="search" id="input-directory-search" class="form-control form-control-sm" placeholder="🔍 Search profiles..." style="font-size: 0.78rem; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-card); border-radius: 6px; padding: 0.35rem 0.6rem; width: 100%; box-sizing: border-box;">
-        </div>
-        <div id="profile-directory-list" class="profile-directory-list"></div>
-      </div>
-
-      <div class="sidebar-section">
         <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
           <span>App Hierarchy Tiers</span>
           <button type="button" id="btn-open-tree-view" class="btn btn-xs btn-gold" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;" title="Open Visual MLM Hierarchy Tree">🌳 Tree</button>
         </div>
         <div class="hierarchy-legend" id="hierarchy-legend-container">
-          <div class="legend-item" data-tier="1" style="border-left-color: var(--role-admin);">
-            <span class="legend-title">Admin Master</span>
-            <span class="legend-level">Tier 1 &bull; Founder</span>
+          <div class="legend-item" data-tier="1" style="border-left-color: #8b5cf6;" title="Click to view Tier 1 Admin Master Profiles">
+            <div class="legend-item-left">
+              <span class="legend-title">👑 Admin Master</span>
+              <span class="legend-level">Tier 1 &bull; Founder</span>
+            </div>
+            <div class="legend-item-right">
+              <span class="legend-count-badge" id="legend-count-tier-1">1</span>
+              <span class="legend-arrow">&rsaquo;</span>
+            </div>
           </div>
-          <div class="legend-item" data-tier="2" style="border-left-color: var(--role-healer);">
-            <span class="legend-title">Healer Connect</span>
-            <span class="legend-level">Tier 2 &bull; Level Completed</span>
+
+          <div class="legend-item" data-tier="2" style="border-left-color: #10b981;" title="Click to view Tier 2 Certified Healer Profiles">
+            <div class="legend-item-left">
+              <span class="legend-title">🛡️ Healer Connect</span>
+              <span class="legend-level">Tier 2 &bull; Level Completed</span>
+            </div>
+            <div class="legend-item-right">
+              <span class="legend-count-badge" id="legend-count-tier-2">3</span>
+              <span class="legend-arrow">&rsaquo;</span>
+            </div>
           </div>
-          <div class="legend-item" data-tier="3" style="border-left-color: var(--role-trainee);">
-            <span class="legend-title">Trainee Sadhak</span>
-            <span class="legend-level">Tier 3 &bull; In-Progress</span>
+
+          <div class="legend-item" data-tier="3" style="border-left-color: #f59e0b;" title="Click to view Tier 3 Trainee Sadhak Profiles">
+            <div class="legend-item-left">
+              <span class="legend-title">🌿 Trainee Sadhak</span>
+              <span class="legend-level">Tier 3 &bull; In-Progress</span>
+            </div>
+            <div class="legend-item-right">
+              <span class="legend-count-badge" id="legend-count-tier-3">2</span>
+              <span class="legend-arrow">&rsaquo;</span>
+            </div>
           </div>
-          <div class="legend-item" data-tier="4" style="border-left-color: var(--role-devotee);">
-            <span class="legend-title">Devotee / Seeker</span>
-            <span class="legend-level">Tier 4 &bull; Personal &amp; House Clean</span>
+
+          <div class="legend-item" data-tier="4" style="border-left-color: #3b82f6;" title="Click to view Tier 4 Devotee / Seeker Profiles">
+            <div class="legend-item-left">
+              <span class="legend-title">🌟 Devotee / Seeker</span>
+              <span class="legend-level">Tier 4 &bull; Personal &amp; House Clean</span>
+            </div>
+            <div class="legend-item-right">
+              <span class="legend-count-badge" id="legend-count-tier-4">3</span>
+              <span class="legend-arrow">&rsaquo;</span>
+            </div>
           </div>
         </div>
       </div>
@@ -156,13 +175,13 @@
       <div class="sidebar-section">
         <div class="sidebar-heading">Dedicated Portals</div>
         <div class="sub-portal-links">
-          <a href="../Masters/index.html" class="sub-portal-link active" title="Open Master Portal">
+          <a href="Masters/index.html" class="sub-portal-link active" title="Open Master Portal">
             <span>🏛️</span> Masters Portal
           </a>
-          <a href="../Healers/index.html" class="sub-portal-link " title="Open Healer Portal">
+          <a href="Healers/index.html" class="sub-portal-link" title="Open Healer Portal">
             <span>🌿</span> Healers Portal
           </a>
-          <a href="../Devotee/index.html" class="sub-portal-link " title="Open Devotee Portal">
+          <a href="Devotee/index.html" class="sub-portal-link" title="Open Devotee Portal">
             <span>🌟</span> Devotee Portal
           </a>
         </div>
@@ -182,11 +201,33 @@
       </div>
     </aside>
 
+    <!-- Left Slide-Out Tier Profiles Panel -->
+    <div id="tier-profiles-panel" class="tier-profiles-flyout-panel">
+      <div class="tier-panel-header">
+        <div class="tier-panel-title-wrap">
+          <span class="tier-panel-icon" id="tier-panel-icon">👑</span>
+          <div>
+            <h3 class="tier-panel-title" id="tier-panel-title">Admin Master Profiles</h3>
+            <span class="tier-panel-count-badge" id="tier-panel-count">1 Member</span>
+          </div>
+        </div>
+        <button type="button" class="tier-panel-close-btn" id="btn-close-tier-panel" title="Close Left Panel">&times;</button>
+      </div>
+
+      <div class="tier-panel-search-wrap">
+        <input type="search" id="input-tier-panel-search" class="form-control form-control-sm" placeholder="🔍 Search profiles in tier...">
+      </div>
+
+      <div id="tier-panel-profiles-list" class="tier-panel-profiles-list">
+        <!-- Rendered dynamically with image / avatar profiles -->
+      </div>
+    </div>
+
     <!-- Main Canvas Area -->
     <main class="admin-canvas">
       <div class="profile-form-container">
         
-        <!-- 1st Box: Master Profile Identity & Reference Code Header Card -->
+        <!-- 1st Box: Master Profile Identity Card (Reference code box cleanly hidden from home view) -->
         <div class="card profile-header-card" id="main-profile-box-1">
           <div class="card-header-flex">
             <div class="user-avatar-block">
@@ -1089,122 +1130,179 @@
           </div>
 
           <!-- ############################################################
-               TAB 4: HEALER CONNECT
+               TAB 4: HEALER CONNECT (Android Healers Hub Design)
                ############################################################ -->
           <div class="main-tab-content-panel" id="tab-healer-connect">
-            <div class="card">
-              <div class="card-title-bar">
-                <div class="card-title"><span class="card-title-icon">🔱</span> Levels of Sadhana Completed with Level Status &amp; Master Certifications</div>
-                <div class="card-actions">
-                  <button type="button" id="btn-add-completed-sadhana" class="btn btn-sm btn-gold">+ Add Completed Sadhana Credential</button>
+            <div class="healers-portal-container">
+              <!-- Top Sub-sections: Completed Sadhanas & Mentorship Network -->
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🔱</span> Levels of Sadhana Completed &amp; Master Certifications</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-completed-sadhana" class="btn btn-sm btn-gold">+ Add Completed Sadhana</button>
+                  </div>
+                </div>
+                <div id="healer-completed-sadhanas-container" class="healer-cards-grid"></div>
+
+                <div class="card-title-bar mt-4">
+                  <div class="card-title"><span class="card-title-icon">👥</span> Mentorship Network (Devotees &amp; Trainees Connected)</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-connected-devotee" class="btn btn-sm btn-outline">+ Link Devotee</button>
+                  </div>
+                </div>
+                <div id="healer-network-container" class="dynamic-items-container mt-2"></div>
+              </div>
+
+              <!-- Multilevel Organization Hub (Moved Below - All changes saved locally) -->
+              <div class="healers-hub-banner-card mt-4">
+                <div class="healers-banner-header">
+                  <div>
+                    <h3 class="healers-banner-title">Multilevel Organization Hub</h3>
+                    <p class="healers-banner-sub">5-Level Parallel &amp; Sequential Lineage Engine</p>
+                  </div>
+                  <button type="button" class="btn-tree-toggle-banner" id="btn-open-healers-tree">
+                    <span>🌳</span> <span>5-Level Tree</span>
+                  </button>
+                </div>
+
+                <div class="healers-metrics-strip" id="healers-hub-metrics-strip">
+                  <div class="metric-pill-item metric-total">
+                    <span class="metric-pill-count" id="hub-metric-total">0</span>
+                    <span class="metric-pill-label">Total</span>
+                  </div>
+                  <div class="metric-pill-item metric-admin">
+                    <span class="metric-pill-count" id="hub-metric-admin">0</span>
+                    <span class="metric-pill-label">Admin</span>
+                  </div>
+                  <div class="metric-pill-item metric-healers">
+                    <span class="metric-pill-count" id="hub-metric-healers">0</span>
+                    <span class="metric-pill-label">Healers</span>
+                  </div>
+                  <div class="metric-pill-item metric-trainees">
+                    <span class="metric-pill-count" id="hub-metric-trainees">0</span>
+                    <span class="metric-pill-label">Trainees</span>
+                  </div>
+                  <div class="metric-pill-item metric-devotees">
+                    <span class="metric-pill-count" id="hub-metric-devotees">0</span>
+                    <span class="metric-pill-label">Devotees</span>
+                  </div>
                 </div>
               </div>
-              <p class="card-desc">Master level attunements, siddhi certifications, and authorized healer mentorship privileges.</p>
 
-              <div id="healer-completed-sadhanas-container" class="healer-cards-grid"></div>
+              <!-- Search & Category Filter Chips -->
+              <div class="healers-hub-controls">
+                <div class="healers-search-input-wrap">
+                  <span class="search-icon">🔍</span>
+                  <input type="search" id="input-healers-search" class="healers-search-input" placeholder="Search by name, 16-digit code, phone, level, city...">
+                </div>
 
-              <!-- Connected Devotees & Trainees Network -->
-              <div class="card-title-bar mt-4">
-                <div class="card-title"><span class="card-title-icon">👥</span> Mentorship Network (Devotees &amp; Trainees Connected)</div>
-                <div class="card-actions">
-                  <button type="button" id="btn-add-connected-devotee" class="btn btn-sm btn-outline">+ Link Devotee</button>
+                <div class="healers-filter-chips-row" id="healers-filter-chips-container">
+                  <button type="button" class="healer-filter-chip active" data-type="ALL">All (<span id="chip-cnt-all">0</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="ADMIN">Admin (<span id="chip-cnt-admin">0</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="HEALER">Healers (<span id="chip-cnt-healers">0</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="TRAINEE">Trainees (<span id="chip-cnt-trainees">0</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="DEVOTEE">Devotees (<span id="chip-cnt-devotees">0</span>)</button>
                 </div>
               </div>
-              <div id="healer-network-container" class="dynamic-items-container mt-2"></div>
+
+              <!-- Filtered Profile Cards Grid -->
+              <div id="healers-hub-cards-container" class="healers-cards-grid"></div>
             </div>
-          
+          </div>
+
           <!-- ############################################################
-               TAB 5: GENEALOGY TREE & SPIDERWEB CANVAS (DIRECT IN BODY)
+               TAB 5: GENEALOGY TREE (Android HierarchyTreeScreen Design)
                ############################################################ -->
           <div class="main-tab-content-panel" id="tab-genealogy-tree">
-            <div class="card body-tree-card">
-              <div class="card-title-bar body-tree-title-bar">
-                <div class="card-title">
-                  <span class="card-title-icon">🌳</span> 
-                  <span>App Hierarchy Lineage &bull; Spiderweb Genealogy Canvas</span>
-                </div>
-                <div class="card-actions body-tree-quick-stats">
-                  <span class="stat-badge" id="body-tree-total-members">👥 Total Members: 0</span>
-                  <span class="stat-badge stat-gold" id="body-tree-active-tier">Tier Focus: All</span>
-                </div>
-              </div>
-
-              <!-- Full In-Body Canvas Toolbar -->
-              <div class="body-tree-toolbar">
-                <div class="body-tree-toolbar-left">
-                  <button type="button" class="btn btn-sm btn-gold btn-smart-fit" id="btn-body-smart-fit" title="Auto Fit & Center Tree (Best Smart Fit to Viewport)">
-                    <span>🎯</span> <span>Smart Fit</span>
-                  </button>
-                  <button type="button" class="tree-tool-btn" id="btn-body-zoom-in" title="Zoom In (or Scroll Wheel)">
-                    <span>➕</span> <span>Zoom In</span>
-                  </button>
-                  <button type="button" class="tree-tool-btn" id="btn-body-zoom-out" title="Zoom Out (or Scroll Wheel)">
-                    <span>➖</span> <span>Zoom Out</span>
-                  </button>
-                  <button type="button" class="tree-tool-btn" id="btn-body-zoom-reset" title="Reset View (100%)">
-                    <span>🔄</span> <span>100%</span>
-                  </button>
-                  
-                  <span class="tree-drag-badge" title="Click and drag anywhere on canvas to pan like Google Maps">
-                    <span>✋</span> <span>Hand Pan Active</span>
-                  </span>
-                </div>
-
-                <div class="body-tree-toolbar-right">
-                  <div class="tree-search-wrap">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="body-tree-search-input" class="form-control form-control-sm tree-search-input" placeholder="Find member by name...">
-                    <button type="button" id="btn-clear-tree-search" class="clear-search-btn" title="Clear Search">✕</button>
+            <div class="hierarchy-tree-view-wrapper">
+              <!-- Top Hierarchy Header Card -->
+              <div class="card">
+                <div class="card-title-bar">
+                  <div>
+                    <div class="card-title"><span class="card-title-icon">🌳</span> Organization Hierarchy Tree</div>
+                    <p class="card-desc" style="margin-bottom: 0;">Visual representation of 5-level parallel and sequential networks</p>
                   </div>
-
-                  <select id="body-tree-tier-filter" class="form-control form-control-sm tree-filter-select" title="Filter by Tier Level">
-                    <option value="ALL">🌐 All 4 Tiers</option>
-                    <option value="1">👑 Tier 1 &bull; Admin Master</option>
-                    <option value="2">🌿 Tier 2 &bull; Healer Connect</option>
-                    <option value="3">📿 Tier 3 &bull; Trainee Sadhak</option>
-                    <option value="4">🌱 Tier 4 &bull; Devotee / Seeker</option>
-                  </select>
-
-                  <div class="segmented-toggle-group" title="Switch Tree Layout Presentation">
-                    <button type="button" class="segmented-btn active" data-layout="cluster" id="btn-layout-cluster" title="Clustered MLM Branches (Hierarchical Sub-trees)">🌳 Clustered</button>
-                    <button type="button" class="segmented-btn" data-layout="spiderweb" id="btn-layout-spiderweb" title="Spiderweb Lineage Matrix">🕸️ Spiderweb</button>
+                  <div class="card-actions">
+                    <div class="segmented-toggle-group" title="Switch Tree Layout Presentation">
+                      <button type="button" class="segmented-btn active" data-tree-view="recursive" id="btn-view-recursive">🌳 5-Level List</button>
+                      <button type="button" class="segmented-btn" data-tree-view="canvas" id="btn-view-canvas">🕸️ Canvas</button>
+                    </div>
                   </div>
-
-                  <button type="button" class="tree-tool-btn" id="btn-body-fullscreen" title="Expand Tree Canvas to Fullscreen">
-                    <span>⛶</span> <span>Fullscreen</span>
-                  </button>
                 </div>
-              </div>
 
-              <!-- Interactive In-Body Canvas Viewport -->
-              <div class="body-tree-canvas-viewport" id="body-tree-canvas-viewport">
-                <div class="body-tree-surface" id="body-tree-surface">
-                  <svg class="body-spiderweb-svg-layer" id="body-spiderweb-svg-layer">
-                    <defs>
-                      <marker id="body-spiderweb-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                        <path d="M 0 1.5 L 10 5 L 0 8.5 z" class="body-spiderweb-arrow-marker" />
-                      </marker>
-                      <filter id="node-glow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#f5d365" flood-opacity="0.6"/>
-                      </filter>
-                    </defs>
-                  </svg>
-                  <div class="body-spiderweb-nodes-layer" id="body-spiderweb-nodes-layer">
-                    <!-- Injected dynamically by ProfileView.renderInBodyHierarchyTree -->
+                <!-- Level Generation Filter Chips -->
+                <div style="margin-top: 0.75rem;">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Filter by Level Generation:</span>
+                  <div class="hierarchy-level-filter-bar" id="hierarchy-level-filter-chips">
+                    <button type="button" class="hierarchy-level-filter-chip active" data-level="ALL">All Levels (<span id="tree-cnt-all">0</span>)</button>
+                    <button type="button" class="hierarchy-level-filter-chip" data-level="1">Level 1 (<span id="tree-cnt-1">0</span>)</button>
+                    <button type="button" class="hierarchy-level-filter-chip" data-level="2">Level 2 (<span id="tree-cnt-2">0</span>)</button>
+                    <button type="button" class="hierarchy-level-filter-chip" data-level="3">Level 3 (<span id="tree-cnt-3">0</span>)</button>
+                    <button type="button" class="hierarchy-level-filter-chip" data-level="4">Level 4 (<span id="tree-cnt-4">0</span>)</button>
+                    <button type="button" class="hierarchy-level-filter-chip" data-level="5">Level 5 (<span id="tree-cnt-5">0</span>)</button>
                   </div>
                 </div>
               </div>
 
-              <!-- Canvas Bottom Helper & Legend Bar -->
-              <div class="body-tree-footer-bar">
-                <div class="tree-legend-mini">
-                  <span class="legend-chip chip-tier-1"><span class="chip-dot dot-tier-1"></span> Tier 1 Master</span>
-                  <span class="legend-chip chip-tier-2"><span class="chip-dot dot-tier-2"></span> Tier 2 Healer</span>
-                  <span class="legend-chip chip-tier-3"><span class="chip-dot dot-tier-3"></span> Tier 3 Trainee</span>
-                  <span class="legend-chip chip-tier-4"><span class="chip-dot dot-tier-4"></span> Tier 4 Devotee / Seeker</span>
+              <!-- 5-Level Recursive Tree View Container -->
+              <div id="hierarchy-recursive-tree-view" class="hierarchy-tree-nodes-list"></div>
+
+              <!-- Spiderweb Canvas Container (Secondary view) -->
+              <div id="hierarchy-canvas-tree-view" class="card body-tree-card" style="display: none;">
+                <div class="body-tree-toolbar">
+                  <div class="body-tree-toolbar-left">
+                    <button type="button" class="btn btn-sm btn-gold btn-smart-fit" id="btn-body-smart-fit" title="Smart Fit to Viewport">
+                      <span>🎯</span> <span>Smart Fit</span>
+                    </button>
+                    <button type="button" class="tree-tool-btn" id="btn-body-zoom-in" title="Zoom In">
+                      <span>➕</span> <span>Zoom In</span>
+                    </button>
+                    <button type="button" class="tree-tool-btn" id="btn-body-zoom-out" title="Zoom Out">
+                      <span>➖</span> <span>Zoom Out</span>
+                    </button>
+                    <button type="button" class="tree-tool-btn" id="btn-body-zoom-reset" title="Reset View">
+                      <span>🔄</span> <span>100%</span>
+                    </button>
+                    <span class="tree-drag-badge">
+                      <span>✋</span> <span>Pan Active</span>
+                    </span>
+                  </div>
+
+                  <div class="body-tree-toolbar-right">
+                    <div class="tree-search-wrap">
+                      <span class="search-icon">🔍</span>
+                      <input type="text" id="body-tree-search-input" class="form-control form-control-sm tree-search-input" placeholder="Find member by name...">
+                      <button type="button" id="btn-clear-tree-search" class="clear-search-btn" title="Clear Search">✕</button>
+                    </div>
+                    <button type="button" class="tree-tool-btn" id="btn-body-fullscreen" title="Fullscreen">
+                      <span>⛶</span> <span>Fullscreen</span>
+                    </button>
+                  </div>
                 </div>
-                <div class="tree-footer-hint">
-                  💡 <strong>Pro Tip:</strong> Click any person icon to slide out their profile metadata drawer from the right.
+
+                <div class="body-tree-canvas-viewport" id="body-tree-canvas-viewport">
+                  <div class="body-tree-surface" id="body-tree-surface">
+                    <svg class="body-spiderweb-svg-layer" id="body-spiderweb-svg-layer">
+                      <defs>
+                        <marker id="body-spiderweb-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                          <path d="M 0 1.5 L 10 5 L 0 8.5 z" class="body-spiderweb-arrow-marker" />
+                        </marker>
+                      </defs>
+                    </svg>
+                    <div class="body-spiderweb-nodes-layer" id="body-spiderweb-nodes-layer"></div>
+                  </div>
+                </div>
+
+                <div class="body-tree-footer-bar">
+                  <div class="tree-legend-mini">
+                    <span class="legend-chip chip-tier-1"><span class="chip-dot dot-tier-1"></span> Level 1 Admin</span>
+                    <span class="legend-chip chip-tier-2"><span class="chip-dot dot-tier-2"></span> Level 2 Healer</span>
+                    <span class="legend-chip chip-tier-3"><span class="chip-dot dot-tier-3"></span> Level 4 Trainee</span>
+                    <span class="legend-chip chip-tier-4"><span class="chip-dot dot-tier-4"></span> Level 5 Devotee</span>
+                  </div>
+                  <div class="tree-footer-hint">
+                    💡 <strong>Pro Tip:</strong> Click any node to slide out details or jump to profile.
+                  </div>
                 </div>
               </div>
             </div>
@@ -1269,14 +1367,14 @@
           <h3 class="modal-title">Goli Gyan for Seekers &bull; Sacred Wisdom Guide</h3>
         </div>
         <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <a href="../GOLI_GYAN_FOR_SEEKERS.html" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline" title="Open in Full Tab">
+          <a href="GOLI_GYAN_FOR_SEEKERS.html" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline" title="Open in Full Tab">
             ↗️ Full Tab
           </a>
           <button id="btn-close-goli-gyan-modal" class="icon-btn">✕</button>
         </div>
       </div>
       <div class="modal-body goli-gyan-modal-body">
-        <iframe src="../GOLI_GYAN_FOR_SEEKERS.html" class="goli-gyan-iframe" title="Goli Gyan Guide"></iframe>
+        <iframe src="GOLI_GYAN_FOR_SEEKERS.html" class="goli-gyan-iframe" title="Goli Gyan Guide"></iframe>
       </div>
     </div>
   </div>
@@ -1457,28 +1555,59 @@
     </div>
   </div>
 
-  <!-- Toast Notification -->
-  <div id="admin-toast" class="admin-toast"></div>
-
-
   <!-- ==============================================================
        MODAL: VISUAL MLM APP HIERARCHY TREE
        ============================================================== -->
   <div id="hierarchy-tree-modal" class="admin-modal-overlay">
-    <div class="admin-modal-dialog tree-modal-dialog">
+    <div class="admin-modal-dialog tree-modal-dialog" id="tree-modal-dialog">
       <div class="modal-header">
         <div class="modal-header-title">
           <span class="modal-icon">🌳</span>
           <div>
-            <h3>App Hierarchy Genealogy Tree • Multi-Tier Downlines</h3>
-            <p class="modal-subtitle">Visual MLM-style lineage matrix. Click any member node to slide out detailed metadata and jump directly to their profile.</p>
+            <h3>App Hierarchy Genealogy Tree • Spiderweb Lineage Matrix</h3>
+            <p class="modal-subtitle">Interactive map-like pan &amp; zoom canvas. Click any member icon to slide out profile details and jump to profile.</p>
           </div>
         </div>
         <button type="button" class="modal-close" id="btn-close-tree-modal" aria-label="Close Modal">&times;</button>
       </div>
-      <div class="modal-body" style="padding: 1rem;">
+
+      <!-- Canvas Toolbar: Zoom & Pan Controls -->
+      <div class="tree-canvas-toolbar">
+        <div class="tree-toolbar-left">
+          <button type="button" class="tree-tool-btn" id="btn-tree-zoom-in" title="Zoom In (or use Mouse Wheel)">
+            <span>➕</span> <span>Zoom In</span>
+          </button>
+          <button type="button" class="tree-tool-btn" id="btn-tree-zoom-out" title="Zoom Out (or use Mouse Wheel)">
+            <span>➖</span> <span>Zoom Out</span>
+          </button>
+          <button type="button" class="tree-tool-btn" id="btn-tree-zoom-reset" title="Reset View &amp; Center">
+            <span>🔄</span> <span>Reset 100%</span>
+          </button>
+          <span class="tree-drag-badge" title="Click and drag anywhere on the canvas to move the screen like in Maps">
+            <span>✋</span> <span>Hand Drag Active (Pan Anywhere)</span>
+          </span>
+        </div>
+        <div class="tree-toolbar-right">
+          <button type="button" class="tree-tool-btn" id="btn-tree-fullscreen" title="Toggle Fullscreen View">
+            <span>⛶</span> <span>Fullscreen</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding: 0; position: relative; overflow: hidden;">
         <div class="tree-canvas-viewport" id="tree-canvas-viewport">
-          <!-- Injected dynamically by ProfileView.renderHierarchyTree -->
+          <div class="tree-interactive-surface" id="tree-interactive-surface">
+            <svg class="spiderweb-svg-layer" id="spiderweb-svg-layer">
+              <defs>
+                <marker id="spiderweb-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1.5 L 10 5 L 0 8.5 z" class="spiderweb-arrow-marker" />
+                </marker>
+              </defs>
+            </svg>
+            <div class="spiderweb-nodes-layer" id="spiderweb-nodes-layer">
+              <!-- Injected dynamically by ProfileView.renderHierarchyTree -->
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1509,11 +1638,14 @@
   </div>
   <div id="tree-drawer-backdrop" class="drawer-backdrop"></div>
 
-
-  <!-- BOTTOM-RIGHT SLIDE-IN TOAST NOTIFICATION STACK -->
+  <!-- ==============================================================
+       BOTTOM-RIGHT SLIDE-IN TOAST NOTIFICATION STACK
+       ============================================================== -->
   <div id="toast-notifications-container" class="toast-notifications-container" aria-live="polite"></div>
 
-  <!-- DIALOG: NODE QUICK ACTION & LINEAGE OPTIONS -->
+  <!-- ==============================================================
+       DIALOG: NODE QUICK ACTION & LINEAGE OPTIONS
+       ============================================================== -->
   <div id="node-action-dialog" class="admin-modal" aria-hidden="true">
     <div class="modal-card" style="max-width: 480px;">
       <div class="modal-header">
@@ -1523,12 +1655,17 @@
         </div>
         <button id="btn-close-node-dialog" class="icon-btn">✕</button>
       </div>
-      <div class="modal-body" id="node-dialog-body"></div>
+      <div class="modal-body" id="node-dialog-body">
+        <!-- Injected dynamically -->
+      </div>
       <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
         <button id="btn-close-node-dialog-footer" class="btn btn-outline">Close</button>
       </div>
     </div>
   </div>
+
+  <!-- Legacy Toast Notification Container -->
+  <div id="admin-toast" class="admin-toast"></div>
 
   <!-- Firebase App & Realtime Database SDK (Compat v9) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>

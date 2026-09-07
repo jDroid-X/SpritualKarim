@@ -128,6 +128,58 @@ SpritualKarim/
 
 ---
 
+## 🔗 Official Links & Distribution
+
+| Channel | Link | Description |
+| :--- | :--- | :--- |
+| 📦 **Direct Release APK** | [Download app-release.apk](https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk) | Production signed Android application package |
+| 🌐 **Live Web Portal** | [Spiritual Karim Web Portal](https://jdroid-x.github.io/SpritualKarim/) | Hosted responsive web app on GitHub Pages |
+| 🤖 **Telegram Bot Pairing** | [`@SpiritualKarimBot`](https://t.me/SpiritualKarimBot) | Instant member verification and broadcast notifications |
+| 💻 **GitHub Repository** | [jDroid-X/SpritualKarim](https://github.com/jDroid-X/SpritualKarim) | Master source code, continuous integration & updates |
+
+---
+
+## 📲 Step-by-Step Installation & Activation Validation
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Mentor as Upline Mentor / Healer
+    actor Seeker as Devotee / Trainee
+    participant App as Spiritual Karim App / Web
+    participant Server as Firebase RTDB / Bot Bridge
+
+    Mentor->>App: Generate Pairing Invite (16-Digit Code + 6-Digit PIN)
+    Mentor->>Seeker: Share Invite via WhatsApp / Telegram / SMS
+    Seeker->>App: Download APK & Open Device Pairing
+    Seeker->>App: Enter 16-Digit Code & 6-Digit PIN
+    App->>Server: Submit 24-Hour Validation Request (PENDING)
+    Server-->>Mentor: Notify Upline for Authorization
+    Mentor->>App: Approve & Confirm Seeker Placement
+    App->>Server: Activate Profile & Bind to Lineage Tree (APPROVED)
+    Server-->>Seeker: Real-Time Synchronization Active!
+```
+
+### Installation Steps:
+1. **Android Installation**:
+   - Download the latest APK directly from: [`app-release.apk`](https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk).
+   - Tap to install. If prompted by Android security, enable *"Install from this source"*.
+2. **Web Portal Access**:
+   - Open [https://jdroid-x.github.io/SpritualKarim/](https://jdroid-x.github.io/SpritualKarim/) in any modern desktop or mobile browser.
+
+### Device Activation & Validation Protocol:
+1. **Initiate Pairing**:
+   - The upline Mentor opens **User Hub → Share & Pair** to generate the **16-Digit Reference Code** and **6-Digit Activation PIN** (e.g., `SKHM-ADM1-7788-9900` + `481920`).
+2. **Transmit Payload**:
+   - Share via 1-tap WhatsApp, Telegram, or copy the formatted invite text.
+3. **Seeker Verification**:
+   - The seeker enters the 16-digit sponsor code and 6-digit PIN on their device.
+4. **24-Hour Upline Approval Validation**:
+   - For strict lineage integrity, pairing requests require confirmation within **24 hours**.
+   - Upon upline approval, the seeker's device binds to the 3-generation ancestral lineage matrix, activating real-time house clean reviews and sadhana progress sync.
+
+---
+
 ### Running the Web Portal Locally
 
 1. **Navigate to the Web Directory**:

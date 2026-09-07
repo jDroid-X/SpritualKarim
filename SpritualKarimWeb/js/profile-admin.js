@@ -1,4 +1,4 @@
-﻿/**
+/**
  * profile-admin.js
  * Master 4-Tier OOPS-based MVC JavaScript Application for Spiritual Karim Admin Panel
  * Tier 1: Devotee Personal (Identity, Ancestral Lineage, House Clean)
@@ -487,6 +487,35 @@ class ProfileModel {
       console.warn('Error loading system settings', e);
     }
     return this._getDefaultSettings();
+  }
+
+  isCircularSponsor(profileId, proposedSponsorCode) {
+    if (!proposedSponsorCode || proposedSponsorCode === 'ROOT' || proposedSponsorCode === 'ROOT-0000-0000-0000') return false;
+    const currentProfile = this.getProfileById(profileId);
+    if (!currentProfile) return false;
+    if (currentProfile.referenceCode === proposedSponsorCode) return true;
+
+    const isDownline = (parentCode, targetCode, visited = new Set()) => {
+      if (visited.has(parentCode)) return false;
+      visited.add(parentCode);
+      const children = this.profiles.filter(p => p.referredByCode === parentCode);
+      for (const child of children) {
+        if (child.referenceCode === targetCode) return true;
+        if (isDownline(child.referenceCode, targetCode, visited)) return true;
+      }
+      return false;
+    };
+
+    return isDownline(currentProfile.referenceCode, proposedSponsorCode);
+  }
+
+  formatRefCode(str) {
+    if (!str) return '';
+    const cleaned = str.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (cleaned.length <= 4) return cleaned;
+    if (cleaned.length <= 8) return cleaned.slice(0, 4) + '-' + cleaned.slice(4);
+    if (cleaned.length <= 12) return cleaned.slice(0, 4) + '-' + cleaned.slice(4, 8) + '-' + cleaned.slice(8);
+    return cleaned.slice(0, 4) + '-' + cleaned.slice(4, 8) + '-' + cleaned.slice(8, 12) + '-' + cleaned.slice(12, 16);
   }
 
   saveSettings(newSettings) {
@@ -1633,6 +1662,109 @@ class ProfileModel {
     }
     return null;
   }
+
+  /**
+   * Calculates Summary Metrics matching Android Compose HealersHubScreen
+   */
+  getSummaryMetrics(scopedList = null) {
+    const list = scopedList || this.profiles;
+    return {
+      total: list.length,
+      admin: list.filter(p => p.profileType === 'ADMIN' || p.level === 1).length,
+      healers: list.filter(p => p.profileType === 'HEALER' || p.level === 2 || p.level === 3).length,
+      trainees: list.filter(p => p.profileType === 'TRAINEE' || p.level === 4).length,
+      devotees: list.filter(p => p.profileType === 'DEVOTEE' || p.level === 5).length
+    };
+  }
+
+  /**
+   * Returns Role-Scoped Relevant Profiles matching Android RBAC logic
+   */
+  getScopedProfiles(roleMode = null, activeProfile = null) {
+    const role = roleMode || this.getRoleMode();
+    const active = activeProfile || this.getActiveProfile();
+
+    if (role === 'MASTER' || role === 'ADMIN') {
+      return this.profiles;
+    }
+
+    if (role === 'HEALER') {
+      const refCode = active.referenceCode || '';
+      const downlineCodes = new Set([refCode]);
+      let added = true;
+      while (added) {
+        added = false;
+        for (const p of this.profiles) {
+          if (p.referredByCode && downlineCodes.has(p.referredByCode) && !downlineCodes.has(p.referenceCode)) {
+            downlineCodes.add(p.referenceCode);
+            added = true;
+          }
+        }
+      }
+      return this.profiles.filter(p => p.id === active.id || downlineCodes.has(p.referenceCode) || p.referredByCode === refCode);
+    }
+
+    if (role === 'TRAINEE') {
+      return this.profiles.filter(p => p.id === active.id || p.referredByCode === active.referenceCode || p.referenceCode === active.referredByCode);
+    }
+
+    if (role === 'DEVOTEE') {
+      return this.profiles.filter(p => p.id === active.id || p.referenceCode === active.referredByCode);
+    }
+
+    return this.profiles;
+  }
+
+  /**
+   * Bi-Directional Firebase Realtime Database Synchronization
+   */
+  async fetchFromFirebaseRealtime() {
+    const firebaseUrl = this.settings?.firebaseUrl || 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/';
+    try {
+      const resp = await fetch(`${firebaseUrl.replace(/\/$/, '')}/profiles.json`);
+      if (resp.ok) {
+        const cloudData = await resp.json();
+        if (cloudData && typeof cloudData === 'object') {
+          const remoteList = Object.values(cloudData);
+          if (remoteList.length > 0) {
+            let updated = false;
+            remoteList.forEach(rp => {
+              const idx = this.profiles.findIndex(p => p.id === rp.id || p.referenceCode === rp.referenceCode);
+              if (idx === -1) {
+                this.profiles.push(rp);
+                updated = true;
+              } else {
+                this.profiles[idx] = { ...this.profiles[idx], ...rp };
+                updated = true;
+              }
+            });
+            if (updated) {
+              this.saveProfiles(this.profiles);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Firebase RTDB sync notice:', e.message);
+    }
+  }
+
+  async pushProfileToFirebase(profile) {
+    if (!profile) return;
+    const firebaseUrl = this.settings?.firebaseUrl || 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/';
+    const nodeKey = (profile.id || profile.referenceCode || 'prof-' + Date.now()).replace(/[^a-zA-Z0-9_-]/g, '_');
+    try {
+      if (navigator.onLine) {
+        await fetch(`${firebaseUrl.replace(/\/$/, '')}/profiles/${nodeKey}.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profile)
+        });
+      }
+    } catch (e) {
+      this._enqueueOfflineSync('PROFILE_PUT', { key: nodeKey, profile });
+    }
+  }
 }
 
 // ==============================================================
@@ -1755,63 +1887,7 @@ class ProfileView {
     this.btnBodyZoomReset = document.getElementById('btn-body-zoom-reset');
     this.btnBodyFullscreen = document.getElementById('btn-body-fullscreen');
     this.bodyTreeSearchInput = document.getElementById('body-tree-search-input');
-    this.btnClearTreeSearch = document.getElementById('btn-clear-tree-search');
-    this.bodyTreeTierFilter = document.getElementById('body-tree-tier-filter');
-    this.btnLayoutCluster = document.getElementById('btn-layout-cluster');
-    this.btnLayoutSpiderweb = document.getElementById('btn-layout-spiderweb');
-    this.bodyTreeTotalMembers = document.getElementById('body-tree-total-members');
-    this.bodyTreeActiveTier = document.getElementById('body-tree-active-tier');
-
-    // Pan & Zoom state for In-Body Canvas
-    this.inBodyTreePanState = { panX: 0, panY: 30, scale: 1.0, isDragging: false, startX: 0, startY: 0, layoutMode: 'cluster' };
-
-    // Toast Notifications & Node Action Dialog
-    this.toastNotificationsContainer = document.getElementById('toast-notifications-container');
-    this.nodeActionDialog = document.getElementById('node-action-dialog');
-    this.nodeDialogBody = document.getElementById('node-dialog-body');
-    this.nodeDialogTitle = document.getElementById('node-dialog-title');
-    this.btnCloseNodeDialog = document.getElementById('btn-close-node-dialog');
-    this.btnCloseNodeDialogFooter = document.getElementById('btn-close-node-dialog-footer');
-
-    // Modal Hierarchy Tree View (Legacy backup) & Profile Metadata Drawer
-    this.hierarchyTreeModal = document.getElementById('hierarchy-tree-modal');
-    this.treeCanvasViewport = document.getElementById('tree-canvas-viewport');
-    this.treeModalDialog = document.getElementById('tree-modal-dialog');
-    this.treeInteractiveSurface = document.getElementById('tree-interactive-surface');
-    this.spiderwebSvgLayer = document.getElementById('spiderweb-svg-layer');
-    this.spiderwebNodesLayer = document.getElementById('spiderweb-nodes-layer');
-    this.btnTreeZoomIn = document.getElementById('btn-tree-zoom-in');
-    this.btnTreeZoomOut = document.getElementById('btn-tree-zoom-out');
-    this.btnTreeZoomReset = document.getElementById('btn-tree-zoom-reset');
-    this.btnTreeFullscreen = document.getElementById('btn-tree-fullscreen');
-
-    this.treeProfileDrawer = document.getElementById('tree-profile-drawer');
-    this.treeDrawerBackdrop = document.getElementById('tree-drawer-backdrop');
-    this.treeDrawerBody = document.getElementById('tree-drawer-body');
-    this.treeDrawerProfileName = document.getElementById('tree-drawer-profile-name');
-    this.treeDrawerProfileRole = document.getElementById('tree-drawer-profile-role');
-    this.btnTreeLoadProfile = document.getElementById('btn-tree-load-profile');
-    this.btnCloseTreeModal = document.getElementById('btn-close-tree-modal');
-    this.btnCloseTreeDrawer = document.getElementById('btn-close-tree-drawer');
-    this.btnOpenTreeView = document.getElementById('btn-open-tree-view');
-
-    // Pan & Zoom state for Modal
     this.treePanState = { panX: 0, panY: 0, scale: 1.0, isDragging: false, startX: 0, startY: 0 };
-
-    // Theme Switcher & Header Elements
-    this.btnThemeToggle = document.getElementById('btn-theme-toggle');
-    this.themeIcon = document.getElementById('theme-icon');
-    this.themeLabel = document.getElementById('theme-label');
-    this.btnMobileSidebarToggle = document.getElementById('btn-mobile-sidebar-toggle');
-    this.adminSidebar = document.querySelector('.admin-sidebar');
-    this.sidebarBackdrop = document.getElementById('sidebar-backdrop');
-    this.btnQuickGoliGyan = document.getElementById('btn-quick-goli-gyan');
-    this.headerStampBadge = document.getElementById('header-stamp-badge');
-
-    // Share & Pair 24-Hour Protocol Modal Elements
-    this.btnQuickSharePairing = document.getElementById('btn-quick-share-pairing');
-    this.sharePairingModal = document.getElementById('share-pairing-modal');
-    this.btnCloseSharePairingModal = document.getElementById('btn-close-share-pairing-modal') || document.querySelector('#share-pairing-modal .modal-close');
     this.sharePairingModalBody = document.getElementById('share-pairing-modal-body');
 
     // Settings Modal Elements & Controls
@@ -1834,10 +1910,25 @@ class ProfileView {
     this.settingFirebaseUrl = document.getElementById('setting-firebase-url');
     this.settingDefaultRoleMode = document.getElementById('setting-default-role-mode');
     this.settingAutoSave = document.getElementById('setting-auto-save') || document.getElementById('setting-live-sync');
+
+  
+    // Left Flyout Tier Profiles Panel Elements
+    this.tierProfilesPanel = document.getElementById('tier-profiles-panel');
+    this.tierPanelTitle = document.getElementById('tier-panel-title');
+    this.tierPanelIcon = document.getElementById('tier-panel-icon');
+    this.tierPanelCount = document.getElementById('tier-panel-count');
+    this.tierPanelProfilesList = document.getElementById('tier-panel-profiles-list');
+    this.inputTierPanelSearch = document.getElementById('input-tier-panel-search');
+    this.btnCloseTierPanel = document.getElementById('btn-close-tier-panel');
+    this.currentOpenTier = null;
+    this.currentTierProfiles = [];
+  
   }
 
   render(profile, visibleProfiles, roleMode, settings) {
+    this.populateSettings(settings);
     this._renderRoleSelector(roleMode);
+    this.updateLegendCounts(this.allProfiles || visibleProfiles);
     this._renderDropdown(profile, visibleProfiles);
     this._renderDirectory(profile, visibleProfiles);
     this._renderHeaderCard(profile, roleMode);
@@ -1859,6 +1950,8 @@ class ProfileView {
     this._renderCategorizedTraineeSadhanas(profile.traineeSadhanas || []);
 
     // Healer Completed & Network
+    const hubProfiles = this.allProfiles || visibleProfiles || [];
+    this.renderAndroidHealersHub(hubProfiles, profile, roleMode);
     this._renderHealerCompleted(profile.healerCompletedSadhanas || []);
     this._renderHealerNetwork(profile.healerNetwork || []);
 
@@ -1871,6 +1964,7 @@ class ProfileView {
     this.renderInBodyHierarchyTree(treeProfiles, tier, query, mode);
 
     // JSON Live Inspector
+    this.renderAndroidHierarchyTree(treeProfiles, this.hierarchySelectedLevel || 'ALL', profile);
     this._updateJSONPreview(profile);
 
     // Apply RBAC Rules Across the UI
@@ -1894,54 +1988,225 @@ class ProfileView {
 
   _renderDirectory(activeProfile, visibleProfiles) {
     if (!this.profileDirectoryList) return;
-    const roleColors = {
-      ADMIN: 'var(--role-admin)',
-      HEALER: 'var(--role-healer)',
-      TRAINEE: 'var(--role-trainee)',
-      DEVOTEE: 'var(--role-devotee)'
-    };
 
-    this.profileDirectoryList.innerHTML = visibleProfiles.map(p => `
-      <div class="profile-item-row ${p.id === activeProfile.id ? 'active' : ''}" data-id="${p.id}">
-        <div>
-          <span class="profile-item-name">${p.name}</span>
-          <span class="profile-item-sub">${p.referenceCode}</span>
+    const tiers = [
+      {
+        tierNumber: 1,
+        title: 'Tier 1: Admin Master (Founder)',
+        icon: '👑',
+        badgeBg: 'rgba(139, 92, 246, 0.2)',
+        borderColor: '#8b5cf6',
+        filter: (p) => p.profileType === 'ADMIN' || p.level === 1
+      },
+      {
+        tierNumber: 2,
+        title: 'Tier 2: Certified Healers & Gurus',
+        icon: '🛡️',
+        badgeBg: 'rgba(16, 185, 129, 0.2)',
+        borderColor: '#10b981',
+        filter: (p) => p.profileType === 'HEALER' && p.level === 2
+      },
+      {
+        tierNumber: 3,
+        title: 'Tier 3: Healers In-Progress / Siddhi',
+        icon: '✨',
+        badgeBg: 'rgba(236, 72, 153, 0.2)',
+        borderColor: '#ec4899',
+        filter: (p) => p.profileType === 'HEALER' && p.level === 3
+      },
+      {
+        tierNumber: 4,
+        title: 'Tier 4: Trainee Sadhaks',
+        icon: '🌿',
+        badgeBg: 'rgba(245, 158, 11, 0.2)',
+        borderColor: '#f59e0b',
+        filter: (p) => p.profileType === 'TRAINEE' || p.level === 4
+      },
+      {
+        tierNumber: 5,
+        title: 'Tier 5: Devotees & Seekers',
+        icon: '🌟',
+        badgeBg: 'rgba(59, 130, 246, 0.2)',
+        borderColor: '#3b82f6',
+        filter: (p) => p.profileType === 'DEVOTEE' || p.level === 5 || (!p.level && p.profileType !== 'ADMIN' && p.profileType !== 'HEALER' && p.profileType !== 'TRAINEE')
+      }
+    ];
+
+    let html = '';
+
+    tiers.forEach(tier => {
+      const tierProfiles = visibleProfiles.filter(tier.filter);
+      if (tierProfiles.length === 0) return;
+
+      const itemsHtml = tierProfiles.map(p => {
+        const isActive = p.id === activeProfile.id;
+        const initials = (p.name || 'SK')
+          .split(' ')
+          .map(w => w[0])
+          .slice(0, 2)
+          .join('')
+          .toUpperCase();
+        
+        const isPaid = p.isPaid !== false && p.paymentStatus !== 'FREE';
+
+        return `
+          <div class="profile-item-row ${isActive ? 'active' : ''}" data-id="${p.id}" title="Click to view & edit details for ${p.name}">
+            <div class="profile-item-avatar-col">
+              <div class="profile-item-avatar" style="border-color: ${tier.borderColor};">
+                ${initials}
+                <span class="profile-status-dot ${p.isActive ? 'online' : 'offline'}"></span>
+              </div>
+            </div>
+            <div class="profile-item-info-col">
+              <div class="profile-item-name-row">
+                <span class="profile-item-name">${p.name}</span>
+                <span class="profile-mini-stamp ${isPaid ? 'stamp-paid' : 'stamp-free'}">${isPaid ? 'PAID' : 'FREE'}</span>
+              </div>
+              <div class="profile-item-sub-row">
+                <span class="profile-item-sub">${p.referenceCode}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      html += `
+        <div class="sidebar-tier-group" data-tier="${tier.tierNumber}">
+          <div class="sidebar-tier-header" style="border-left: 3px solid ${tier.borderColor};">
+            <div class="sidebar-tier-title-group">
+              <span class="sidebar-tier-icon">${tier.icon}</span>
+              <span class="sidebar-tier-title">${tier.title}</span>
+            </div>
+            <span class="sidebar-tier-count" style="background: ${tier.badgeBg}; color: ${tier.borderColor};">${tierProfiles.length}</span>
+          </div>
+          <div class="sidebar-tier-items">
+            ${itemsHtml}
+          </div>
         </div>
-        <span class="profile-item-badge" style="background: ${roleColors[p.profileType] || '#666'}; color: #fff;">
-          ${p.profileType}
-        </span>
-      </div>
-    `).join('');
+      `;
+    });
+
+    this.profileDirectoryList.innerHTML = html;
   }
 
   _renderHeaderCard(profile, roleMode = 'MASTER') {
-    if (this.displayProfileName) this.displayProfileName.textContent = profile.name || 'Untitled Profile';
-    if (this.displayRefCode) this.displayRefCode.textContent = profile.referenceCode || 'SKHM-XXXX-XXXX-XXXX';
-    if (this.displaySponsorCode) this.displaySponsorCode.textContent = `Sponsor: ${profile.referredByCode || 'ROOT-0000-0000-0000'}`;
+    const mainBox = document.getElementById('main-profile-box-1');
+    const isPaid = profile.isPaid !== false && profile.paymentStatus !== 'FREE';
+    const initials = (profile.name || 'SK')
+      .split(' ')
+      .map(w => w[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase();
 
     const roleColors = {
-      ADMIN: 'var(--role-admin)',
-      HEALER: 'var(--role-healer)',
-      TRAINEE: 'var(--role-trainee)',
-      DEVOTEE: 'var(--role-devotee)'
+      ADMIN: 'var(--role-admin, #8b5cf6)',
+      HEALER: 'var(--role-healer, #10b981)',
+      TRAINEE: 'var(--role-trainee, #f59e0b)',
+      DEVOTEE: 'var(--role-devotee, #3b82f6)'
     };
+    const roleBg = roleColors[profile.profileType] || 'var(--role-admin, #8b5cf6)';
 
-    if (this.displayRoleBadge) {
-      this.displayRoleBadge.textContent = `${profile.profileType} • LEVEL ${profile.level}`;
-      this.displayRoleBadge.style.backgroundColor = roleColors[profile.profileType] || 'var(--role-admin)';
-    }
+    if (mainBox) {
+      let flipperWrapper = mainBox.querySelector('.card-flipper-3d-wrapper');
+      if (!flipperWrapper) {
+        mainBox.innerHTML = `
+          <div class="card-flipper-3d-wrapper" id="profile-card-flipper-wrapper">
+            <div class="card-flipper-inner" id="profile-card-flipper-inner">
+              <!-- FRONT FACE -->
+              <div class="card-flipper-front" style="padding: 1.25rem; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-lg);">
+                <div class="card-header-flex" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                  <div class="user-avatar-block" style="display: flex; align-items: center; gap: 1rem;">
+                    <div class="avatar-circle" id="profile-avatar-initials">${initials}</div>
+                    <div>
+                      <h2 class="profile-name-title" id="display-profile-name" style="margin: 0 0 0.35rem 0;">${profile.name || 'Untitled Profile'}</h2>
+                      <div class="profile-role-badge-row" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <span class="role-badge" id="display-role-badge" style="background-color: ${roleBg};">${profile.profileType} • LEVEL ${profile.level || 1}</span>
+                        <span class="status-pill ${profile.isActive ? 'active' : ''}" id="display-status-pill">${profile.isActive ? 'Active Member' : 'Inactive'}</span>
+                        <span class="stamp-indicator ${isPaid ? 'stamp-paid' : 'stamp-free'}" id="display-payment-stamp" title="Click to toggle Paid (Green) / Free (Red)">${isPaid ? 'PAID' : 'FREE'}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="header-card-actions-row" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-xs btn-outline" id="btn-copy-header-ref-code" title="Copy 16-Digit Code" style="font-family: monospace; font-size: 0.78rem;">
+                      📋 <span id="header-ref-code-text">${profile.referenceCode || 'SKHM-XXXX-XXXX-XXXX'}</span>
+                    </button>
+                    <button type="button" class="btn-flip-card-trigger" id="btn-flip-to-back" title="Flip to 24h Pairing &amp; Node Telemetry">
+                      🔄 QR &amp; Telemetry
+                    </button>
+                  </div>
+                </div>
+              </div>
 
-    if (this.displayStatusPill) {
-      this.displayStatusPill.textContent = profile.isActive ? 'Active Member' : 'Inactive';
-      this.displayStatusPill.className = `status-pill ${profile.isActive ? 'active' : ''}`;
-    }
-
-    // Paid / Free Stamp Indicator in Top Box & Header Bar
-    const isPaid = profile.isPaid !== false && profile.paymentStatus !== 'FREE';
-    if (this.displayPaymentStamp) {
-      this.displayPaymentStamp.className = `stamp-indicator ${isPaid ? 'stamp-paid' : 'stamp-free'}`;
-      this.displayPaymentStamp.textContent = isPaid ? 'PAID' : 'FREE';
-      this.displayPaymentStamp.title = `Current Status: ${isPaid ? 'PAID (Green Stamp)' : 'FREE (Red Stamp)'} • Click to toggle`;
+              <!-- BACK FACE -->
+              <div class="card-flipper-back flipper-back-content">
+                <div class="flipper-back-header">
+                  <div class="flipper-back-title">
+                    <span>📡</span> Node Telemetry &amp; 24h Device Pairing
+                  </div>
+                  <button type="button" class="btn-flip-card-trigger" id="btn-flip-to-front" title="Flip back to Profile Card">
+                    🔄 View Profile
+                  </button>
+                </div>
+                <div class="telemetry-grid">
+                  <div class="telemetry-item">
+                    <div class="telemetry-item-label">Node Reference</div>
+                    <div class="telemetry-item-val" id="telemetry-ref-code">${profile.referenceCode || 'SKHM-XXXX-XXXX-XXXX'}</div>
+                  </div>
+                  <div class="telemetry-item">
+                    <div class="telemetry-item-label">Upline Sponsor</div>
+                    <div class="telemetry-item-val">${profile.referredByCode || 'ROOT'}</div>
+                  </div>
+                  <div class="telemetry-item">
+                    <div class="telemetry-item-label">Cloud Telemetry</div>
+                    <div class="telemetry-item-val" style="color: #10b981;">🟢 RTDB CONNECTED</div>
+                  </div>
+                  <div class="telemetry-item">
+                    <div class="telemetry-item-label">Device Protocol</div>
+                    <div class="telemetry-item-val">v3.8 (REST+WSS)</div>
+                  </div>
+                </div>
+                <div class="telemetry-qr-section">
+                  <div class="telemetry-qr-box">
+                    <svg viewBox="0 0 100 100" width="60" height="60">
+                      <rect width="100" height="100" fill="white"/>
+                      <path d="M10 10h30v30h-30z M60 10h30v30h-30z M10 60h30v30h-30z M20 20h10v10h-10z M70 20h10v10h-10z M20 70h10v10h-10z M50 20h5v15h-5z M50 50h30v5h-30z M60 65h10v10h-10z M80 75h10v15h-10z" fill="#1e1b4b"/>
+                    </svg>
+                  </div>
+                  <div class="telemetry-qr-text">
+                    <strong>24-Hour QR Device Pairing Protocol</strong><br/>
+                    Scan from Spiritual Karim Android App to link this node securely to your hierarchy downline.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        const pName = mainBox.querySelector('#display-profile-name');
+        if (pName) pName.textContent = profile.name || 'Untitled Profile';
+        const pBadge = mainBox.querySelector('#display-role-badge');
+        if (pBadge) {
+          pBadge.textContent = `${profile.profileType} • LEVEL ${profile.level || 1}`;
+          pBadge.style.backgroundColor = roleBg;
+        }
+        const pStatus = mainBox.querySelector('#display-status-pill');
+        if (pStatus) {
+          pStatus.textContent = profile.isActive ? 'Active Member' : 'Inactive';
+          pStatus.className = `status-pill ${profile.isActive ? 'active' : ''}`;
+        }
+        const pStamp = mainBox.querySelector('#display-payment-stamp');
+        if (pStamp) {
+          pStamp.className = `stamp-indicator ${isPaid ? 'stamp-paid' : 'stamp-free'}`;
+          pStamp.textContent = isPaid ? 'PAID' : 'FREE';
+        }
+        const pInitials = mainBox.querySelector('#profile-avatar-initials');
+        if (pInitials) pInitials.textContent = initials;
+        const pRef = mainBox.querySelector('#header-ref-code-text');
+        if (pRef) pRef.textContent = profile.referenceCode || 'SKHM-XXXX-XXXX-XXXX';
+        const tRef = mainBox.querySelector('#telemetry-ref-code');
+        if (tRef) tRef.textContent = profile.referenceCode || 'SKHM-XXXX-XXXX-XXXX';
+      }
     }
 
     if (this.headerStampBadge) {
@@ -1949,14 +2214,6 @@ class ProfileView {
       this.headerStampBadge.textContent = isPaid ? '🟢 PAID' : '🔴 FREE';
       this.headerStampBadge.title = `Active Membership: ${isPaid ? 'PAID' : 'FREE'}`;
     }
-
-    const initials = (profile.name || 'SK')
-      .split(' ')
-      .map(w => w[0])
-      .slice(0, 2)
-      .join('')
-      .toUpperCase();
-    if (this.avatarInitials) this.avatarInitials.textContent = initials || 'SK';
   }
 
   _populateForm(profile) {
@@ -2648,101 +2905,136 @@ class ProfileView {
 
   renderSharePairingModal(profile, invites = []) {
     const body = document.getElementById('share-pairing-modal-body');
-    if (!body) return;
+    if (!body || !profile) return;
 
-    const sponsorCode = profile.referenceCode || 'SK-7842-8921';
+    const sponsorCode = profile.referenceCode || 'SKHM-ADM1-7788-9900';
     const cleanCode = sponsorCode.replace(/[^a-zA-Z0-9]/g, '');
-    const telegramLink = `https://t.me/SpiritualKarimBot?start=pair_${cleanCode}`;
-    const apkDownloadUrl = 'https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk';
+    const activePin = (100000 + (Math.abs(sponsorCode.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) * 31) % 900000)).toString();
+
+    // Official Installation & Release Links
+    const apkDownloadUrl = 'https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk';
     const repoUrl = 'https://github.com/jDroid-X/SpritualKarim';
+    const webPortalUrl = 'https://jdroid-x.github.io/SpritualKarim/SpritualKarimWeb/';
+    const telegramBotHandle = 'SpiritualKarimBot';
+    const telegramLink = `https://t.me/${telegramBotHandle}?start=pair_${cleanCode}_${activePin}`;
 
     const payloadText = `🕉️ SPIRITUAL KARIM • SACRED LINEAGE PAIRING INVITE
 
-Mentor: ${profile.name} (Level ${profile.level || 1})
-16-Digit Sponsor Code: ${sponsorCode}
+Mentor: ${profile.name || 'Karim Ji'} (Level ${profile.level || 1})
+16-Digit Reference Code: ${sponsorCode}
 
-Connection: Devotee & Seeker Lineage
+Connection Type: Downline Member (Level-Down Seekers & Trainees)
 Assigned Role: Devotee (Personal & Lineage Sadhana)
 
-Telegram Bot Link: ${telegramLink}
-⏱️ 24-Hour Expiration Notice: Valid for 24 Hours only (Upline approval required). Multiple resends allowed.
-📦 Direct APK Download: ${apkDownloadUrl}
-🌐 Releases & Updates: ${repoUrl}
+Verification Method: Mobile Number OTP & Telegram Bot
+Activation Pairing PIN: ${activePin}
+Telegram Bot Pairing: ${telegramLink}
 
-Install Spiritual Karim, enter your phone or tap Telegram link to request hierarchy pairing with your mentor.`;
+⏱️ Link Validity: Valid for 24 Hours only (Upline approval required). Multiple resends allowed.
+📦 Direct Release APK: ${apkDownloadUrl}
+🌐 Online Web Portal: ${webPortalUrl}
+🌐 GitHub Repository & Updates: ${repoUrl}
+
+Installation & Activation Steps:
+1. Download and install the Spiritual Karim Android App or open the Web Portal link.
+2. Enter the 16-Digit Sponsor Reference Code (${sponsorCode}) and 6-Digit Activation PIN (${activePin}).
+3. Once validated, your upline mentor confirms activation to begin real-time lineage synchronization!`;
 
     const encodedPayload = encodeURIComponent(payloadText);
     const encodedApk = encodeURIComponent(apkDownloadUrl);
 
     body.innerHTML = `
-      <div class="share-pairing-card">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-          <div>
-            <span style="font-size: 0.8rem; color: var(--text-gold); font-weight: 700; text-transform: uppercase;">16-Digit Mentor Sponsor Code</span>
-            <div style="font-size: 1.25rem; font-weight: 800; font-family: var(--font-mono); color: var(--text-primary); letter-spacing: 1px;">${sponsorCode}</div>
-          </div>
-          <span class="role-badge badge-${(profile.profileType || 'devotee').toLowerCase()}">L${profile.level || 1} Mentor</span>
+      <!-- 1. Source Code Display Banner (Matching Android App Surface) -->
+      <div style="background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 0.65rem; padding: 0.85rem 1.15rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <div style="font-size: 0.7rem; font-weight: 800; color: var(--gold-400); text-transform: uppercase; letter-spacing: 0.05em;">YOUR 16-DIGIT SPONSOR CODE</div>
+          <div style="font-size: 1.25rem; font-weight: 800; font-family: var(--font-mono); color: var(--text-primary); letter-spacing: 1.5px;">${sponsorCode}</div>
         </div>
-
-        <div class="pairing-qr-box">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100" height="100" fill="#ffffff"/>
-            <rect x="5" y="5" width="28" height="28" fill="#0c0914" rx="3"/>
-            <rect x="9" y="9" width="20" height="20" fill="#ffffff" rx="2"/>
-            <rect x="13" y="13" width="12" height="12" fill="#d4af37" rx="1"/>
-
-            <rect x="67" y="5" width="28" height="28" fill="#0c0914" rx="3"/>
-            <rect x="71" y="9" width="20" height="20" fill="#ffffff" rx="2"/>
-            <rect x="75" y="13" width="12" height="12" fill="#d4af37" rx="1"/>
-
-            <rect x="5" y="67" width="28" height="28" fill="#0c0914" rx="3"/>
-            <rect x="9" y="71" width="20" height="20" fill="#ffffff" rx="2"/>
-            <rect x="13" y="75" width="12" height="12" fill="#d4af37" rx="1"/>
-
-            <rect x="38" y="10" width="8" height="8" fill="#0c0914"/>
-            <rect x="50" y="14" width="8" height="8" fill="#0c0914"/>
-            <rect x="38" y="26" width="8" height="8" fill="#0c0914"/>
-            <rect x="10" y="38" width="8" height="8" fill="#0c0914"/>
-            <rect x="22" y="42" width="8" height="8" fill="#0c0914"/>
-            <rect x="38" y="38" width="24" height="24" fill="#0c0914"/>
-            <rect x="44" y="44" width="12" height="12" fill="#d4af37"/>
-            <rect x="68" y="38" width="8" height="8" fill="#0c0914"/>
-            <rect x="80" y="46" width="8" height="8" fill="#0c0914"/>
-            <rect x="38" y="68" width="8" height="8" fill="#0c0914"/>
-            <rect x="52" y="72" width="8" height="8" fill="#0c0914"/>
-            <rect x="68" y="68" width="12" height="12" fill="#0c0914"/>
-            <rect x="82" y="80" width="8" height="8" fill="#0c0914"/>
-            <rect x="40" y="84" width="20" height="8" fill="#0c0914"/>
-          </svg>
-          <div class="pairing-qr-caption">📷 Scan with Seeker Device Camera</div>
-        </div>
-
-        <div style="margin: 0.75rem 0;">
-          <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-gold); margin-bottom: 0.35rem;">Multi-Channel Instant Dispatch:</div>
-          <div class="share-channels-grid">
-            <a href="https://api.whatsapp.com/send?text=${encodedPayload}" target="_blank" class="btn-share-channel btn-share-whatsapp" title="Share via WhatsApp">
-              <span>💬</span> <span>WhatsApp</span>
-            </a>
-            <a href="https://t.me/share/url?url=${encodedApk}&text=${encodedPayload}" target="_blank" class="btn-share-channel btn-share-telegram" title="Share via Telegram">
-              <span>✈️</span> <span>Telegram</span>
-            </a>
-            <a href="sms:?body=${encodedPayload}" class="btn-share-channel btn-share-sms" title="Send SMS Invite">
-              <span>📱</span> <span>SMS</span>
-            </a>
-            <button type="button" class="btn-share-channel btn-share-copy" id="btn-copy-pairing-payload" data-payload="${encodeURIComponent(payloadText)}" title="Copy Full Invite Text">
-              <span>📋</span> <span>Copy Link</span>
-            </button>
-          </div>
-        </div>
-
-        <div style="margin-top: 0.75rem;">
-          <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem;">Shareable Invitation Preview:</div>
-          <pre style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.75rem; font-size: 0.78rem; font-family: var(--font-mono); color: var(--text-secondary); white-space: pre-wrap; max-height: 120px; overflow-y: auto;">${payloadText}</pre>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span class="role-badge" style="background: var(--gold-500); color: #0b0714; font-weight: 800;">L${profile.level || 1} ${profile.profileType || 'MENTOR'}</span>
+          <button type="button" class="btn btn-xs btn-outline" id="btn-copy-sponsor-only" data-code="${sponsorCode}" title="Copy 16-digit code">
+            📋 Copy Code
+          </button>
         </div>
       </div>
 
+      <!-- 2. Connection Relationship & Verification Channels (Android Segmented Controls) -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.85rem; margin-bottom: 1rem;">
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 0.5rem; padding: 0.75rem;">
+          <div style="font-size: 0.75rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.4rem;">1. Connection Relationship</div>
+          <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; margin-bottom: 0.35rem; cursor: pointer;">
+            <input type="radio" name="share-conn-type" value="downline" checked>
+            <span>Downline Member (Level-Down Seekers)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; cursor: pointer;">
+            <input type="radio" name="share-conn-type" value="parallel">
+            <span>Parallel Co-Mentor (Healer-to-Healer)</span>
+          </label>
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 0.5rem; padding: 0.75rem;">
+          <div style="font-size: 0.75rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.4rem;">2. Verification Method &amp; PIN</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 0.4rem; padding: 0.4rem 0.65rem;">
+            <div>
+              <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Generated Activation PIN</div>
+              <div style="font-size: 1.05rem; font-weight: 800; color: #10b981; font-family: var(--font-mono); letter-spacing: 2px;">${activePin}</div>
+            </div>
+            <button type="button" class="btn btn-xs btn-outline" id="btn-copy-pin-only" data-pin="${activePin}" title="Copy PIN">
+              📋
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Official App Installation & Repository Badges -->
+      <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 0.65rem; padding: 0.85rem 1rem; margin-bottom: 1rem;">
+        <div style="font-size: 0.78rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <span>📦</span> Official App Installation &amp; Online Links
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.6rem;">
+          <a href="${apkDownloadUrl}" target="_blank" class="btn btn-sm btn-gold" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.8rem; text-decoration: none;" title="Download Android APK">
+            <span>📥</span> Direct APK Download
+          </a>
+          <a href="${webPortalUrl}" target="_blank" class="btn btn-sm btn-outline" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.8rem; text-decoration: none;" title="Open Web Portal">
+            <span>🌐</span> Online Web App
+          </a>
+          <a href="${telegramLink}" target="_blank" class="btn btn-sm btn-outline" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.8rem; text-decoration: none;" title="Open Telegram Bot Pairing">
+            <span>✈️</span> Telegram Pairing Bot
+          </a>
+          <a href="${repoUrl}" target="_blank" class="btn btn-sm btn-outline" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.8rem; text-decoration: none;" title="View GitHub Source">
+            <span>🐙</span> GitHub Repository
+          </a>
+        </div>
+      </div>
+
+      <!-- 4. Multi-Channel Instant Share Buttons -->
+      <div style="margin-bottom: 1rem;">
+        <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem;">3. Share Invitation via Apps:</div>
+        <div class="share-channels-grid">
+          <a href="https://api.whatsapp.com/send?text=${encodedPayload}" target="_blank" class="btn-share-channel btn-share-whatsapp" title="Share via WhatsApp">
+            <span>💬</span> <span>WhatsApp</span>
+          </a>
+          <a href="https://t.me/share/url?url=${encodedApk}&text=${encodedPayload}" target="_blank" class="btn-share-channel btn-share-telegram" title="Share via Telegram">
+            <span>✈️</span> <span>Telegram</span>
+          </a>
+          <a href="sms:?body=${encodedPayload}" class="btn-share-channel btn-share-sms" title="Send SMS Invite">
+            <span>📱</span> <span>SMS</span>
+          </a>
+          <button type="button" class="btn-share-channel btn-share-copy" id="btn-copy-pairing-payload" data-payload="${encodeURIComponent(payloadText)}" title="Copy Full Invite Text">
+            <span>📋</span> <span>Copy Full Invite</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 5. Formatted Shareable Invitation Preview -->
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem;">Shareable Invitation Payload (Monospace Preview):</div>
+        <pre style="background: rgba(0,0,0,0.45); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-sm); padding: 0.85rem; font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-secondary); white-space: pre-wrap; max-height: 130px; overflow-y: auto;">${payloadText}</pre>
+      </div>
+
+      <!-- 6. 24-Hour Pending Approvals Section -->
       <div class="pending-approvals-card">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
           <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); font-family: var(--font-heading);">
             ⏳ Pending Seeker Hierarchy Approvals (24-Hour Protocol)
           </div>
@@ -2750,8 +3042,8 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
             + Test New Seeker Request
           </button>
         </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.35rem 0 0.75rem 0;">
-          Seekers who entered your sponsor code enter a 24-hour verification window. Approve within 24 hours to promote to your downline hierarchy.
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.35rem 0 0.75rem 0;">
+          Seekers who enter your sponsor code enter a 24-hour verification window. Approve within 24 hours to promote to your downline hierarchy.
         </p>
 
         <div style="overflow-x: auto;">
@@ -2777,9 +3069,35 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
     if (copyBtn) {
       copyBtn.addEventListener('click', () => {
         const text = decodeURIComponent(copyBtn.getAttribute('data-payload') || '');
-        navigator.clipboard.writeText(text).then(() => {
-          this.showToast('✓ Full 24-Hour Pairing Invite copied to clipboard!');
-        });
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+            this.showToast('✓ Full 24-Hour Pairing Invite copied to clipboard!');
+          });
+        }
+      });
+    }
+
+    const copySponsorBtn = body.querySelector('#btn-copy-sponsor-only');
+    if (copySponsorBtn) {
+      copySponsorBtn.addEventListener('click', () => {
+        const code = copySponsorBtn.getAttribute('data-code') || '';
+        if (navigator.clipboard && code) {
+          navigator.clipboard.writeText(code).then(() => {
+            this.showToast(`📋 Sponsor Code copied: ${code}`);
+          });
+        }
+      });
+    }
+
+    const copyPinBtn = body.querySelector('#btn-copy-pin-only');
+    if (copyPinBtn) {
+      copyPinBtn.addEventListener('click', () => {
+        const pin = copyPinBtn.getAttribute('data-pin') || '';
+        if (navigator.clipboard && pin) {
+          navigator.clipboard.writeText(pin).then(() => {
+            this.showToast(`🔑 Activation PIN copied: ${pin}`);
+          });
+        }
       });
     }
   }
@@ -2845,39 +3163,79 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
   }
 
   populateSettings(settings) {
-    if (this.settingDefaultMentorName) this.settingDefaultMentorName.value = settings.defaultMentorName || 'Karim Ji (Founder)';
-    if (this.settingDefaultMentorCode) this.settingDefaultMentorCode.value = settings.defaultMentorCode || 'SKHM-ADM1-7788-9900';
-    if (this.settingSpeechLang) this.settingSpeechLang.value = settings.speechLang || 'en-US';
-    if (this.settingDefaultTargetMalas) this.settingDefaultTargetMalas.value = settings.defaultTargetMalas || '11 Malas Daily';
-    if (this.settingDevoteeCanDelete) this.settingDevoteeCanDelete.checked = settings.allowDevoteeDelete === true;
-    if (this.settingDevoteeCanEditLineage) this.settingDevoteeCanEditLineage.checked = settings.devoteeCanEditLineage !== false;
-    if (this.settingDevoteeCanEnroll) this.settingDevoteeCanEnroll.checked = settings.devoteeCanEnroll !== false;
-    if (this.settingHealerStrictTeam) this.settingHealerStrictTeam.checked = settings.healerStrictTeam !== false;
-    if (this.settingHealerCanCertify) this.settingHealerCanCertify.checked = settings.healerCanCertify !== false;
-    if (this.settingHealerCanDeleteTeam) this.settingHealerCanDeleteTeam.checked = settings.healerCanDeleteTeam !== false;
-    if (this.settingFirebaseUrl) this.settingFirebaseUrl.value = settings.firebaseUrl || 'https://spritualkarim-default-rtdb.firebaseio.com/';
-    if (this.settingDefaultRoleMode) this.settingDefaultRoleMode.value = settings.defaultRoleMode || 'MASTER';
-    if (this.settingAutoSave) this.settingAutoSave.value = settings.autoSaveMode || 'INSTANT';
+    const s = {
+      defaultMentorName: 'Karim Ji (Founder)',
+      defaultMentorCode: 'SKHM-ADM1-7788-9900',
+      speechLang: 'en-US',
+      defaultTargetMalas: '11 Malas Daily',
+      defaultSadhanaStreak: '1 Day',
+      allowDevoteeDelete: false,
+      devoteeCanEditLineage: true,
+      devoteeCanEnroll: true,
+      healerStrictTeam: true,
+      healerCanCertify: true,
+      healerCanDeleteTeam: true,
+      healerCanViewEntireTeam: true,
+      enableLiveSync: true,
+      firebaseUrl: 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/',
+      defaultRoleMode: 'MASTER',
+      autoSaveMode: 'INSTANT',
+      ...(settings || {})
+    };
+
+    const setVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val !== undefined ? val : '';
+    };
+
+    const setChecked = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.checked = Boolean(val);
+    };
+
+    setVal('setting-default-mentor-name', s.defaultMentorName);
+    setVal('setting-default-mentor-code', s.defaultMentorCode);
+    setVal('setting-speech-lang', s.speechLang);
+    setVal('setting-default-target-malas', s.defaultTargetMalas);
+    setChecked('setting-devotee-can-delete', s.allowDevoteeDelete === true);
+    setChecked('setting-devotee-can-edit-lineage', s.devoteeCanEditLineage !== false);
+    setChecked('setting-devotee-can-enroll', s.devoteeCanEnroll !== false);
+    setChecked('setting-healer-strict-team', s.healerStrictTeam !== false);
+    setChecked('setting-healer-can-certify', s.healerCanCertify !== false);
+    setChecked('setting-healer-can-delete-team', s.healerCanDeleteTeam !== false);
+    setVal('setting-firebase-url', s.firebaseUrl);
+    setVal('setting-default-role-mode', s.defaultRoleMode);
+    setVal('setting-auto-save', s.autoSaveMode);
   }
 
   readSettingsFromForm() {
+    const getVal = (id, defaultVal = '') => {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : defaultVal;
+    };
+
+    const getChecked = (id, defaultVal = false) => {
+      const el = document.getElementById(id);
+      return el ? el.checked : defaultVal;
+    };
+
     return {
-      defaultMentorName: this.settingDefaultMentorName ? this.settingDefaultMentorName.value.trim() : 'Karim Ji (Founder)',
-      defaultMentorCode: this.settingDefaultMentorCode ? this.settingDefaultMentorCode.value.trim() : 'SKHM-ADM1-7788-9900',
-      speechLang: this.settingSpeechLang ? this.settingSpeechLang.value : 'en-US',
-      defaultTargetMalas: this.settingDefaultTargetMalas ? this.settingDefaultTargetMalas.value.trim() : '11 Malas Daily',
+      defaultMentorName: getVal('setting-default-mentor-name', 'Karim Ji (Founder)'),
+      defaultMentorCode: getVal('setting-default-mentor-code', 'SKHM-ADM1-7788-9900'),
+      speechLang: getVal('setting-speech-lang', 'en-US'),
+      defaultTargetMalas: getVal('setting-default-target-malas', '11 Malas Daily'),
       defaultSadhanaStreak: '1 Day',
-      allowDevoteeDelete: this.settingDevoteeCanDelete ? this.settingDevoteeCanDelete.checked : false,
-      devoteeCanEditLineage: this.settingDevoteeCanEditLineage ? this.settingDevoteeCanEditLineage.checked : true,
-      devoteeCanEnroll: this.settingDevoteeCanEnroll ? this.settingDevoteeCanEnroll.checked : true,
-      healerStrictTeam: this.settingHealerStrictTeam ? this.settingHealerStrictTeam.checked : true,
-      healerCanCertify: this.settingHealerCanCertify ? this.settingHealerCanCertify.checked : true,
-      healerCanDeleteTeam: this.settingHealerCanDeleteTeam ? this.settingHealerCanDeleteTeam.checked : true,
-      healerCanViewEntireTeam: this.settingHealerStrictTeam ? this.settingHealerStrictTeam.checked : true,
+      allowDevoteeDelete: getChecked('setting-devotee-can-delete', false),
+      devoteeCanEditLineage: getChecked('setting-devotee-can-edit-lineage', true),
+      devoteeCanEnroll: getChecked('setting-devotee-can-enroll', true),
+      healerStrictTeam: getChecked('setting-healer-strict-team', true),
+      healerCanCertify: getChecked('setting-healer-can-certify', true),
+      healerCanDeleteTeam: getChecked('setting-healer-can-delete-team', true),
+      healerCanViewEntireTeam: getChecked('setting-healer-strict-team', true),
       enableLiveSync: true,
-      firebaseUrl: this.settingFirebaseUrl ? this.settingFirebaseUrl.value.trim() : 'https://spritualkarim-default-rtdb.firebaseio.com/',
-      defaultRoleMode: this.settingDefaultRoleMode ? this.settingDefaultRoleMode.value : 'MASTER',
-      autoSaveMode: this.settingAutoSave ? this.settingAutoSave.value : 'INSTANT'
+      firebaseUrl: getVal('setting-firebase-url', 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/'),
+      defaultRoleMode: getVal('setting-default-role-mode', 'MASTER'),
+      autoSaveMode: getVal('setting-auto-save', 'INSTANT')
     };
   }
 
@@ -2887,80 +3245,265 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
     }
   }
 
-  showToast(titleOrMessage, messageText = '', type = 'info', duration = 4000, actionBtn = null) {
-    // 1. Fallback / legacy bottom center toast
-    if (this.toastEl) {
-      this.toastEl.textContent = typeof titleOrMessage === 'string' ? titleOrMessage : 'Action executed';
-      this.toastEl.classList.add('show');
-      setTimeout(() => { if (this.toastEl) this.toastEl.classList.remove('show'); }, 3000);
+  
+  openTierPanel(tierNumber, allProfiles, activeProfileId) {
+    if (!this.tierProfilesPanel) return;
+
+    this.currentOpenTier = tierNumber;
+    const tierMeta = {
+      1: { title: 'Admin Master Profiles', icon: '👑', color: '#8b5cf6', filter: p => p.profileType === 'ADMIN' || p.level === 1 },
+      2: { title: 'Healer Connect Profiles', icon: '🛡️', color: '#10b981', filter: p => p.profileType === 'HEALER' && (p.level === 2 || p.level === 3 || !p.level) },
+      3: { title: 'Trainee Sadhak Profiles', icon: '🌿', color: '#f59e0b', filter: p => p.profileType === 'TRAINEE' || p.level === 4 },
+      4: { title: 'Devotee / Seeker Profiles', icon: '🌟', color: '#3b82f6', filter: p => p.profileType === 'DEVOTEE' || p.level === 5 || (!p.level && p.profileType !== 'ADMIN' && p.profileType !== 'HEALER' && p.profileType !== 'TRAINEE') }
+    };
+
+    const meta = tierMeta[tierNumber] || tierMeta[1];
+    this.currentTierProfiles = (allProfiles || []).filter(meta.filter);
+
+    if (this.tierPanelIcon) this.tierPanelIcon.textContent = meta.icon;
+    if (this.tierPanelTitle) this.tierPanelTitle.textContent = meta.title;
+    if (this.tierPanelCount) this.tierPanelCount.textContent = `${this.currentTierProfiles.length} Member${this.currentTierProfiles.length !== 1 ? 's' : ''}`;
+
+    this._renderTierPanelCards(this.currentTierProfiles, activeProfileId, meta.color);
+
+    // Active state on sidebar legend
+    document.querySelectorAll('#hierarchy-legend-container .legend-item').forEach(item => {
+      const itemTier = parseInt(item.getAttribute('data-tier'), 10);
+      if (itemTier === tierNumber) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+
+    this.tierProfilesPanel.classList.add('is-open');
+    if (this.inputTierPanelSearch) {
+      this.inputTierPanelSearch.value = '';
+      this.inputTierPanelSearch.focus();
+    }
+  }
+
+  closeTierPanel() {
+    if (!this.tierProfilesPanel) return;
+    this.tierProfilesPanel.classList.remove('is-open');
+    this.currentOpenTier = null;
+    document.querySelectorAll('#hierarchy-legend-container .legend-item').forEach(item => {
+      item.classList.remove('active');
+    });
+  }
+
+  _renderTierPanelCards(profiles, activeProfileId, borderColor = '#d4af37') {
+    if (!this.tierPanelProfilesList) return;
+
+    if (profiles.length === 0) {
+      this.tierPanelProfilesList.innerHTML = `
+        <div style="text-align: center; padding: 2rem 1rem; color: var(--text-muted);">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+          <div>No member profiles found in this tier.</div>
+        </div>
+      `;
+      return;
     }
 
-    // 2. Rich Slide-in Bottom-Right Toast Stack
-    if (!this.toastNotificationsContainer) {
-      this.toastNotificationsContainer = document.getElementById('toast-notifications-container');
+    this.tierPanelProfilesList.innerHTML = profiles.map(p => {
+      const isActive = p.id === activeProfileId;
+      const initials = (p.name || 'SK')
+        .split(' ')
+        .map(w => w[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
+
+      const isPaid = p.isPaid !== false && p.paymentStatus !== 'FREE';
+
+      return `
+        <div class="tier-panel-profile-card ${isActive ? 'active' : ''}" data-id="${p.id}" title="Click to view &amp; edit full profile for ${p.name}">
+          <div class="tier-card-avatar-wrap">
+            <div class="tier-card-avatar" style="border-color: ${borderColor};">
+              ${initials}
+              <span class="tier-card-avatar-dot ${p.isActive ? 'online' : 'offline'}"></span>
+            </div>
+          </div>
+          <div class="tier-card-info">
+            <div class="tier-card-name-row">
+              <span class="tier-card-name">${p.name}</span>
+              <span class="tier-card-stamp ${isPaid ? 'stamp-paid' : 'stamp-free'}">${isPaid ? 'PAID' : 'FREE'}</span>
+            </div>
+            <div class="tier-card-ref-row">
+              <span class="tier-card-ref">${p.referenceCode}</span>
+              <span class="tier-card-level-badge">LVL ${p.level || 1}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  updateLegendCounts(profiles) {
+    const counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    (profiles || []).forEach(p => {
+      if (p.profileType === 'ADMIN' || p.level === 1) counts[1]++;
+      else if (p.profileType === 'HEALER') counts[2]++;
+      else if (p.profileType === 'TRAINEE' || p.level === 4) counts[3]++;
+      else counts[4]++;
+    });
+
+    for (let t = 1; t <= 4; t++) {
+      const el = document.getElementById('legend-count-tier-' + t);
+      if (el) el.textContent = counts[t];
+    }
+  }
+
+  showSlideToast(title, message, type = 'info', duration = 4500, actionBtn = null) {
+    let container = document.getElementById('slide-in-toast-stack');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'slide-in-toast-stack';
+      container.className = 'slide-in-toast-stack';
+      document.body.appendChild(container);
     }
 
-    if (this.toastNotificationsContainer) {
-      const toast = document.createElement('div');
-      const toastType = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
-      toast.className = `toast-notification toast-${toastType}`;
+    const toast = document.createElement('div');
+    const validTypes = ['success', 'error', 'warning', 'info'];
+    const toastType = validTypes.includes(type) ? type : 'info';
+    toast.className = 'slide-toast-item slide-toast-' + toastType;
 
-      const iconMap = {
-        success: '🟢',
-        error: '🔴',
-        warning: '🟡',
-        info: '🔵'
-      };
+    const iconMap = {
+      success: '🟢',
+      error: '🔴',
+      warning: '🟡',
+      info: '✨'
+    };
 
-      const title = messageText ? titleOrMessage : 'System Notification';
-      const msg = messageText || titleOrMessage;
-      const icon = iconMap[toastType] || '🔔';
+    const toastTitle = title || 'Spiritual Notification';
+    const toastMsg = message || '';
+    const icon = iconMap[toastType] || '🔔';
 
-      let actionHtml = '';
-      if (actionBtn && actionBtn.text && typeof actionBtn.onClick === 'function') {
-        actionHtml = `<button type="button" class="toast-action-btn" id="toast-action-${Date.now()}">${actionBtn.text}</button>`;
+    let actionHtml = '';
+    if (actionBtn && actionBtn.text && typeof actionBtn.onClick === 'function') {
+      actionHtml = '<button type="button" class="btn btn-xs btn-gold mt-2 toast-action-btn">' + actionBtn.text + '</button>';
+    }
+
+    toast.innerHTML = `
+      <span class="slide-toast-icon">${icon}</span>
+      <div class="slide-toast-content">
+        <div class="slide-toast-title">${toastTitle}</div>
+        <div class="slide-toast-msg">${toastMsg}</div>
+        ${actionHtml}
+      </div>
+      <button type="button" class="slide-toast-close" aria-label="Close Notification">&times;</button>
+      <div class="slide-toast-progress" style="animation-duration: ${duration}ms;"></div>
+    `;
+
+    container.appendChild(toast);
+
+    const dismiss = () => {
+      toast.classList.add('toast-closing');
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 320);
+    };
+
+    toast.querySelector('.slide-toast-close').addEventListener('click', dismiss);
+
+    if (actionHtml) {
+      const btn = toast.querySelector('.toast-action-btn');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          actionBtn.onClick();
+          dismiss();
+        });
+      }
+    }
+
+    setTimeout(dismiss, duration);
+  }
+
+  openCustomDialog({ title = 'Spiritual Confirmation', message = '', icon = '✨', options = [] }) {
+    return new Promise((resolve) => {
+      let backdrop = document.getElementById('spiritual-custom-dialog-backdrop');
+      if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'spiritual-custom-dialog-backdrop';
+        backdrop.className = 'spiritual-dialog-backdrop';
+        document.body.appendChild(backdrop);
       }
 
-      toast.innerHTML = `
-        <span class="toast-icon">${icon}</span>
-        <div class="toast-content">
-          <div class="toast-title">${title}</div>
-          <div class="toast-message">${msg}</div>
-          ${actionHtml}
+      const defaultOptions = options && options.length > 0 ? options : [
+        { text: 'Confirm', type: 'btn-gold', value: true },
+        { text: 'Cancel', type: 'btn-outline', value: false }
+      ];
+
+      const actionsHtml = defaultOptions.map((opt, idx) => 
+        '<button type="button" class="btn ' + (opt.type || 'btn-outline') + '" data-dialog-idx="' + idx + '">' +
+          opt.text +
+        '</button>'
+      ).join('');
+
+      backdrop.innerHTML = `
+        <div class="spiritual-dialog-box" role="dialog" aria-modal="true">
+          <div class="spiritual-dialog-header">
+            <span class="spiritual-dialog-icon">${icon}</span>
+            <h3 class="spiritual-dialog-title">${title}</h3>
+          </div>
+          <div class="spiritual-dialog-body">${message}</div>
+          <div class="spiritual-dialog-actions">${actionsHtml}</div>
         </div>
-        <button type="button" class="toast-close-btn" aria-label="Close Notification">&times;</button>
-        <div class="toast-progress-bar" style="animation: toastProgress ${duration}ms linear forwards;"></div>
       `;
 
-      this.toastNotificationsContainer.appendChild(toast);
+      backdrop.classList.add('is-active');
 
-      // Slide in animation
-      requestAnimationFrame(() => {
-        toast.classList.add('toast-visible');
-      });
-
-      const dismiss = () => {
-        toast.classList.remove('toast-visible');
-        toast.classList.add('toast-hiding');
-        setTimeout(() => {
-          if (toast.parentNode) toast.parentNode.removeChild(toast);
-        }, 400);
+      const closeDialog = (resValue) => {
+        backdrop.classList.remove('is-active');
+        resolve(resValue);
       };
 
-      toast.querySelector('.toast-close-btn').addEventListener('click', dismiss);
+      const actionBtns = backdrop.querySelectorAll('[data-dialog-idx]');
+      actionBtns.forEach((btn, idx) => {
+        btn.addEventListener('click', () => {
+          const opt = defaultOptions[idx];
+          if (typeof opt.action === 'function') {
+            opt.action();
+          }
+          closeDialog(opt.value !== undefined ? opt.value : true);
+        });
+      });
 
-      if (actionHtml) {
-        const btn = toast.querySelector('.toast-action-btn');
-        if (btn) {
-          btn.addEventListener('click', () => {
-            actionBtn.onClick();
-            dismiss();
-          });
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) {
+          closeDialog(false);
         }
-      }
+      });
+    });
+  }
 
-      setTimeout(dismiss, duration);
+  setValidationStatus(inputEl, isValid, errorMsg = '') {
+    if (!inputEl) return;
+    const group = inputEl.closest('.form-group') || inputEl.parentElement;
+    if (!group) return;
+
+    let msgEl = group.querySelector('.input-validation-msg');
+    if (!msgEl) {
+      msgEl = document.createElement('div');
+      msgEl.className = 'input-validation-msg';
+      group.appendChild(msgEl);
     }
+
+    if (isValid) {
+      group.classList.remove('has-validation-error');
+      group.classList.add('has-validation-success');
+      msgEl.textContent = errorMsg || '✓ Valid entry';
+    } else {
+      group.classList.remove('has-validation-success');
+      group.classList.add('has-validation-error');
+      msgEl.textContent = errorMsg || '⚠️ Invalid format';
+    }
+  }
+
+  showToast(titleOrMessage, messageText = '', type = 'info', duration = 4000, actionBtn = null) {
+    const title = messageText ? titleOrMessage : 'Spiritual Karim System';
+    const msg = messageText || titleOrMessage;
+    this.showSlideToast(title, msg, type, duration, actionBtn);
   }
 
   showFloatingNotification(title, message, icon = '🔔', duration = 4500) {
@@ -3638,11 +4181,384 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
 
     this.treeDrawerBody.innerHTML = html;
   }
+
+  // ==========================================================================
+  // ANDROID COMPOSE ALIGNED: HEALERS HUB & RECURSIVE HIERARCHY TREE METHODS
+  // ==========================================================================
+
+  renderAndroidHealersHub(scopedProfiles = [], activeProfile = null, roleMode = 'MASTER') {
+    // 1. Summary Metrics
+    const totalCount = scopedProfiles.length;
+    const adminCount = scopedProfiles.filter(p => p.profileType === 'ADMIN' || p.level === 1).length;
+    const healersCount = scopedProfiles.filter(p => p.profileType === 'HEALER' || p.level === 2 || p.level === 3).length;
+    const traineesCount = scopedProfiles.filter(p => p.profileType === 'TRAINEE' || p.level === 4).length;
+    const devoteesCount = scopedProfiles.filter(p => p.profileType === 'DEVOTEE' || p.level === 5).length;
+
+    if (this.hubMetricTotal) this.hubMetricTotal.textContent = totalCount;
+    if (this.hubMetricAdmin) this.hubMetricAdmin.textContent = adminCount;
+    if (this.hubMetricHealers) this.hubMetricHealers.textContent = healersCount;
+    if (this.hubMetricTrainees) this.hubMetricTrainees.textContent = traineesCount;
+    if (this.hubMetricDevotees) this.hubMetricDevotees.textContent = devoteesCount;
+
+    // 2. Category Filter Chip Counts
+    const setChipText = (id, count) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = count;
+    };
+    setChipText('chip-cnt-all', totalCount);
+    setChipText('chip-cnt-admin', adminCount);
+    setChipText('chip-cnt-healers', healersCount);
+    setChipText('chip-cnt-trainees', traineesCount);
+    setChipText('chip-cnt-devotees', devoteesCount);
+
+    // 3. Filter List by Category & Search Query
+    const query = (this.healersSearchQuery || '').trim().toLowerCase();
+    const category = this.healersSelectedCategory || 'ALL';
+
+    const filtered = scopedProfiles.filter(p => {
+      const matchesCategory = category === 'ALL' || p.profileType === category;
+      const matchesQuery = !query ||
+        (p.name && p.name.toLowerCase().includes(query)) ||
+        (p.referenceCode && p.referenceCode.toLowerCase().includes(query)) ||
+        (p.phone && p.phone.includes(query)) ||
+        (p.city && p.city.toLowerCase().includes(query)) ||
+        (p.level && p.level.toString() === query);
+      return matchesCategory && matchesQuery;
+    });
+
+    if (!this.healersHubCardsContainer) {
+      this.healersHubCardsContainer = document.getElementById('healers-hub-cards-container');
+    }
+    if (!this.healersHubCardsContainer) return;
+
+    if (filtered.length === 0) {
+      this.healersHubCardsContainer.innerHTML = `
+        <div class="healers-empty-state">
+          <div class="healers-empty-state-icon">🔍</div>
+          <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">No profiles found</div>
+          <div style="font-size: 0.82rem;">No member profiles match "${query || category}". Try adjusting search filters.</div>
+        </div>
+      `;
+      return;
+    }
+
+    const getAvatarClass = (p) => {
+      if (p.profileType === 'ADMIN' || p.level === 1) return 'avatar-admin';
+      if (p.profileType === 'HEALER' || p.level === 2 || p.level === 3) return 'avatar-healer';
+      if (p.profileType === 'TRAINEE' || p.level === 4) return 'avatar-trainee';
+      return 'avatar-devotee';
+    };
+
+    const getBadgeClass = (p) => {
+      if (p.profileType === 'ADMIN' || p.level === 1) return 'badge-pill-admin';
+      if (p.profileType === 'HEALER' || p.level === 2 || p.level === 3) return 'badge-pill-healer';
+      if (p.profileType === 'TRAINEE' || p.level === 4) return 'badge-pill-trainee';
+      return 'badge-pill-devotee';
+    };
+
+    const getRoleName = (p) => {
+      if (p.profileType === 'ADMIN' || p.level === 1) return 'Founder Master';
+      if (p.profileType === 'HEALER' || p.level === 2 || p.level === 3) return 'Spiritual Healer';
+      if (p.profileType === 'TRAINEE' || p.level === 4) return 'Mentorship Trainee';
+      return 'Devotee Seeker';
+    };
+
+    this.healersHubCardsContainer.innerHTML = filtered.map(p => {
+      const remediesCount = (p.selectedRemedies || []).length;
+      const isCurrentActive = activeProfile && activeProfile.id === p.id;
+
+      return `
+        <div class="healer-member-card ${isCurrentActive ? 'active-member-card' : ''}" data-profile-id="${p.id}" style="${isCurrentActive ? 'border-color: var(--gold-400); background: rgba(212, 175, 55, 0.08);' : ''}">
+          <!-- Level Avatar Box -->
+          <div class="healer-member-avatar-box ${getAvatarClass(p)}">
+            L${p.level || 1}
+          </div>
+
+          <!-- Main Info -->
+          <div class="healer-member-info">
+            <div class="healer-member-name-row">
+              <span class="healer-member-name">${p.name || 'Member'}</span>
+              <span class="healer-role-badge-pill ${getBadgeClass(p)}">${getRoleName(p)}</span>
+              ${p.isPaid ? '<span class="stamp-indicator stamp-paid" style="font-size: 0.65rem; padding: 0.1rem 0.35rem;">PAID</span>' : '<span class="stamp-indicator stamp-free" style="font-size: 0.65rem; padding: 0.1rem 0.35rem;">FREE</span>'}
+            </div>
+
+            <div class="healer-member-contact">
+              ${p.phone || '+91 98000 00000'} • ${p.city || 'National'}
+            </div>
+
+            <!-- 16-Digit Reference Code Pill with Copy -->
+            <div>
+              <span class="healer-ref-code-pill btn-copy-card-code" data-code="${p.referenceCode}" title="Click to copy 16-digit reference code">
+                <span>📱</span>
+                <span class="healer-ref-code-text">${p.referenceCode || 'SKHM-0000-0000-0000'}</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">📋</span>
+              </span>
+            </div>
+
+            <!-- Referred By & Remedy Pill -->
+            <div class="healer-member-meta-row">
+              <span>Sponsor: ${(p.referredByCode || 'ROOT-0000-0000-0000').substring(0, 14)}...</span>
+              ${remediesCount > 0 ? `<span class="healer-remedy-count-pill">🌿 ${remediesCount} Remedies</span>` : ''}
+            </div>
+          </div>
+
+          <!-- 3-Dots Action Menu Trigger -->
+          <div style="position: relative;">
+            <button type="button" class="healer-card-actions-menu-btn btn-member-quick-opts" data-profile-id="${p.id}" title="Member Actions">
+              ⋮
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  renderAndroidHierarchyTree(profiles = [], levelFilter = 'ALL', activeProfile = null, treeScope = 'downline') {
+    if (!this.hierarchyRecursiveTreeView) {
+      this.hierarchyRecursiveTreeView = document.getElementById('hierarchy-recursive-tree-view');
+    }
+    if (!this.hierarchyRecursiveTreeView) return;
+
+    const allProfiles = profiles || [];
+    const focusNode = activeProfile || (this.allProfiles ? this.allProfiles[0] : allProfiles[0]);
+    if (!focusNode) {
+      this.hierarchyRecursiveTreeView.innerHTML = '<div class="healers-empty-state"><div class="healers-empty-state-icon">🌳</div><div>No tree members found.</div></div>';
+      return;
+    }
+
+    // 1. Update Level Filter Chip Counts
+    const setTreeCount = (id, count) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = count;
+    };
+    setTreeCount('tree-cnt-all', allProfiles.length);
+    setTreeCount('tree-cnt-1', allProfiles.filter(p => p.level === 1 || p.profileType === 'ADMIN').length);
+    setTreeCount('tree-cnt-2', allProfiles.filter(p => p.level === 2 || p.profileType === 'HEALER').length);
+    setTreeCount('tree-cnt-3', allProfiles.filter(p => p.level === 3).length);
+    setTreeCount('tree-cnt-4', allProfiles.filter(p => p.level === 4 || p.profileType === 'TRAINEE').length);
+    setTreeCount('tree-cnt-5', allProfiles.filter(p => p.level === 5 || p.profileType === 'DEVOTEE').length);
+
+    // 2. Build Ancestral Upline Breadcrumb Path (Top of Tree)
+    const breadcrumbChain = [];
+    let currentTrace = focusNode;
+    const visitedCodes = new Set();
+
+    while (currentTrace && !visitedCodes.has(currentTrace.referenceCode)) {
+      visitedCodes.add(currentTrace.referenceCode);
+      breadcrumbChain.unshift(currentTrace);
+      if (!currentTrace.referredByCode || currentTrace.referredByCode === 'ROOT' || currentTrace.referredByCode === 'ROOT-0000-0000-0000') {
+        break;
+      }
+      const parent = allProfiles.find(p => p.referenceCode === currentTrace.referredByCode);
+      if (!parent || parent.id === currentTrace.id) break;
+      currentTrace = parent;
+    }
+
+    const breadcrumbHtml = breadcrumbChain.map((node, idx) => {
+      const isCurrent = node.id === focusNode.id;
+      const roleIcon = node.profileType === 'ADMIN' ? '👑' : (node.profileType === 'HEALER' ? '🛡️' : (node.profileType === 'TRAINEE' ? '🌿' : '🌟'));
+      return `
+        <span class="tree-breadcrumb-item ${isCurrent ? 'current-node' : 'btn-jump-profile-trigger'}" data-profile-id="${node.id}" title="Jump to ${node.name}">
+          ${roleIcon} ${node.name}
+        </span>
+        ${idx < breadcrumbChain.length - 1 ? '<span class="tree-breadcrumb-sep">➔</span>' : ''}
+      `;
+    }).join('');
+
+    // 3. Calculate Direct and Total Downline Sub-tree for Focus Node
+    const getDownlineMembers = (parentCode, visited = new Set()) => {
+      const list = [];
+      const direct = allProfiles.filter(p => p.referredByCode === parentCode && p.id !== focusNode.id);
+      for (const d of direct) {
+        if (!visited.has(d.referenceCode)) {
+          visited.add(d.referenceCode);
+          list.push(d);
+          list.push(...getDownlineMembers(d.referenceCode, visited));
+        }
+      }
+      return list;
+    };
+
+    const directChildren = allProfiles.filter(p => p.referredByCode === focusNode.referenceCode && p.id !== focusNode.id);
+    const totalDownlines = getDownlineMembers(focusNode.referenceCode);
+    const isPaid = focusNode.isPaid !== false && focusNode.paymentStatus !== 'FREE';
+    const initials = (focusNode.name || 'SK').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+
+    // 4. Render Top Focus Node Banner
+    const topBannerHtml = `
+      <div class="tree-focus-top-banner">
+        <div class="tree-ancestral-breadcrumb">
+          <span style="color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase;">Lineage Path:</span>
+          ${breadcrumbHtml}
+        </div>
+
+        <div class="tree-focus-profile-row">
+          <div class="tree-focus-avatar-group">
+            <div class="tree-focus-avatar">${initials}</div>
+            <div>
+              <div class="tree-focus-title">${focusNode.name}</div>
+              <div class="tree-focus-sub">
+                <span class="role-badge" style="font-size: 0.68rem; padding: 0.15rem 0.5rem;">${focusNode.profileType} • LVL ${focusNode.level || 1}</span>
+                <span style="font-family: monospace;">${focusNode.referenceCode}</span>
+                <span class="stamp-indicator ${isPaid ? 'stamp-paid' : 'stamp-free'}" style="font-size: 0.65rem;">${isPaid ? 'PAID' : 'FREE'}</span>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button type="button" class="btn btn-xs btn-outline btn-toggle-tree-view-scope" data-scope="${treeScope === 'downline' ? 'org' : 'downline'}" title="Switch between scoped downline and full org tree">
+              ${treeScope === 'downline' ? '🌐 View Entire Org Tree' : '🎯 View Focus Downlines'}
+            </button>
+          </div>
+        </div>
+
+        <div class="tree-metrics-bar">
+          <div class="tree-metric-box">
+            <div class="tree-metric-label">Direct Referrals (L1)</div>
+            <div class="tree-metric-val">${directChildren.length}</div>
+          </div>
+          <div class="tree-metric-box">
+            <div class="tree-metric-label">Total Downlines</div>
+            <div class="tree-metric-val">${totalDownlines.length}</div>
+          </div>
+          <div class="tree-metric-box">
+            <div class="tree-metric-label">Upline Sponsor</div>
+            <div class="tree-metric-val" style="font-size: 0.75rem; font-family: monospace;">${focusNode.referredByCode || 'ROOT'}</div>
+          </div>
+          <div class="tree-metric-box">
+            <div class="tree-metric-label">Network Status</div>
+            <div class="tree-metric-val" style="color: #10b981; font-size: 0.8rem;">🟢 ACTIVE</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // 5. Render Recursive Downline Nodes
+    let treeBodyHtml = '';
+
+    if (levelFilter !== 'ALL') {
+      const targetLvl = parseInt(levelFilter, 10);
+      const levelMembers = allProfiles.filter(p => p.level === targetLvl || (targetLvl === 1 && p.profileType === 'ADMIN') || (targetLvl === 2 && p.profileType === 'HEALER') || (targetLvl === 4 && p.profileType === 'TRAINEE') || (targetLvl === 5 && p.profileType === 'DEVOTEE'));
+
+      treeBodyHtml = `
+        <div style="font-weight: 700; color: var(--gold-400); margin-bottom: 0.65rem; font-size: 0.95rem;">
+          Members in Level Generation ${targetLvl} (${levelMembers.length})
+        </div>
+        ${levelMembers.map(m => this._renderHierarchyNodeCardHtml(m, false, false)).join('')}
+      `;
+    } else if (treeScope === 'downline') {
+      // Scoped Downline Tree under Focus Node
+      if (directChildren.length === 0) {
+        treeBodyHtml = `
+          <div class="healers-empty-state" style="background: rgba(0,0,0,0.25); border: 1px dashed rgba(212,175,55,0.25); border-radius: 0.75rem; padding: 2rem 1rem;">
+            <div class="healers-empty-state-icon">🌱</div>
+            <div style="font-weight: 700; color: var(--gold-400); margin-bottom: 0.35rem;">No Downline Disciples Yet under ${focusNode.name}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); max-width: 440px; margin: 0 auto 1rem auto;">
+              Share reference code <strong>${focusNode.referenceCode}</strong> or 24-Hour pairing invite from the top bar to connect new trainees and seekers under this lineage.
+            </div>
+            <div style="display: flex; justify-content: center; gap: 0.6rem;">
+              <button type="button" class="btn btn-sm btn-gold" id="btn-tree-copy-invite" data-code="${focusNode.referenceCode}">
+                📋 Copy Invite Code
+              </button>
+              <button type="button" class="btn btn-sm btn-outline btn-toggle-tree-view-scope" data-scope="org">
+                🌐 View Full Organization Tree (${allProfiles.length})
+              </button>
+            </div>
+          </div>
+        `;
+      } else {
+        treeBodyHtml = `
+          <div class="tree-scope-title" style="margin-bottom: 0.75rem; color: var(--gold-400);">
+            <span>🌿</span> Connected Downlines under ${focusNode.name} (${totalDownlines.length} Members)
+          </div>
+          ${this._renderRecursiveTreeBranchHtml(focusNode, allProfiles, 0)}
+        `;
+      }
+    } else {
+      // Full Organization Tree (starting from root level 1 nodes)
+      const allRefCodes = new Set(allProfiles.map(p => p.referenceCode));
+      const rootProfiles = allProfiles.filter(p => p.level === 1 || p.profileType === 'ADMIN' || !allRefCodes.has(p.referredByCode));
+      const effectiveRoots = rootProfiles.length > 0 ? rootProfiles : [allProfiles[0]];
+
+      treeBodyHtml = `
+        <div class="tree-scope-title" style="margin-bottom: 0.75rem; color: var(--gold-400);">
+          <span>🌐</span> Full Organization Lineage Tree (${allProfiles.length} Members)
+        </div>
+        ${effectiveRoots.map(root => this._renderRecursiveTreeBranchHtml(root, allProfiles, 0)).join('')}
+      `;
+    }
+
+    this.hierarchyRecursiveTreeView.innerHTML = topBannerHtml + treeBodyHtml;
+  }
+
+  _renderRecursiveTreeBranchHtml(node, allProfiles, indentDp) {
+    const children = allProfiles.filter(p => p.referredByCode && p.referredByCode === node.referenceCode && p.id !== node.id);
+    const hasChildren = children.length > 0;
+    const isExpanded = true;
+
+    const childrenHtml = hasChildren ? `
+      <div class="hierarchy-node-children-branch" id="tree-branch-${node.id}">
+        ${children.map(child => this._renderRecursiveTreeBranchHtml(child, allProfiles, indentDp + 16)).join('')}
+      </div>
+    ` : '';
+
+    return `
+      <div class="hierarchy-tree-node-wrapper" data-node-id="${node.id}">
+        ${this._renderHierarchyNodeCardHtml(node, hasChildren, isExpanded)}
+        ${childrenHtml}
+      </div>
+    `;
+  }
+
+  _renderHierarchyNodeCardHtml(profile, hasChildren = false, isExpanded = true) {
+    const getAvatarBg = (p) => {
+      if (p.profileType === 'ADMIN' || p.level === 1) return 'linear-gradient(135deg, #7a1c37, #b91c1c)';
+      if (p.profileType === 'HEALER' || p.level === 2 || p.level === 3) return 'linear-gradient(135deg, #fcb900, #d97706)';
+      if (p.profileType === 'TRAINEE' || p.level === 4) return 'linear-gradient(135deg, #00d084, #059669)';
+      return 'linear-gradient(135deg, #0088cc, #2563eb)';
+    };
+
+    return `
+      <div class="hierarchy-node-card-item" data-profile-id="${profile.id}">
+        ${hasChildren ? `
+          <button type="button" class="hierarchy-node-expand-btn btn-toggle-tree-branch" data-node-id="${profile.id}" title="Expand / Collapse Branch">
+            ${isExpanded ? '−' : '+'}
+          </button>
+        ` : '<span style="width: 24px;"></span>'}
+
+        <!-- Level Circle -->
+        <div class="hierarchy-node-level-circle" style="background: ${getAvatarBg(profile)};">
+          L${profile.level || 1}
+        </div>
+
+        <!-- Node Info (Click to jump to profile) -->
+        <div class="hierarchy-node-content btn-jump-profile-trigger" data-profile-id="${profile.id}" title="Click to view full details for ${profile.name}">
+          <div class="hierarchy-node-title-row">
+            <span class="hierarchy-node-name">${profile.name || 'Member'}</span>
+            ${profile.isPaid ? '<span style="font-size: 0.65rem; color: #10b981; font-weight: 700;">● PAID</span>' : '<span style="font-size: 0.65rem; color: #ef4444; font-weight: 700;">○ FREE</span>'}
+          </div>
+          <div class="hierarchy-node-details">
+            ${profile.profileType || 'DEVOTEE'} • ${profile.referenceCode || 'SKHM-0000'}
+          </div>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="hierarchy-node-actions-row">
+          <button type="button" class="hierarchy-node-action-btn btn-share-tree-node" data-profile-id="${profile.id}" title="Share Node Reference">
+            📲 Share
+          </button>
+          <button type="button" class="hierarchy-node-action-btn btn-jump-profile-trigger" data-profile-id="${profile.id}" title="Inspect Details">
+            👁️ View
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
 }
 
-// ==============================================================
+// ============================================================== 
 // 4. CONTROLLER LAYER (INTERCONNECTING ALL TABS & DRAWER ACTIONS)
-// ==============================================================
+// ============================================================== 
 class ProfileController {
   constructor(model, view) {
     this.model = model;
@@ -3654,180 +4570,12 @@ class ProfileController {
     this._renderCurrentState();
     this._bindNavigationTabs();
     this._bindSadhanaCatalogEvents();
-    this._bindEvents();
+    this._setupEventListeners();
 
     window.addEventListener('online', () => {
       this.model.flushOfflineSyncQueue();
       this.view.showToast('📶 Online connection restored. Telemetry synced.');
     });
-  }
-
-  // ==========================================
-  // Device OS Theme Management (Auto / Dark / Light)
-  // ==========================================
-  _initTheme() {
-    const savedTheme = localStorage.getItem('sk_theme_preference') || 'auto';
-    this._applyTheme(savedTheme, false);
-
-    // Dynamic listener for OS theme preference changes
-    try {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      mediaQuery.addEventListener('change', () => {
-        const currentPref = localStorage.getItem('sk_theme_preference') || 'auto';
-        if (currentPref === 'auto') {
-          this._applyTheme('auto', false);
-        }
-      });
-    } catch (err) {
-      console.warn('MatchMedia listener error', err);
-    }
-  }
-
-  _applyTheme(pref, showToast = false) {
-    localStorage.setItem('sk_theme_preference', pref);
-    let resolvedTheme = pref;
-    if (pref === 'auto') {
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      resolvedTheme = prefersDark ? 'dark' : 'light';
-    }
-
-    document.documentElement.setAttribute('data-theme', resolvedTheme);
-
-    if (this.view.themeIcon && this.view.themeLabel) {
-      if (pref === 'auto') {
-        this.view.themeIcon.textContent = '💻';
-        this.view.themeLabel.textContent = `Auto (${resolvedTheme === 'dark' ? 'Dark' : 'Light'})`;
-        if (this.view.btnThemeToggle) {
-          this.view.btnThemeToggle.title = `Theme: Auto (Device OS: ${resolvedTheme === 'dark' ? 'Dark' : 'Light'}) | Click to change`;
-        }
-      } else if (pref === 'dark') {
-        this.view.themeIcon.textContent = '🌙';
-        this.view.themeLabel.textContent = 'Dark';
-        if (this.view.btnThemeToggle) {
-          this.view.btnThemeToggle.title = 'Theme: Dark Mode | Click to change';
-        }
-      } else {
-        this.view.themeIcon.textContent = '☀️';
-        this.view.themeLabel.textContent = 'Light';
-        if (this.view.btnThemeToggle) {
-          this.view.btnThemeToggle.title = 'Theme: Light Mode | Click to change';
-        }
-      }
-    }
-
-    if (showToast) {
-      this.view.showToast(`🎨 Theme switched to: ${pref.toUpperCase()}`);
-    }
-  }
-
-  _cycleTheme() {
-    const current = localStorage.getItem('sk_theme_preference') || 'auto';
-    const sequence = ['auto', 'dark', 'light'];
-    const nextIndex = (sequence.indexOf(current) + 1) % sequence.length;
-    const nextTheme = sequence[nextIndex];
-    this._applyTheme(nextTheme, true);
-  }
-
-  _renderCurrentState() {
-    const active = this.model.getActiveProfile();
-    const visibleProfiles = this.model.getVisibleProfiles();
-    const roleMode = this.model.getRoleMode();
-    const settings = this.model.settings;
-    this.view.allProfiles = this.model.profiles;
-    this.view.render(active, visibleProfiles, roleMode, settings);
-    this._filterRemedies();
-  }
-
-  _filterRemedies() {
-    const searchInput = document.getElementById('input-search-remedies');
-    const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
-    const activeSeg = document.querySelector('.segmented-control[data-target-section="remedies"] .segmented-item.active');
-    const filterMode = activeSeg ? (activeSeg.getAttribute('data-filter') || 'ALL') : 'ALL';
-
-    const remedyCards = document.querySelectorAll('.remedy-card-option');
-    let matchCount = 0;
-
-    remedyCards.forEach(card => {
-      const titleEl = card.querySelector('.option-title');
-      const tagEl = card.querySelector('.option-tag');
-      const sadhanaId = card.getAttribute('data-sadhana-id') || '';
-      const catalogItem = SADHANA_CATALOG[sadhanaId] || {};
-
-      const textContent = `${titleEl ? titleEl.textContent : ''} ${tagEl ? tagEl.textContent : ''} ${catalogItem.summary || ''} ${catalogItem.mantra || ''}`.toLowerCase();
-      const isPaid = card.classList.contains('tile-paid') || card.querySelector('.stamp-paid') !== null;
-
-      const matchesSearch = query === '' || textContent.includes(query);
-      const matchesFilter = filterMode === 'ALL' || (filterMode === 'PAID' && isPaid) || (filterMode === 'FREE' && !isPaid);
-
-      if (matchesSearch && matchesFilter) {
-        card.style.display = '';
-        matchCount++;
-      } else {
-        card.style.display = 'none';
-      }
-    });
-
-    // Also manage category group headers visibility if all cards inside are hidden
-    document.querySelectorAll('.remedy-category-group').forEach(group => {
-      const visibleCards = group.querySelectorAll('.remedy-card-option:not([style*="display: none"])');
-      group.style.display = visibleCards.length > 0 ? '' : 'none';
-    });
-  }
-
-  _bindNavigationTabs() {
-    const mainTabs = document.querySelectorAll('.main-tab-btn');
-    mainTabs.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const targetTabId = btn.getAttribute('data-main-tab');
-        this.switchMainTab(targetTabId);
-      });
-    });
-
-    const setupSubTabs = (containerSelector) => {
-      const panel = document.querySelector(containerSelector);
-      if (!panel) return;
-      const subTabBtns = panel.querySelectorAll('.sub-tab-btn');
-      subTabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const targetSubId = btn.getAttribute('data-sub-tab');
-          subTabBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-
-          panel.querySelectorAll('.sub-tab-panel').forEach(sp => {
-            sp.classList.remove('active');
-            if (sp.id === targetSubId) {
-              sp.classList.add('active');
-            }
-          });
-        });
-      });
-    };
-
-    setupSubTabs('#tab-devotee-personal');
-    setupSubTabs('#tab-seeker-purpose');
-  }
-
-  switchMainTab(tabId) {
-    const mainTabs = document.querySelectorAll('.main-tab-btn');
-    mainTabs.forEach(b => {
-      b.classList.toggle('active', b.getAttribute('data-main-tab') === tabId);
-    });
-
-    document.querySelectorAll('.main-tab-content-panel').forEach(panel => {
-      panel.classList.toggle('active', panel.id === tabId);
-    });
-
-    // Auto-render & Smart Fit if switching to In-Body Genealogy Tree Tab (Tab 5)
-    if (tabId === 'tab-genealogy-tree') {
-      const activeFilter = this.view.bodyTreeTierFilter ? this.view.bodyTreeTierFilter.value : 'ALL';
-      const tier = activeFilter === 'ALL' ? null : parseInt(activeFilter, 10);
-      const query = this.view.bodyTreeSearchInput ? this.view.bodyTreeSearchInput.value : '';
-      const mode = this.view.inBodyTreePanState?.layoutMode || 'cluster';
-      this.view.renderInBodyHierarchyTree(this.model.profiles, tier, query, mode);
-      setTimeout(() => {
-        this.view.smartFitInBodyTree();
-      }, 80);
-    }
   }
 
   _bindSadhanaCatalogEvents() {
@@ -4304,6 +5052,168 @@ class ProfileController {
       });
     }
 
+    // ==============================================================
+    // ANDROID COMPOSE ALIGNED: HEALERS HUB & RECURSIVE TREE EVENT BINDINGS
+    // ==============================================================
+
+    // 1. Search Bar in Healers Hub
+    const inputHealersSearch = document.getElementById('input-healers-search');
+    if (inputHealersSearch) {
+      inputHealersSearch.addEventListener('input', (e) => {
+        this.view.healersSearchQuery = e.target.value;
+        const scoped = this.model.getScopedProfiles();
+        this.view.renderAndroidHealersHub(scoped, this.model.getActiveProfile(), this.model.getRoleMode());
+      });
+    }
+
+    // 2. Category Filter Chips in Healers Hub
+    const filterChipsContainer = document.getElementById('healers-filter-chips-container');
+    if (filterChipsContainer) {
+      filterChipsContainer.addEventListener('click', (e) => {
+        const chip = e.target.closest('.healer-filter-chip');
+        if (chip) {
+          filterChipsContainer.querySelectorAll('.healer-filter-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          this.view.healersSelectedCategory = chip.getAttribute('data-type') || 'ALL';
+          const scoped = this.model.getScopedProfiles();
+          this.view.renderAndroidHealersHub(scoped, this.model.getActiveProfile(), this.model.getRoleMode());
+        }
+      });
+    }
+
+    // 3. Top Banner "5-Level Tree" Button Shortcut
+    const btnOpenHealersTree = document.getElementById('btn-open-healers-tree');
+    if (btnOpenHealersTree) {
+      btnOpenHealersTree.addEventListener('click', () => {
+        this.switchMainTab('tab-genealogy-tree');
+        this.view.renderAndroidHierarchyTree(this.model.profiles, this.view.hierarchySelectedLevel || 'ALL');
+        this.view.showToast('🌳 Switched to Organization Hierarchy Tree');
+      });
+    }
+
+    // 4. Hierarchy Level Generation Filter Chips (Tab 5)
+    const hierarchyLevelFilterChips = document.getElementById('hierarchy-level-filter-chips');
+    if (hierarchyLevelFilterChips) {
+      hierarchyLevelFilterChips.addEventListener('click', (e) => {
+        const chip = e.target.closest('.hierarchy-level-filter-chip');
+        if (chip) {
+          hierarchyLevelFilterChips.querySelectorAll('.hierarchy-level-filter-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          const lvl = chip.getAttribute('data-level') || 'ALL';
+          this.view.hierarchySelectedLevel = lvl;
+          this.view.renderAndroidHierarchyTree(this.model.profiles, lvl);
+          this.view.showToast(`🎯 Level Generation Filter: ${lvl === 'ALL' ? 'All Levels' : 'Level ' + lvl}`);
+        }
+      });
+    }
+
+    // 5. Segmented Tree View Toggles (Recursive List vs Canvas)
+    const btnViewRecursive = document.getElementById('btn-view-recursive');
+    const btnViewCanvas = document.getElementById('btn-view-canvas');
+    const recursiveViewEl = document.getElementById('hierarchy-recursive-tree-view');
+    const canvasViewEl = document.getElementById('hierarchy-canvas-tree-view');
+
+    if (btnViewRecursive && btnViewCanvas) {
+      btnViewRecursive.addEventListener('click', () => {
+        btnViewRecursive.classList.add('active');
+        btnViewCanvas.classList.remove('active');
+        if (recursiveViewEl) recursiveViewEl.style.display = 'flex';
+        if (canvasViewEl) canvasViewEl.style.display = 'none';
+        this.view.renderAndroidHierarchyTree(this.model.profiles, this.view.hierarchySelectedLevel || 'ALL');
+      });
+
+      btnViewCanvas.addEventListener('click', () => {
+        btnViewCanvas.classList.add('active');
+        btnViewRecursive.classList.remove('active');
+        if (recursiveViewEl) recursiveViewEl.style.display = 'none';
+        if (canvasViewEl) canvasViewEl.style.display = 'block';
+        setTimeout(() => this.view.smartFitInBodyTree(), 80);
+      });
+    }
+
+    // 6. Global Delegate for Healer Cards & Recursive Tree Interactive Elements
+    document.addEventListener('click', (e) => {
+      // Copy 16-Digit Code Pill
+      const copyCodeBtn = e.target.closest('.btn-copy-card-code');
+      if (copyCodeBtn) {
+        const code = copyCodeBtn.getAttribute('data-code');
+        if (code) {
+          navigator.clipboard.writeText(code).then(() => {
+            this.view.showToast(`📋 Copied: ${code}`);
+          });
+        }
+        return;
+      }
+
+      // Member 3-Dots Quick Action Menu
+      const quickOptsBtn = e.target.closest('.btn-member-quick-opts');
+      if (quickOptsBtn) {
+        const pid = quickOptsBtn.getAttribute('data-profile-id');
+        const prof = this.model.profiles.find(p => p.id === pid);
+        if (prof) {
+          this.view.openNodeActionDialog(prof);
+        }
+        return;
+      }
+
+      // Toggle Tree Recursive Branch Expand / Collapse
+      const toggleBranchBtn = e.target.closest('.btn-toggle-tree-branch');
+      if (toggleBranchBtn) {
+        const nodeId = toggleBranchBtn.getAttribute('data-node-id');
+        const branch = document.getElementById(`tree-branch-${nodeId}`);
+        if (branch) {
+          const isHidden = branch.style.display === 'none';
+          branch.style.display = isHidden ? 'flex' : 'none';
+          toggleBranchBtn.textContent = isHidden ? '−' : '+';
+        }
+        return;
+      }
+
+      // Share Tree Node
+      const shareNodeBtn = e.target.closest('.btn-share-tree-node');
+      if (shareNodeBtn) {
+        const pid = shareNodeBtn.getAttribute('data-profile-id');
+        const prof = this.model.profiles.find(p => p.id === pid);
+        if (prof) {
+          const shareText = `Spiritual Karim Member Profile:\nName: ${prof.name}\n16-Digit Code: ${prof.referenceCode}\nRole: ${prof.profileType}\nLevel: ${prof.level}\nSponsor: ${prof.referredByCode}`;
+          navigator.clipboard.writeText(shareText).then(() => {
+            this.view.showToast(`📲 Member reference copied for sharing!`);
+          });
+        }
+        return;
+      }
+
+      // Inspect Tree Node in Drawer
+      const inspectNodeBtn = e.target.closest('.btn-inspect-tree-node');
+      if (inspectNodeBtn) {
+        const pid = inspectNodeBtn.getAttribute('data-profile-id');
+        const prof = this.model.profiles.find(p => p.id === pid);
+        if (prof) {
+          this.view.renderTreeProfileDrawer(prof);
+          this.view.toggleTreeProfileDrawer(true);
+        }
+        return;
+      }
+
+      // Jump to Profile on Node Click
+      const jumpTrigger = e.target.closest('.btn-jump-profile-trigger');
+      if (jumpTrigger) {
+        const pid = jumpTrigger.getAttribute('data-profile-id');
+        if (pid && this.model.profiles.some(p => p.id === pid)) {
+          this.model.setActiveProfileId(pid);
+          this._renderCurrentState();
+          this.switchMainTab('tab-devotee-personal');
+          this.view.showToast(`🚀 Switched active profile to "${this.model.getActiveProfile().name}"`);
+        }
+        return;
+      }
+    });
+
+    // 7. Live Firebase Polling Sync Loop (Every 5 seconds)
+    setInterval(() => {
+      this.model.fetchFromFirebaseRealtime();
+    }, 5000);
+
     // Mobile Sidebar Off-Canvas Drawer Toggle
     if (this.view.btnMobileSidebarToggle && this.view.adminSidebar) {
       this.view.btnMobileSidebarToggle.addEventListener('click', () => {
@@ -4550,10 +5460,6 @@ class ProfileController {
     // Admin & RBAC Settings Modal Actions
     if (this.view.btnAdminSettings) {
       this.view.btnAdminSettings.addEventListener('click', () => {
-        if (this.model.getRoleMode() !== 'MASTER') {
-          alert('Access Denied: Only Master / Admin role has permissions to configure system and RBAC settings.');
-          return;
-        }
         this.view.populateSettings(this.model.settings);
         this.view.toggleSettingsModal(true);
       });
@@ -4571,7 +5477,7 @@ class ProfileController {
         this.model.saveSettings(newSettings);
         this.view.toggleSettingsModal(false);
         this._renderCurrentState();
-        this.view.showToast('✓ Admin Settings & RBAC rules saved successfully!');
+        this.view.showToast('✓ Admin System & RBAC Permission Settings saved & synchronized!');
       });
     }
 
@@ -4582,12 +5488,11 @@ class ProfileController {
           const defaults = this.model._getDefaultSettings();
           this.model.saveSettings(defaults);
           this.view.populateSettings(defaults);
-          this.view.showToast('Settings reset to defaults.');
+          this.view.showToast('Settings reset to factory defaults.');
         }
       });
     }
 
-    // Profile Switchers
     if (this.view.selectActiveProfile) {
       this.view.selectActiveProfile.addEventListener('change', (e) => {
         this.model.setActiveProfileId(e.target.value);
@@ -5108,19 +6013,50 @@ class ProfileController {
       });
     }
 
-    // App Hierarchy Tiers & In-Body MLM Tree View Events
+    // App Hierarchy Tiers Legend Click -> Open Left Flyout Panel
     document.querySelectorAll('#hierarchy-legend-container .legend-item').forEach(item => {
       item.addEventListener('click', () => {
         const tier = parseInt(item.getAttribute('data-tier'), 10);
-        if (this.view.bodyTreeTierFilter) this.view.bodyTreeTierFilter.value = tier.toString();
-        this.switchMainTab('tab-genealogy-tree');
-        this.view.renderInBodyHierarchyTree(this.model.profiles, tier, '', this.view.inBodyTreePanState?.layoutMode || 'cluster');
-        setTimeout(() => {
-          this.view.smartFitInBodyTree();
-          this.view.showToast(`🎯 Filtered tree to Tier ${tier} (${item.querySelector('.legend-title')?.textContent || 'Tier'})`);
-        }, 100);
+        this.view.openTierPanel(tier, this.model.profiles, this.model.activeProfileId);
+        this.view.showToast(`📂 Opened Tier ${tier} Profiles Panel`);
       });
     });
+
+    if (this.view.btnCloseTierPanel) {
+      this.view.btnCloseTierPanel.addEventListener('click', () => {
+        this.view.closeTierPanel();
+      });
+    }
+
+    if (this.view.tierPanelProfilesList) {
+      this.view.tierPanelProfilesList.addEventListener('click', (e) => {
+        const card = e.target.closest('.tier-panel-profile-card');
+        if (card) {
+          const id = card.getAttribute('data-id');
+          this.model.setActiveProfileId(id);
+          this._renderCurrentState();
+
+          // Highlight card in tier panel
+          this.view.tierPanelProfilesList.querySelectorAll('.tier-panel-profile-card').forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+
+          const activeP = this.model.getActiveProfile();
+          this.view.showToast(`🚀 Viewing profile: ${activeP.name}`);
+        }
+      });
+    }
+
+    if (this.view.inputTierPanelSearch) {
+      this.view.inputTierPanelSearch.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        const filtered = (this.view.currentTierProfiles || []).filter(p => 
+          (p.name && p.name.toLowerCase().includes(q)) || 
+          (p.referenceCode && p.referenceCode.toLowerCase().includes(q))
+        );
+        const metaColor = { 1: '#8b5cf6', 2: '#10b981', 3: '#f59e0b', 4: '#3b82f6' }[this.view.currentOpenTier] || '#d4af37';
+        this.view._renderTierPanelCards(filtered, this.model.activeProfileId, metaColor);
+      });
+    }
 
     if (this.view.btnOpenTreeView) {
       this.view.btnOpenTreeView.addEventListener('click', () => {

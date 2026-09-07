@@ -148,8 +148,8 @@ fun AboutScreen(navController: NavController) {
         // GitHub Releases, Direct Download & Auto-Updates Section
         item {
             val context = androidx.compose.ui.platform.LocalContext.current
-            val githubDownloadUrl = remember { AppSettingsRepository.getVariableValue("GITHUB_RELEASE_DOWNLOAD_URL", "https://github.com/jiten/SpritualKarim/releases/latest/download/app-debug.apk") }
-            val githubRepoUrl = remember { AppSettingsRepository.getVariableValue("GITHUB_REPO_URL", "https://github.com/jiten/SpritualKarim") }
+            val githubDownloadUrl = remember { AppSettingsRepository.getVariableValue("GITHUB_RELEASE_DOWNLOAD_URL", "https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk") }
+            val githubRepoUrl = remember { AppSettingsRepository.getVariableValue("GITHUB_REPO_URL", "https://github.com/jDroid-X/SpritualKarim") }
 
             SpiritualGlassCard(
                 borderBrush = Brush.linearGradient(
