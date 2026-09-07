@@ -189,6 +189,11 @@ fun SpiritualDrawerContent(
                 AnimatedVisibility(visible = isHealersExpanded) {
                     Column(modifier = Modifier.padding(start = 16.dp)) {
                         DrawerSubItem(
+                            title = "👑 Karim Ji (Founder Profile)",
+                            selected = currentRoute == Screen.HealerDetail.createRoute("prof-root-01"),
+                            onClick = { onNavigate(Screen.HealerDetail.createRoute("prof-root-01")); onCloseDrawer() }
+                        )
+                        DrawerSubItem(
                             title = LanguageManager.getString("healers_hub"),
                             selected = currentRoute == Screen.HealersHub.route || currentRoute == "healers",
                             onClick = { onNavigate(Screen.HealersHub.createRoute()); onCloseDrawer() }

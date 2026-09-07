@@ -489,6 +489,10 @@ class ProfileModel {
     return this._getDefaultSettings();
   }
 
+  getProfileById(profileId) {
+    return this.profiles.find(p => p.id === profileId) || null;
+  }
+
   isCircularSponsor(profileId, proposedSponsorCode) {
     if (!proposedSponsorCode || proposedSponsorCode === 'ROOT' || proposedSponsorCode === 'ROOT-0000-0000-0000') return false;
     const currentProfile = this.getProfileById(profileId);
@@ -4570,11 +4574,123 @@ class ProfileController {
     this._renderCurrentState();
     this._bindNavigationTabs();
     this._bindSadhanaCatalogEvents();
-    this._setupEventListeners();
+    this._bindEvents();
 
     window.addEventListener('online', () => {
       this.model.flushOfflineSyncQueue();
       this.view.showToast('📶 Online connection restored. Telemetry synced.');
+    });
+  }
+
+  // ==========================================
+  // Device OS Theme Management (Auto / Dark / Light)
+  // ==========================================
+  _initTheme() {
+    const savedTheme = localStorage.getItem('sk_theme_preference') || 'auto';
+    this._applyTheme(savedTheme, false);
+
+    // Dynamic listener for OS theme preference changes
+    try {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      mediaQuery.addEventListener('change', () => {
+        const currentPref = localStorage.getItem('sk_theme_preference') || 'auto';
+        if (currentPref === 'auto') {
+          this._applyTheme('auto', false);
+        }
+      });
+    } catch (err) {
+      console.warn('MatchMedia listener error', err);
+    }
+  }
+
+  _applyTheme(pref, showToast = false) {
+    localStorage.setItem('sk_theme_preference', pref);
+    let resolvedTheme = pref;
+    if (pref === 'auto') {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      resolvedTheme = prefersDark ? 'dark' : 'light';
+    }
+
+    document.documentElement.setAttribute('data-theme', resolvedTheme);
+
+    if (this.view.themeIcon && this.view.themeLabel) {
+      if (pref === 'auto') {
+        this.view.themeIcon.textContent = '💻';
+        this.view.themeLabel.textContent = `Auto (${resolvedTheme === 'dark' ? 'Dark' : 'Light'})`;
+        if (this.view.btnThemeToggle) {
+          this.view.btnThemeToggle.title = `Theme: Auto (Device OS: ${resolvedTheme === 'dark' ? 'Dark' : 'Light'}) | Click to change`;
+        }
+      } else if (pref === 'dark') {
+        this.view.themeIcon.textContent = '🌙';
+        this.view.themeLabel.textContent = 'Dark';
+        if (this.view.btnThemeToggle) {
+          this.view.btnThemeToggle.title = 'Theme: Dark Mode | Click to change';
+        }
+      } else {
+        this.view.themeIcon.textContent = '☀️';
+        this.view.themeLabel.textContent = 'Light';
+        if (this.view.btnThemeToggle) {
+          this.view.btnThemeToggle.title = 'Theme: Light Mode | Click to change';
+        }
+      }
+    }
+
+    if (showToast) {
+      this.view.showToast(`🎨 Theme switched to: ${pref.toUpperCase()}`);
+    }
+  }
+
+  _cycleTheme() {
+    const current = localStorage.getItem('sk_theme_preference') || 'auto';
+    const sequence = ['auto', 'dark', 'light'];
+    const nextIndex = (sequence.indexOf(current) + 1) % sequence.length;
+    const nextTheme = sequence[nextIndex];
+    this._applyTheme(nextTheme, true);
+  }
+
+  _renderCurrentState() {
+    const active = this.model.getActiveProfile();
+    const visibleProfiles = this.model.getVisibleProfiles();
+    const roleMode = this.model.getRoleMode();
+    const settings = this.model.settings;
+    this.view.allProfiles = this.model.profiles;
+    this.view.render(active, visibleProfiles, roleMode, settings);
+    this._filterRemedies();
+  }
+
+  _filterRemedies() {
+    const searchInput = document.getElementById('input-search-remedies');
+    const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+    const activeSeg = document.querySelector('.segmented-control[data-target-section="remedies"] .segmented-item.active');
+    const filterMode = activeSeg ? (activeSeg.getAttribute('data-filter') || 'ALL') : 'ALL';
+
+    const remedyCards = document.querySelectorAll('.remedy-card-option');
+    let matchCount = 0;
+
+    remedyCards.forEach(card => {
+      const titleEl = card.querySelector('.option-title');
+      const tagEl = card.querySelector('.option-tag');
+      const sadhanaId = card.getAttribute('data-sadhana-id') || '';
+      const catalogItem = SADHANA_CATALOG[sadhanaId] || {};
+
+      const textContent = `${titleEl ? titleEl.textContent : ''} ${tagEl ? tagEl.textContent : ''} ${catalogItem.summary || ''} ${catalogItem.mantra || ''}`.toLowerCase();
+      const isPaid = card.classList.contains('tile-paid') || card.querySelector('.stamp-paid') !== null;
+
+      const matchesSearch = query === '' || textContent.includes(query);
+      const matchesFilter = filterMode === 'ALL' || (filterMode === 'PAID' && isPaid) || (filterMode === 'FREE' && !isPaid);
+
+      if (matchesSearch && matchesFilter) {
+        card.style.display = '';
+        matchCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    // Also manage category group headers visibility if all cards inside are hidden
+    document.querySelectorAll('.remedy-category-group').forEach(group => {
+      const visibleCards = group.querySelectorAll('.remedy-card-option:not([style*="display: none"])');
+      group.style.display = visibleCards.length > 0 ? '' : 'none';
     });
   }
 
