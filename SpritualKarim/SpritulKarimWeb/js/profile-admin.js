@@ -547,6 +547,9 @@ class ProfileModel {
 
   _getDefaultProfiles() {
     return [
+      // ==========================================
+      // TIER 1: ADMIN MASTER (FOUNDER)
+      // ==========================================
       {
         id: 'prof-admin-01',
         referenceCode: 'SKHM-ADM1-7788-9900',
@@ -567,120 +570,42 @@ class ProfileModel {
         isActive: true,
         notes: 'Founder and Supreme Spiritual Guide of the Sanctuary.',
         categoryTag: 'Master Guide & Supreme Cleansing',
-        
         seekerDiagnostics: {
           afflictionDuration: 'N/A (Master Guide)',
           kuldeviIssues: 'Kuldevi Blessings Activated',
           targetOutcome: 'Universal sadhana transmission & supreme house purification'
         },
-
         interestedSadhanas: [
           { id: 'sri_yantra', name: 'Sri Yantra Sadhana', category: 'Sacred Sadhana', priority: 'High', status: 'Enrolled' },
           { id: 'kalashtami', name: 'Kalashtami Bhairav Sadhana', category: 'Sacred Sadhana', priority: 'High', status: 'Enrolled' },
           { id: 'three_diya', name: 'Three Diya Process', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }
         ],
-
         houseCleanLevels: [
-          {
-            id: 'hc-1',
-            levelNumber: 1,
-            levelTitle: 'Level 1 — Self House Clean',
-            status: 'APPROVED',
-            cleanPercentage: 100,
-            cleanedDetails: 'Sanctum Sanctorum daily purification. Sacred copper Sri Yantra energized with continuous Brahma Muhurta Trataka and Himalayan Bakhoor.',
-            mentorCode: 'SKHM-ADM1-7788-9900',
-            mentorName: 'Karim Ji (Founder)',
-            mentorRemarks: 'Direct master lineage purity verified 100%.',
-            approvalDate: 'Today • Dawn'
-          },
-          {
-            id: 'hc-2',
-            levelNumber: 2,
-            levelTitle: 'Level 2 — Parents House Clean',
-            status: 'APPROVED',
-            cleanPercentage: 100,
-            cleanedDetails: 'Ancestral Haveli purified with traditional copper havan kund and sacred herbs.',
-            mentorCode: 'SKHM-ADM1-7788-9900',
-            mentorName: 'Karim Ji (Founder)',
-            mentorRemarks: 'Ancestral peace established.',
-            approvalDate: 'Yesterday'
-          },
-          {
-            id: 'hc-3',
-            levelNumber: 3,
-            levelTitle: 'Level 3 — Relative House Clean',
-            status: 'APPROVED',
-            cleanPercentage: 100,
-            cleanedDetails: 'Extended family residences blessed and purified with 3-diya process.',
-            mentorCode: 'SKHM-ADM1-7788-9900',
-            mentorName: 'Karim Ji (Founder)',
-            mentorRemarks: 'Complete 3-level clan purification certified.',
-            approvalDate: '2 days ago'
-          }
+          { id: 'hc-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Sanctum Sanctorum daily purification.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Direct master lineage purity verified 100%.', approvalDate: 'Today • Dawn' },
+          { id: 'hc-2', levelNumber: 2, levelTitle: 'Level 2 — Parents House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Ancestral Haveli purified with traditional copper havan kund.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Ancestral peace established.', approvalDate: 'Yesterday' },
+          { id: 'hc-3', levelNumber: 3, levelTitle: 'Level 3 — Relative House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Extended family residences blessed and purified with 3-diya process.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Complete 3-level clan purification certified.', approvalDate: '2 days ago' }
         ],
-
         traineeSadhanas: [
-          {
-            id: 'ts-1',
-            sadhanaKey: 'sri_yantra',
-            title: 'Sri Yantra Sadhana',
-            categoryDomain: 'sadhanas',
-            isPaid: true,
-            paymentStatus: 'PAID',
-            level: 'Level 4 — Master Attunement',
-            dailyTarget: '21 Malas Daily + Havan',
-            currentStreak: '108 Days Continuous',
-            progressPercent: 100,
-            status: 'Master Siddhi',
-            mentorCode: 'SKHM-ADM1-7788-9900',
-            diaryNotes: 'Golden geometry visualization stabilized at Ajna Chakra.'
-          },
-          {
-            id: 'ts-2',
-            sadhanaKey: 'three_diya',
-            title: 'Three Diya Process',
-            categoryDomain: 'remedies',
-            isPaid: false,
-            paymentStatus: 'FREE',
-            level: 'Level 3 — Havan & Energy Transmission',
-            dailyTarget: '3 Diyas at Sunset',
-            currentStreak: '21 Days Completed',
-            progressPercent: 100,
-            status: 'Completed',
-            mentorCode: 'SKHM-ADM1-7788-9900',
-            diaryNotes: 'Heavy astral smoke clearing certified.'
-          }
+          { id: 'ts-1', sadhanaKey: 'sri_yantra', title: 'Sri Yantra Sadhana', categoryDomain: 'sadhanas', isPaid: true, paymentStatus: 'PAID', level: 'Level 4 — Master Attunement', dailyTarget: '21 Malas Daily + Havan', currentStreak: '108 Days Continuous', progressPercent: 100, status: 'Master Siddhi', mentorCode: 'SKHM-ADM1-7788-9900', diaryNotes: 'Golden geometry visualization stabilized at Ajna Chakra.' },
+          { id: 'ts-2', sadhanaKey: 'three_diya', title: 'Three Diya Process', categoryDomain: 'remedies', isPaid: false, paymentStatus: 'FREE', level: 'Level 3 — Havan & Energy Transmission', dailyTarget: '3 Diyas at Sunset', currentStreak: '21 Days Completed', progressPercent: 100, status: 'Completed', mentorCode: 'SKHM-ADM1-7788-9900', diaryNotes: 'Heavy astral smoke clearing certified.' }
         ],
-
         healerCompletedSadhanas: [
-          {
-            id: 'hcs-1',
-            title: 'Master Sri Yantra Siddhi',
-            levelCompleted: 'Level 4 — Master Guru',
-            completionDate: '2023-11-15',
-            status: 'Certified Master & Guru',
-            seekersGuidedCount: 1450,
-            authorizedToGuide: true,
-            sealCode: 'SKHM-SEAL-MASTER-001'
-          }
+          { id: 'hcs-1', title: 'Master Sri Yantra Siddhi', levelCompleted: 'Level 4 — Master Guru', completionDate: '2023-11-15', status: 'Certified Master & Guru', seekersGuidedCount: 1450, authorizedToGuide: true, sealCode: 'SKHM-SEAL-MASTER-001' }
         ],
-
         healerNetwork: [
-          { id: 'net-1', name: 'Acharya Devendra', refCode: 'SKHM-HLR2-3344-5566', role: 'Healer (Level 2)', activeCases: 12 }
+          { id: 'net-1', name: 'Acharya Devendra', refCode: 'SKHM-HLR2-3344-5566', role: 'Healer (Level 2)', activeCases: 12 },
+          { id: 'net-2', name: 'Maa Anandita Devi', refCode: 'SKHM-HLR2-5566-7788', role: 'Healer (Level 2)', activeCases: 8 }
         ],
-
         lineage: {
-          currentFamily: {
-            selfName: 'Karim Ji',
-            selfTitle: 'Founder & Master Guide',
-            spouseName: 'Devi Ji',
-            children: [{ id: 'c1', name: 'Aarav Karim', gender: 'Son', ageOrNote: 'Age 14' }],
-            siblings: [{ id: 's1', name: 'Tariq Khan', relation: 'Brother', spouseName: 'Zainab', childrenSummary: '1 Son', isMarried: true, notes: 'Spiritual support' }]
-          },
+          currentFamily: { selfName: 'Karim Ji', selfTitle: 'Founder & Master Guide', spouseName: 'Devi Ji', children: [{ id: 'c1', name: 'Aarav Karim', gender: 'Son', ageOrNote: 'Age 14' }], siblings: [{ id: 's1', name: 'Tariq Khan', relation: 'Brother', spouseName: 'Zainab', childrenSummary: '1 Son', isMarried: true, notes: 'Spiritual support' }] },
           husbandAncestral: { fatherName: 'Late Master Father', motherName: 'Late Divine Mother', paternalGrandfather: 'Grandfather Senior', paternalGrandmother: 'Grandmother Senior', maternalGrandfather: 'Nana Ji Senior', maternalGrandmother: 'Nani Ji Senior', siblings: [], address: 'Ancestral Lineage Roots' },
-          wifeAncestral: { fatherName: 'Late Father-in-law', motherName: 'Mother-in-law', paternalGrandfather: 'Dada Ji (Wife Side)', paternalGrandmother: 'Dadi Ji (Wife Side)', maternalGrandfather: 'Nana Ji (Wife Side)', maternalGrandmother: 'Nani Ji (Wife Side)', siblings: [], address: 'Wife Ancestral Village' }
+          wifeAncestral: { fatherName: 'Late Father-in-law', motherName: 'Mother-in-law', paternalGrandfather: 'Dada Ji', paternalGrandmother: 'Dadi Ji', maternalGrandfather: 'Nana Ji', maternalGrandmother: 'Nani Ji', siblings: [], address: 'Wife Ancestral Village' }
         }
       },
+
+      // ==========================================
+      // TIER 2: HEALER CONNECT (LEVEL COMPLETED)
+      // ==========================================
       {
         id: 'prof-healer-02',
         referenceCode: 'SKHM-HLR2-3344-5566',
@@ -714,7 +639,10 @@ class ProfileModel {
         healerCompletedSadhanas: [
           { id: 'hcs-2', title: 'Three Diya Master Certification', levelCompleted: 'Level 3 — Healer Acharya', completionDate: '2024-05-10', status: 'Certified Master', seekersGuidedCount: 340, authorizedToGuide: true, sealCode: 'SKHM-SEAL-DIYA-301' }
         ],
-        healerNetwork: [{ id: 'net-2', name: 'Amitabh Sen', refCode: 'SKHM-TRN4-1122-3344', role: 'Trainee (Level 4)', activeCases: 4 }],
+        healerNetwork: [
+          { id: 'net-3', name: 'Amitabh Sen', refCode: 'SKHM-TRN3-1122-3344', role: 'Trainee (Level 3)', activeCases: 6 },
+          { id: 'net-4', name: 'Rajeshwari Joshi', refCode: 'SKHM-TRN3-2233-4455', role: 'Trainee (Level 3)', activeCases: 4 }
+        ],
         lineage: {
           currentFamily: { selfName: 'Acharya Devendra', selfTitle: 'Senior Spiritual Healer', spouseName: 'Sunita Sharma', children: [], siblings: [] },
           husbandAncestral: { fatherName: 'Ramprasad Sharma', motherName: 'Kaushalya Devi', paternalGrandfather: 'Pt. Badri Prasad', paternalGrandmother: 'Sita Devi', maternalGrandfather: 'Govind Ram', maternalGrandmother: 'Radha Devi', siblings: [], address: 'Varanasi, UP' },
@@ -722,15 +650,210 @@ class ProfileModel {
         }
       },
       {
-        id: 'prof-devotee-03',
-        referenceCode: 'SKHM-DEV5-9988-1122',
+        id: 'prof-healer-03',
+        referenceCode: 'SKHM-HLR2-5566-7788',
+        referredByCode: 'SKHM-ADM1-7788-9900',
+        transferredCode: '',
+        name: 'Maa Anandita Devi',
+        phone: '+91 98330 44556',
+        email: 'anandita.healer@spiritualkarim.org',
+        profileType: 'HEALER',
+        level: 2,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Maa Chamunda Navratri Sadhana, Kundalini awakening, and ancestral Pitru Dosha clearance.',
+        selectedRemedies: ['navratri', 'kundalini', 'material_benefits', 'aura_strengthening'],
+        address: '88 Ganga Ghat Sanctuary',
+        city: 'Varanasi, UP',
+        joinDate: '2024-05-20',
+        isActive: true,
+        notes: 'Specialist in Chamunda Shakti Anushthan and Kundalini energy flows.',
+        categoryTag: 'Kundalini & Aura Shield',
+        seekerDiagnostics: { afflictionDuration: 'Transmuted in 2020', kuldeviIssues: 'Kuldevi Temple Established', targetOutcome: 'Guide 50+ seekers to diksha' },
+        interestedSadhanas: [{ id: 'navratri', name: 'Navratri Chamunda Sadhana', category: 'Sacred Sadhana', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-h3-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Ganga water purification with daily Akhand Jyoti.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Divine grace awakened.', approvalDate: '2024-05-25' },
+          { id: 'hc-h3-2', levelNumber: 2, levelTitle: 'Level 2 — Parents House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Varanasi ancestral sanctuary purified.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Ancestral blessings flowing.', approvalDate: '2024-06-10' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-h3-1', sadhanaKey: 'navratri', title: 'Navratri Chamunda Sadhana', categoryDomain: 'sadhanas', isPaid: true, paymentStatus: 'PAID', level: 'Level 4 — Master Attunement', dailyTarget: '108 Malas + Havan', currentStreak: '45 Days', progressPercent: 100, status: 'Master Siddhi', mentorCode: 'SKHM-ADM1-7788-9900', diaryNotes: 'Navarna mantra Siddhi complete.' }
+        ],
+        healerCompletedSadhanas: [
+          { id: 'hcs-3', title: 'Navarna Shakti Master Certification', levelCompleted: 'Level 3 — Healer Acharya', completionDate: '2024-04-15', status: 'Certified Master', seekersGuidedCount: 210, authorizedToGuide: true, sealCode: 'SKHM-SEAL-SHAKTI-402' }
+        ],
+        healerNetwork: [
+          { id: 'net-5', name: 'Rohan Verma', refCode: 'SKHM-TRN3-6677-8899', role: 'Trainee (Level 3)', activeCases: 5 },
+          { id: 'net-6', name: 'Priya Sharma', refCode: 'SKHM-TRN3-7788-9900', role: 'Trainee (Level 3)', activeCases: 3 }
+        ],
+        lineage: {
+          currentFamily: { selfName: 'Maa Anandita Devi', selfTitle: 'Acharya Yogini', spouseName: '', children: [], siblings: [] },
+          husbandAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' },
+          wifeAncestral: { fatherName: 'Pt. Vidyadhar Shastri', motherName: 'Gayatri Devi', paternalGrandfather: 'Pt. Ishwar Das', paternalGrandmother: 'Saraswati Devi', maternalGrandfather: 'Harishchandra', maternalGrandmother: 'Gauri Devi', siblings: [], address: 'Varanasi, UP' }
+        }
+      },
+
+      // ==========================================
+      // TIER 3: TRAINEE SADHAK (IN-PROGRESS)
+      // ==========================================
+      {
+        id: 'prof-trainee-04',
+        referenceCode: 'SKHM-TRN3-1122-3344',
         referredByCode: 'SKHM-HLR2-3344-5566',
         transferredCode: '',
-        name: 'Sunita Mehra (Devotee)',
+        name: 'Amitabh Sen',
+        phone: '+91 98450 77889',
+        email: 'amitabh.sen@trainee.org',
+        profileType: 'TRAINEE',
+        level: 3,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Mastering 3 Diya fire cleansing and Sri Yantra geometry.',
+        selectedRemedies: ['three_diya', 'sri_yantra'],
+        address: '12 Temple Street',
+        city: 'Kolkata, West Bengal',
+        joinDate: '2024-07-10',
+        isActive: true,
+        notes: 'Advanced trainee under Acharya Devendra.',
+        categoryTag: 'Trainee Sadhak',
+        seekerDiagnostics: { afflictionDuration: '2 Years', kuldeviIssues: 'Purification active', targetOutcome: 'Advance to Level 3 Havan' },
+        interestedSadhanas: [{ id: 'three_diya', name: 'Three Diya Process', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-t4-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Doorway threshold purified daily.', mentorCode: 'SKHM-HLR2-3344-5566', mentorName: 'Acharya Devendra', mentorRemarks: 'Purity certified.', approvalDate: '2024-07-18' },
+          { id: 'hc-t4-2', levelNumber: 2, levelTitle: 'Level 2 — Parents House Clean', status: 'IN_PROGRESS', cleanPercentage: 60, cleanedDetails: 'Cleansing ancestral flat in Kolkata.', mentorCode: 'SKHM-HLR2-3344-5566', mentorName: 'Acharya Devendra', mentorRemarks: 'In Progress.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-t4-1', sadhanaKey: 'three_diya', title: 'Three Diya Process', categoryDomain: 'remedies', isPaid: true, paymentStatus: 'PAID', level: 'Level 2 — Mantra Diksha', dailyTarget: '3 Diyas at Dusk', currentStreak: '14 Days', progressPercent: 75, status: 'In Progress', mentorCode: 'SKHM-HLR2-3344-5566', diaryNotes: 'Threshold cleared.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Amitabh Sen', selfTitle: 'Trainee Sadhak', spouseName: 'Rupali Sen', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Birendra Sen', motherName: 'Suniti Sen', paternalGrandfather: 'Kalyan Sen', paternalGrandmother: 'Asha Sen', maternalGrandfather: 'S. K. Roy', maternalGrandmother: 'Manju Roy', siblings: [], address: 'Kolkata, WB' },
+          wifeAncestral: { fatherName: 'Subhas Bose', motherName: 'Ila Bose', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-trainee-05',
+        referenceCode: 'SKHM-TRN3-2233-4455',
+        referredByCode: 'SKHM-HLR2-3344-5566',
+        transferredCode: '',
+        name: 'Rajeshwari Joshi',
+        phone: '+91 98560 88990',
+        email: 'rajeshwari.j@trainee.org',
+        profileType: 'TRAINEE',
+        level: 3,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Negativity fumigation and Pitru Rin Mukti fire rituals.',
+        selectedRemedies: ['negativity', 'karmic_debts'],
+        address: '24 Navrangpura',
+        city: 'Ahmedabad, Gujarat',
+        joinDate: '2024-07-22',
+        isActive: true,
+        notes: 'Specializing in Bakhoor cleansing.',
+        categoryTag: 'Trainee Sadhak',
+        seekerDiagnostics: { afflictionDuration: '1 Year', kuldeviIssues: 'Blessings restored', targetOutcome: 'Level 2 Sadhana completion' },
+        interestedSadhanas: [{ id: 'negativity', name: 'Negativity Cleansing', category: 'Cleansing & Healing', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-t5-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 90, cleanedDetails: 'Full fumigation with pure Loban & Bakhoor.', mentorCode: 'SKHM-HLR2-3344-5566', mentorName: 'Acharya Devendra', mentorRemarks: 'Good energetic shift.', approvalDate: '2024-08-01' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-t5-1', sadhanaKey: 'negativity', title: 'Negativity Cleansing (Bakhoor)', categoryDomain: 'cleansing', isPaid: true, paymentStatus: 'PAID', level: 'Level 2 — Mantra Diksha', dailyTarget: 'Dusk Fumigation', currentStreak: '12 Days', progressPercent: 70, status: 'In Progress', mentorCode: 'SKHM-HLR2-3344-5566', diaryNotes: 'Atmosphere purified.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Rajeshwari Joshi', selfTitle: 'Trainee Sadhak', spouseName: 'Manish Joshi', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Kirit Joshi', motherName: 'Bhavana Joshi', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Ahmedabad' },
+          wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-trainee-06',
+        referenceCode: 'SKHM-TRN3-6677-8899',
+        referredByCode: 'SKHM-HLR2-5566-7788',
+        transferredCode: '',
+        name: 'Rohan Verma',
+        phone: '+91 98670 99001',
+        email: 'rohan.verma@trainee.org',
+        profileType: 'TRAINEE',
+        level: 3,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Kaal Bhairav protection and family aura fortification.',
+        selectedRemedies: ['kalashtami', 'nazar_suraksha'],
+        address: '55 Gomti Nagar',
+        city: 'Lucknow, UP',
+        joinDate: '2024-08-05',
+        isActive: true,
+        notes: 'Trainee guided by Maa Anandita Devi.',
+        categoryTag: 'Trainee Sadhak',
+        seekerDiagnostics: { afflictionDuration: '3 Years', kuldeviIssues: 'Puja scheduled', targetOutcome: 'Astral shield mastery' },
+        interestedSadhanas: [{ id: 'kalashtami', name: 'Kalashtami Bhairav Sadhana', category: 'Sacred Sadhana', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-t6-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 85, cleanedDetails: '4-wick mustard lamp protection established.', mentorCode: 'SKHM-HLR2-5566-7788', mentorName: 'Maa Anandita Devi', mentorRemarks: 'Protection seal active.', approvalDate: '2024-08-10' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-t6-1', sadhanaKey: 'kalashtami', title: 'Kalashtami Bhairav Sadhana', categoryDomain: 'sadhanas', isPaid: true, paymentStatus: 'PAID', level: 'Level 2 — Mantra Diksha', dailyTarget: '11 Malas Night Sandhya', currentStreak: '9 Days', progressPercent: 60, status: 'In Progress', mentorCode: 'SKHM-HLR2-5566-7788', diaryNotes: 'Fear banished.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Rohan Verma', selfTitle: 'Trainee Sadhak', spouseName: '', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Dr. S. K. Verma', motherName: 'Rekha Verma', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Lucknow' },
+          wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-trainee-07',
+        referenceCode: 'SKHM-TRN3-7788-9900',
+        referredByCode: 'SKHM-HLR2-5566-7788',
+        transferredCode: '',
+        name: 'Priya Sharma',
+        phone: '+91 98780 11223',
+        email: 'priya.sharma@trainee.org',
+        profileType: 'TRAINEE',
+        level: 3,
+        isPaid: false,
+        paymentStatus: 'FREE',
+        objective: 'Aura strengthening and business obstacle removal.',
+        selectedRemedies: ['aura_strengthening', 'business_money'],
+        address: '19 Vasant Vihar',
+        city: 'New Delhi',
+        joinDate: '2024-08-12',
+        isActive: true,
+        notes: 'Dedicated sadhak in crystal and Gayatri practices.',
+        categoryTag: 'Trainee Sadhak',
+        seekerDiagnostics: { afflictionDuration: '6 Months', kuldeviIssues: 'None', targetOutcome: 'Aura energy stabilization' },
+        interestedSadhanas: [{ id: 'aura_strengthening', name: 'Aura Strengthening', category: 'Cleansing & Healing', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-t7-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 80, cleanedDetails: 'Sphatik crystal water harmonization.', mentorCode: 'SKHM-HLR2-5566-7788', mentorName: 'Maa Anandita Devi', mentorRemarks: 'Good progress.', approvalDate: '2024-08-16' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-t7-1', sadhanaKey: 'aura_strengthening', title: 'Aura Strengthening & Psychic Shield', categoryDomain: 'cleansing', isPaid: false, paymentStatus: 'FREE', level: 'Level 1 — Initiation', dailyTarget: '24 Gayatri Chants', currentStreak: '6 Days', progressPercent: 50, status: 'In Progress', mentorCode: 'SKHM-HLR2-5566-7788', diaryNotes: 'Calm mind felt.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Priya Sharma', selfTitle: 'Trainee Sadhak', spouseName: '', children: [], siblings: [] },
+          husbandAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' },
+          wifeAncestral: { fatherName: 'V. K. Sharma', motherName: 'Saroj Sharma', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Delhi' }
+        }
+      },
+
+      // ==========================================
+      // TIER 4: DEVOTEE / SEEKER (PERSONAL & HOUSE CLEAN)
+      // ==========================================
+      {
+        id: 'prof-devotee-08',
+        referenceCode: 'SKHM-DEV4-9988-1122',
+        referredByCode: 'SKHM-TRN3-1122-3344',
+        transferredCode: '',
+        name: 'Sunita Mehra',
         phone: '+91 97110 55443',
         email: 'sunita.mehra@devotee.org',
         profileType: 'DEVOTEE',
-        level: 5,
+        level: 4,
         isPaid: false,
         paymentStatus: 'FREE',
         objective: 'Overcoming household stress, learning 3 Diya process, and purifying ancestral karma.',
@@ -744,16 +867,160 @@ class ProfileModel {
         seekerDiagnostics: { afflictionDuration: '3 Years', kuldeviIssues: 'Kuldevi Puja pending', targetOutcome: 'Peace of mind and family health' },
         interestedSadhanas: [{ id: 'three_diya', name: 'Three Diya Process', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }],
         houseCleanLevels: [
-          { id: 'hc-7', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'IN_PROGRESS', cleanPercentage: 50, cleanedDetails: 'Purifying main doorway and altar daily.', mentorCode: 'SKHM-HLR2-3344-5566', mentorName: 'Acharya Devendra', mentorRemarks: 'Good progress.', approvalDate: 'Pending' }
+          { id: 'hc-d8-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'IN_PROGRESS', cleanPercentage: 50, cleanedDetails: 'Purifying main doorway and altar daily.', mentorCode: 'SKHM-TRN3-1122-3344', mentorName: 'Amitabh Sen', mentorRemarks: 'Good progress.', approvalDate: 'Pending' }
         ],
         traineeSadhanas: [
-          { id: 'ts-4', sadhanaKey: 'three_diya', title: 'Three Diya Process', categoryDomain: 'remedies', isPaid: false, paymentStatus: 'FREE', level: 'Level 1 — Novice Initiation', dailyTarget: '3 Diyas at Dusk', currentStreak: '7 Days', progressPercent: 35, status: 'In Progress', mentorCode: 'SKHM-HLR2-3344-5566', diaryNotes: 'Noticed positive shift in home.' }
+          { id: 'ts-d8-1', sadhanaKey: 'three_diya', title: 'Three Diya Process', categoryDomain: 'remedies', isPaid: false, paymentStatus: 'FREE', level: 'Level 1 — Initiation', dailyTarget: '3 Diyas at Dusk', currentStreak: '7 Days', progressPercent: 35, status: 'In Progress', mentorCode: 'SKHM-TRN3-1122-3344', diaryNotes: 'Noticed positive shift in home.' }
         ],
         healerCompletedSadhanas: [],
         healerNetwork: [],
         lineage: {
           currentFamily: { selfName: 'Sunita Mehra', selfTitle: 'Devotee Seeker', spouseName: 'Ramesh Mehra', children: [], siblings: [] },
           husbandAncestral: { fatherName: 'Om Prakash Mehra', motherName: 'Kanti Mehra', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Jaipur, Rajasthan' },
+          wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-devotee-09',
+        referenceCode: 'SKHM-DEV4-3322-1100',
+        referredByCode: 'SKHM-TRN3-1122-3344',
+        transferredCode: '',
+        name: 'Deepak Saxena',
+        phone: '+91 97220 66554',
+        email: 'deepak.saxena@devotee.org',
+        profileType: 'DEVOTEE',
+        level: 4,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Business growth, stuck payments recovery, and Sri Yantra worship.',
+        selectedRemedies: ['business_money', 'sri_yantra'],
+        address: '77 Arera Colony',
+        city: 'Bhopal, MP',
+        joinDate: '2024-08-15',
+        isActive: true,
+        notes: 'Devotee seeking financial stability and Lakshmi blessings.',
+        categoryTag: 'Devotee Seeker',
+        seekerDiagnostics: { afflictionDuration: '1.5 Years', kuldeviIssues: 'Kuldevi Puja Done', targetOutcome: 'Clear business debt' },
+        interestedSadhanas: [{ id: 'business_money', name: 'Business & Wealth Upaya', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-d9-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'IN_PROGRESS', cleanPercentage: 40, cleanedDetails: 'Clearing commercial shop cash altar.', mentorCode: 'SKHM-TRN3-1122-3344', mentorName: 'Amitabh Sen', mentorRemarks: 'Under guidance.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-d9-1', sadhanaKey: 'business_money', title: 'Business & Wealth Upaya', categoryDomain: 'remedies', isPaid: true, paymentStatus: 'PAID', level: 'Level 1 — Initiation', dailyTarget: 'Friday Silver Diya', currentStreak: '4 Days', progressPercent: 30, status: 'In Progress', mentorCode: 'SKHM-TRN3-1122-3344', diaryNotes: 'Payments started unlocking.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Deepak Saxena', selfTitle: 'Devotee Seeker', spouseName: 'Neelam Saxena', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'J. P. Saxena', motherName: 'Maya Saxena', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Bhopal' },
+          wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-devotee-10',
+        referenceCode: 'SKHM-DEV4-4433-2211',
+        referredByCode: 'SKHM-TRN3-2233-4455',
+        transferredCode: '',
+        name: 'Aarohi Patel',
+        phone: '+91 97330 77665',
+        email: 'aarohi.patel@devotee.org',
+        profileType: 'DEVOTEE',
+        level: 4,
+        isPaid: false,
+        paymentStatus: 'FREE',
+        objective: 'House Clean Level 1 and family peace.',
+        selectedRemedies: ['three_diya', 'healing'],
+        address: '33 Ring Road',
+        city: 'Surat, Gujarat',
+        joinDate: '2024-08-20',
+        isActive: true,
+        notes: 'Devotee practicing daily sunset 3-diya purification.',
+        categoryTag: 'Devotee Seeker',
+        seekerDiagnostics: { afflictionDuration: '8 Months', kuldeviIssues: 'Pending', targetOutcome: 'Calm household environment' },
+        interestedSadhanas: [{ id: 'three_diya', name: 'Three Diya Process', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-d10-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'IN_PROGRESS', cleanPercentage: 30, cleanedDetails: 'Purifying main entryway with sea salt.', mentorCode: 'SKHM-TRN3-2233-4455', mentorName: 'Rajeshwari Joshi', mentorRemarks: 'Under review.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-d10-1', sadhanaKey: 'three_diya', title: 'Three Diya Process', categoryDomain: 'remedies', isPaid: false, paymentStatus: 'FREE', level: 'Level 1 — Initiation', dailyTarget: '3 Diyas at Sunset', currentStreak: '5 Days', progressPercent: 25, status: 'In Progress', mentorCode: 'SKHM-TRN3-2233-4455', diaryNotes: 'Peace observed.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Aarohi Patel', selfTitle: 'Devotee Seeker', spouseName: '', children: [], siblings: [] },
+          husbandAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' },
+          wifeAncestral: { fatherName: 'Nitin Patel', motherName: 'Geeta Patel', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Surat' }
+        }
+      },
+      {
+        id: 'prof-devotee-11',
+        referenceCode: 'SKHM-DEV4-5544-3322',
+        referredByCode: 'SKHM-TRN3-6677-8899',
+        transferredCode: '',
+        name: 'Meera Nair',
+        phone: '+91 97440 88776',
+        email: 'meera.nair@devotee.org',
+        profileType: 'DEVOTEE',
+        level: 4,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Spiritual protection, evil eye shielding, and aura fortification.',
+        selectedRemedies: ['nazar_suraksha', 'aura_strengthening'],
+        address: '5 Marine Drive',
+        city: 'Kochi, Kerala',
+        joinDate: '2024-08-22',
+        isActive: true,
+        notes: 'Devotee practicing daily Nazar Suraksha rituals.',
+        categoryTag: 'Devotee Seeker',
+        seekerDiagnostics: { afflictionDuration: '2 Years', kuldeviIssues: 'Done', targetOutcome: 'Dissolve physical exhaustion' },
+        interestedSadhanas: [{ id: 'nazar_suraksha', name: 'Nazar Suraksha & Evil Eye Shield', category: 'Cleansing & Healing', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-d11-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'IN_PROGRESS', cleanPercentage: 45, cleanedDetails: 'Rai and salt cleansing twice weekly.', mentorCode: 'SKHM-TRN3-6677-8899', mentorName: 'Rohan Verma', mentorRemarks: 'Good energetic clearance.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-d11-1', sadhanaKey: 'nazar_suraksha', title: 'Nazar Suraksha & Evil Eye Shield', categoryDomain: 'cleansing', isPaid: true, paymentStatus: 'PAID', level: 'Level 1 — Initiation', dailyTarget: 'Tuesday & Saturday Godhuli Bela', currentStreak: '6 Days', progressPercent: 40, status: 'In Progress', mentorCode: 'SKHM-TRN3-6677-8899', diaryNotes: 'Headaches relieved.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Meera Nair', selfTitle: 'Devotee Seeker', spouseName: 'Ajay Nair', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Madhavan Nair', motherName: 'Lalitha Nair', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Kochi' },
+          wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-devotee-12',
+        referenceCode: 'SKHM-DEV4-6655-4433',
+        referredByCode: 'SKHM-TRN3-7788-9900',
+        transferredCode: '',
+        name: 'Suresh Rao',
+        phone: '+91 97550 99887',
+        email: 'suresh.rao@devotee.org',
+        profileType: 'DEVOTEE',
+        level: 4,
+        isPaid: false,
+        paymentStatus: 'FREE',
+        objective: 'Ancestral Rin Mukti and positive vibration in home.',
+        selectedRemedies: ['karmic_debts', 'three_diya'],
+        address: '101 Indiranagar',
+        city: 'Bengaluru, Karnataka',
+        joinDate: '2024-08-25',
+        isActive: true,
+        notes: 'Devotee initiated by Priya Sharma.',
+        categoryTag: 'Devotee Seeker',
+        seekerDiagnostics: { afflictionDuration: '1 Year', kuldeviIssues: 'Under consultation', targetOutcome: 'Debt settlement and harmony' },
+        interestedSadhanas: [{ id: 'karmic_debts', name: 'Karmic Debts Fire Cleansing', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-d12-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'IN_PROGRESS', cleanPercentage: 20, cleanedDetails: 'Commencing Rin Mukteshwar havan.', mentorCode: 'SKHM-TRN3-7788-9900', mentorName: 'Priya Sharma', mentorRemarks: 'First cycle active.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-d12-1', sadhanaKey: 'karmic_debts', title: 'Karmic Debts Fire Cleansing', categoryDomain: 'remedies', isPaid: false, paymentStatus: 'FREE', level: 'Level 1 — Initiation', dailyTarget: 'Tuesday Havan', currentStreak: '2 Days', progressPercent: 20, status: 'In Progress', mentorCode: 'SKHM-TRN3-7788-9900', diaryNotes: 'Red lentils offering done.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Suresh Rao', selfTitle: 'Devotee Seeker', spouseName: 'Shalini Rao', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Venkatesh Rao', motherName: 'Padma Rao', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Bengaluru' },
           wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
         }
       }
@@ -764,7 +1031,10 @@ class ProfileModel {
     try {
       const data = localStorage.getItem(this.storageKey);
       if (data) {
-        return JSON.parse(data);
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed) && parsed.length >= 8 && parsed.some(p => p.profileType === 'TRAINEE' || p.level === 3 || p.level === 4)) {
+          return parsed;
+        }
       }
     } catch (e) {
       console.warn('Error loading profiles from localStorage', e);
@@ -1589,6 +1859,14 @@ class ProfileView {
     // Healer Completed & Network
     this._renderHealerCompleted(profile.healerCompletedSadhanas || []);
     this._renderHealerNetwork(profile.healerNetwork || []);
+
+    // Render In-Body App Hierarchy Tree (Tab 5)
+    const treeProfiles = this.allProfiles || visibleProfiles || [];
+    const activeFilter = this.bodyTreeTierFilter ? this.bodyTreeTierFilter.value : 'ALL';
+    const tier = activeFilter === 'ALL' ? null : parseInt(activeFilter, 10);
+    const query = this.bodyTreeSearchInput ? this.bodyTreeSearchInput.value : '';
+    const mode = this.inBodyTreePanState?.layoutMode || 'cluster';
+    this.renderInBodyHierarchyTree(treeProfiles, tier, query, mode);
 
     // JSON Live Inspector
     this._updateJSONPreview(profile);
@@ -2793,7 +3071,7 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
 
     if (!profiles || profiles.length === 0) {
       if (this.bodySpiderwebNodesLayer) {
-        this.bodySpiderwebNodesLayer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 2rem;">No profiles found.</div>';
+        this.bodySpiderwebNodesLayer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 2rem;">No profiles available.</div>';
       }
       return;
     }
@@ -2813,16 +3091,15 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
     const tier4List = profiles.filter(p => this._getTierDetails(p).tier === 4);
 
     const rootProfile = tier1List.length > 0 ? tier1List[0] : profiles[0];
-
-    // Build hierarchical lineage groups
     const cleanQuery = (searchQuery || '').trim().toLowerCase();
+    const connections = [];
 
     const renderPersonNode = (p, tier, isRoot = false) => {
       const isDevotee = tier === 4;
       const headFill = isDevotee ? '#a5f3fc' : '#1e3a8a';
-      const headStroke = isDevotee ? '#0284c7' : '#0a1128';
+      const headStroke = isDevotee ? '#0284c7' : '#93c5fd';
       const bodyFill = isDevotee ? '#a5f3fc' : '#1e3a8a';
-      const bodyStroke = isDevotee ? '#0284c7' : '#0a1128';
+      const bodyStroke = isDevotee ? '#0284c7' : '#93c5fd';
 
       const name = p.name || (isRoot ? 'Founder (Karim Ji)' : 'Seeker');
       const isMatch = cleanQuery && name.toLowerCase().includes(cleanQuery);
@@ -2836,9 +3113,9 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
              tabindex="0"
              title="${name} (${this._getTierDetails(p).title}) • Click to view details, double click to jump to profile">
           <div class="person-icon-graphic">
-            <svg viewBox="0 0 36 50" width="${isRoot ? '36' : '30'}" height="${isRoot ? '48' : '40'}" class="person-svg">
-              <circle cx="18" cy="9" r="6.5" fill="${headFill}" stroke="${headStroke}" stroke-width="1.5" class="person-head" />
-              <rect x="7" y="18" width="22" height="26" rx="2.5" fill="${bodyFill}" stroke="${bodyStroke}" stroke-width="1.5" class="person-body" />
+            <svg viewBox="0 0 36 50" width="${isRoot ? '38' : '32'}" height="${isRoot ? '50' : '42'}" class="person-svg">
+              <circle cx="18" cy="9" r="6.5" fill="${headFill}" stroke="${headStroke}" stroke-width="1.8" class="person-head" />
+              <rect x="7" y="18" width="22" height="26" rx="3" fill="${bodyFill}" stroke="${bodyStroke}" stroke-width="1.8" class="person-body" />
             </svg>
           </div>
           <div class="person-node-name">${name}</div>
@@ -2849,10 +3126,13 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
     let html = '';
 
     if (layoutMode === 'cluster') {
-      // Build Clustered MLM Sub-tree Structure
-      const effectiveHealers = tier2List.length > 0 ? tier2List : [{ id: 'mock-h1', name: 'Healer 1', referenceCode: 'H1' }, { id: 'mock-h2', name: 'Healer 2', referenceCode: 'H2' }];
+      // Clustered MLM Branches
+      const effectiveHealers = tier2List.length > 0 ? tier2List : [{ id: 'mock-h1', name: 'Acharya Devendra', referenceCode: 'SKHM-HLR2-3344-5566' }];
 
       const healerBranchesHtml = effectiveHealers.map((healer, hIdx) => {
+        // Track Root -> Healer link
+        connections.push({ parentId: `body-tree-node-${rootProfile.id}`, childId: `body-tree-node-${healer.id}` });
+
         // Find trainees under this healer
         let matchedTrainees = tier3List.filter(t => t.referredByCode && t.referredByCode === healer.referenceCode);
         if (matchedTrainees.length === 0 && tier3List.length > 0) {
@@ -2863,6 +3143,9 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
         }
 
         const traineeColumnsHtml = matchedTrainees.map((trainee, tIdx) => {
+          // Track Healer -> Trainee link
+          connections.push({ parentId: `body-tree-node-${healer.id}`, childId: `body-tree-node-${trainee.id}` });
+
           // Find devotees under this trainee
           let matchedDevotees = tier4List.filter(d => d.referredByCode && d.referredByCode === trainee.referenceCode);
           if (matchedDevotees.length === 0 && tier4List.length > 0) {
@@ -2871,6 +3154,11 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
           if (matchedDevotees.length === 0) {
             matchedDevotees = [{ id: `mock-d-${hIdx}-${tIdx}-1`, name: `Devotee ${tIdx + 1}.A` }];
           }
+
+          // Track Trainee -> Devotees links
+          matchedDevotees.forEach(devotee => {
+            connections.push({ parentId: `body-tree-node-${trainee.id}`, childId: `body-tree-node-${devotee.id}` });
+          });
 
           const devoteesHtml = matchedDevotees.map(d => renderPersonNode(d, 4)).join('');
 
@@ -2900,11 +3188,11 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
 
       html = `
         <div class="tree-hierarchy-wrapper" id="tree-hierarchy-wrapper">
-          <!-- Top Root Master -->
+          <!-- Tier 1: Top Master Root -->
           <div class="tree-cluster-node-wrap" id="tree-root-cluster">
             ${renderPersonNode(rootProfile, 1, true)}
           </div>
-          <!-- Healers Sub-trees Row -->
+          <!-- Tier 2 & Down: Healers & Sub-branches -->
           <div class="tree-sub-branches-row" id="tree-healers-row">
             ${healerBranchesHtml}
           </div>
@@ -2912,38 +3200,57 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
       `;
     } else {
       // Spiderweb Matrix Layout (4 clean rows)
+      const effectiveHealers = tier2List.length > 0 ? tier2List : [{ id: 'mock-h1', name: 'Acharya Devendra' }];
+      const effectiveTrainees = tier3List.length > 0 ? tier3List : [{ id: 'mock-t1', name: 'Amitabh Sen' }];
+      const effectiveDevotees = tier4List.length > 0 ? tier4List : [{ id: 'mock-d1', name: 'Sunita Mehra' }];
+
+      effectiveHealers.forEach(h => {
+        connections.push({ parentId: `body-tree-node-${rootProfile.id}`, childId: `body-tree-node-${h.id}` });
+      });
+
+      effectiveTrainees.forEach((t, idx) => {
+        const parentH = effectiveHealers.find(h => h.referenceCode && h.referenceCode === t.referredByCode) || effectiveHealers[idx % effectiveHealers.length];
+        if (parentH) connections.push({ parentId: `body-tree-node-${parentH.id}`, childId: `body-tree-node-${t.id}` });
+      });
+
+      effectiveDevotees.forEach((d, idx) => {
+        const parentT = effectiveTrainees.find(t => t.referenceCode && t.referenceCode === d.referredByCode) || effectiveTrainees[idx % effectiveTrainees.length];
+        if (parentT) connections.push({ parentId: `body-tree-node-${parentT.id}`, childId: `body-tree-node-${d.id}` });
+      });
+
       html = `
         <div class="tree-hierarchy-wrapper spiderweb-matrix-flow" id="tree-hierarchy-wrapper">
           <div class="spiderweb-level-row level-1-row" id="body-row-tier-1">
             ${renderPersonNode(rootProfile, 1, true)}
           </div>
           <div class="spiderweb-level-row level-2-row" id="body-row-tier-2">
-            ${tier2List.length > 0 ? tier2List.map(h => renderPersonNode(h, 2)).join('') : renderPersonNode({ id: 'mock-h1', name: 'Healer 1' }, 2) + renderPersonNode({ id: 'mock-h2', name: 'Healer 2' }, 2)}
+            ${effectiveHealers.map(h => renderPersonNode(h, 2)).join('')}
           </div>
           <div class="spiderweb-level-row level-3-row" id="body-row-tier-3">
-            ${tier3List.length > 0 ? tier3List.map(t => renderPersonNode(t, 3)).join('') : renderPersonNode({ id: 'mock-t1', name: 'Trainee 1' }, 3) + renderPersonNode({ id: 'mock-t2', name: 'Trainee 2' }, 3)}
+            ${effectiveTrainees.map(t => renderPersonNode(t, 3)).join('')}
           </div>
           <div class="spiderweb-level-row level-4-row" id="body-row-tier-4">
-            ${tier4List.length > 0 ? tier4List.map(d => renderPersonNode(d, 4)).join('') : renderPersonNode({ id: 'mock-d1', name: 'Devotee 1' }, 4) + renderPersonNode({ id: 'mock-d2', name: 'Devotee 2' }, 4)}
+            ${effectiveDevotees.map(d => renderPersonNode(d, 4)).join('')}
           </div>
         </div>
       `;
     }
 
     this.bodySpiderwebNodesLayer.innerHTML = html;
+    this._currentTreeConnections = connections;
 
-    // Draw connecting lines with dynamic coordinates
+    // Draw connecting bezier lines with exact coordinates
     setTimeout(() => {
-      this._drawInBodyConnectingLines(rootProfile, tier2List, tier3List, tier4List, layoutMode);
-    }, 60);
+      this._drawInBodyConnectingLines(connections);
+    }, 50);
 
-    // Auto smart-fit on initial render
+    // Auto smart-fit on render
     setTimeout(() => {
       this.smartFitInBodyTree();
     }, 100);
   }
 
-  _drawInBodyConnectingLines(root, tier2List, tier3List, tier4List, layoutMode) {
+  _drawInBodyConnectingLines(connections = []) {
     if (!this.bodySpiderwebSvgLayer || !this.bodySpiderwebNodesLayer) return;
 
     const surfaceRect = this.bodySpiderwebNodesLayer.getBoundingClientRect();
@@ -2966,43 +3273,12 @@ Install Spiritual Karim, enter your phone or tap Telegram link to request hierar
       </defs>
     `;
 
-    const rootAnchor = getCenterAnchor(`body-tree-node-${root.id}`, false);
-
-    // Connect Root to all Tier 2 nodes
-    const effectiveHealers = tier2List.length > 0 ? tier2List : [{ id: 'mock-h1' }, { id: 'mock-h2' }];
-    effectiveHealers.forEach(h => {
-      const childAnchor = getCenterAnchor(`body-tree-node-${h.id}`, true);
-      if (rootAnchor && childAnchor) {
-        const midY = (rootAnchor.y + childAnchor.y) / 2;
-        pathsSvg += `<path d="M ${rootAnchor.x} ${rootAnchor.y} C ${rootAnchor.x} ${midY}, ${childAnchor.x} ${midY}, ${childAnchor.x} ${childAnchor.y}" class="spiderweb-bezier-line" marker-end="url(#body-spiderweb-arrow)" />`;
-      }
-    });
-
-    // Connect Healers to Trainees
-    const effectiveTrainees = tier3List.length > 0 ? tier3List : [{ id: 'mock-t-0-1' }, { id: 'mock-t-1-1' }, { id: 'mock-t1' }, { id: 'mock-t2' }];
-    effectiveTrainees.forEach((t, idx) => {
-      const parentHealer = tier2List.find(h => h.referenceCode && h.referenceCode === t.referredByCode) || effectiveHealers[idx % effectiveHealers.length];
-      if (parentHealer) {
-        const pAnchor = getCenterAnchor(`body-tree-node-${parentHealer.id}`, false);
-        const cAnchor = getCenterAnchor(`body-tree-node-${t.id}`, true);
-        if (pAnchor && cAnchor) {
-          const midY = (pAnchor.y + cAnchor.y) / 2;
-          pathsSvg += `<path d="M ${pAnchor.x} ${pAnchor.y} C ${pAnchor.x} ${midY}, ${cAnchor.x} ${midY}, ${cAnchor.x} ${cAnchor.y}" class="spiderweb-bezier-line" marker-end="url(#body-spiderweb-arrow)" />`;
-        }
-      }
-    });
-
-    // Connect Trainees to Devotees
-    const effectiveDevotees = tier4List.length > 0 ? tier4List : [{ id: 'mock-d-0-0-1' }, { id: 'mock-d-1-0-1' }, { id: 'mock-d1' }, { id: 'mock-d2' }];
-    effectiveDevotees.forEach((d, idx) => {
-      const parentTrainee = tier3List.find(t => t.referenceCode && t.referenceCode === d.referredByCode) || effectiveTrainees[idx % effectiveTrainees.length];
-      if (parentTrainee) {
-        const pAnchor = getCenterAnchor(`body-tree-node-${parentTrainee.id}`, false);
-        const cAnchor = getCenterAnchor(`body-tree-node-${d.id}`, true);
-        if (pAnchor && cAnchor) {
-          const midY = (pAnchor.y + cAnchor.y) / 2;
-          pathsSvg += `<path d="M ${pAnchor.x} ${pAnchor.y} C ${pAnchor.x} ${midY}, ${cAnchor.x} ${midY}, ${cAnchor.x} ${cAnchor.y}" class="spiderweb-bezier-line" marker-end="url(#body-spiderweb-arrow)" />`;
-        }
+    connections.forEach(conn => {
+      const pAnchor = getCenterAnchor(conn.parentId, false);
+      const cAnchor = getCenterAnchor(conn.childId, true);
+      if (pAnchor && cAnchor) {
+        const midY = (pAnchor.y + cAnchor.y) / 2;
+        pathsSvg += `<path d="M ${pAnchor.x} ${pAnchor.y} C ${pAnchor.x} ${midY}, ${cAnchor.x} ${midY}, ${cAnchor.x} ${cAnchor.y}" class="spiderweb-bezier-line" marker-end="url(#body-spiderweb-arrow)" />`;
       }
     });
 
@@ -3455,6 +3731,7 @@ class ProfileController {
     const visibleProfiles = this.model.getVisibleProfiles();
     const roleMode = this.model.getRoleMode();
     const settings = this.model.settings;
+    this.view.allProfiles = this.model.profiles;
     this.view.render(active, visibleProfiles, roleMode, settings);
     this._filterRemedies();
   }
