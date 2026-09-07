@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const webRoot = 'c:\\Users\\jiten\\jAnitGravity\\SpritualKarim\\SpritulKarimWeb';
-const baseDir = 'c:\\Users\\jiten\\jAnitGravity\\SpritualKarim';
+const webRoot = path.join(__dirname);
+const baseDir = path.resolve(__dirname, '..');
 
 // Tree Modal and Drawer Markup to inject into subportals if not present
 const treeModalAndDrawerSnippet = `
@@ -296,12 +296,10 @@ function copyDirSync(src, dest) {
   }
 }
 
-// 2. Mirror SpritulKarimWeb to SpritualKarimWeb and nested aliases
+// 2. Mirror SpritualKarimWeb to alias locations if needed
 const targets = [
-  path.join(baseDir, 'SpritualKarimWeb'),
-  path.join(baseDir, 'SpritualKarim', 'SpritulKarimWeb'),
-  path.join(baseDir, 'SpritualKarim', 'SpritualKarimWeb')
-];
+  path.join(baseDir, 'SpritulKarimWeb')
+].filter(target => path.resolve(target) !== path.resolve(webRoot));
 
 targets.forEach(target => {
   console.log(`Mirroring ${webRoot} -> ${target}...`);

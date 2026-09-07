@@ -995,7 +995,84 @@ fun HealerDetailScreen(
         }
 
         // ==========================================
-        // 2. 3-GENERATION ANCESTRAL LINEAGE & SIBLINGS CARD
+        // 2. 🧹 HOUSE CLEAN & SADHANA STATUS (4-DIMENSIONAL SPIRITUAL PROGRESS MATRIX)
+        // ==========================================
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "🧹 House Clean & Sadhana Status",
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "Live Member Progress Matrix",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 10.sp
+                    )
+                }
+
+                // 2x2 Grid of Active Groups
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    // Group 1: Personal & Lineage Summary
+                    val cleanPct = remember(profile.id) {
+                        com.jdroidx.spritualkarim.data.repository.HouseCleanRepository.calculateOverallCleanPercentage(profile.id)
+                    }
+                    DevoteeActiveSummaryCard(
+                        icon = Icons.Default.Person,
+                        groupTitle = "1. Personal & Lineage",
+                        metricText = "Level ${profile.level} • ${cleanPct}% Clean",
+                        subText = "3-Gen Tree Linked • ${profile.city.ifBlank { "Spiritual Kendra" }}",
+                        accentColor = SpiritualGold,
+                        modifier = Modifier.weight(1f),
+                        onClick = { }
+                    )
+
+                    // Group 2: Seeker Purpose & Upayas Summary
+                    DevoteeActiveSummaryCard(
+                        icon = Icons.Default.CrisisAlert,
+                        groupTitle = "2. Seeker Purpose",
+                        metricText = "${profile.selectedRemedies.size} Upayas Prescribed",
+                        subText = "Affliction: ${profile.seekerDiagnostics.afflictionDuration.ifBlank { "3 Years" }}",
+                        accentColor = SpiritualOrange,
+                        modifier = Modifier.weight(1f),
+                        onClick = { }
+                    )
+                }
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    // Group 3: Trainee In-Progress Sadhanas
+                    DevoteeActiveSummaryCard(
+                        icon = Icons.Default.SelfImprovement,
+                        groupTitle = "3. Active Sadhanas",
+                        metricText = "${profile.selectedRemedies.size} Active Practices",
+                        subText = "Category: ${profile.categoryTag.ifBlank { "House Clean & Sadhana" }}",
+                        accentColor = SpiritualTeal,
+                        modifier = Modifier.weight(1f),
+                        onClick = { }
+                    )
+
+                    // Group 4: Healer Connect & Siddhis
+                    DevoteeActiveSummaryCard(
+                        icon = Icons.Default.Verified,
+                        groupTitle = "4. Healer Connect",
+                        metricText = "Tier ${profile.level} Lineage",
+                        subText = "${allDescendants.size} Descendants • ${directDownline.size} Direct",
+                        accentColor = SpiritualCrimson,
+                        modifier = Modifier.weight(1f),
+                        onClick = { }
+                    )
+                }
+            }
+        }
+
+        // ==========================================
+        // 3. 3-GENERATION ANCESTRAL LINEAGE & SIBLINGS CARD
         // ==========================================
         item {
             Personal3GenLineageCard(
@@ -1025,6 +1102,15 @@ fun HealerDetailScreen(
                 SectionHeader(title = "Identification & Tracking Details", icon = Icons.Default.Badge)
                 Spacer(modifier = Modifier.height(8.dp))
 
+                DetailItemRow(
+                    label = "16-Digit Reference Code",
+                    value = profile.referenceCode,
+                    onAction = {
+                        clipboardManager.setText(AnnotatedString(profile.referenceCode))
+                        Toast.makeText(context, "Code Copied: ${profile.referenceCode}", Toast.LENGTH_SHORT).show()
+                    },
+                    actionIcon = Icons.Default.ContentCopy
+                )
                 DetailItemRow(
                     label = "Phone Number",
                     value = profile.phone,

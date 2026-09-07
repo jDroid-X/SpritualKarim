@@ -1,4 +1,4 @@
-/**
+﻿/**
  * profile-admin.js
  * Master 4-Tier OOPS-based MVC JavaScript Application for Spiritual Karim Admin Panel
  * Tier 1: Devotee Personal (Identity, Ancestral Lineage, House Clean)
@@ -1643,6 +1643,8 @@ class ProfileView {
     this.form = document.getElementById('profile-admin-form');
     this.selectActiveProfile = document.getElementById('select-active-profile');
     this.profileDirectoryList = document.getElementById('profile-directory-list');
+    this.inputDirectorySearch = document.getElementById('input-directory-search');
+    this.directorySearchQuery = '';
 
     // Role Switcher & RBAC Controls
     this.selectRoleMode = document.getElementById('select-role-mode');

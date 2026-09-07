@@ -294,66 +294,7 @@ fun UserTabContent(
                         }
                     }
 
-                    // Row 2: 16-Digit Sponsor Code Banner (Smart Fit Multi-Device Row)
-                    Surface(
-                        shape = RoundedCornerShape(8.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 10.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "MY 16-DIGIT CODE",
-                                    fontSize = 8.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    letterSpacing = 0.8.sp
-                                )
-                                Text(
-                                    text = activeProfile.referenceCode,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    fontFamily = FontFamily.Monospace,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    maxLines = 1
-                                )
-                            }
-
-                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                FilledTonalIconButton(
-                                    onClick = {
-                                        clipboardManager.setText(AnnotatedString(activeProfile.referenceCode))
-                                        Toast.makeText(context, "16-Digit Code Copied", Toast.LENGTH_SHORT).show()
-                                    },
-                                    modifier = Modifier.size(30.dp),
-                                    shape = RoundedCornerShape(6.dp)
-                                ) {
-                                    Icon(Icons.Default.ContentCopy, contentDescription = "Copy", modifier = Modifier.size(14.dp))
-                                }
-
-                                Button(
-                                    onClick = { showSharePairingDialog = true },
-                                    shape = RoundedCornerShape(6.dp),
-                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
-                                    modifier = Modifier.height(30.dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                                ) {
-                                    Icon(Icons.Default.Share, contentDescription = "Share", modifier = Modifier.size(13.dp), tint = MaterialTheme.colorScheme.onPrimary)
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Share", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
-                                }
-                            }
-                        }
-                    }
-
-                    // Row 3: 2-Column Responsive Metadata Fields (Mentor Guide & Category Tag)
+                    // Row 2: Profile Specialization & Level Overview (No 16-digit code on home card)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -365,12 +306,11 @@ fun UserTabContent(
                             modifier = Modifier.weight(1f)
                         ) {
                             Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)) {
-                                Text("Mentor Guide Code", fontSize = 8.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text("Spiritual Role / Level", fontSize = 8.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(
-                                    text = activeProfile.referredByCode.ifBlank { "SKHM-ADM1-7788-9900" },
+                                    text = "${activeProfile.formattedRoleBadge} • Level ${activeProfile.level}",
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
-                                    fontFamily = FontFamily.Monospace,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     maxLines = 1
                                 )
@@ -451,87 +391,7 @@ fun UserTabContent(
         }
 
         // ==========================================
-        // 2. ACTIVE INFORMATION GROUP SUMMARY DASHBOARD (DRILL-DOWN TILES)
-        // ==========================================
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "🌟 Active Spiritual Summary & Drill Down",
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = "Tap group to drill down",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 10.sp
-                    )
-                }
-
-                // 2x2 Grid of Active Groups
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    // Group 1: Personal & Lineage Summary
-                    DevoteeActiveSummaryCard(
-                        icon = Icons.Default.Person,
-                        groupTitle = "1. Personal & Lineage",
-                        metricText = "Level ${activeProfile.level} • 85% Clean",
-                        subText = "3-Gen Tree Linked • House Clean Active",
-                        accentColor = SpiritualGold,
-                        modifier = Modifier.weight(1f),
-                        onClick = {
-                            activePortalTab = 0
-                            activeDevoteeSubTab = 0
-                        }
-                    )
-
-                    // Group 2: Seeker Purpose & Upayas Summary
-                    DevoteeActiveSummaryCard(
-                        icon = Icons.Default.CrisisAlert,
-                        groupTitle = "2. Seeker Purpose",
-                        metricText = "${enrolledRemedyIds.size} Upayas Enrolled",
-                        subText = "Duration: 3 Yrs • Kuldevi Pending",
-                        accentColor = SpiritualOrange,
-                        modifier = Modifier.weight(1f),
-                        onClick = {
-                            activePortalTab = 1
-                            activeSeekerSubTab = 0
-                        }
-                    )
-                }
-
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    // Group 3: Trainee In-Progress Sadhanas
-                    DevoteeActiveSummaryCard(
-                        icon = Icons.Default.SelfImprovement,
-                        groupTitle = "3. Active Sadhanas",
-                        metricText = "${activeSadhanasState.size} In-Progress",
-                        subText = "Streak: 14 Days • 68% Completed",
-                        accentColor = SpiritualTeal,
-                        modifier = Modifier.weight(1f),
-                        onClick = { activePortalTab = 2 }
-                    )
-
-                    // Group 4: Healer Connect & Siddhis
-                    DevoteeActiveSummaryCard(
-                        icon = Icons.Default.Verified,
-                        groupTitle = "4. Healer Connect",
-                        metricText = "3 Master Siddhis",
-                        subText = "3 Seekers Connected in Team",
-                        accentColor = SpiritualCrimson,
-                        modifier = Modifier.weight(1f),
-                        onClick = { activePortalTab = 3 }
-                    )
-                }
-            }
-        }
-
-        // ==========================================
-        // 3. MAIN 4-TAB PORTAL NAVIGATION BAR (BELOW 1st BOX)
+        // 2. MAIN 4-TAB PORTAL NAVIGATION BAR (BELOW PROFILE HEADER CARD)
         // ==========================================
         item {
             Row(

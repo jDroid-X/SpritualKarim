@@ -3,24 +3,27 @@
     ".read": "auth != null || true",
     ".write": "auth != null || true",
     "device_logs": {
-      "$deviceId": {
+      "": {
         ".indexOn": ["timestamp", "logType", "severity"],
-        "$logId": {
+        "": {
           ".validate": "newData.hasChildren(['timestamp', 'logType'])"
         }
       }
     },
     "pairing_invites": {
       ".indexOn": ["status", "sponsorCode", "expiresAt", "seekerPhone"],
-      "$inviteId": {
+      "": {
         ".validate": "newData.hasChildren(['inviteCode', 'sponsorCode', 'seekerName', 'expiresAt', 'status'])"
       }
     },
     "profiles": {
       ".indexOn": ["referenceCode", "referredByCode", "profileType", "isActive", "paymentStatus"]
     },
+    "authorisedNodes": {
+      ".indexOn": ["nodeId", "sponsorId", "role", "status", "lastSeenTimestamp"]
+    },
     "sync_queue": {
-      "$deviceId": {
+      "": {
         ".indexOn": ["timestamp", "status", "revision"]
       }
     },

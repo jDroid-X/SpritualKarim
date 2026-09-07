@@ -121,7 +121,10 @@
     <!-- Left Navigation & Directory Sidebar -->
     <aside class="admin-sidebar">
       <div class="sidebar-section">
-        <div class="sidebar-heading">Profile Directory</div>
+                <div class="sidebar-heading">Profile Directory</div>
+        <div style="padding: 0 0 0.5rem 0;">
+          <input type="search" id="input-directory-search" class="form-control form-control-sm" placeholder="🔍 Search profiles..." style="font-size: 0.78rem; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-card); border-radius: 6px; padding: 0.35rem 0.6rem; width: 100%; box-sizing: border-box;">
+        </div>
         <div id="profile-directory-list" class="profile-directory-list"></div>
       </div>
 
@@ -1273,7 +1276,7 @@
         </div>
       </div>
       <div class="modal-body goli-gyan-modal-body">
-        <iframe src="GOLI_GYAN_FOR_SEEKERS.html" class="goli-gyan-iframe" title="Goli Gyan Guide"></iframe>
+        <iframe src="../GOLI_GYAN_FOR_SEEKERS.html" class="goli-gyan-iframe" title="Goli Gyan Guide"></iframe>
       </div>
     </div>
   </div>
@@ -1457,7 +1460,6 @@
   <!-- Toast Notification -->
   <div id="admin-toast" class="admin-toast"></div>
 
-  <script src="../js/profile-admin.js"></script>
 
   <!-- ==============================================================
        MODAL: VISUAL MLM APP HIERARCHY TREE
@@ -1528,5 +1530,10 @@
     </div>
   </div>
 
+  <!-- Firebase App & Realtime Database SDK (Compat v9) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script src="../js/profile-admin.js"></script>
 </body>
 </html>
