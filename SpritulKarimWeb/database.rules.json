@@ -3,12 +3,18 @@
     ".read": "auth != null || true",
     ".write": "auth != null || true",
     "device_logs": {
-      "$deviceId": {
-        ".indexOn": ["timestamp", "logType", "severity"]
+      "": {
+        ".indexOn": ["timestamp", "logType", "severity"],
+        "": {
+          ".validate": "newData.hasChildren(['timestamp', 'logType'])"
+        }
       }
     },
     "pairing_invites": {
-      ".indexOn": ["status", "sponsorCode", "expiresAt", "seekerPhone"]
+      ".indexOn": ["status", "sponsorCode", "expiresAt", "seekerPhone"],
+      "": {
+        ".validate": "newData.hasChildren(['inviteCode', 'sponsorCode', 'seekerName', 'expiresAt', 'status'])"
+      }
     },
     "profiles": {
       ".indexOn": ["referenceCode", "referredByCode", "profileType", "isActive", "paymentStatus"]
@@ -17,7 +23,7 @@
       ".indexOn": ["nodeId", "sponsorId", "role", "status", "lastSeenTimestamp"]
     },
     "sync_queue": {
-      "$queueId": {
+      "": {
         ".indexOn": ["timestamp", "status", "revision"]
       }
     },
