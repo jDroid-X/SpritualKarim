@@ -1,0 +1,47 @@
+{
+  "rules": {
+    "profiles": {
+      ".read": "auth != null || true",
+      ".write": "auth != null",
+      "$deviceId": {
+        ".indexOn": [
+          "referenceCode",
+          "referredByCode",
+          "profileType",
+          "level"
+        ]
+      }
+    },
+    "pairing_invites": {
+      ".read": "auth != null || true",
+      ".write": "auth != null || true",
+      "$queueId": {
+        ".indexOn": [
+          "sponsorCode",
+          "status",
+          "expiresAt"
+        ]
+      }
+    },
+    "sadhana_catalog": {
+      ".read": true,
+      ".write": "auth != null && auth.token.admin == true"
+    },
+    "device_telemetry": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "system_config": {
+      ".read": true,
+      ".write": "auth != null && auth.token.admin == true"
+    },
+    "lineage_graph": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "audit_logs": {
+      ".read": "auth != null && auth.token.admin == true",
+      ".write": "auth != null"
+    }
+  }
+}

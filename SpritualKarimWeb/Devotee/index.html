@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spiritual Karim • Mobile App Admin Panel - 4-Tier User Management</title>
+  <title>Devotee Portal • Shree Spritual Karim Sansthan</title>
   <meta name="description" content="Admin Control Panel for Spiritual Karim Mobile App - Devotee Personal, Seeker Purpose, Trainee Sadhak, and Healer Connect Management">
   
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="../Logo.png">
+  <link rel="icon" type="image/png" href="Logo.png">
 
   <!-- Google Fonts: Cinzel, Outfit & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../css/profile-admin.css?v=rtdb_v3_1788844932105">
+  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1788855903569">
 </head>
-<body data-portal-mode="devotee">
+<body data-portal-role="DEVOTEE" class="portal-devotee">
   <!-- Top Admin Control Header (2-Row Smart Fit Layout) -->
   <header class="admin-topbar multi-row-header">
     <!-- Row 1: Brand, Status, Global Tools & Theme Switcher -->
@@ -32,7 +32,7 @@
           <div class="brand-text-block">
             <div class="brand-title-wrap">
               <span class="admin-title">SPIRITUAL KARIM ADMIN</span>
-              <span class="header-portal-badge" id="header-portal-badge">🌟 Devotee Portal</span>
+              <span class="header-portal-badge" id="header-portal-badge">👑 Master Control</span>
             </div>
             <span class="admin-subtitle">Mobile App Control &bull; 4-Tier User Management</span>
           </div>
@@ -64,15 +64,10 @@
           <span>📜</span> <span class="btn-text-desktop">Goli Gyan</span>
         </button>
 
-        <!-- Share & Invite Seeker Quick Modal Trigger -->
-        <button type="button" id="btn-quick-share-pairing" class="btn btn-sm btn-gold header-quick-btn" title="Share &amp; Invite Seeker (24h Device Pairing Protocol)">
-          <span>📲</span> <span class="btn-text-desktop">Share &amp; Pair</span>
-        </button>
-
-        <!-- Settings Modal Trigger -->
-        <button type="button" id="btn-admin-settings" class="btn btn-sm btn-outline header-quick-btn" title="Admin System &amp; Permission Settings">
-          <span>⚙️</span> <span class="btn-text-desktop">Settings</span>
-        </button>
+        <!-- Mobile App Download Quick Button -->
+        <a href="https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk" id="btn-header-download-app" class="btn btn-sm btn-gold header-quick-btn" title="Download Spiritual Karim Android Mobile App (APK)" download="SpiritualKarim.apk" target="_blank">
+          <span>📱</span> <span class="btn-text-desktop">Download App</span>
+        </a>
       </div>
     </div>
 
@@ -83,10 +78,10 @@
           <span class="selector-icon">🛡️</span>
           <label for="select-role-mode" class="switch-label">Role:</label>
           <select id="select-role-mode" class="role-mode-dropdown" title="Switch Access View & Permissions">
-            <option value="MASTER" >👑 Master (Full Control)</option>
+            <option value="MASTER" selected>👑 Master (Full Control)</option>
             <option value="HEALER" >🌿 Healer (Self &amp; Team)</option>
             <option value="TRAINEE" >📿 Trainee (Self &amp; Devotees)</option>
-            <option value="DEVOTEE" selected>🌟 Devotee (Personal Only)</option>
+            <option value="DEVOTEE" >🌟 Devotee (Personal Only)</option>
           </select>
         </div>
 
@@ -176,7 +171,7 @@
       <div class="sidebar-section">
         <div class="sidebar-heading">Dedicated Portals</div>
         <div class="sub-portal-links" id="sidebar-dedicated-portals">
-          <a href="../Masters/index.html" class="sub-portal-link " data-portal-tier="1" title="Open Master Portal">
+          <a href="../Masters/index.html" class="sub-portal-link active" data-portal-tier="1" title="Open Master Portal">
             <span>🏛️</span> Masters Portal
           </a>
           <a href="../Healers/index.html" class="sub-portal-link " data-portal-tier="2" title="Open Healer Portal">
@@ -185,22 +180,31 @@
           <a href="../Trainee/index.html" class="sub-portal-link " data-portal-tier="3" title="Open Trainee Sadhak Portal">
             <span>📿</span> Trainee Sadhak Portal
           </a>
-          <a href="../Devotee/index.html" class="sub-portal-link active" data-portal-tier="4" title="Open Devotee Portal">
+          <a href="../Devotee/index.html" class="sub-portal-link " data-portal-tier="4" title="Open Devotee Portal">
             <span>🌟</span> Devotee Portal
           </a>
         </div>
       </div>
 
-      <div class="sidebar-section">
-        <div class="sidebar-heading">Quick Actions</div>
-        <button id="btn-copy-ref-code" class="btn btn-sm btn-outline w-100 mb-2">
+      <div class="sidebar-section" id="sidebar-tools-section">
+        <div class="sidebar-heading">System Tools &amp; Actions</div>
+        <button type="button" id="sidebar-btn-share-pairing" class="btn btn-sm btn-gold w-100 mb-2" title="Share &amp; Invite Seeker (24h Device Pairing Protocol)">
+          <span>📲</span> Share &amp; Pair Invite
+        </button>
+        <button type="button" id="sidebar-btn-rbac-matrix" class="btn btn-sm btn-outline w-100 mb-2" title="4-Tier Authorization Access Matrix &amp; Master Governance Rules">
+          <span>🛡️</span> Access Matrix
+        </button>
+        <button type="button" id="sidebar-btn-admin-settings" class="btn btn-sm btn-outline w-100 mb-2" title="Admin System &amp; Permission Settings">
+          <span>⚙️</span> System Settings
+        </button>
+        <button type="button" id="btn-copy-ref-code" class="btn btn-sm btn-outline w-100 mb-2" title="Copy 16-Digit Code">
           <span>📋</span> Copy 16-Digit Code
         </button>
-        <button id="btn-gen-ref-code" class="btn btn-sm btn-outline w-100 mb-2">
+        <button type="button" id="btn-gen-ref-code" class="btn btn-sm btn-outline w-100 mb-2" title="Generate New Reference Code">
           <span>🎲</span> Generate New Code
         </button>
-        <button id="btn-toggle-json-drawer" class="btn btn-sm btn-outline w-100">
-          <span>⚙️</span> View App JSON
+        <button type="button" id="btn-toggle-json-drawer" class="btn btn-sm btn-outline w-100" title="View Mobile App JSON Payload">
+          <span>📄</span> View App JSON
         </button>
       </div>
 
@@ -1323,16 +1327,6 @@
           <!-- ############################################################
                TAB 5: GENEALOGY TREE (Android HierarchyTreeScreen Design)
                ############################################################ -->
-          <div class="main-tab-content-panel"
-
-          <!-- ############################################################
-               TAB 5: GENEALOGY TREE (Android HierarchyTreeScreen Design)
-               ############################################################ -->
-          <div class="main-tab-content-panel"
-
-          <!-- ############################################################
-               TAB 5: GENEALOGY TREE (Android HierarchyTreeScreen Design)
-               ############################################################ -->
           <div class="main-tab-content-panel" id="tab-genealogy-tree">
             <div class="hierarchy-tree-view-wrapper">
               <!-- Top Hierarchy Header Card -->
@@ -1596,7 +1590,7 @@
         <button id="btn-close-goli-modal" class="icon-btn">✕</button>
       </div>
       <div class="modal-body">
-        <iframe src="GOLI_GYAN_FOR_SEEKERS.html" style="width: 100%; height: 60vh; border: none; border-radius: var(--radius-md);"></iframe>
+        <iframe src="../GOLI_GYAN_FOR_SEEKERS.html" style="width: 100%; height: 60vh; border: none; border-radius: var(--radius-md);"></iframe>
       </div>
     </div>
   </div>
@@ -2061,7 +2055,141 @@
   </div>
 
 
+  
+  <!-- ==============================================================
+       MODAL: 4-TIER AUTHORIZATION ACCESS MATRIX & GOVERNANCE
+       ============================================================== -->
+  <div id="rbac-access-matrix-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card modal-lg" style="max-width: 920px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.4rem;">🛡️</span>
+          <div>
+            <h3 class="modal-title">4-Tier Authorization Access Matrix</h3>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Master Role-Based Governance &amp; Closed-Loop Permissions Table</p>
+          </div>
+        </div>
+        <button id="btn-close-rbac-modal" class="icon-btn" aria-label="Close Modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <div class="table-responsive-wrapper" style="overflow-x: auto; border: 1px solid var(--border-card); border-radius: var(--radius-md);">
+          <table class="rtdb-drilldown-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
+            <thead>
+              <tr style="background: var(--bg-hover);">
+                <th style="padding: 0.75rem 0.6rem; text-align: left;">Role Tier</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Visible Tabs</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Portals</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Multilevel Org Hub</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Genealogy Tree</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Firebase RTDB</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Permissions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 0.75rem 0.6rem; font-weight: 700; color: var(--role-admin, #8b5cf6);">👑 Master (Tier 1)</td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">All 6 Tabs</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">All 4 Portals</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">Full System (All Tiers)</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">5-Level Spiderweb</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">Table Drill-down</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">Full CRUD &amp; Settings</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 0.75rem 0.6rem; font-weight: 700; color: var(--role-healer, #10b981);">🌿 Healer (Tier 2)</td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(16,185,129,0.15); color: #10b981;">Tabs 1, 2, 3, 4, 5</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(16,185,129,0.15); color: #10b981;">Healer, Trainee, Devotee</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(16,185,129,0.15); color: #10b981;">Self &amp; Team Downlines</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(16,185,129,0.15); color: #10b981;">Healer Downlines</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(239,68,68,0.15); color: #ef4444;">Restricted (Hidden)</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(16,185,129,0.15); color: #10b981;">Team Mentorship</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 0.75rem 0.6rem; font-weight: 700; color: var(--role-trainee, #f59e0b);">📿 Trainee (Tier 3)</td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(245,158,11,0.15); color: #f59e0b;">Tabs 1, 2, 3, 5</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(245,158,11,0.15); color: #f59e0b;">Trainee, Devotee</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(245,158,11,0.15); color: #f59e0b;">Devotee Downlines</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(245,158,11,0.15); color: #f59e0b;">Assigned Sadhaks</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(239,68,68,0.15); color: #ef4444;">Restricted (Hidden)</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(245,158,11,0.15); color: #f59e0b;">Sadhak Memo &amp; Tracking</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 0.75rem 0.6rem; font-weight: 700; color: var(--role-devotee, #3b82f6);">🌟 Devotee (Tier 4)</td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(59,130,246,0.15); color: #3b82f6;">Tabs 1, 2 Only</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(59,130,246,0.15); color: #3b82f6;">Devotee Portal</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(148,163,184,0.15); color: var(--text-muted);">Self + Connected Upline Only</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(148,163,184,0.15); color: var(--text-muted);">Restricted (Hidden)</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(239,68,68,0.15); color: #ef4444;">Restricted (Hidden)</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(59,130,246,0.15); color: #3b82f6;">Self Profile &amp; 24h QR</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-gold" id="btn-close-rbac-footer">Close Matrix</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- ==============================================================
+       MODAL: CREATE NEW MEMBER PROFILE & LINEAGE ONBOARDING
+       ============================================================== -->
+  <div id="create-profile-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card" style="max-width: 620px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">👤</span>
+          <div>
+            <h3 class="modal-title">Create New Member Profile</h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Onboard Devotee, Trainee, or Healer into Lineage Tree</p>
+          </div>
+        </div>
+        <button id="btn-close-create-profile-modal" class="icon-btn" aria-label="Close Modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-role">Target Role Tier</label>
+          <select id="new-profile-role" class="form-control">
+            <option value="DEVOTEE" selected>🌟 Devotee / Seeker (Tier 4)</option>
+            <option value="TRAINEE">📿 Trainee Sadhak (Tier 3)</option>
+            <option value="HEALER">🌿 Spiritual Healer (Tier 2)</option>
+            <option value="ADMIN">👑 Admin Master (Tier 1)</option>
+          </select>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-name">Full Name *</label>
+          <input type="text" id="new-profile-name" class="form-control" placeholder="e.g. Akil Khan, Imran Sheikh" required>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-phone">Mobile / WhatsApp Number *</label>
+          <input type="tel" id="new-profile-phone" class="form-control" placeholder="e.g. +91 98234 56789" required>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-city">City &amp; State</label>
+          <input type="text" id="new-profile-city" class="form-control" placeholder="e.g. Lucknow, Uttar Pradesh">
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-sponsor">Sponsor / Mentor Reference Code *</label>
+          <input type="text" id="new-profile-sponsor" class="form-control font-mono" placeholder="e.g. SKHM-ADM1-7788-9900" style="font-weight: 700; color: var(--gold-400);">
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-membership">Membership Status</label>
+          <select id="new-profile-membership" class="form-control">
+            <option value="PAID" selected>🟢 Paid Member (Full Access)</option>
+            <option value="FREE">🔴 Free / Trial Member</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button type="button" class="btn btn-outline" id="btn-cancel-create-profile">Cancel</button>
+        <button type="button" class="btn btn-gold" id="btn-submit-create-profile">➕ Create &amp; Place in Lineage</button>
+      </div>
+    </div>
+  </div>
+
   <!-- External Vendor & Core Logic Scripts -->
-  <script src="../js/profile-admin.js?v=rtdb_v3_1788844932105"></script>
+  <script src="../js/profile-admin.js?v=sk_v5_1788855903569"></script>
 </body>
 </html>
