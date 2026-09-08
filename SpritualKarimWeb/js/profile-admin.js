@@ -497,9 +497,17 @@ class ProfileModel {
     return {
       defaultMentorName: 'Karim Ji (Founder)',
       defaultMentorCode: 'SKHM-ADM1-7788-9900',
-      speechLang: 'en-US',
+      telegramBotHandle: 'SpiritualKarimBot',
+      notebookLmPortalUrl: 'https://notebooklm.google.com',
+      threeDiyaEveningWindow: '06:15 PM – 07:00 PM',
+      cleanMinApprovalPercent: 75,
       defaultTargetMalas: '11 Malas Daily',
+      defaultJapaTargetCount: 108,
       defaultSadhanaStreak: '1 Day',
+      githubApkUrl: 'https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk',
+      githubRepoUrl: 'https://github.com/jDroid-X/SpritualKarim',
+      webPortalUrl: 'https://jdroid-x.github.io/SpritualKarim/',
+      uplineApprovalTimeoutHours: 24,
       allowDevoteeDelete: false,
       devoteeCanEditLineage: true,
       devoteeCanEnroll: true,
@@ -509,8 +517,11 @@ class ProfileModel {
       healerCanViewEntireTeam: true,
       enableLiveSync: true,
       firebaseUrl: 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/',
+      firebaseProjectId: 'spritualkarim-7b5fd',
+      dataMinimizationEnabled: true,
       defaultRoleMode: 'MASTER',
-      autoSaveMode: 'INSTANT'
+      autoSaveMode: 'INSTANT',
+      speechLang: 'en-US'
     };
   }
 
@@ -3579,8 +3590,18 @@ Installation & Activation Steps:
 
     setVal('setting-default-mentor-name', s.defaultMentorName);
     setVal('setting-default-mentor-code', s.defaultMentorCode);
-    setVal('setting-speech-lang', s.speechLang);
+    setVal('setting-telegram-bot-handle', s.telegramBotHandle);
+    setVal('setting-notebooklm-portal-url', s.notebookLmPortalUrl);
+    setVal('setting-three-diya-window', s.threeDiyaEveningWindow);
+    setVal('setting-clean-min-approval-percent', s.cleanMinApprovalPercent);
     setVal('setting-default-target-malas', s.defaultTargetMalas);
+    setVal('setting-default-japa-target-count', s.defaultJapaTargetCount);
+    setVal('setting-github-apk-url', s.githubApkUrl);
+    setVal('setting-github-repo-url', s.githubRepoUrl);
+    setVal('setting-web-portal-url', s.webPortalUrl);
+    setVal('setting-upline-approval-timeout', s.uplineApprovalTimeoutHours);
+    setVal('setting-speech-lang', s.speechLang);
+    setChecked('setting-data-minimization', s.dataMinimizationEnabled !== false);
     setChecked('setting-devotee-can-delete', s.allowDevoteeDelete === true);
     setChecked('setting-devotee-can-edit-lineage', s.devoteeCanEditLineage !== false);
     setChecked('setting-devotee-can-enroll', s.devoteeCanEnroll !== false);
@@ -3588,6 +3609,7 @@ Installation & Activation Steps:
     setChecked('setting-healer-can-certify', s.healerCanCertify !== false);
     setChecked('setting-healer-can-delete-team', s.healerCanDeleteTeam !== false);
     setVal('setting-firebase-url', s.firebaseUrl);
+    setVal('setting-firebase-project-id', s.firebaseProjectId);
     setVal('setting-default-role-mode', s.defaultRoleMode);
     setVal('setting-auto-save', s.autoSaveMode);
   }
@@ -3606,9 +3628,17 @@ Installation & Activation Steps:
     return {
       defaultMentorName: getVal('setting-default-mentor-name', 'Karim Ji (Founder)'),
       defaultMentorCode: getVal('setting-default-mentor-code', 'SKHM-ADM1-7788-9900'),
-      speechLang: getVal('setting-speech-lang', 'en-US'),
+      telegramBotHandle: getVal('setting-telegram-bot-handle', 'SpiritualKarimBot'),
+      notebookLmPortalUrl: getVal('setting-notebooklm-portal-url', 'https://notebooklm.google.com'),
+      threeDiyaEveningWindow: getVal('setting-three-diya-window', '06:15 PM – 07:00 PM'),
+      cleanMinApprovalPercent: Number(getVal('setting-clean-min-approval-percent', '75')) || 75,
       defaultTargetMalas: getVal('setting-default-target-malas', '11 Malas Daily'),
+      defaultJapaTargetCount: Number(getVal('setting-default-japa-target-count', '108')) || 108,
       defaultSadhanaStreak: '1 Day',
+      githubApkUrl: getVal('setting-github-apk-url', 'https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk'),
+      githubRepoUrl: getVal('setting-github-repo-url', 'https://github.com/jDroid-X/SpritualKarim'),
+      webPortalUrl: getVal('setting-web-portal-url', 'https://jdroid-x.github.io/SpritualKarim/'),
+      uplineApprovalTimeoutHours: Number(getVal('setting-upline-approval-timeout', '24')) || 24,
       allowDevoteeDelete: getChecked('setting-devotee-can-delete', false),
       devoteeCanEditLineage: getChecked('setting-devotee-can-edit-lineage', true),
       devoteeCanEnroll: getChecked('setting-devotee-can-enroll', true),
@@ -3618,8 +3648,11 @@ Installation & Activation Steps:
       healerCanViewEntireTeam: getChecked('setting-healer-strict-team', true),
       enableLiveSync: true,
       firebaseUrl: getVal('setting-firebase-url', 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/'),
+      firebaseProjectId: getVal('setting-firebase-project-id', 'spritualkarim-7b5fd'),
+      dataMinimizationEnabled: getChecked('setting-data-minimization', true),
       defaultRoleMode: getVal('setting-default-role-mode', 'MASTER'),
-      autoSaveMode: getVal('setting-auto-save', 'INSTANT')
+      autoSaveMode: getVal('setting-auto-save', 'INSTANT'),
+      speechLang: getVal('setting-speech-lang', 'en-US')
     };
   }
 

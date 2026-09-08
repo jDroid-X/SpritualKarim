@@ -1684,6 +1684,45 @@
               <input type="text" id="setting-default-target-malas" class="form-control" value="11 Malas Daily">
             </div>
           </div>
+          <div class="form-grid-3 mt-2">
+            <div class="form-group">
+              <label class="form-label" for="setting-three-diya-window">Three Diya Window</label>
+              <input type="text" id="setting-three-diya-window" class="form-control" value="06:15 PM – 07:00 PM">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="setting-default-japa-target-count">Default Japa Malas</label>
+              <input type="number" id="setting-default-japa-target-count" class="form-control" value="108">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="setting-clean-min-approval-percent">Clean Passing %</label>
+              <input type="number" id="setting-clean-min-approval-percent" class="form-control" min="1" max="100" value="75">
+            </div>
+          </div>
+        </div>
+
+        <!-- Setting Group: Dynamic URLs & Pairing Configuration -->
+        <div class="remedy-category-group">
+          <div class="remedy-group-title"><span>📡</span> Telegram Bot, AI Reasoning &amp; Distribution Links</div>
+          <div class="form-grid-2 mt-2">
+            <div class="form-group">
+              <label class="form-label" for="setting-telegram-bot-handle">Telegram Bot Handle</label>
+              <input type="text" id="setting-telegram-bot-handle" class="form-control font-mono" value="SpiritualKarimBot">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="setting-upline-approval-timeout">Pairing Timeout (Hours)</label>
+              <input type="number" id="setting-upline-approval-timeout" class="form-control" value="24">
+            </div>
+          </div>
+          <div class="form-grid-2 mt-2">
+            <div class="form-group">
+              <label class="form-label" for="setting-notebooklm-portal-url">Google NotebookLM AI URL</label>
+              <input type="text" id="setting-notebooklm-portal-url" class="form-control font-mono" value="https://notebooklm.google.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="setting-github-apk-url">GitHub APK Release Download URL</label>
+              <input type="text" id="setting-github-apk-url" class="form-control font-mono" value="https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk">
+            </div>
+          </div>
         </div>
 
         <!-- Setting Group: Authorization Access Matrix -->
@@ -1783,13 +1822,25 @@
         <!-- Setting Group 3: App Sync & Firebase -->
         <div class="remedy-category-group">
           <div class="remedy-group-title"><span>☁️</span> Mobile App Sync &amp; Endpoints</div>
-          <div class="form-group" style="margin-top: 0.5rem;">
-            <label class="form-label">Firebase Realtime DB URL</label>
-            <input type="text" id="setting-firebase-url" class="form-control font-mono" value="https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/">
+          <div class="form-grid-2 mt-2">
+            <div class="form-group">
+              <label class="form-label" for="setting-firebase-url">Firebase Realtime DB URL</label>
+              <input type="text" id="setting-firebase-url" class="form-control font-mono" value="https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="setting-firebase-project-id">Firebase Project ID</label>
+              <input type="text" id="setting-firebase-project-id" class="form-control font-mono" value="spritualkarim-7b5fd">
+            </div>
+          </div>
+          <div class="form-group mt-2">
+            <label class="custom-toggle-label" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+              <span style="font-size: 0.88rem; color: var(--text-primary);">Strict Data Minimization (Privacy-First Cloud Sync):</span>
+              <input type="checkbox" id="setting-data-minimization" checked>
+            </label>
           </div>
           <div class="form-grid-2 mt-2">
             <div class="form-group">
-              <label class="form-label">Default Portal View Mode</label>
+              <label class="form-label" for="setting-default-role-mode">Default Portal View Mode</label>
               <select id="setting-default-role-mode" class="form-control">
                 <option value="MASTER">👑 Master Mode</option>
                 <option value="HEALER">🌿 Healer Mode</option>
@@ -1798,7 +1849,7 @@
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">Auto-Save State to Storage</label>
+              <label class="form-label" for="setting-auto-save">Auto-Save State to Storage</label>
               <select id="setting-auto-save" class="form-control">
                 <option value="INSTANT">Instant Real-Time</option>
                 <option value="MANUAL">Manual Save Button Only</option>
