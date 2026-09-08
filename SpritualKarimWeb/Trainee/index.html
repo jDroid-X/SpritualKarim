@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1788855903569">
+  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1788881247113">
 </head>
 <body data-portal-role="TRAINEE" class="portal-trainee">
   <!-- Top Admin Control Header (2-Row Smart Fit Layout) -->
@@ -115,7 +115,147 @@
   <!-- Admin Main Layout -->
   <div class="admin-layout">
     <!-- Left Navigation & Directory Sidebar -->
-    <aside class="admin-sidebar">
+    <!-- Left Navigation & Enterprise Drawer (User Rule 7 Standard Compliant) -->
+    <aside class="admin-sidebar" id="admin-enterprise-drawer">
+      
+      <!-- Enterprise Drawer Section 1: Standard Navigation Suite -->
+      <div class="sidebar-section">
+        <div class="sidebar-heading">🧭 Enterprise Navigation</div>
+        <nav class="enterprise-drawer-nav">
+          <a class="drawer-nav-item active" id="nav-item-dashboard" href="#main-profile-box-1" title="Main Dashboard & Profile Identity Card">
+            <span class="drawer-item-icon">🏠</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Dashboard</span>
+              <span class="drawer-item-desc">Hero Identity & Live Canvas</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-devices" href="#btn-flip-to-back" title="Children Devices, 24h Pairing & Telemetry">
+            <span class="drawer-item-icon">📱</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Children Devices</span>
+              <span class="drawer-item-desc">Downline 24h Node Pairing</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-radar" href="#tab-genealogy-tree" title="Live Radar & Sacred Sadhak Geographic Distribution">
+            <span class="drawer-item-icon">🧭</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Live Map</span>
+              <span class="drawer-item-desc">Visual MLM Spiderweb Radar</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-history" href="#tab-firebase-data" title="Location & Telemetry Activity History">
+            <span class="drawer-item-icon">📜</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Location History</span>
+              <span class="drawer-item-desc">Telemetry Logs & Cloud Events</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-groups" href="#tab-healer-connect" title="MeetMyFriend Groups, Sangha Circles & Mentorship">
+            <span class="drawer-item-icon">👥</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">MeetMyFriend Groups</span>
+              <span class="drawer-item-desc">Sangha Circles & Healer Hub</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-safezones" href="#devotee-sub-houseclean" title="Safe Zones, Sacred Sanctum & House Clean Levels">
+            <span class="drawer-item-icon">🛡️</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Safe Zones</span>
+              <span class="drawer-item-desc">House Clean & Sanctum Levels</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-lineage" href="#devotee-sub-lineage" title="Guardians & 3-Generation Ancestral Lineage">
+            <span class="drawer-item-icon">👨‍👩‍👧</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Guardians / Family</span>
+              <span class="drawer-item-desc">3-Gen Ancestral Lineage</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-notifications" href="#header-cloud-status" title="Realtime Notifications & Device Alerts">
+            <span class="drawer-item-icon">🔔</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Notifications</span>
+              <span class="drawer-item-desc">Live Cloud Sync Alerts</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-health" href="#telemetry-ref-code" title="Device Health, RTDB Ping & Telemetry">
+            <span class="drawer-item-icon">🩺</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Device Health</span>
+              <span class="drawer-item-desc">Battery & RTDB Telemetry</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-profile" href="#devotee-sub-identity" title="Active Member Profile & Identity Configuration">
+            <span class="drawer-item-icon">👤</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Profile</span>
+              <span class="drawer-item-desc">Identity & Reference Codes</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-settings" href="#admin-settings-modal" title="Admin System Settings & Dynamic Variables">
+            <span class="drawer-item-icon">⚙️</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Settings</span>
+              <span class="drawer-item-desc">Dynamic Cloud & System Config</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-privacy" href="#rbac-access-matrix-modal" title="Privacy Controls & 4-Tier Access Matrix">
+            <span class="drawer-item-icon">🔒</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Privacy Controls</span>
+              <span class="drawer-item-desc">4-Tier Access Matrix (RBAC)</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-support" href="#goli-gyan-modal" title="Help & Support, Goli Gyan Guide">
+            <span class="drawer-item-icon">❓</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Help &amp; Support</span>
+              <span class="drawer-item-desc">Goli Gyan &amp; Sadhana Guides</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-about" href="javascript:void(0)" title="About Spiritual Karim v5.0 Master Build">
+            <span class="drawer-item-icon">ℹ️</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">About App</span>
+              <span class="drawer-item-desc">Spiritual Karim Enterprise v5.0</span>
+            </div>
+          </a>
+
+          <a class="drawer-nav-item" id="nav-item-logout" href="javascript:void(0)" title="Switch Role / Reset Session">
+            <span class="drawer-item-icon">🚪</span>
+            <div class="drawer-item-content">
+              <span class="drawer-item-title">Logout</span>
+              <span class="drawer-item-desc">Switch Role / Reset Session</span>
+            </div>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Quick Directory Filter Search (User Rule) -->
+      <div class="sidebar-section">
+        <div class="sidebar-heading">🔍 Quick Member Directory</div>
+        <div class="sidebar-search-wrap">
+          <input type="search" id="input-directory-search" class="form-control form-control-sm" placeholder="Search profiles...">
+        </div>
+        <div id="profile-directory-list" class="profile-directory-list" style="max-height: 180px; overflow-y: auto;">
+          <!-- Dynamically populated if needed -->
+        </div>
+      </div>
+
+      <!-- Enterprise Drawer Section 2: Hierarchy Tiers -->
       <div class="sidebar-section">
         <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
           <span>App Hierarchy Tiers</span>
@@ -168,6 +308,7 @@
         </div>
       </div>
 
+      <!-- Enterprise Drawer Section 3: Dedicated Sub-Portals -->
       <div class="sidebar-section">
         <div class="sidebar-heading">Dedicated Portals</div>
         <div class="sub-portal-links" id="sidebar-dedicated-portals">
@@ -186,6 +327,7 @@
         </div>
       </div>
 
+      <!-- Enterprise Drawer Section 4: System Tools & Actions -->
       <div class="sidebar-section" id="sidebar-tools-section">
         <div class="sidebar-heading">System Tools &amp; Actions</div>
         <button type="button" id="sidebar-btn-share-pairing" class="btn btn-sm btn-gold w-100 mb-2" title="Share &amp; Invite Seeker (24h Device Pairing Protocol)">
@@ -208,6 +350,7 @@
         </button>
       </div>
 
+      <!-- Enterprise Drawer Section 5: Firebase RTDB Quick Drill-Down -->
       <div class="sidebar-section">
         <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
           <span>🔥 Firebase Realtime DB</span>
@@ -294,7 +437,7 @@
                   <!-- 2nd Column: Reference Meta & Flip Trigger -->
                   <div class="header-card-actions-row" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                     <button type="button" class="btn btn-xs btn-outline" id="btn-copy-header-ref-code" title="Copy 16-Digit Code" style="font-family: monospace; font-size: 0.78rem;">
-                      📋 <span id="header-ref-code-text">SKHM-ADM1-7788-9900</span>
+                      📋 <span id="header-ref-code-text"><span id="display-ref-code">SKHM-ADM1-7788-9900</span></span><span id="display-sponsor-code" style="display:none;">ROOT-0000-0000-0000</span>
                     </button>
                     <button type="button" class="btn-flip-card-trigger" id="btn-flip-to-back" title="Flip to 24h Pairing &amp; Node Telemetry">
                       🔄 QR &amp; Telemetry
@@ -1018,6 +1161,17 @@
                   💡 <strong>Interactive Catalog:</strong> Click any Sadhana card or 👁️ to slide out its complete rituals &amp; mantras. Ticking any tile automatically synchronizes it to the Trainee In-Progress workspace!
                 </p>
 
+                <!-- Interactive Sacred Sadhana Listbox with Dynamic Detail Preview Card -->
+                <div class="detail-listbox-wrap" id="sadhana-listbox-wrap">
+                  <label class="form-label" for="select-sacred-sadhana" style="font-size: 0.88rem; font-weight: 700; color: var(--gold-400); display: flex; align-items: center; gap: 0.4rem;">
+                    <span>🕉️</span> Select Sacred Sadhana to Inspect Details &amp; Prescriptions
+                  </label>
+                  <select id="select-sacred-sadhana" class="detail-listbox-select">
+                    <!-- Populated dynamically from SADHANA_CATALOG -->
+                  </select>
+                  <div id="sadhana-detail-preview-container"></div>
+                </div>
+
                 <!-- Checkbox Catalog with Slide-Out Detail Triggers -->
                 <div class="remedy-category-group">
                   <div class="remedy-group-title">🕉️ Sacred Sadhanas Catalog</div>
@@ -1317,10 +1471,20 @@
                   <button type="button" class="healer-filter-chip" data-type="TRAINEE">Trainees (<span id="chip-cnt-trainees">0</span>)</button>
                   <button type="button" class="healer-filter-chip" data-type="DEVOTEE">Devotees (<span id="chip-cnt-devotees">0</span>)</button>
                 </div>
+                <!-- Directory View Segmented Toggle (Grid Cards vs Table List) -->
+                <div class="segmented-toggle-bar" id="healers-layout-toggle-bar" title="Switch Directory Layout: Grid Cards vs Table List">
+                  <button type="button" class="segmented-toggle-option active" id="btn-layout-grid" data-layout="GRID">
+                    <span>📇</span> Grid Cards
+                  </button>
+                  <button type="button" class="segmented-toggle-option" id="btn-layout-table" data-layout="TABLE">
+                    <span>📋</span> Table List
+                  </button>
+                </div>
               </div>
 
-              <!-- Filtered Profile Cards Grid -->
+              <!-- Filtered Profile Cards Grid / Table Container -->
               <div id="healers-hub-cards-container" class="healers-cards-grid"></div>
+              <div id="healers-hub-table-container" class="healers-hub-table-wrapper" style="display: none;"></div>
             </div>
           </div>
 
@@ -1587,7 +1751,7 @@
           <span style="font-size: 1.3rem;">📜</span>
           <h3 class="modal-title">Goli Gyan • Quick Wisdom Directory</h3>
         </div>
-        <button id="btn-close-goli-modal" class="icon-btn">✕</button>
+        <button id="btn-close-goli-gyan-modal" data-alias="btn-close-goli-gyan-modal" class="icon-btn">✕</button>
       </div>
       <div class="modal-body">
         <iframe src="../GOLI_GYAN_FOR_SEEKERS.html" style="width: 100%; height: 60vh; border: none; border-radius: var(--radius-md);"></iframe>
@@ -1642,10 +1806,39 @@
           <span style="font-size: 1.3rem;">⚙️</span>
           <h3 class="modal-title">Admin System &amp; 4-Tier RBAC Permission Settings</h3>
         </div>
-        <button id="btn-close-settings-modal" class="icon-btn">✕</button>
+        <button id="btn-close-settings-modal" data-alias="btn-close-admin-settings" data-alias="btn-close-admin-settings" class="icon-btn">✕</button>
       </div>
       <div class="modal-body" style="display: flex; flex-direction: column; gap: 1.25rem;">
         
+        <!-- Setting Group: Core Organization & Cloud Database Config -->
+        <div class="remedy-category-group">
+          <div class="remedy-group-title"><span>🏛️</span> Enterprise Organization &amp; Cloud Database Variables</div>
+          <div class="form-grid-2 mt-2">
+            <div class="form-group">
+              <label class="form-label" for="setting-app-name">Application Name</label>
+              <input type="text" id="setting-app-name" class="form-control" value="Spiritual Karim Admin">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="setting-org-name">Organization / Sansthan Title</label>
+              <input type="text" id="setting-org-name" class="form-control" value="Shree Spritual Karim Sansthan">
+            </div>
+          </div>
+          <div class="form-grid-2 mt-2">
+            <div class="form-group">
+              <label class="form-label" for="setting-firebase-url">Firebase Realtime Database Endpoint URL</label>
+              <input type="url" id="setting-firebase-url" class="form-control font-mono" value="https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/">
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; justify-content: center;">
+              <label class="form-label">Realtime Auto Cloud Sync</label>
+              <label class="custom-toggle" style="margin-top: 0.25rem;">
+                <input type="checkbox" id="setting-auto-cloud-sync" checked>
+                <span class="toggle-slider"></span>
+                <span class="toggle-label" style="margin-left: 0.5rem; font-weight: 600;">Active Live Stream to Firebase RTDB</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
         <!-- Setting Group 0: Dynamic System & Mentor Parameters -->
         <div class="remedy-category-group">
           <div class="remedy-group-title"><span>👑</span> Dynamic Mentor Sponsor &amp; Voice Engine Config</div>
@@ -1871,7 +2064,7 @@
             <p class="modal-subtitle">Generate dynamic invite payload with direct APK download, 16-digit sponsor code, Telegram link &amp; 24h countdown.</p>
           </div>
         </div>
-        <button type="button" class="modal-close" id="btn-close-share-modal" aria-label="Close Modal">&times;</button>
+        <button type="button" class="modal-close" id="btn-close-share-pairing-modal" data-alias="btn-close-share-pairing-modal" aria-label="Close Modal">&times;</button>
       </div>
       <div class="modal-body" id="share-pairing-modal-body">
         <!-- Injected dynamically by ProfileView.renderSharePairingModal -->
@@ -2190,6 +2383,144 @@
   </div>
 
   <!-- External Vendor & Core Logic Scripts -->
-  <script src="../js/profile-admin.js?v=sk_v5_1788855903569"></script>
+  <script src="../js/profile-admin.js?v=sk_v5_1788881247113"></script>
+
+  <!-- ==============================================================
+       SLIDE-IN NOTIFICATIONS STACK & CUSTOM DIALOG BACKDROP
+       ============================================================== -->
+  <div id="slide-in-toast-stack" class="slide-in-toast-stack"></div>
+  <div id="spiritual-custom-dialog-backdrop" class="spiritual-custom-dialog-backdrop" style="display:none;"></div>
+  <div id="admin-toast" class="admin-toast" style="display:none;"></div>
+
+  <!-- Hidden Alias Bridge for ID Compatibility -->
+  <div style="display:none;" aria-hidden="true">
+    <button type="button" id="btn-admin-settings"></button>
+    <button type="button" id="btn-open-rbac-matrix"></button>
+    <button type="button" id="btn-quick-share-pairing"></button>
+  </div>
+
+
+  <!-- ==============================================================
+       SACRED SADHANA SLIDE-OUT DETAIL DRAWER
+       ============================================================== -->
+  <div id="sadhana-drawer-backdrop" class="sadhana-drawer-backdrop" style="display: none;"></div>
+  <aside id="sadhana-detail-drawer" class="sadhana-detail-drawer" aria-hidden="true">
+    <div class="sadhana-drawer-header">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span id="sadhana-drawer-icon" style="font-size: 1.8rem;">🔯</span>
+        <div>
+          <h3 id="sadhana-drawer-title" style="margin: 0; font-family: var(--font-heading); color: var(--gold-400); font-size: 1.25rem;">Sri Yantra Sadhana</h3>
+          <span id="sadhana-drawer-category" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Sacred Sadhana • Level 1–4</span>
+        </div>
+      </div>
+      <button type="button" id="btn-close-sadhana-drawer" class="icon-btn" aria-label="Close Sadhana Drawer" style="font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+    </div>
+    <div id="sadhana-drawer-body" class="sadhana-drawer-body" style="padding: 1.25rem; overflow-y: auto; flex-grow: 1;">
+      <!-- Content populated dynamically by ProfileView.openSadhanaDrawer -->
+    </div>
+    <div class="sadhana-drawer-footer" style="padding: 1rem 1.25rem; border-top: 1px solid var(--border-glass-gold); display: flex; justify-content: flex-end; gap: 0.75rem; background: rgba(14, 10, 22, 0.95);">
+      <button type="button" class="btn btn-outline btn-sm" id="btn-drawer-send-trainee">📤 Send to Trainee</button>
+      <button type="button" class="btn btn-gold btn-sm" id="btn-drawer-enroll">🌟 Enroll in Sadhana</button>
+    </div>
+  </aside>
+
+
+  <!-- ==============================================================
+       MODAL: FIREBASE RTDB NODE INSPECTOR & JSON EDITOR
+       ============================================================== -->
+  <div id="rtdb-inspector-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card modal-lg" style="max-width: 800px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">🔥</span>
+          <div>
+            <h3 class="modal-title">Firebase Node Inspector</h3>
+            <p style="margin: 0; font-size: 0.75rem; color: var(--text-muted);">Inspect, Edit &amp; Real-time Patch Node Payload</p>
+          </div>
+        </div>
+        <button type="button" id="btn-close-rtdb-inspector" class="icon-btn" aria-label="Close Inspector">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <div style="display: flex; gap: 1rem; margin-bottom: 0.85rem; font-size: 0.82rem; flex-wrap: wrap;">
+          <div><strong>Target Path:</strong> <code id="rtdb-inspector-path" style="color: var(--gold-400);">/profiles</code></div>
+          <div><strong>Node Type:</strong> <span id="rtdb-inspector-type" class="badge-status-pill badge-live">object</span></div>
+          <div><strong>Payload Size:</strong> <span id="rtdb-inspector-size">-- KB</span></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rtdb-inspector-json-editor">JSON Payload Value:</label>
+          <textarea id="rtdb-inspector-json-editor" class="form-control font-mono" rows="12" style="font-size: 0.82rem; line-height: 1.4; resize: vertical;"></textarea>
+        </div>
+        <div id="rtdb-inspector-status" style="font-size: 0.78rem; margin-top: 0.5rem; color: var(--text-muted);">Ready to modify.</div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn btn-outline btn-sm" id="btn-rtdb-copy-inspect-json">📋 Copy JSON</button>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-outline btn-sm" id="btn-close-rtdb-inspector-footer">Cancel</button>
+          <button type="button" class="btn btn-gold btn-sm" id="btn-rtdb-save-node-json">💾 Save Changes to DB</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==============================================================
+       MODAL: FIREBASE RTDB ADD NEW CHILD NODE
+       ============================================================== -->
+  <div id="rtdb-add-node-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card" style="max-width: 550px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">➕</span>
+          <h3 class="modal-title">Add Firebase Node</h3>
+        </div>
+        <button type="button" id="btn-close-rtdb-add-node" class="icon-btn" aria-label="Close Add Node">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <div class="form-group mb-3">
+          <label class="form-label" for="rtdb-add-target-path">Parent Node Path</label>
+          <input type="text" id="rtdb-add-target-path" class="form-control font-mono" value="/profiles">
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="rtdb-add-key-name">Child Key Name</label>
+          <input type="text" id="rtdb-add-key-name" class="form-control" placeholder="e.g. custom_sadhana_node">
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="rtdb-add-key-type">Data Value Type</label>
+          <select id="rtdb-add-key-type" class="form-control">
+            <option value="string" selected>String Text</option>
+            <option value="number">Number</option>
+            <option value="boolean">Boolean (true/false)</option>
+            <option value="json">JSON Object / Array</option>
+          </select>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="rtdb-add-value">Payload Value</label>
+          <textarea id="rtdb-add-value" class="form-control font-mono" rows="4" placeholder="Enter node initial value..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-add-node">Cancel</button>
+        <button type="button" class="btn btn-gold btn-sm" id="btn-rtdb-submit-add-node">➕ Add to Realtime DB</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Hidden Bridge for Dual-ID & Backward Compatibility -->
+  <div style="display:none;" aria-hidden="true">
+    <button type="button" id="btn-close-admin-settings"></button>
+    <button type="button" id="btn-cancel-settings"></button>
+    <button type="button" id="setting-allow-devotee-delete"></button>
+    <button type="button" id="setting-healer-team-view"></button>
+    <button type="button" id="setting-live-sync"></button>
+    <div id="tbody-pending-approvals"></div>
+    <div id="tree-hierarchy-wrapper"></div>
+    <textarea id="trainee-new-memo-text"></textarea>
+    <button type="button" id="btn-add-trainee-memo"></button>
+    <button type="button" id="btn-copy-pairing-payload"></button>
+    <button type="button" id="btn-copy-sponsor-only"></button>
+    <button type="button" id="btn-copy-pin-only"></button>
+  </div>
+
 </body>
 </html>

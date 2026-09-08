@@ -1,8 +1,7 @@
 /**
  * ProfileView.js
- * OOPS MVC View Layer: DOM Rendering, 3D Flipper, RTDB Explorer, & Genealogy Tree
+ * Master 4-Tier OOPS-based MVC View Layer for Spiritual Karim
  */
-
 class ProfileView {
   constructor() {
 
@@ -30,7 +29,7 @@ class ProfileView {
 
     // Role Switcher & RBAC Controls
     this.selectRoleMode = document.getElementById('select-role-mode');
-    this.btnAdminSettings = document.getElementById('btn-admin-settings');
+    this.btnAdminSettings = document.getElementById('btn-admin-settings') || document.getElementById('sidebar-btn-admin-settings');
     this.adminSettingsModal = document.getElementById('admin-settings-modal');
 
     // Header Display Elements
@@ -142,7 +141,7 @@ class ProfileView {
     this.sharePairingModalBody = document.getElementById('share-pairing-modal-body');
 
     // Settings Modal Elements & Controls
-    this.btnAdminSettings = document.getElementById('btn-admin-settings');
+    this.btnAdminSettings = document.getElementById('btn-admin-settings') || document.getElementById('sidebar-btn-admin-settings');
     this.adminSettingsModal = document.getElementById('admin-settings-modal');
     this.btnCloseAdminSettings = document.getElementById('btn-close-settings-modal') || document.getElementById('btn-close-admin-settings') || document.querySelector('#admin-settings-modal .icon-btn');
     this.btnSaveSettings = document.getElementById('btn-save-settings');
@@ -201,7 +200,7 @@ class ProfileView {
     this._renderCategorizedTraineeSadhanas(profile.traineeSadhanas || []);
 
     // Healer Completed & Network
-    const hubProfiles = (typeof this.getScopedProfiles === 'function') ? this.getScopedProfiles(roleMode, profile) : (visibleProfiles || []);
+    const hubProfiles = this.allProfiles || visibleProfiles || [];
     this.renderAndroidHealersHub(hubProfiles, profile, roleMode);
     this._renderHealerCompleted(profile.healerCompletedSadhanas || []);
     this._renderHealerNetwork(profile.healerNetwork || []);
@@ -1000,65 +999,12 @@ class ProfileView {
     `).join('');
   }
 
-    // Enforce 4-Tier Role-Based Access Control (RBAC) & Hierarchy Visibility Matrix
+  // Enforce 4-Tier Role-Based Access Control (RBAC) & Hierarchy Visibility Matrix
   enforceRBAC(roleMode = 'MASTER', settings = {}) {
     const isMaster = roleMode === 'MASTER' || roleMode === 'ADMIN';
     const isHealer = roleMode === 'HEALER';
     const isTrainee = roleMode === 'TRAINEE';
     const isDevotee = roleMode === 'DEVOTEE';
-
-    // 0. Main Navigation Tabs Filtering:
-    // Tab 1: Devotee Personal - visible to All
-    // Tab 2: Seeker Purpose - visible to All
-    // Tab 3: Trainee Sadhak - visible to Master, Healer, Trainee (HIDDEN for Devotee)
-    // Tab 4: Healer Connect - visible to Master, Healer (HIDDEN for Trainee, Devotee)
-    // Tab 5: Genealogy Tree - visible to Master, Healer, Trainee (HIDDEN for Devotee)
-    // Tab 6: Firebase RTDB Data - visible ONLY to Master (HIDDEN for Healer, Trainee, Devotee)
-    const tabConfig = {
-      'tab-devotee-personal': true,
-      'tab-seeker-purpose': true,
-      'tab-trainee-sadhak': isMaster || isHealer || isTrainee,
-      'tab-healer-connect': isMaster || isHealer,
-      'tab-genealogy-tree': isMaster || isHealer || isTrainee,
-      'tab-firebase-data': isMaster
-    };
-
-    document.querySelectorAll('.main-tab-btn[data-main-tab]').forEach(btn => {
-      const tabId = btn.getAttribute('data-main-tab');
-      const show = tabConfig[tabId] !== false;
-      btn.style.display = show ? 'flex' : 'none';
-    });
-
-    // Box 1 Header 3rd Column Genealogy Button:
-    const headerGenealogyBtn = document.getElementById('main-tab-tree-btn');
-    if (headerGenealogyBtn) {
-      headerGenealogyBtn.style.display = (isMaster || isHealer || isTrainee) ? 'flex' : 'none';
-    }
-
-    // Auto-switch to first visible tab if active tab was hidden
-    const activeBtn = document.querySelector('.main-tab-btn.active');
-    if (activeBtn && activeBtn.style.display === 'none') {
-      const firstVisibleBtn = document.querySelector('.main-tab-btn:not([style*="display: none"])');
-      if (firstVisibleBtn) {
-        firstVisibleBtn.click();
-      }
-    }
-
-    // 0.1 Sidebar RTDB Explorer Section Visibility (Master only)
-    const sidebarRtdbSection = document.getElementById('sidebar-rtdb-section') || document.querySelector('.sidebar-rtdb-section');
-    if (sidebarRtdbSection) {
-      sidebarRtdbSection.style.display = isMaster ? 'block' : 'none';
-    }
-    const rtdbSidebarBtn = document.getElementById('sidebar-rtdb-btn');
-    if (rtdbSidebarBtn) {
-      rtdbSidebarBtn.style.display = isMaster ? 'flex' : 'none';
-    }
-
-    // 0.2 Access Matrix Button Visibility (Master only)
-    const rbacMatrixBtn = document.getElementById('btn-open-rbac-matrix');
-    if (rbacMatrixBtn) {
-      rbacMatrixBtn.style.display = isMaster ? 'inline-flex' : 'none';
-    }
 
     // 1. App Hierarchy Tiers Legend Visibility (Image 1)
     // Master: 1, 2, 3, 4
@@ -1150,6 +1096,15 @@ class ProfileView {
       } else {
         this.btnAdminSettings.style.opacity = '1';
         this.btnAdminSettings.title = 'Open Master Admin & RBAC Settings';
+
+    const rbacMatrixBtns = [
+      document.getElementById('btn-open-rbac-matrix'),
+      document.getElementById('sidebar-btn-rbac-matrix')
+    ];
+    rbacMatrixBtns.forEach(btn => {
+      if (btn) btn.style.display = isMaster ? 'inline-flex' : 'none';
+    });
+
       }
     }
 
@@ -1281,6 +1236,19 @@ class ProfileView {
     }
   }
 
+  toggleRbacMatrixModal(forceState) {
+    const modal = document.getElementById('rbac-access-matrix-modal');
+    if (!modal) return;
+    const isOpen = typeof forceState === 'boolean' ? forceState : (!modal.classList.contains('open') && !modal.classList.contains('is-open'));
+    if (isOpen) {
+      modal.classList.add('open', 'is-open');
+      modal.setAttribute('aria-hidden', 'false');
+    } else {
+      modal.classList.remove('open', 'is-open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+  }
+
   toggleSettingsModal(forceState) {
     if (!this.adminSettingsModal) return;
     const isOpen = typeof forceState === 'boolean' ? forceState : !this.adminSettingsModal.classList.contains('open');
@@ -1298,10 +1266,10 @@ class ProfileView {
     if (!modal) return;
     const isOpen = typeof forceState === 'boolean' ? forceState : !modal.classList.contains('open');
     if (isOpen) {
-      modal.classList.add('open');
+      modal.classList.add('open', 'is-open');
       modal.setAttribute('aria-hidden', 'false');
     } else {
-      modal.classList.remove('open');
+      modal.classList.remove('open', 'is-open');
       modal.setAttribute('aria-hidden', 'true');
     }
   }
@@ -1596,6 +1564,10 @@ Installation & Activation Steps:
       if (el) el.checked = Boolean(val);
     };
 
+    setVal('setting-app-name', s.appName || 'Spiritual Karim Admin');
+    setVal('setting-org-name', s.orgName || 'Shree Spritual Karim Sansthan');
+    setVal('setting-firebase-url', s.firebaseUrl || 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/');
+    setChecked('setting-auto-cloud-sync', s.autoCloudSync !== false);
     setVal('setting-default-mentor-name', s.defaultMentorName);
     setVal('setting-default-mentor-code', s.defaultMentorCode);
     setVal('setting-telegram-bot-handle', s.telegramBotHandle);
@@ -1634,6 +1606,10 @@ Installation & Activation Steps:
     };
 
     return {
+      appName: getVal('setting-app-name', 'Spiritual Karim Admin'),
+      orgName: getVal('setting-org-name', 'Shree Spritual Karim Sansthan'),
+      firebaseUrl: getVal('setting-firebase-url', 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/'),
+      autoCloudSync: getChecked('setting-auto-cloud-sync', true),
       defaultMentorName: getVal('setting-default-mentor-name', 'Karim Ji (Founder)'),
       defaultMentorCode: getVal('setting-default-mentor-code', 'SKHM-ADM1-7788-9900'),
       telegramBotHandle: getVal('setting-telegram-bot-handle', 'SpiritualKarimBot'),
@@ -1777,6 +1753,68 @@ Installation & Activation Steps:
       const el = document.getElementById('legend-count-tier-' + t);
       if (el) el.textContent = counts[t];
     }
+  }
+
+  
+  initSadhanaListbox() {
+    const select = document.getElementById('select-sacred-sadhana');
+    const container = document.getElementById('sadhana-detail-preview-container');
+    if (!select || !container || typeof SADHANA_CATALOG === 'undefined') return;
+
+    const keys = Object.keys(SADHANA_CATALOG);
+    select.innerHTML = keys.map(k => {
+      const item = SADHANA_CATALOG[k] || {};
+      return '<option value="' + k + '">' + (item.icon || '🕉️') + ' ' + escapeHtmlUtil(item.title || k) + ' (' + escapeHtmlUtil(item.category || 'Sadhana') + ' • ' + escapeHtmlUtil(item.levelScope || 'All') + ')</option>';
+    }).join('');
+
+    this.renderSadhanaDetailPreview(select.value || keys[0]);
+  }
+
+  renderSadhanaDetailPreview(sadhanaId) {
+    const container = document.getElementById('sadhana-detail-preview-container');
+    if (!container || typeof SADHANA_CATALOG === 'undefined') return;
+    const item = SADHANA_CATALOG[sadhanaId] || SADHANA_CATALOG.sri_yantra || {};
+
+    container.innerHTML = `
+      <div class="detail-listbox-preview-card mt-3">
+        <div class="detail-preview-header">
+          <div class="detail-preview-title-row">
+            <span class="detail-preview-icon">${item.icon || '🕉️'}</span>
+            <div>
+              <h4 class="detail-preview-title">${escapeHtmlUtil(item.title || sadhanaId)}</h4>
+              <span style="font-size: 0.75rem; color: var(--gold-300);">${escapeHtmlUtil(item.category || 'Sacred Sadhana')} &bull; ${escapeHtmlUtil(item.levelScope || 'Universal')}</span>
+            </div>
+          </div>
+          <button type="button" class="btn btn-xs btn-gold btn-open-sadhana-drawer-from-preview" data-sadhana="${sadhanaId}" title="Open Full Ritual Steps Drawer">
+            📖 Full Prescription Drawer
+          </button>
+        </div>
+        <div class="detail-preview-grid">
+          <div class="detail-preview-item">
+            <div class="detail-preview-item-label">Auspicious Timing</div>
+            <div class="detail-preview-item-value">${escapeHtmlUtil(item.timing || 'Brahma Muhurta (04:00 - 06:00 AM)')}</div>
+          </div>
+          <div class="detail-preview-item">
+            <div class="detail-preview-item-label">Aasan &amp; Direction</div>
+            <div class="detail-preview-item-value">${escapeHtmlUtil(item.aasanDirection || 'East / North Facing')}</div>
+          </div>
+          <div class="detail-preview-item">
+            <div class="detail-preview-item-label">Sacred Ingredients</div>
+            <div class="detail-preview-item-value" style="font-size: 0.78rem;">${escapeHtmlUtil(item.ingredients || 'Cow Ghee Diya, Lotus Seed Mala, Gangajal')}</div>
+          </div>
+          <div class="detail-preview-item">
+            <div class="detail-preview-item-label">Primary Benefits</div>
+            <div class="detail-preview-item-value" style="font-size: 0.78rem;">${escapeHtmlUtil(item.benefits || 'Purification, Prosperity, Divine Aura')}</div>
+          </div>
+        </div>
+        ${item.mantra ? `
+          <div class="detail-preview-mantra">
+            <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.25rem;">Sacred Beej Mantra</div>
+            ${escapeHtmlUtil(item.mantra)}
+          </div>
+        ` : ''}
+      </div>
+    `;
   }
 
   showSlideToast(title, message, type = 'info', duration = 4500, actionBtn = null) {
@@ -2666,6 +2704,63 @@ Installation & Activation Steps:
     }
     if (!this.healersHubCardsContainer) return;
 
+    const gridBtn = document.getElementById('btn-layout-grid');
+    const tableBtn = document.getElementById('btn-layout-table');
+    const gridContainer = this.healersHubCardsContainer;
+    const tableContainer = document.getElementById('healers-hub-table-container');
+
+    if (gridBtn && tableBtn) {
+      gridBtn.classList.toggle('active', this.directoryLayout === 'GRID');
+      tableBtn.classList.toggle('active', this.directoryLayout === 'TABLE');
+    }
+
+    if (this.directoryLayout === 'TABLE' && tableContainer) {
+      if (gridContainer) gridContainer.style.display = 'none';
+      tableContainer.style.display = 'block';
+      tableContainer.innerHTML = `
+        <table class="healers-hub-table">
+          <thead>
+            <tr>
+              <th>Member</th>
+              <th>Role Tier</th>
+              <th>16-Digit Code</th>
+              <th>Sponsor Mentor</th>
+              <th>Phone / WhatsApp</th>
+              <th>City</th>
+              <th>Stamp</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filtered.map(p => `
+              <tr class="healer-table-row" data-id="${p.id}">
+                <td>
+                  <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <div class="avatar-circle ${getAvatarClass(p)}" style="width: 32px; height: 32px; font-size: 0.78rem;">${(p.name || 'U').substring(0, 2).toUpperCase()}</div>
+                    <strong style="color: var(--gold-300);">${escapeHtmlUtil(p.name || 'Untitled')}</strong>
+                  </div>
+                </td>
+                <td><span class="badge-status-pill ${getBadgeClass(p)}">${escapeHtmlUtil(p.profileType)} (L${p.level || 1})</span></td>
+                <td><code class="font-mono" style="font-size: 0.78rem; color: var(--gold-400);">${escapeHtmlUtil(p.referenceCode || 'N/A')}</code></td>
+                <td><code class="font-mono" style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtmlUtil(p.referredByCode || 'ROOT')}</code></td>
+                <td>${escapeHtmlUtil(p.phone || 'N/A')}</td>
+                <td>${escapeHtmlUtil(p.city || 'N/A')}</td>
+                <td><span class="stamp-badge ${p.paymentStatus === 'PAID' ? 'stamp-paid' : 'stamp-free'}">${p.paymentStatus || 'PAID'}</span></td>
+                <td style="text-align: right;">
+                  <button type="button" class="btn btn-xs btn-gold btn-hub-select-profile" data-id="${p.id}">View Profile</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      return;
+    } else {
+      if (tableContainer) tableContainer.style.display = 'none';
+      if (gridContainer) gridContainer.style.display = 'grid';
+    }
+
+
     if (filtered.length === 0) {
       this.healersHubCardsContainer.innerHTML = `
         <div class="healers-empty-state">
@@ -3264,6 +3359,6 @@ Installation & Activation Steps:
 // 4. CONTROLLER LAYER (INTERCONNECTING ALL TABS & DRAWER ACTIONS)
 // ==============================================================
 
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { ProfileView };
+if (typeof window !== 'undefined') {
+  window.ProfileView = ProfileView;
 }

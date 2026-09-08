@@ -1,11 +1,57 @@
 /**
  * profile-admin.js
  * Master 4-Tier OOPS-based MVC JavaScript Application for Spiritual Karim Admin Panel
+ * Tier 1: Devotee Personal (Identity, Ancestral Lineage, House Clean)
+ * Tier 2: Seeker Purpose (Goals, House Clean Status, Sadhanas Interested & Slide-out Drawer)
+ * Tier 3: Trainee Sadhak (Categorized In-Progress Level Wise & Goli Gyan)
+ * Tier 4: Healer Connect (Level Completed with Status & Certifications)
+ *
+ * RBAC & 4-Tier Multi-Portal Engine (Enterprise OOPS MVC Architecture)
  */
 
-// js/profile-admin.js
-import { appConfig } from './config/appConfig.js';
-import { retryFetch } from './utils/retryHelper.js';
+// ==============================================================
+// 0. GLOBAL APPLICATION CONFIGURATION & HIGH-TRAFFIC RETRY UTILITY
+// ==============================================================
+const appConfig = {
+  appName: 'Spiritual Karim Admin',
+  orgName: 'Shree Spritual Karim Sansthan',
+  firebaseUrl: 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/',
+  defaultMentorName: 'Karim Ji (Founder)',
+  defaultMentorCode: 'SKHM-ADM1-7788-9900',
+  defaultTargetMalas: '11 Malas Daily',
+  defaultSadhanaStreak: '1 Day',
+  autoCloudSync: true,
+  directoryLayout: 'GRID',
+  githubApkUrl: 'https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk'
+};
+
+async function retryFetch(input, init = {}, maxRetry = 3) {
+  let attempt = 0;
+  while (true) {
+    try {
+      const response = await fetch(input, init);
+      const status = response.status;
+      const serverLoad = (response.headers && typeof response.headers.get === 'function')
+        ? response.headers.get('X-Server-Load')
+        : null;
+      if (status === 429 || (serverLoad && serverLoad.toLowerCase() === 'high')) {
+        if (attempt >= maxRetry) {
+          throw new Error('retryFetch: max retries exceeded');
+        }
+        attempt++;
+        console.warn('retryFetch: high traffic (status ' + status + '); retry ' + attempt + ' after 2s');
+        await new Promise(r => setTimeout(r, 2000));
+        continue;
+      }
+      return response;
+    } catch (e) {
+      if (attempt >= maxRetry) throw e;
+      attempt++;
+      console.warn('retryFetch: fetch error (' + e.message + '); retry ' + attempt + ' after 2s');
+      await new Promise(r => setTimeout(r, 2000));
+    }
+  }
+}
 
 function escapeHtmlUtil(str) {
   if (str === null || str === undefined) return '';
@@ -16,20 +62,445 @@ function escapeHtmlUtil(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
+
 if (typeof window !== 'undefined') {
+  window.appConfig = appConfig;
+  window.retryFetch = retryFetch;
   window.escapeHtmlUtil = escapeHtmlUtil;
   window.escapeHtml = escapeHtmlUtil;
 }
+
+// ==============================================================
+// 1. MASTER SADHANA CATALOG & SACRED KNOWLEDGE DICTIONARY
+// ==============================================================
+const SADHANA_CATALOG = {
+  sri_yantra: {
+    id: 'sri_yantra',
+    title: 'Sri Yantra Sadhana',
+    category: 'Sacred Sadhana',
+    domain: 'sadhanas',
+    icon: '🔯',
+    levelScope: 'Level 1–4',
+    summary: 'Supreme Tantric Sadhana for divine wealth, material elevation, third-eye awakening, and cosmic geometric alignment.',
+    mantra: 'ॐ श्रीं ह्रीं क्लीं त्रिभुवन महालक्ष्म्यै अस्मांक दारिद्र्य नाशय प्रचुर धन देहि देहि क्लीं ह्रीं श्रीं ॐ',
+    timing: 'Brahma Muhurta (04:00 AM – 06:00 AM) or Dusk Sandhya',
+    aasanDirection: 'Yellow / Red Silk Aasan, East Facing',
+    ingredients: 'Pure Copper or Silver Meru Sri Yantra, Pure Cow Ghee Diya, Lotus Seed Mala (Kamalgatta), Saffron, Fresh Lotus Flowers.',
+    steps: [
+      'Perform Aachaman and purify the prayer altar with Gangajal.',
+      'Place Sri Yantra upon a clean copper plate over a bed of raw unblemished rice.',
+      'Light the Cow Ghee Diya and perform 5 minutes of focused Trataka (gazing at the central Bindu of the Sri Yantra).',
+      'Chant 11 or 21 Malas of the Maha Lakshmi Beej Mantra with undivided concentration.',
+      'Conclude with Shree Suktam recital and offer saffron milk bhog.'
+    ],
+    benefits: 'Eliminates acute financial blockages, unlocks business prosperity, balances the Ajna chakra, and radiates high-frequency divine aura.',
+    cautions: 'Maintain strict Satvik diet, celibacy during anushthan days, and never point feet towards the Sri Yantra.'
+  },
+
+  kalashtami: {
+    id: 'kalashtami',
+    title: 'Kalashtami Bhairav Sadhana',
+    category: 'Sacred Sadhana',
+    domain: 'sadhanas',
+    icon: '🔱',
+    levelScope: 'Level 1–4',
+    summary: 'Kaal Bhairav Sadhana for overcoming intense fear, black magic attacks, evil eye, and court/police obstacles.',
+    mantra: 'ॐ भ्रं कालभैरवाय फट् ॥ ॐ ह्रीं बटुकाय आपदुद्धारणाय कुरु कुरु बटुकाय ह्रीं ॐ स्वाहा ॥',
+    timing: 'Night Sandhya (09:00 PM – Midnight) on Krishna Paksha Ashtami (Kalashtami)',
+    aasanDirection: 'Black or Dark Woolen Aasan, South or North Facing',
+    ingredients: 'Mustard Oil (Sarson) Diya, Black Sesame Seeds (Til), Urad Dal, Kaal Bhairav Yantra, Rudraksha Mala.',
+    steps: [
+      'Cleanse yourself and sit on the woolen aasan facing South/North.',
+      'Light a large 4-wick Mustard Oil lamp in front of Kaal Bhairav image or idol.',
+      'Offer black sesame seeds, raw jaggery, and red flowers to Lord Bhairav.',
+      'Chant 11 Malas of the Bhairav Beej Mantra using a consecrated Rudraksha Mala.',
+      'Recite Kaal Bhairav Ashtakam with devotion and burn camphor & loban.'
+    ],
+    benefits: 'Impenetrable astral shield against paranormal disturbances, removal of enemy hostility, and destruction of deep-seated phobias.',
+    cautions: 'Requires fearless mental disposition; perform only with pure protective intent.'
+  },
+
+  navratri: {
+    id: 'navratri',
+    title: 'Navratri Chamunda Sadhana',
+    category: 'Sacred Sadhana',
+    domain: 'sadhanas',
+    icon: '⚔️',
+    levelScope: 'Level 1–4',
+    summary: '9-Day Intense Navratri Anushthan invoking Maa Chamunda and Durga for supreme Shakti activation and curse removal.',
+    mantra: 'ॐ ऐं ह्रीं क्लीं चामुण्डायै विच्चे ॥',
+    timing: 'Dawn and Twilight Sandhya during 9 days of Navratri',
+    aasanDirection: 'Red Woolen / Silk Aasan, North-East Facing',
+    ingredients: 'Akhand Jyoti Diya, Navarna Yantra, Fresh Hibiscus Flowers, Clove Pairs, Camphor, Havan Kund.',
+    steps: [
+      'Establish Kalash and light the Akhand Jyoti on Pratipada.',
+      'Recite Durga Saptashati chapters sequentially each day.',
+      'Chant 108 Malas of the Navarna Mantra daily with dedicated focus.',
+      'Perform daily evening havan offering 108 ahutis with cloves, ghee, and sacred havan samagri.',
+      'Perform Kanya Pujan and Brahman bhojan on Navami day.'
+    ],
+    benefits: 'Total destruction of lingering generational curses, awakening of inner courage, and immense divine grace of the Divine Mother.',
+    cautions: 'Strict fasting or single Satvik meal, complete mental purity, and no footwear in prayer zone.'
+  },
+
+  diwali: {
+    id: 'diwali',
+    title: 'Diwali Sadhana Week',
+    category: 'Sacred Sadhana',
+    domain: 'sadhanas',
+    icon: '✨',
+    levelScope: 'Level 1–4',
+    summary: '7-Night festive sadhana bridging Dhanteras, Kali Chaudas, Diwali, and Govardhan Puja for boundless abundance.',
+    mantra: 'ॐ ह्रीं श्रीं क्रीं क्लीं श्रीं लक्ष्मी मम गृहे धनं पूरय पूरय चिंताएं दूरय दूरय स्वाहा ॥',
+    timing: 'Maha Nishita Kaal (11:40 PM – 12:30 AM) on Diwali Night',
+    aasanDirection: 'Yellow Velvet Aasan, North Facing (Kuber Direction)',
+    ingredients: 'Silver Lakshmi-Ganesh Coins, Lotus Flowers, Kuber Yantra, 21 Ghee Diyas, Pure Saffron, Kamalgatta Mala.',
+    steps: [
+      'Commence on Dhanteras by purifying the cash safe/altar with rose water and salt.',
+      'On Kali Chaudas, perform evening negativity banishing with 3 mustard oil lamps.',
+      'On Diwali night, perform Lakshmi-Kuber Maha Abhishek and light 21 lamps.',
+      'Perform continuous Jaap of Lakshmi Beej for 3 hours during Nishita Kaal.',
+      'Tie 5 energized Gomti Chakras and yellow cowries in a red cloth and place in treasury.'
+    ],
+    benefits: 'Guarantees uninterrupted financial stability for the upcoming year and opens blocked career channels.',
+    cautions: 'Keep the home impeccably clean and free of broken glass or iron clutter.'
+  },
+
+  three_diya: {
+    id: 'three_diya',
+    title: 'Three Diya Process',
+    category: 'Divine Remedy',
+    domain: 'remedies',
+    icon: '🪔',
+    levelScope: 'Level 1–3',
+    summary: 'Signature 21-Day Fire Cleansing Remedy designed by Spiritual Karim to burn stagnant domestic negativity and astral heaviness.',
+    mantra: 'ॐ नमः शिवाय ॥ (108 chants while lighting the lamps)',
+    timing: 'Exact Dusk Sunset Window (Godhuli Bela)',
+    aasanDirection: 'Main Entrance Doorway / Threshold Facing Outwards',
+    ingredients: '3 Clay Clay/Earthen Diyas (Mitti ke Diye), Pure Mustard Oil, Thick Cotton Wicks, Sea Salt Water.',
+    steps: [
+      'Wash and mop the main entryway floor with sea-salt water 15 minutes before sunset.',
+      'Fill 3 fresh earthen lamps with mustard oil and insert cotton wicks.',
+      'Place the 3 lamps in a triangular formation directly at the main entrance doorway threshold facing outside.',
+      'Light each lamp while mentally chanting Om Namah Shivaya and praying for all negative energies to exit.',
+      'Let the lamps extinguish naturally; repeat daily for 21 consecutive days without break.'
+    ],
+    benefits: 'Disperses chronic family disputes, removes negative entity attachments from house walls, and brings immediate peace.',
+    cautions: 'Do not blow out the lamps; never reuse the clay lamps if cracked.'
+  },
+
+  trilok_nagri: {
+    id: 'trilok_nagri',
+    title: 'Trilok Nagri Access',
+    category: 'Divine Remedy',
+    domain: 'remedies',
+    icon: '🌌',
+    levelScope: 'Level 1–3',
+    summary: 'Higher dimensional meditation portal connecting seeker consciousness to astral masters and ancestral protectors.',
+    mantra: 'ॐ त्रिलोकपालकाय विद्महे दिव्यदृष्टये धीमहि तन्नो गुरुः प्रचोदयात् ॥',
+    timing: 'Midnight Sandhya or Pre-Dawn 03:30 AM',
+    aasanDirection: 'White Silk Aasan, North-East Facing',
+    ingredients: 'Crystal Sphatik Mala, White Sandalwood Paste, Himalayan Rock Crystal, Pure Rose Water.',
+    steps: [
+      'Sit in Padmasana or Sukhasana with spine completely upright.',
+      'Apply white sandalwood at the Third Eye (Ajna Chakra) point.',
+      'Hold the Sphatik mala and align breath with deep 4-7-8 rhythmic breathing.',
+      'Chant the Trilok Mantra 108 times while visualizing a radiant golden beam descending through the crown chakra.',
+      'Remain in silent witnessing state for 15 minutes.'
+    ],
+    benefits: 'Enhances intuitive perception, prophetic dreaming, and direct energetic connection with guru guidance.',
+    cautions: 'Perform only with grounded mind; ground yourself with water post-meditation.'
+  },
+
+  court_cases: {
+    id: 'court_cases',
+    title: 'Court Cases Remedy (Clove & Cardamom Havan)',
+    category: 'Divine Remedy',
+    domain: 'remedies',
+    icon: '⚖️',
+    levelScope: 'Level 1–3',
+    summary: 'Fire ritual employing consecrated Clove (Laung) and Green Cardamom (Elaichi) to resolve unjust legal battles and disputes.',
+    mantra: 'ॐ ह्रीं बगलामुखि सर्वदुष्टानां वाचं मुखं पदं स्तम्भय जिह्वां कीलय बुद्धिं विनाशय ह्रीं ॐ स्वाहा ॥',
+    timing: 'Tuesday or Saturday Sunset',
+    aasanDirection: 'Yellow Aasan, East Facing',
+    ingredients: '108 Intact Cloves (with heads), 108 Green Cardamoms, Pure Cow Ghee, Dry Coconut (Gola), Black Mustard Seeds.',
+    steps: [
+      'Set up a small copper havan kund with dry mango wood and camphor.',
+      'Ignite the sacred fire with pure cow ghee.',
+      'Dip pairs of cloves and cardamoms in pure ghee.',
+      'Chant the Baglamukhi Beej Mantra and offer 108 ahutis into the sacred fire.',
+      'Pray for truth to prevail and favorable legal resolution.'
+    ],
+    benefits: 'Stops malicious legal conspiracies, calms opposing parties, and hastens stalled court settlements.',
+    cautions: 'Must only be performed for rightful and genuine cases, never for harming innocents.'
+  },
+
+  business_money: {
+    id: 'business_money',
+    title: 'Business & Wealth Upaya (Silver Diya Remedy)',
+    category: 'Divine Remedy',
+    domain: 'remedies',
+    icon: '🪙',
+    levelScope: 'Level 1–3',
+    summary: 'Sacred Silver Lamp Prosperity Protocol to unblock stuck payments, revive falling business revenues, and attract wealth.',
+    mantra: 'ॐ श्रीं ह्रीं क्लीं श्री सिद्ध लक्ष्म्यै नमः ॥',
+    timing: 'Friday Morning during Shukla Paksha',
+    aasanDirection: 'Yellow Silk Aasan, North Facing at Cash Counter / Altar',
+    ingredients: 'Pure Silver Diya, Cow Ghee, 2 Intact Cloves, Camphor Tablet, Yellow Cloth, Consecrated Sri Yantra.',
+    steps: [
+      'Thoroughly clean the commercial shop/office altar or home cash locker.',
+      'Place a yellow cloth and set the Silver Diya upon a small silver/brass plate.',
+      'Fill the silver lamp with pure cow ghee and insert 2 clove heads into the ghee.',
+      'Light the lamp and chant the Siddha Lakshmi Mantra 108 times.',
+      'Circulate the lamp smoke (Aarti) around the cash drawer and entry threshold.'
+    ],
+    benefits: 'Dissolves financial stagnation, clears payment backlogs, and ensures steady growth of trade and wealth.',
+    cautions: 'Ensure cloves placed in the ghee are unbroken.'
+  },
+
+  negativity: {
+    id: 'negativity',
+    title: 'Negativity Cleansing (Bakhoor & Loban Fumigation)',
+    category: 'Cleansing & Healing',
+    domain: 'cleansing',
+    icon: '💨',
+    levelScope: 'Level 1–3',
+    summary: 'Traditional aromatic smoke ritual utilizing Himalayan Bakhoor, Loban, and Guggul to detoxify household energetic fields.',
+    mantra: 'ॐ अपसर्पन्तु ते भूता ये भूता भूमि संस्थिताः। ये भूता विघ्नकर्तारस्ते नश्यन्तु शिवाज्ञया॥',
+    timing: 'Every Tuesday and Saturday at Twilight Dusk',
+    aasanDirection: 'Whole House Cleanse (Room by Room from East to West)',
+    ingredients: 'Authentic Spiritual Karim Himalayan Bakhoor, Raw Loban Resin, Guggul, Hot Cow Dung Coal (Kanda) / Charcoal, Brass Dhuna.',
+    steps: [
+      'Ignite natural charcoal or cow dung cake in a brass fumigation burner (Dhuna).',
+      'Sprinkle pure Bakhoor and Loban powder over the burning embers.',
+      'Carry the dense fragrant smoke into every room, corner, behind doors, and beneath beds.',
+      'Chant the cleansing mantra or play Mahamrityunjaya jaap continuously during fumigation.',
+      'Open windows slightly afterwards to allow displaced heavy energies to vacate.'
+    ],
+    benefits: 'Instantly breaks heavy astral stagnation, eliminates recurring bad dreams, and restores sweet tranquil household vibes.',
+    cautions: 'Do not inhale smoke directly; handle hot charcoal with tongs.'
+  },
+
+  kundalini: {
+    id: 'kundalini',
+    title: 'Kundalini & Spiritual Progress',
+    category: 'Cleansing & Healing',
+    domain: 'cleansing',
+    icon: '🧘',
+    levelScope: 'Level 1–4',
+    summary: 'Chakra purification and vital energy elevation method guided by Mentor Karim for safe Kundalini awakening.',
+    mantra: 'ॐ सोऽहं हंसः ॥ ॐ ऐं ह्रीं श्रीं मत्संसारतारिण्यै नमः ॥',
+    timing: 'Early Dawn (Brahma Muhurta 04:30 AM)',
+    aasanDirection: 'Kusha Grass Aasan covered with Wool, East Facing',
+    ingredients: 'Copper Water Vessel, Consecrated Rudraksha Mala, Ghee Lamp.',
+    steps: [
+      'Sit straight in Siddhasana with spine completely aligned.',
+      'Perform 10 minutes of Nadi Shodhana Pranayama to balance Ida and Pingala nadis.',
+      'Focus attention at the Mooladhara Chakra and visualize crimson radiant light.',
+      'Mentally chant the seed sounds while gently drawing the energy up through Sushumna to Sahasrara.',
+      'Drink energized copper water upon concluding.'
+    ],
+    benefits: 'Calms hyperactive nervous system, sharpens memory and mental clarity, and ignites spiritual ascension.',
+    cautions: 'Do not force breath retention; proceed gradually under guru guidance.'
+  },
+
+  material_benefits: {
+    id: 'material_benefits',
+    title: 'Material & Karmic Benefits',
+    category: 'Cleansing & Healing',
+    domain: 'cleansing',
+    icon: '💎',
+    levelScope: 'Level 1–3',
+    summary: 'Karmic debt resolution ritual for dissolving Pitru Dosha, planetary afflictions (Grah Dosha), and chronic bad luck.',
+    mantra: 'ॐ पितृभ्यो नमः ॥ ॐ सूर्याय नमः ॥',
+    timing: 'Amavasya (New Moon) or Sunday Dawn',
+    aasanDirection: 'White Cotton Aasan, South-Facing for Pitru, East for Surya',
+    ingredients: 'Black Sesame Seeds, Raw Milk, Kheer (Rice Pudding), Black Urad, Copper Lota with Gangajal.',
+    steps: [
+      'Offer Arghya to Lord Surya at dawn using water mixed with red flowers and jaggery.',
+      'Prepare sweet rice kheer and offer 5 portions on banana leaf for crows, cows, dogs, and ants.',
+      'Offer Tarpan with water and black sesame seeds facing South direction.',
+      'Perform 108 Mahamrityunjaya chants dedicated to the peace of ancestors.',
+      'Donate food or blankets to needy individuals.'
+    ],
+    benefits: 'Releases heavy ancestral blockages, restores health in family, and blesses future generations with prosperity.',
+    cautions: 'Do not consume non-satvik food on Amavasya day.'
+  },
+
+  healing: {
+    id: 'healing',
+    title: 'Spiritual Healing from Illness',
+    category: 'Cleansing & Healing',
+    domain: 'cleansing',
+    icon: '🌿',
+    levelScope: 'Level 1–3',
+    summary: 'Pranic healing and energized holy water ritual to relieve chronic ailments, stress exhaustion, and low vital immunity.',
+    mantra: 'ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्। उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात्॥',
+    timing: 'Daily Morning at Sunrise',
+    aasanDirection: 'Green / White Silk Aasan, North-East Facing',
+    ingredients: 'Pure Copper Glass with Spring Water, 5 Fresh Tulsi Leaves, Ghee Diya, Consecrated Rudraksha Mala.',
+    steps: [
+      'Sit comfortably and place copper glass with fresh water and Tulsi leaves in front of you.',
+      'Light the ghee lamp and hold right palm above the water glass.',
+      'Chant Mahamrityunjaya Mantra 108 times with deep positive visualization, channeling healing light through your palm into the water.',
+      'Drink the energized water in 3 sips while praying for cellular rejuvenation.',
+      'Gently massage remaining few drops onto forehead and crown chakra.'
+    ],
+    benefits: 'Boosts bodily immune vigor, repairs fragmented auric energy fields, and relieves psychosomatic tensions.',
+    cautions: 'Complementary spiritual remedy; continue standard medical prescriptions as advised.'
+  },
+
+  maha_mrityunjaya_havan: {
+    id: 'maha_mrityunjaya_havan',
+    title: 'Maha Mrityunjaya Healing Havan',
+    category: 'Divine Remedy',
+    domain: 'remedies',
+    icon: '🔥',
+    levelScope: 'Level 1–3',
+    summary: 'Supreme life-restoring Vedic fire ritual to neutralize severe health afflictions, accident dangers, and critical energetic drops.',
+    mantra: 'ॐ हौं जूं सः ॐ भूर्भुवः स्वः ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात् ॐ स्वः भुवः भूः ॐ सः जूं हौं ॐ ॥',
+    timing: 'Early Morning (Pratah Sandhya) or Monday Dusk',
+    aasanDirection: 'White Woolen / Kusha Aasan, East Facing',
+    ingredients: 'Copper Havan Kund, Mango Wood, Pure Cow Ghee, Durva Grass, Bel Patra, Black Sesame, Guggal, Samagri.',
+    steps: [
+      'Cleanse altar space and ignite sacred fire with camphor and dry wood.',
+      'Perform Ganesh and Shiva invocation with sacred water sprinkles.',
+      'Dip Durva grass and Bel Patra in pure cow ghee.',
+      'Offer 108 ahutis chanting the Maha Mrityunjaya Samput Mantra with total devotion.',
+      'Conclude with Aarti and distribute energized sacred ashes (Vibhuti).'
+    ],
+    benefits: 'Creates impenetrable armor against untimely physical crises, relieves chronic bodily pains, and revives vital life-force (Prana).',
+    cautions: 'Perform with utmost mental reverence and clean satvik diet.'
+  },
+
+  vastu_dosh_nivaran: {
+    id: 'vastu_dosh_nivaran',
+    title: 'Vastu Dosh Nivaran Upaya',
+    category: 'Divine Remedy',
+    domain: 'remedies',
+    icon: '🧭',
+    levelScope: 'Level 1–3',
+    summary: 'Directional harmonic rectification ritual to clear blocked North-East (Ishanya) and South-West (Nairutya) household energy channels.',
+    mantra: 'ॐ वास्तुपुरुषाय नमः ॥ ॐ नमो भगवते वास्तुपुरुषाय महाबलपराक्रमाय सर्वदोषनिवारणाय स्वाहा ॥',
+    timing: 'Thursday or Sunday Sunrise',
+    aasanDirection: 'North-East Corner of Residence, Facing North',
+    ingredients: 'Copper Vastu Yantra, Camphor Crystals, Sea Salt, Turmeric Water, Gomati Chakra, Yellow Mustard Seeds.',
+    steps: [
+      'Identify afflicted Vastu zones (defective kitchen, toilet in Ishanya, cut corners).',
+      'Purify the afflicted direction with sea salt dissolved in turmeric Gangajal.',
+      'Place consecrated Copper Vastu Yantra on a wooden plinth.',
+      'Light a pure cow ghee lamp and chant the Vastu Purusha Mantra 108 times.',
+      'Sprinkle yellow mustard seeds in household corners to seal protective borders.'
+    ],
+    benefits: 'Eliminates sudden family discord, halts drain of savings, and restores harmonious cosmic prana flow through dwelling.',
+    cautions: 'Do not place shoes or clutter in the energized North-East zone.'
+  },
+
+  santana_gopal: {
+    id: 'santana_gopal',
+    title: 'Santana Gopal Lineage Havan',
+    category: 'Divine Remedy',
+    domain: 'remedies',
+    icon: '👶',
+    levelScope: 'Level 1–3',
+    summary: 'Divine child blessing and ancestral lineage protection ritual dedicated to Lord Krishna for family prosperity and progeny.',
+    mantra: 'ॐ देवकीसुत गोविन्द वासुदेव जगत्पते। देहि मे तनयं कृष्ण त्वामहं शरणं गतः॥',
+    timing: 'Brahma Muhurta or Shukla Paksha Ekadashi/Ashtami',
+    aasanDirection: 'Yellow Silk Aasan, East Facing',
+    ingredients: 'Santana Gopal Yantra, Pure Cow Milk/Makhana Kheer, Tulsi Dal, White Butter (Makhan), Ghee, Peepal Leaf.',
+    steps: [
+      'Install Santana Gopal Yantra or Bal Gopal Vigrah on silver/brass thali.',
+      'Perform Panchamrit abhishek accompanied by Vishnu Sahasranama recital.',
+      'Offer fresh butter mixed with mishri and Tulsi leaves as naivedya.',
+      'Perform 108 ahutis in sacred fire using gugal, ghee, and lotus seeds.',
+      'Both spouses partake of the sanctified prasad together.'
+    ],
+    benefits: 'Removes deep genetic and energetic hurdles to childbirth, protects offspring, and fosters peaceful joyous household atmosphere.',
+    cautions: 'Maintain total celibacy on anushthan days prior to ritual completion.'
+  },
+
+  karmic_debts: {
+    id: 'karmic_debts',
+    title: 'Karmic Debts Fire Cleansing (Rin Mukti)',
+    category: 'Divine Remedy',
+    domain: 'remedies',
+    icon: '📜',
+    levelScope: 'Level 1–3',
+    summary: 'Rin-Mukti ancestral and past-life debt alleviation protocol designed to dissolve relentless monetary obligations and loans.',
+    mantra: 'ॐ ॠणमुक्तेश्वराय महादेवाय नमः ॥ ॐ आं ह्रीं क्रौं खं फट् ॥',
+    timing: 'Tuesday Morning or Pradosh Sandhya',
+    aasanDirection: 'Red / Orange Woolen Aasan, South or East Facing',
+    ingredients: 'Copper Lota, Red Lentils (Masoor Dal), Copper Coins, Pure Ghee Diya, Clove-infused Camphor, Peepal Twigs.',
+    steps: [
+      'Offer red lentils and water to the roots of a Banyan or Peepal tree in the morning.',
+      'Set up evening havan with clove-infused camphor and dry wood.',
+      'Offer 108 ahutis chanting Rin Mukteshwar Shiva Mantra.',
+      'Pray sincerely for forgiveness of all known and unknown karmic transgressions.',
+      'Distribute sweet boondi or jaggery bread to cows and laborers.'
+    ],
+    benefits: 'Accelerates settlement of chronic bank debts, stops unexplainable loss of earnings, and unblocks stagnant capital flow.',
+    cautions: 'Pledge to maintain ethical financial conduct alongside remedy.'
+  },
+
+  nazar_suraksha: {
+    id: 'nazar_suraksha',
+    title: 'Nazar Suraksha & Evil Eye Shield',
+    category: 'Cleansing & Healing',
+    domain: 'cleansing',
+    icon: '🧿',
+    levelScope: 'Level 1–3',
+    summary: 'Potent auric detoxification protocol using black mustard seeds, dry red chillies, rock salt, and camphor to dispel malicious jealousy.',
+    mantra: 'ॐ क्रां क्रीं क्रौं सः भौमाय नमः ॥ ॐ हं हनुमते रुद्रात्मकाय हुं फट् ॥',
+    timing: 'Tuesday or Saturday Sunset (Godhuli Bela)',
+    aasanDirection: 'Center of Main Hall or Threshold, Facing East',
+    ingredients: 'Black Mustard Seeds (Rai), 7 Dry Red Chillies (with stems intact), Rock Salt Crystals, Burning Charcoal in Earthen Pot.',
+    steps: [
+      'Hold a handful of black mustard seeds, salt crystals, and 7 whole dry red chillies in right fist.',
+      'Circulate clockwise 7 times around the head and body of afflicted individual or across main room.',
+      'Drop the ingredients directly onto hot burning charcoal or iron pan.',
+      'Observe smoke: pungent absence indicates burning of acute evil eye (Nazar).',
+      'Wash hands with salted water and discard cooled ash outside residential boundary.'
+    ],
+    benefits: 'Instantly lifts unexplainable physical exhaustion, stops continuous yawning and heavy headaches, and dissolves destructive toxic envy.',
+    cautions: 'Never touch the burned residue with bare fingers afterwards.'
+  },
+
+  aura_strengthening: {
+    id: 'aura_strengthening',
+    title: 'Aura Strengthening & Psychic Shield',
+    category: 'Cleansing & Healing',
+    domain: 'cleansing',
+    icon: '🛡️',
+    levelScope: 'Level 1–4',
+    summary: 'Crystalline energetic field fortification technique using consecrated Sphatik, energized water bath, and Gayatri Prana kavach.',
+    mantra: 'ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात् ॥',
+    timing: 'Daily Morning immediately post-bath',
+    aasanDirection: 'White Silk Aasan, East Facing',
+    ingredients: 'Clear Quartz (Sphatik) Crystal, Rock Salt Bath, Fresh Cow Milk Drops, Gangajal, Sandalwood Essential Oil.',
+    steps: [
+      'Add a pinch of consecrated rock salt and 3 drops of rose water to daily bath water.',
+      'Post-bath, sit on white silk aasan and hold energized Sphatik in both palms at heart chakra (Anahata).',
+      'Chant Gayatri Mantra 24 times while visualizing a brilliant oval sphere of impenetrable golden-white light enclosing your aura 3 feet in all directions.',
+      'Anoint forehead and throat chakra with pure sandalwood oil.',
+      'Carry the energized crystal throughout daily public interactions.'
+    ],
+    benefits: 'Prevents psychic vulnerability, stops energetic leakage in crowded venues, and elevates charisma and spiritual presence.',
+    cautions: 'Re-energize the crystal under morning sunlight once every 14 days.'
+  }
+};
 
 // ==============================================================
 // 2. MODEL LAYER (SINGLE SOURCE OF TRUTH & REACTIVE STORAGE)
 // ==============================================================
 class ProfileModel {
   constructor() {
-    this.storageKey = 'sk_admin_profiles_database_v2';
-    this.activeIdKey = 'sk_admin_active_profile_id_v2';
+    this.storageKey = 'sk_admin_profiles_v3';
+    this.activeProfileIdKey = 'sk_admin_active_profile_id_v3';
     this.settingsKey = 'sk_admin_system_settings_v1';
     this.roleModeKey = 'sk_admin_active_role_mode_v1';
+
+    this.profiles = this._loadProfiles();
+    this.settings = this._loadSettings();
 
     // Determine initial roleMode from URL query, pathname, body tag, or localStorage
     let detectedRole = 'MASTER';
@@ -63,32 +534,85 @@ class ProfileModel {
     }
     this.roleMode = detectedRole;
 
-    this.settings = this._loadSettings();
-    this.profiles = this._loadProfiles();
-    this.activeProfileId = this._loadActiveId();
+    this.activeProfileId = localStorage.getItem(this.activeProfileIdKey) || (this.profiles[0]?.id || 'prof-admin-01');
+    this.activeSadhanaDrawerId = null;
+  }
+
+  _getDefaultSettings() {
+    return {
+      defaultMentorName: 'Karim Ji (Founder)',
+      defaultMentorCode: 'SKHM-ADM1-7788-9900',
+      telegramBotHandle: 'SpiritualKarimBot',
+      notebookLmPortalUrl: 'https://notebooklm.google.com',
+      threeDiyaEveningWindow: '06:15 PM – 07:00 PM',
+      cleanMinApprovalPercent: 75,
+      defaultTargetMalas: '11 Malas Daily',
+      defaultJapaTargetCount: 108,
+      defaultSadhanaStreak: '1 Day',
+      githubApkUrl: 'https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk',
+      githubRepoUrl: 'https://github.com/jDroid-X/SpritualKarim',
+      webPortalUrl: 'https://jdroid-x.github.io/SpritualKarim/',
+      uplineApprovalTimeoutHours: 24,
+      allowDevoteeDelete: false,
+      devoteeCanEditLineage: true,
+      devoteeCanEnroll: true,
+      healerStrictTeam: true,
+      healerCanCertify: true,
+      healerCanDeleteTeam: true,
+      healerCanViewEntireTeam: true,
+      enableLiveSync: true,
+      firebaseUrl: 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/',
+      firebaseProjectId: 'spritualkarim-7b5fd',
+      dataMinimizationEnabled: true,
+      defaultRoleMode: 'MASTER',
+      autoSaveMode: 'INSTANT',
+      speechLang: 'en-US'
+    };
   }
 
   _loadSettings() {
     try {
       const data = localStorage.getItem(this.settingsKey);
       if (data) {
-        return JSON.parse(data);
+        return { ...this._getDefaultSettings(), ...JSON.parse(data) };
       }
     } catch (e) {
-      console.warn('Error reading settings', e);
+      console.warn('Error loading system settings', e);
     }
-    return {
-      appName: 'Spiritual Karim Admin',
-      orgName: 'Shree Spritual Karim Sansthan',
-      firebaseUrl: appConfig.firebaseUrl,
-      defaultMentorName: 'Karim Ji (Founder)',
-      defaultMentorCode: 'SKHM-ADM1-7788-9900',
-      defaultTargetMalas: '11 Malas Daily',
-      defaultSadhanaStreak: '1 Day',
-      allowDevoteeDelete: false,
-      healerCanDeleteTeam: true,
-      githubApkUrl: 'https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk'
+    return this._getDefaultSettings();
+  }
+
+  getProfileById(profileId) {
+    return this.profiles.find(p => p.id === profileId) || null;
+  }
+
+  isCircularSponsor(profileId, proposedSponsorCode) {
+    if (!proposedSponsorCode || proposedSponsorCode === 'ROOT' || proposedSponsorCode === 'ROOT-0000-0000-0000') return false;
+    const currentProfile = this.getProfileById(profileId);
+    if (!currentProfile) return false;
+    if (currentProfile.referenceCode === proposedSponsorCode) return true;
+
+    const isDownline = (parentCode, targetCode, visited = new Set()) => {
+      if (visited.has(parentCode)) return false;
+      visited.add(parentCode);
+      const children = this.profiles.filter(p => p.referredByCode === parentCode);
+      for (const child of children) {
+        if (child.referenceCode === targetCode) return true;
+        if (isDownline(child.referenceCode, targetCode, visited)) return true;
+      }
+      return false;
     };
+
+    return isDownline(currentProfile.referenceCode, proposedSponsorCode);
+  }
+
+  formatRefCode(str) {
+    if (!str) return '';
+    const cleaned = str.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (cleaned.length <= 4) return cleaned;
+    if (cleaned.length <= 8) return cleaned.slice(0, 4) + '-' + cleaned.slice(4);
+    if (cleaned.length <= 12) return cleaned.slice(0, 4) + '-' + cleaned.slice(4, 8) + '-' + cleaned.slice(8);
+    return cleaned.slice(0, 4) + '-' + cleaned.slice(4, 8) + '-' + cleaned.slice(8, 12) + '-' + cleaned.slice(12, 16);
   }
 
   saveSettings(newSettings) {
@@ -96,7 +620,7 @@ class ProfileModel {
     try {
       localStorage.setItem(this.settingsKey, JSON.stringify(this.settings));
     } catch (e) {
-      console.warn('Could not save settings', e);
+      console.error('Error saving settings to localStorage', e);
     }
   }
 
@@ -108,6 +632,7 @@ class ProfileModel {
     this.roleMode = mode.toUpperCase();
     localStorage.setItem(this.roleModeKey, this.roleMode);
 
+    // Switch active profile to match selected tier if current does not match
     const active = this.getActiveProfile();
     if (this.roleMode === 'DEVOTEE' && active?.profileType !== 'DEVOTEE') {
       const devoteeProf = this.profiles.find(p => p.profileType === 'DEVOTEE');
@@ -128,32 +653,1144 @@ class ProfileModel {
     if (this.roleMode === 'MASTER') {
       return this.profiles;
     }
+
     if (this.roleMode === 'HEALER') {
+      // Healer can see Healer, Trainee, Devotee (no Admin Master)
       return this.profiles.filter(p => p.profileType !== 'ADMIN' && p.level !== 1);
     }
+
     if (this.roleMode === 'TRAINEE') {
+      // Trainee can see Trainee, Devotee (no Admin or Healer)
       return this.profiles.filter(p => p.profileType === 'TRAINEE' || p.profileType === 'DEVOTEE');
     }
+
     if (this.roleMode === 'DEVOTEE') {
       const active = this.getActiveProfile();
+      // Devotee sees own profile / devotees only (cannot see upper levels structure)
       const devotees = this.profiles.filter(p => p.id === active?.id || p.profileType === 'DEVOTEE');
       return devotees.length > 0 ? devotees : [active];
     }
+
     return this.profiles;
   }
 
+  _getDefaultProfiles() {
+    return [
+      // ==========================================
+      // TIER 1: ADMIN MASTER (FOUNDER)
+      // ==========================================
+      {
+        id: 'prof-admin-01',
+        referenceCode: 'SKHM-ADM1-7788-9900',
+        referredByCode: 'ROOT-0000-0000-0000',
+        transferredCode: '',
+        name: 'Karim Ji (Founder)',
+        phone: '+91 98765 43210',
+        email: 'karim.master@spiritualkarim.org',
+        profileType: 'ADMIN',
+        level: 1,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Spiritual illumination, Kundalini awakening, cosmic balance, and global guidance.',
+        selectedRemedies: ['sri_yantra', 'kalashtami', 'navratri', 'diwali', 'three_diya', 'negativity', 'healing'],
+        address: 'Spiritual Karim Central Sanctuary',
+        city: 'Mumbai, Maharashtra',
+        joinDate: '2024-01-01',
+        isActive: true,
+        notes: 'Founder and Supreme Spiritual Guide of the Sanctuary.',
+        categoryTag: 'Master Guide & Supreme Cleansing',
+        seekerDiagnostics: {
+          afflictionDuration: 'N/A (Master Guide)',
+          kuldeviIssues: 'Kuldevi Blessings Activated',
+          targetOutcome: 'Universal sadhana transmission & supreme house purification'
+        },
+        interestedSadhanas: [
+          { id: 'sri_yantra', name: 'Sri Yantra Sadhana', category: 'Sacred Sadhana', priority: 'High', status: 'Enrolled' },
+          { id: 'kalashtami', name: 'Kalashtami Bhairav Sadhana', category: 'Sacred Sadhana', priority: 'High', status: 'Enrolled' },
+          { id: 'three_diya', name: 'Three Diya Process', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }
+        ],
+        houseCleanLevels: [
+          { id: 'hc-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Sanctum Sanctorum daily purification.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Direct master lineage purity verified 100%.', approvalDate: 'Today • Dawn' },
+          { id: 'hc-2', levelNumber: 2, levelTitle: 'Level 2 — Parents House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Ancestral Haveli purified with traditional copper havan kund.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Ancestral peace established.', approvalDate: 'Yesterday' },
+          { id: 'hc-3', levelNumber: 3, levelTitle: 'Level 3 — Relative House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Extended family residences blessed and purified with 3-diya process.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Complete 3-level clan purification certified.', approvalDate: '2 days ago' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-1', sadhanaKey: 'sri_yantra', title: 'Sri Yantra Sadhana', categoryDomain: 'sadhanas', isPaid: true, paymentStatus: 'PAID', level: 'Level 4 — Master Attunement', dailyTarget: '21 Malas Daily + Havan', currentStreak: '108 Days Continuous', progressPercent: 100, status: 'Master Siddhi', mentorCode: 'SKHM-ADM1-7788-9900', diaryNotes: 'Golden geometry visualization stabilized at Ajna Chakra.' },
+          { id: 'ts-2', sadhanaKey: 'three_diya', title: 'Three Diya Process', categoryDomain: 'remedies', isPaid: false, paymentStatus: 'FREE', level: 'Level 3 — Havan & Energy Transmission', dailyTarget: '3 Diyas at Sunset', currentStreak: '21 Days Completed', progressPercent: 100, status: 'Completed', mentorCode: 'SKHM-ADM1-7788-9900', diaryNotes: 'Heavy astral smoke clearing certified.' }
+        ],
+        healerCompletedSadhanas: [
+          { id: 'hcs-1', title: 'Master Sri Yantra Siddhi', levelCompleted: 'Level 4 — Master Guru', completionDate: '2023-11-15', status: 'Certified Master & Guru', seekersGuidedCount: 1450, authorizedToGuide: true, sealCode: 'SKHM-SEAL-MASTER-001' }
+        ],
+        healerNetwork: [
+          { id: 'net-1', name: 'Acharya Devendra', refCode: 'SKHM-HLR2-3344-5566', role: 'Healer (Level 2)', activeCases: 12 },
+          { id: 'net-2', name: 'Maa Anandita Devi', refCode: 'SKHM-HLR2-5566-7788', role: 'Healer (Level 2)', activeCases: 8 }
+        ],
+        lineage: {
+          currentFamily: { selfName: 'Karim Ji', selfTitle: 'Founder & Master Guide', spouseName: 'Devi Ji', children: [{ id: 'c1', name: 'Aarav Karim', gender: 'Son', ageOrNote: 'Age 14' }], siblings: [{ id: 's1', name: 'Tariq Khan', relation: 'Brother', spouseName: 'Zainab', childrenSummary: '1 Son', isMarried: true, notes: 'Spiritual support' }] },
+          husbandAncestral: { fatherName: 'Late Master Father', motherName: 'Late Divine Mother', paternalGrandfather: 'Grandfather Senior', paternalGrandmother: 'Grandmother Senior', maternalGrandfather: 'Nana Ji Senior', maternalGrandmother: 'Nani Ji Senior', siblings: [], address: 'Ancestral Lineage Roots' },
+          wifeAncestral: { fatherName: 'Late Father-in-law', motherName: 'Mother-in-law', paternalGrandfather: 'Dada Ji', paternalGrandmother: 'Dadi Ji', maternalGrandfather: 'Nana Ji', maternalGrandmother: 'Nani Ji', siblings: [], address: 'Wife Ancestral Village' }
+        }
+      },
+
+      // ==========================================
+      // TIER 2: HEALER CONNECT (LEVEL COMPLETED)
+      // ==========================================
+      {
+        id: 'prof-healer-02',
+        referenceCode: 'SKHM-HLR2-3344-5566',
+        referredByCode: 'SKHM-ADM1-7788-9900',
+        transferredCode: '',
+        name: 'Acharya Devendra',
+        phone: '+91 98220 11223',
+        email: 'devendra.healer@spiritualkarim.org',
+        profileType: 'HEALER',
+        level: 2,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Energy healing, aura purification, and house negativity cleansing.',
+        selectedRemedies: ['three_diya', 'negativity', 'healing', 'court_cases'],
+        address: '42 Sacred Grove Road',
+        city: 'Pune, Maharashtra',
+        joinDate: '2024-06-15',
+        isActive: true,
+        notes: 'Specialist in Three Diya remedies and Pitru Dosha diagnostics.',
+        categoryTag: 'Cleansing & Guidance',
+        seekerDiagnostics: { afflictionDuration: 'Overcome in 2021', kuldeviIssues: 'Kuldevi Shanti Puja Performed', targetOutcome: 'Guide 100+ families' },
+        interestedSadhanas: [{ id: 'three_diya', name: 'Three Diya Process', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-4', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Purified residence in Pune with sea-salt water, loban & camphor.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'High vibrational field observed.', approvalDate: '2024-06-20' },
+          { id: 'hc-5', levelNumber: 2, levelTitle: 'Level 2 — Parents House Clean', status: 'APPROVED', cleanPercentage: 95, cleanedDetails: 'Parents ancestral home cleaned.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Ancestral blessings restored.', approvalDate: '2024-07-02' },
+          { id: 'hc-6', levelNumber: 3, levelTitle: 'Level 3 — Relative House Clean', status: 'IN_PROGRESS', cleanPercentage: 65, cleanedDetails: 'Cleansing maternal uncle residence.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Under supervision.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-3', sadhanaKey: 'three_diya', title: 'Three Diya Process', categoryDomain: 'remedies', isPaid: true, paymentStatus: 'PAID', level: 'Level 3 — Havan Transmission', dailyTarget: '3 Diyas at Dusk', currentStreak: '18 Days', progressPercent: 85, status: 'In Progress', mentorCode: 'SKHM-ADM1-7788-9900', diaryNotes: 'Smoke clearance observed.' }
+        ],
+        healerCompletedSadhanas: [
+          { id: 'hcs-2', title: 'Three Diya Master Certification', levelCompleted: 'Level 3 — Healer Acharya', completionDate: '2024-05-10', status: 'Certified Master', seekersGuidedCount: 340, authorizedToGuide: true, sealCode: 'SKHM-SEAL-DIYA-301' }
+        ],
+        healerNetwork: [
+          { id: 'net-3', name: 'Amitabh Sen', refCode: 'SKHM-TRN3-1122-3344', role: 'Trainee (Level 3)', activeCases: 6 },
+          { id: 'net-4', name: 'Rajeshwari Joshi', refCode: 'SKHM-TRN3-2233-4455', role: 'Trainee (Level 3)', activeCases: 4 }
+        ],
+        lineage: {
+          currentFamily: { selfName: 'Acharya Devendra', selfTitle: 'Senior Spiritual Healer', spouseName: 'Sunita Sharma', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Ramprasad Sharma', motherName: 'Kaushalya Devi', paternalGrandfather: 'Pt. Badri Prasad', paternalGrandmother: 'Sita Devi', maternalGrandfather: 'Govind Ram', maternalGrandmother: 'Radha Devi', siblings: [], address: 'Varanasi, UP' },
+          wifeAncestral: { fatherName: 'Mukesh Trivedi', motherName: 'Shanti Trivedi', paternalGrandfather: 'Hiralal Trivedi', paternalGrandmother: 'Kamala Trivedi', maternalGrandfather: 'Din Dayal', maternalGrandmother: 'Uma Devi', siblings: [], address: 'Nashik, Maharashtra' }
+        }
+      },
+      {
+        id: 'prof-healer-03',
+        referenceCode: 'SKHM-HLR2-5566-7788',
+        referredByCode: 'SKHM-ADM1-7788-9900',
+        transferredCode: '',
+        name: 'Maa Anandita Devi',
+        phone: '+91 98330 44556',
+        email: 'anandita.healer@spiritualkarim.org',
+        profileType: 'HEALER',
+        level: 2,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Maa Chamunda Navratri Sadhana, Kundalini awakening, and ancestral Pitru Dosha clearance.',
+        selectedRemedies: ['navratri', 'kundalini', 'material_benefits', 'aura_strengthening'],
+        address: '88 Ganga Ghat Sanctuary',
+        city: 'Varanasi, UP',
+        joinDate: '2024-05-20',
+        isActive: true,
+        notes: 'Specialist in Chamunda Shakti Anushthan and Kundalini energy flows.',
+        categoryTag: 'Kundalini & Aura Shield',
+        seekerDiagnostics: { afflictionDuration: 'Transmuted in 2020', kuldeviIssues: 'Kuldevi Temple Established', targetOutcome: 'Guide 50+ seekers to diksha' },
+        interestedSadhanas: [{ id: 'navratri', name: 'Navratri Chamunda Sadhana', category: 'Sacred Sadhana', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-h3-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Ganga water purification with daily Akhand Jyoti.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Divine grace awakened.', approvalDate: '2024-05-25' },
+          { id: 'hc-h3-2', levelNumber: 2, levelTitle: 'Level 2 — Parents House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Varanasi ancestral sanctuary purified.', mentorCode: 'SKHM-ADM1-7788-9900', mentorName: 'Karim Ji (Founder)', mentorRemarks: 'Ancestral blessings flowing.', approvalDate: '2024-06-10' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-h3-1', sadhanaKey: 'navratri', title: 'Navratri Chamunda Sadhana', categoryDomain: 'sadhanas', isPaid: true, paymentStatus: 'PAID', level: 'Level 4 — Master Attunement', dailyTarget: '108 Malas + Havan', currentStreak: '45 Days', progressPercent: 100, status: 'Master Siddhi', mentorCode: 'SKHM-ADM1-7788-9900', diaryNotes: 'Navarna mantra Siddhi complete.' }
+        ],
+        healerCompletedSadhanas: [
+          { id: 'hcs-3', title: 'Navarna Shakti Master Certification', levelCompleted: 'Level 3 — Healer Acharya', completionDate: '2024-04-15', status: 'Certified Master', seekersGuidedCount: 210, authorizedToGuide: true, sealCode: 'SKHM-SEAL-SHAKTI-402' }
+        ],
+        healerNetwork: [
+          { id: 'net-5', name: 'Rohan Verma', refCode: 'SKHM-TRN3-6677-8899', role: 'Trainee (Level 3)', activeCases: 5 },
+          { id: 'net-6', name: 'Priya Sharma', refCode: 'SKHM-TRN3-7788-9900', role: 'Trainee (Level 3)', activeCases: 3 }
+        ],
+        lineage: {
+          currentFamily: { selfName: 'Maa Anandita Devi', selfTitle: 'Acharya Yogini', spouseName: '', children: [], siblings: [] },
+          husbandAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' },
+          wifeAncestral: { fatherName: 'Pt. Vidyadhar Shastri', motherName: 'Gayatri Devi', paternalGrandfather: 'Pt. Ishwar Das', paternalGrandmother: 'Saraswati Devi', maternalGrandfather: 'Harishchandra', maternalGrandmother: 'Gauri Devi', siblings: [], address: 'Varanasi, UP' }
+        }
+      },
+
+      // ==========================================
+      // TIER 3: TRAINEE SADHAK (IN-PROGRESS)
+      // ==========================================
+      {
+        id: 'prof-trainee-04',
+        referenceCode: 'SKHM-TRN3-1122-3344',
+        referredByCode: 'SKHM-HLR2-3344-5566',
+        transferredCode: '',
+        name: 'Amitabh Sen',
+        phone: '+91 98450 77889',
+        email: 'amitabh.sen@trainee.org',
+        profileType: 'TRAINEE',
+        level: 3,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Mastering 3 Diya fire cleansing and Sri Yantra geometry.',
+        selectedRemedies: ['three_diya', 'sri_yantra'],
+        address: '12 Temple Street',
+        city: 'Kolkata, West Bengal',
+        joinDate: '2024-07-10',
+        isActive: true,
+        notes: 'Advanced trainee under Acharya Devendra.',
+        categoryTag: 'Trainee Sadhak',
+        seekerDiagnostics: { afflictionDuration: '2 Years', kuldeviIssues: 'Purification active', targetOutcome: 'Advance to Level 3 Havan' },
+        interestedSadhanas: [{ id: 'three_diya', name: 'Three Diya Process', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-t4-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 100, cleanedDetails: 'Doorway threshold purified daily.', mentorCode: 'SKHM-HLR2-3344-5566', mentorName: 'Acharya Devendra', mentorRemarks: 'Purity certified.', approvalDate: '2024-07-18' },
+          { id: 'hc-t4-2', levelNumber: 2, levelTitle: 'Level 2 — Parents House Clean', status: 'IN_PROGRESS', cleanPercentage: 60, cleanedDetails: 'Cleansing ancestral flat in Kolkata.', mentorCode: 'SKHM-HLR2-3344-5566', mentorName: 'Acharya Devendra', mentorRemarks: 'In Progress.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-t4-1', sadhanaKey: 'three_diya', title: 'Three Diya Process', categoryDomain: 'remedies', isPaid: true, paymentStatus: 'PAID', level: 'Level 2 — Mantra Diksha', dailyTarget: '3 Diyas at Dusk', currentStreak: '14 Days', progressPercent: 75, status: 'In Progress', mentorCode: 'SKHM-HLR2-3344-5566', diaryNotes: 'Threshold cleared.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Amitabh Sen', selfTitle: 'Trainee Sadhak', spouseName: 'Rupali Sen', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Birendra Sen', motherName: 'Suniti Sen', paternalGrandfather: 'Kalyan Sen', paternalGrandmother: 'Asha Sen', maternalGrandfather: 'S. K. Roy', maternalGrandmother: 'Manju Roy', siblings: [], address: 'Kolkata, WB' },
+          wifeAncestral: { fatherName: 'Subhas Bose', motherName: 'Ila Bose', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-trainee-05',
+        referenceCode: 'SKHM-TRN3-2233-4455',
+        referredByCode: 'SKHM-HLR2-3344-5566',
+        transferredCode: '',
+        name: 'Rajeshwari Joshi',
+        phone: '+91 98560 88990',
+        email: 'rajeshwari.j@trainee.org',
+        profileType: 'TRAINEE',
+        level: 3,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Negativity fumigation and Pitru Rin Mukti fire rituals.',
+        selectedRemedies: ['negativity', 'karmic_debts'],
+        address: '24 Navrangpura',
+        city: 'Ahmedabad, Gujarat',
+        joinDate: '2024-07-22',
+        isActive: true,
+        notes: 'Specializing in Bakhoor cleansing.',
+        categoryTag: 'Trainee Sadhak',
+        seekerDiagnostics: { afflictionDuration: '1 Year', kuldeviIssues: 'Blessings restored', targetOutcome: 'Level 2 Sadhana completion' },
+        interestedSadhanas: [{ id: 'negativity', name: 'Negativity Cleansing', category: 'Cleansing & Healing', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-t5-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 90, cleanedDetails: 'Full fumigation with pure Loban & Bakhoor.', mentorCode: 'SKHM-HLR2-3344-5566', mentorName: 'Acharya Devendra', mentorRemarks: 'Good energetic shift.', approvalDate: '2024-08-01' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-t5-1', sadhanaKey: 'negativity', title: 'Negativity Cleansing (Bakhoor)', categoryDomain: 'cleansing', isPaid: true, paymentStatus: 'PAID', level: 'Level 2 — Mantra Diksha', dailyTarget: 'Dusk Fumigation', currentStreak: '12 Days', progressPercent: 70, status: 'In Progress', mentorCode: 'SKHM-HLR2-3344-5566', diaryNotes: 'Atmosphere purified.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Rajeshwari Joshi', selfTitle: 'Trainee Sadhak', spouseName: 'Manish Joshi', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Kirit Joshi', motherName: 'Bhavana Joshi', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Ahmedabad' },
+          wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-trainee-06',
+        referenceCode: 'SKHM-TRN3-6677-8899',
+        referredByCode: 'SKHM-HLR2-5566-7788',
+        transferredCode: '',
+        name: 'Rohan Verma',
+        phone: '+91 98670 99001',
+        email: 'rohan.verma@trainee.org',
+        profileType: 'TRAINEE',
+        level: 3,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Kaal Bhairav protection and family aura fortification.',
+        selectedRemedies: ['kalashtami', 'nazar_suraksha'],
+        address: '55 Gomti Nagar',
+        city: 'Lucknow, UP',
+        joinDate: '2024-08-05',
+        isActive: true,
+        notes: 'Trainee guided by Maa Anandita Devi.',
+        categoryTag: 'Trainee Sadhak',
+        seekerDiagnostics: { afflictionDuration: '3 Years', kuldeviIssues: 'Puja scheduled', targetOutcome: 'Astral shield mastery' },
+        interestedSadhanas: [{ id: 'kalashtami', name: 'Kalashtami Bhairav Sadhana', category: 'Sacred Sadhana', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-t6-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 85, cleanedDetails: '4-wick mustard lamp protection established.', mentorCode: 'SKHM-HLR2-5566-7788', mentorName: 'Maa Anandita Devi', mentorRemarks: 'Protection seal active.', approvalDate: '2024-08-10' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-t6-1', sadhanaKey: 'kalashtami', title: 'Kalashtami Bhairav Sadhana', categoryDomain: 'sadhanas', isPaid: true, paymentStatus: 'PAID', level: 'Level 2 — Mantra Diksha', dailyTarget: '11 Malas Night Sandhya', currentStreak: '9 Days', progressPercent: 60, status: 'In Progress', mentorCode: 'SKHM-HLR2-5566-7788', diaryNotes: 'Fear banished.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Rohan Verma', selfTitle: 'Trainee Sadhak', spouseName: '', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Dr. S. K. Verma', motherName: 'Rekha Verma', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Lucknow' },
+          wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-trainee-07',
+        referenceCode: 'SKHM-TRN3-7788-9900',
+        referredByCode: 'SKHM-HLR2-5566-7788',
+        transferredCode: '',
+        name: 'Priya Sharma',
+        phone: '+91 98780 11223',
+        email: 'priya.sharma@trainee.org',
+        profileType: 'TRAINEE',
+        level: 3,
+        isPaid: false,
+        paymentStatus: 'FREE',
+        objective: 'Aura strengthening and business obstacle removal.',
+        selectedRemedies: ['aura_strengthening', 'business_money'],
+        address: '19 Vasant Vihar',
+        city: 'New Delhi',
+        joinDate: '2024-08-12',
+        isActive: true,
+        notes: 'Dedicated sadhak in crystal and Gayatri practices.',
+        categoryTag: 'Trainee Sadhak',
+        seekerDiagnostics: { afflictionDuration: '6 Months', kuldeviIssues: 'None', targetOutcome: 'Aura energy stabilization' },
+        interestedSadhanas: [{ id: 'aura_strengthening', name: 'Aura Strengthening', category: 'Cleansing & Healing', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-t7-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'APPROVED', cleanPercentage: 80, cleanedDetails: 'Sphatik crystal water harmonization.', mentorCode: 'SKHM-HLR2-5566-7788', mentorName: 'Maa Anandita Devi', mentorRemarks: 'Good progress.', approvalDate: '2024-08-16' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-t7-1', sadhanaKey: 'aura_strengthening', title: 'Aura Strengthening & Psychic Shield', categoryDomain: 'cleansing', isPaid: false, paymentStatus: 'FREE', level: 'Level 1 — Initiation', dailyTarget: '24 Gayatri Chants', currentStreak: '6 Days', progressPercent: 50, status: 'In Progress', mentorCode: 'SKHM-HLR2-5566-7788', diaryNotes: 'Calm mind felt.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Priya Sharma', selfTitle: 'Trainee Sadhak', spouseName: '', children: [], siblings: [] },
+          husbandAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' },
+          wifeAncestral: { fatherName: 'V. K. Sharma', motherName: 'Saroj Sharma', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Delhi' }
+        }
+      },
+
+      // ==========================================
+      // TIER 4: DEVOTEE / SEEKER (PERSONAL & HOUSE CLEAN)
+      // ==========================================
+      {
+        id: 'prof-devotee-08',
+        referenceCode: 'SKHM-DEV4-9988-1122',
+        referredByCode: 'SKHM-TRN3-1122-3344',
+        transferredCode: '',
+        name: 'Sunita Mehra',
+        phone: '+91 97110 55443',
+        email: 'sunita.mehra@devotee.org',
+        profileType: 'DEVOTEE',
+        level: 4,
+        isPaid: false,
+        paymentStatus: 'FREE',
+        objective: 'Overcoming household stress, learning 3 Diya process, and purifying ancestral karma.',
+        selectedRemedies: ['three_diya', 'negativity'],
+        address: '108 Shanti Niketan',
+        city: 'Jaipur, Rajasthan',
+        joinDate: '2024-08-01',
+        isActive: true,
+        notes: 'Dedicated devotee initiated into Level 1 House Clean.',
+        categoryTag: 'Devotee Seeker',
+        seekerDiagnostics: { afflictionDuration: '3 Years', kuldeviIssues: 'Kuldevi Puja pending', targetOutcome: 'Peace of mind and family health' },
+        interestedSadhanas: [{ id: 'three_diya', name: 'Three Diya Process', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-d8-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'IN_PROGRESS', cleanPercentage: 50, cleanedDetails: 'Purifying main doorway and altar daily.', mentorCode: 'SKHM-TRN3-1122-3344', mentorName: 'Amitabh Sen', mentorRemarks: 'Good progress.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-d8-1', sadhanaKey: 'three_diya', title: 'Three Diya Process', categoryDomain: 'remedies', isPaid: false, paymentStatus: 'FREE', level: 'Level 1 — Initiation', dailyTarget: '3 Diyas at Dusk', currentStreak: '7 Days', progressPercent: 35, status: 'In Progress', mentorCode: 'SKHM-TRN3-1122-3344', diaryNotes: 'Noticed positive shift in home.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Sunita Mehra', selfTitle: 'Devotee Seeker', spouseName: 'Ramesh Mehra', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Om Prakash Mehra', motherName: 'Kanti Mehra', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Jaipur, Rajasthan' },
+          wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-devotee-09',
+        referenceCode: 'SKHM-DEV4-3322-1100',
+        referredByCode: 'SKHM-TRN3-1122-3344',
+        transferredCode: '',
+        name: 'Deepak Saxena',
+        phone: '+91 97220 66554',
+        email: 'deepak.saxena@devotee.org',
+        profileType: 'DEVOTEE',
+        level: 4,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Business growth, stuck payments recovery, and Sri Yantra worship.',
+        selectedRemedies: ['business_money', 'sri_yantra'],
+        address: '77 Arera Colony',
+        city: 'Bhopal, MP',
+        joinDate: '2024-08-15',
+        isActive: true,
+        notes: 'Devotee seeking financial stability and Lakshmi blessings.',
+        categoryTag: 'Devotee Seeker',
+        seekerDiagnostics: { afflictionDuration: '1.5 Years', kuldeviIssues: 'Kuldevi Puja Done', targetOutcome: 'Clear business debt' },
+        interestedSadhanas: [{ id: 'business_money', name: 'Business & Wealth Upaya', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-d9-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'IN_PROGRESS', cleanPercentage: 40, cleanedDetails: 'Clearing commercial shop cash altar.', mentorCode: 'SKHM-TRN3-1122-3344', mentorName: 'Amitabh Sen', mentorRemarks: 'Under guidance.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-d9-1', sadhanaKey: 'business_money', title: 'Business & Wealth Upaya', categoryDomain: 'remedies', isPaid: true, paymentStatus: 'PAID', level: 'Level 1 — Initiation', dailyTarget: 'Friday Silver Diya', currentStreak: '4 Days', progressPercent: 30, status: 'In Progress', mentorCode: 'SKHM-TRN3-1122-3344', diaryNotes: 'Payments started unlocking.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Deepak Saxena', selfTitle: 'Devotee Seeker', spouseName: 'Neelam Saxena', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'J. P. Saxena', motherName: 'Maya Saxena', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Bhopal' },
+          wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-devotee-10',
+        referenceCode: 'SKHM-DEV4-4433-2211',
+        referredByCode: 'SKHM-TRN3-2233-4455',
+        transferredCode: '',
+        name: 'Aarohi Patel',
+        phone: '+91 97330 77665',
+        email: 'aarohi.patel@devotee.org',
+        profileType: 'DEVOTEE',
+        level: 4,
+        isPaid: false,
+        paymentStatus: 'FREE',
+        objective: 'House Clean Level 1 and family peace.',
+        selectedRemedies: ['three_diya', 'healing'],
+        address: '33 Ring Road',
+        city: 'Surat, Gujarat',
+        joinDate: '2024-08-20',
+        isActive: true,
+        notes: 'Devotee practicing daily sunset 3-diya purification.',
+        categoryTag: 'Devotee Seeker',
+        seekerDiagnostics: { afflictionDuration: '8 Months', kuldeviIssues: 'Pending', targetOutcome: 'Calm household environment' },
+        interestedSadhanas: [{ id: 'three_diya', name: 'Three Diya Process', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-d10-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'IN_PROGRESS', cleanPercentage: 30, cleanedDetails: 'Purifying main entryway with sea salt.', mentorCode: 'SKHM-TRN3-2233-4455', mentorName: 'Rajeshwari Joshi', mentorRemarks: 'Under review.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-d10-1', sadhanaKey: 'three_diya', title: 'Three Diya Process', categoryDomain: 'remedies', isPaid: false, paymentStatus: 'FREE', level: 'Level 1 — Initiation', dailyTarget: '3 Diyas at Sunset', currentStreak: '5 Days', progressPercent: 25, status: 'In Progress', mentorCode: 'SKHM-TRN3-2233-4455', diaryNotes: 'Peace observed.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Aarohi Patel', selfTitle: 'Devotee Seeker', spouseName: '', children: [], siblings: [] },
+          husbandAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' },
+          wifeAncestral: { fatherName: 'Nitin Patel', motherName: 'Geeta Patel', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Surat' }
+        }
+      },
+      {
+        id: 'prof-devotee-11',
+        referenceCode: 'SKHM-DEV4-5544-3322',
+        referredByCode: 'SKHM-TRN3-6677-8899',
+        transferredCode: '',
+        name: 'Meera Nair',
+        phone: '+91 97440 88776',
+        email: 'meera.nair@devotee.org',
+        profileType: 'DEVOTEE',
+        level: 4,
+        isPaid: true,
+        paymentStatus: 'PAID',
+        objective: 'Spiritual protection, evil eye shielding, and aura fortification.',
+        selectedRemedies: ['nazar_suraksha', 'aura_strengthening'],
+        address: '5 Marine Drive',
+        city: 'Kochi, Kerala',
+        joinDate: '2024-08-22',
+        isActive: true,
+        notes: 'Devotee practicing daily Nazar Suraksha rituals.',
+        categoryTag: 'Devotee Seeker',
+        seekerDiagnostics: { afflictionDuration: '2 Years', kuldeviIssues: 'Done', targetOutcome: 'Dissolve physical exhaustion' },
+        interestedSadhanas: [{ id: 'nazar_suraksha', name: 'Nazar Suraksha & Evil Eye Shield', category: 'Cleansing & Healing', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-d11-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'IN_PROGRESS', cleanPercentage: 45, cleanedDetails: 'Rai and salt cleansing twice weekly.', mentorCode: 'SKHM-TRN3-6677-8899', mentorName: 'Rohan Verma', mentorRemarks: 'Good energetic clearance.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-d11-1', sadhanaKey: 'nazar_suraksha', title: 'Nazar Suraksha & Evil Eye Shield', categoryDomain: 'cleansing', isPaid: true, paymentStatus: 'PAID', level: 'Level 1 — Initiation', dailyTarget: 'Tuesday & Saturday Godhuli Bela', currentStreak: '6 Days', progressPercent: 40, status: 'In Progress', mentorCode: 'SKHM-TRN3-6677-8899', diaryNotes: 'Headaches relieved.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Meera Nair', selfTitle: 'Devotee Seeker', spouseName: 'Ajay Nair', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Madhavan Nair', motherName: 'Lalitha Nair', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Kochi' },
+          wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      },
+      {
+        id: 'prof-devotee-12',
+        referenceCode: 'SKHM-DEV4-6655-4433',
+        referredByCode: 'SKHM-TRN3-7788-9900',
+        transferredCode: '',
+        name: 'Suresh Rao',
+        phone: '+91 97550 99887',
+        email: 'suresh.rao@devotee.org',
+        profileType: 'DEVOTEE',
+        level: 4,
+        isPaid: false,
+        paymentStatus: 'FREE',
+        objective: 'Ancestral Rin Mukti and positive vibration in home.',
+        selectedRemedies: ['karmic_debts', 'three_diya'],
+        address: '101 Indiranagar',
+        city: 'Bengaluru, Karnataka',
+        joinDate: '2024-08-25',
+        isActive: true,
+        notes: 'Devotee initiated by Priya Sharma.',
+        categoryTag: 'Devotee Seeker',
+        seekerDiagnostics: { afflictionDuration: '1 Year', kuldeviIssues: 'Under consultation', targetOutcome: 'Debt settlement and harmony' },
+        interestedSadhanas: [{ id: 'karmic_debts', name: 'Karmic Debts Fire Cleansing', category: 'Divine Remedy', priority: 'High', status: 'Enrolled' }],
+        houseCleanLevels: [
+          { id: 'hc-d12-1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'IN_PROGRESS', cleanPercentage: 20, cleanedDetails: 'Commencing Rin Mukteshwar havan.', mentorCode: 'SKHM-TRN3-7788-9900', mentorName: 'Priya Sharma', mentorRemarks: 'First cycle active.', approvalDate: 'Pending' }
+        ],
+        traineeSadhanas: [
+          { id: 'ts-d12-1', sadhanaKey: 'karmic_debts', title: 'Karmic Debts Fire Cleansing', categoryDomain: 'remedies', isPaid: false, paymentStatus: 'FREE', level: 'Level 1 — Initiation', dailyTarget: 'Tuesday Havan', currentStreak: '2 Days', progressPercent: 20, status: 'In Progress', mentorCode: 'SKHM-TRN3-7788-9900', diaryNotes: 'Red lentils offering done.' }
+        ],
+        healerCompletedSadhanas: [],
+        healerNetwork: [],
+        lineage: {
+          currentFamily: { selfName: 'Suresh Rao', selfTitle: 'Devotee Seeker', spouseName: 'Shalini Rao', children: [], siblings: [] },
+          husbandAncestral: { fatherName: 'Venkatesh Rao', motherName: 'Padma Rao', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: 'Bengaluru' },
+          wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+        }
+      }
+    ];
+  }
+
+  _loadProfiles() {
+    try {
+      const data = localStorage.getItem(this.storageKey);
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed) && parsed.length >= 8 && parsed.some(p => p.profileType === 'TRAINEE' || p.level === 3 || p.level === 4)) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('Error loading profiles from localStorage', e);
+    }
+    const defaults = this._getDefaultProfiles();
+    this.saveProfiles(defaults);
+    return defaults;
+  }
+
+  saveProfiles(profiles) {
+    this.profiles = profiles;
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(this.profiles));
+    } catch (e) {
+      console.error('Error saving profiles to localStorage', e);
+    }
+  }
+
+  getActiveProfile() {
+    return this.profiles.find(p => p.id === this.activeProfileId) || this.profiles[0];
+  }
+
+  setActiveProfileId(id) {
+    this.activeProfileId = id;
+    localStorage.setItem(this.activeProfileIdKey, id);
+  }
+
+  updateActiveProfile(updatedData) {
+    const idx = this.profiles.findIndex(p => p.id === this.activeProfileId);
+    if (idx > -1) {
+      this.profiles[idx] = { ...this.profiles[idx], ...updatedData };
+      this.saveProfiles(this.profiles);
+      return this.profiles[idx];
+    }
+    return null;
+  }
+
+  createNewProfile() {
+    const newId = 'prof-' + Date.now();
+    const newRefCode = this.generate16DigitCode('SKHM');
+    const newProfile = {
+      id: newId,
+      referenceCode: newRefCode,
+      referredByCode: 'ROOT-0000-0000-0000',
+      transferredCode: '',
+      name: 'New Devotee Seeker',
+      phone: '+91 ',
+      email: '',
+      profileType: this.roleMode === 'HEALER' ? 'HEALER' : 'DEVOTEE',
+      level: this.roleMode === 'HEALER' ? 2 : 5,
+      isPaid: false,
+      paymentStatus: 'FREE',
+      objective: 'Spiritual purification, House Clean, and Sadhana initiation.',
+      selectedRemedies: ['three_diya', 'negativity'],
+      address: '',
+      city: '',
+      joinDate: new Date().toISOString().split('T')[0],
+      isActive: true,
+      notes: '',
+      categoryTag: 'House Clean & Seekers',
+      seekerDiagnostics: { afflictionDuration: '', kuldeviIssues: '', targetOutcome: '' },
+      interestedSadhanas: [
+        { id: 'three_diya', name: 'Three Diya Process', category: 'Divine Remedy', priority: 'High', status: 'Interested' }
+      ],
+      houseCleanLevels: [
+        { id: 'hc-n1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'NOT_STARTED', cleanPercentage: 0, cleanedDetails: '', mentorCode: null, mentorName: null, mentorRemarks: null, approvalDate: null },
+        { id: 'hc-n2', levelNumber: 2, levelTitle: 'Level 2 — Parents House Clean', status: 'NOT_STARTED', cleanPercentage: 0, cleanedDetails: '', mentorCode: null, mentorName: null, mentorRemarks: null, approvalDate: null },
+        { id: 'hc-n3', levelNumber: 3, levelTitle: 'Level 3 — Relative House Clean', status: 'NOT_STARTED', cleanPercentage: 0, cleanedDetails: '', mentorCode: null, mentorName: null, mentorRemarks: null, approvalDate: null }
+      ],
+      traineeSadhanas: [],
+      healerCompletedSadhanas: [],
+      healerNetwork: [],
+      lineage: {
+        currentFamily: { selfName: 'New Devotee Seeker', selfTitle: 'Devotee Seeker', spouseName: '', children: [], siblings: [] },
+        husbandAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' },
+        wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+      }
+    };
+
+    this.profiles.push(newProfile);
+    this.saveProfiles(this.profiles);
+    this.setActiveProfileId(newId);
+    return newProfile;
+  }
+
+  deleteActiveProfile() {
+    if (this.profiles.length <= 1) {
+      alert('Cannot delete the only remaining profile.');
+      return false;
+    }
+    this.profiles = this.profiles.filter(p => p.id !== this.activeProfileId);
+    this.activeProfileId = this.profiles[0].id;
+    this.saveProfiles(this.profiles);
+    return true;
+  }
+
+  generate16DigitCode(prefix = 'SKHM') {
+    const chars = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const segment = (len) => {
+      let res = '';
+      for (let i = 0; i < len; i++) {
+        res += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return res;
+    };
+    return `${prefix}-${segment(4)}-${segment(4)}-${segment(4)}`;
+  }
+
+  /**
+   * Transfer / Send an enrolled sadhana directly to Trainee Sadhak In-Progress
+   */
+  sendSadhanaToTrainee(sadhanaKeyOrObj) {
+    const profile = this.getActiveProfile();
+    if (!profile.traineeSadhanas) profile.traineeSadhanas = [];
+
+    const key = typeof sadhanaKeyOrObj === 'string' ? sadhanaKeyOrObj : (sadhanaKeyOrObj.id || sadhanaKeyOrObj.sadhanaKey);
+    const catalogItem = SADHANA_CATALOG[key] || {
+      id: key,
+      title: sadhanaKeyOrObj.name || key,
+      category: sadhanaKeyOrObj.category || 'Sacred Sadhana',
+      domain: 'sadhanas',
+      timing: 'Daily Practice',
+      mantra: 'Om Namah Shivaya'
+    };
+
+    const existingIdx = profile.traineeSadhanas.findIndex(ts => ts.sadhanaKey === key || (ts.id && ts.id === key) || ts.title.toLowerCase() === catalogItem.title.toLowerCase());
+    const nowStamp = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    if (existingIdx === -1) {
+      profile.traineeSadhanas.push({
+        id: 'ts-' + Date.now().toString().slice(-4),
+        sadhanaKey: key,
+        title: catalogItem.title,
+        categoryDomain: catalogItem.domain || 'sadhanas',
+        isPaid: profile.isPaid !== false && profile.paymentStatus !== 'FREE',
+        paymentStatus: profile.isPaid !== false && profile.paymentStatus !== 'FREE' ? 'PAID' : 'FREE',
+        level: 'Level 1 — Novice Initiation',
+        dailyTarget: catalogItem.domain === 'remedies' ? 'Daily Sunset Protocol' : (catalogItem.domain === 'cleansing' ? 'Morning / Dusk Routine' : (this.settings?.defaultTargetMalas || '11 Malas Daily')),
+        currentStreak: this.settings?.defaultSadhanaStreak || '1 Day',
+        progressPercent: 20,
+        status: 'In Progress',
+        mentorCode: profile.referredByCode || this.settings?.defaultMentorCode || 'SKHM-ADM1-7788-9900',
+        diaryNotes: `Attunement active. Timing: ${catalogItem.timing || 'Brahma Muhurta'}. Mantra: ${catalogItem.mantra || 'Om Namah Shivaya'}`,
+        memos: [
+          {
+            date: nowStamp,
+            author: this.settings?.defaultMentorName || 'Mentor Guide',
+            text: `Enrolled & initiated into ${catalogItem.title}. Timing: ${catalogItem.timing || 'Daily'}. Mantra frequency synchronized.`
+          }
+        ]
+      });
+    } else {
+      if (!profile.traineeSadhanas[existingIdx].categoryDomain) {
+        profile.traineeSadhanas[existingIdx].categoryDomain = catalogItem.domain || 'sadhanas';
+      }
+    }
+
+    if (!profile.selectedRemedies.includes(key)) {
+      profile.selectedRemedies.push(key);
+    }
+    const hasEnrolled = profile.interestedSadhanas.some(is => is.id === key || is.name === catalogItem.title);
+    if (!hasEnrolled) {
+      profile.interestedSadhanas.push({
+        id: key,
+        name: catalogItem.title,
+        category: catalogItem.category,
+        priority: 'High',
+        status: 'In Progress',
+        isPaid: profile.isPaid !== false && profile.paymentStatus !== 'FREE',
+        paymentStatus: profile.isPaid !== false && profile.paymentStatus !== 'FREE' ? 'PAID' : 'FREE'
+      });
+    }
+
+    this.saveProfiles(this.profiles);
+    return catalogItem;
+  }
+
+  addTraineeMemo(itemId, memoText, author = null, isVerification = false, type = 'NORMAL') {
+    const profile = this.getActiveProfile();
+    if (!profile.traineeSadhanas) profile.traineeSadhanas = [];
+    const item = profile.traineeSadhanas.find(s => s.id === itemId);
+    if (item) {
+      if (!item.memos) item.memos = [];
+      const nowStamp = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const finalAuthor = author || (this.getRoleMode() === 'MASTER' ? (this.settings?.defaultMentorName || 'Master Karim') : (profile.name || 'Devotee Sadhak'));
+      item.memos.push({
+        date: nowStamp,
+        author: finalAuthor,
+        text: memoText,
+        isVerification: isVerification,
+        type: type
+      });
+      this.saveProfiles(this.profiles);
+      return item;
+    }
+    return null;
+  }
+
+  requestTraineeVerification(itemId, customNote = '') {
+    const profile = this.getActiveProfile();
+    if (!profile.traineeSadhanas) profile.traineeSadhanas = [];
+    const item = profile.traineeSadhanas.find(s => s.id === itemId);
+    if (item) {
+      const nowStamp = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      item.verificationStatus = 'PENDING_APPROVAL';
+      item.verificationRequestedDate = nowStamp;
+      const author = profile.name || 'Devotee Sadhak';
+      const sponsorCode = item.mentorCode || profile.referredByCode || this.settings?.defaultMentorCode || 'SKHM-ADM1-7788-9900';
+      const note = customNote || `[VERIFICATION REQUESTED] Sadhak submitted ${item.progressPercent || 0}% progress (${item.currentStreak || '1 Day'}) to upline (${sponsorCode}) for approval seal.`;
+      
+      this.addTraineeMemo(itemId, note, author, true, 'PENDING');
+      this.saveProfiles(this.profiles);
+      return item;
+    }
+    return null;
+  }
+
+  approveTraineeVerification(itemId, mentorName = null, mentorCode = null) {
+    const profile = this.getActiveProfile();
+    if (!profile.traineeSadhanas) profile.traineeSadhanas = [];
+    const item = profile.traineeSadhanas.find(s => s.id === itemId);
+    if (item) {
+      const nowStamp = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const activeMentor = mentorName || this.settings?.defaultMentorName || 'Karim Ji (Founder)';
+      const activeCode = mentorCode || this.settings?.defaultMentorCode || 'SKHM-ADM1-7788-9900';
+
+      item.verificationStatus = 'VERIFIED';
+      item.verifiedDate = nowStamp;
+      item.verifiedBy = activeMentor;
+      item.verifiedCode = activeCode;
+      item.verifiedPercent = item.progressPercent || 100;
+      
+      const note = `[APPROVED BY UPLINE] ${activeMentor} (${activeCode}) verified and officially sealed ${item.progressPercent || 0}% progress advancement!`;
+      this.addTraineeMemo(itemId, note, activeMentor, true, 'VERIFIED');
+      this.saveProfiles(this.profiles);
+      return item;
+    }
+    return null;
+  }
+
+  rejectTraineeVerification(itemId, reason = '', mentorName = null) {
+    const profile = this.getActiveProfile();
+    if (!profile.traineeSadhanas) profile.traineeSadhanas = [];
+    const item = profile.traineeSadhanas.find(s => s.id === itemId);
+    if (item) {
+      item.verificationStatus = 'UNVERIFIED';
+      const activeMentor = mentorName || this.settings?.defaultMentorName || 'Karim Ji (Founder)';
+      const note = `[REVISION REQUESTED] Upline Mentor Guidance: ${reason || 'Please complete additional daily malas before reapplying for the verification seal.'}`;
+      this.addTraineeMemo(itemId, note, activeMentor, true, 'REVISION');
+      this.saveProfiles(this.profiles);
+      return item;
+    }
+    return null;
+  }
+
+  // ==========================================
+  // 4-PHASE APP SHARING & 24-HOUR PAIRING PROTOCOL (ENTERPRISE UPGRADED)
+  // ==========================================
+
+  /**
+   * Cycle Detection: Prevents self-pairing or circular upline/downline relationships
+   */
+  validateLineageRelationship(sponsorCode, candidateCode) {
+    if (!sponsorCode || !candidateCode) return { valid: true };
+    const cleanSponsor = sponsorCode.trim().toUpperCase();
+    const cleanCandidate = candidateCode.trim().toUpperCase();
+
+    if (cleanSponsor === cleanCandidate) {
+      return { valid: false, reason: 'Self-pairing is prohibited. Sponsor code cannot match candidate code.' };
+    }
+
+    // Traverse upwards from sponsor to verify candidate is not an ancestor of sponsor
+    let current = cleanSponsor;
+    const visited = new Set([cleanSponsor]);
+    while (current && current !== 'ROOT-0000-0000-0000') {
+      const prof = this.profiles.find(p => (p.referenceCode || '').toUpperCase() === current);
+      if (!prof || !prof.referredByCode) break;
+      const parent = prof.referredByCode.toUpperCase();
+      if (parent === cleanCandidate) {
+        return { valid: false, reason: `Circular lineage detected: ${cleanCandidate} is already an upline mentor of ${cleanSponsor}.` };
+      }
+      if (visited.has(parent)) break;
+      visited.add(parent);
+      current = parent;
+    }
+
+    return { valid: true };
+  }
+
+  /**
+   * Calculate exponential backoff cooldown for pairing resends (60s -> 180s -> 600s)
+   */
+  getResendCooldownRemaining(item) {
+    if (!item || !item.lastResendTimestamp) return 0;
+    const count = item.resendCount || 0;
+    let requiredCooldownMs = 0;
+    if (count === 1) requiredCooldownMs = 60 * 1000;
+    else if (count === 2) requiredCooldownMs = 180 * 1000;
+    else if (count >= 3) requiredCooldownMs = 600 * 1000;
+
+    const elapsed = Date.now() - item.lastResendTimestamp;
+    const remainingMs = requiredCooldownMs - elapsed;
+    return remainingMs > 0 ? Math.ceil(remainingMs / 1000) : 0;
+  }
+
+  /**
+   * Live Firebase Realtime Database Telemetry Logger
+   */
+  async logDeviceEvent(deviceId, logType, message, details = {}, severity = 'INFO') {
+    const payload = {
+      deviceId: deviceId || 'WEB-ADMIN-DASHBOARD',
+      logType: logType || 'SYSTEM_EVENT',
+      message: message || '',
+      severity: severity,
+      timestamp: { ".sv": "timestamp" },
+      clientTimestampMs: Date.now(),
+      details: details
+    };
+
+    const firebaseUrl = this.settings?.firebaseUrl || 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/';
+    const endpoint = `${firebaseUrl.replace(/\/$/, '')}/device_logs/${encodeURIComponent(deviceId || 'WEB_ADMIN')}.json`;
+
+    try {
+      if (navigator.onLine) {
+        fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(err => this._enqueueOfflineSync('DEVICE_LOG', payload));
+      } else {
+        this._enqueueOfflineSync('DEVICE_LOG', payload);
+      }
+    } catch (err) {
+      this._enqueueOfflineSync('DEVICE_LOG', payload);
+    }
+  }
+
+  /**
+   * Offline Sync Queue Manager
+   */
+  _enqueueOfflineSync(type, payload) {
+    try {
+      const q = JSON.parse(localStorage.getItem('sk_offline_sync_queue') || '[]');
+      q.push({ id: 'sq-' + Date.now(), type, payload, queuedAt: Date.now() });
+      localStorage.setItem('sk_offline_sync_queue', JSON.stringify(q));
+    } catch (e) {
+      console.warn('Could not enqueue offline sync', e);
+    }
+  }
+
+  async flushOfflineSyncQueue() {
+    if (!navigator.onLine) return;
+    try {
+      const raw = localStorage.getItem('sk_offline_sync_queue');
+      if (!raw) return;
+      const q = JSON.parse(raw);
+      if (!Array.isArray(q) || q.length === 0) return;
+
+      const firebaseUrl = this.settings?.firebaseUrl || 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/';
+      const remaining = [];
+
+      for (const item of q) {
+        try {
+          if (item.type === 'DEVICE_LOG') {
+            await fetch(`${firebaseUrl.replace(/\/$/, '')}/device_logs/${encodeURIComponent(item.payload.deviceId || 'WEB')}.json`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(item.payload)
+            });
+          } else if (item.type === 'PAIRING_INVITE') {
+            await fetch(`${firebaseUrl.replace(/\/$/, '')}/pairing_invites/${encodeURIComponent(item.payload.id)}.json`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(item.payload)
+            });
+          }
+        } catch (e) {
+          remaining.push(item);
+        }
+      }
+
+      localStorage.setItem('sk_offline_sync_queue', JSON.stringify(remaining));
+    } catch (e) {
+      console.warn('Error flushing offline sync queue', e);
+    }
+  }
+
+  getPairingInvites() {
+    try {
+      const stored = localStorage.getItem('spiritual_karim_pairing_invites');
+      if (stored) return JSON.parse(stored);
+    } catch (e) {
+      console.warn('Could not load pairing invites', e);
+    }
+    const defaultInvites = [
+      {
+        id: 'inv-01',
+        sponsorCode: 'SKHM-ADM1-7788-9900',
+        seekerName: 'Ananya Sharma',
+        seekerPhone: '+91 98112 33445',
+        seekerDeviceModel: 'Samsung Galaxy SM-G998B',
+        hardwareNonce: 'HW-FPRINT-8891-9921',
+        telegramLink: 'https://t.me/SpiritualKarimBot?start=pair_SKHMADM177889900',
+        apkDownloadUrl: 'https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk',
+        createdAtMs: Date.now() - 3600000,
+        expiresAtMs: Date.now() + 23 * 3600000,
+        status: 'PENDING',
+        resendCount: 0,
+        lastResendTimestamp: Date.now() - 3600000,
+        formattedCreatedTime: 'Today • 1h ago'
+      },
+      {
+        id: 'inv-02',
+        sponsorCode: 'SKHM-ADM1-7788-9900',
+        seekerName: 'Vikram Aditya',
+        seekerPhone: '+91 98223 44556',
+        seekerDeviceModel: 'OnePlus 11 5G',
+        hardwareNonce: 'HW-FPRINT-1122-3344',
+        telegramLink: 'https://t.me/SpiritualKarimBot?start=pair_SKHMADM177889900',
+        apkDownloadUrl: 'https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk',
+        createdAtMs: Date.now() - 86400000,
+        expiresAtMs: Date.now() - 1000,
+        status: 'EXPIRED',
+        resendCount: 1,
+        lastResendTimestamp: Date.now() - 86400000,
+        formattedCreatedTime: 'Yesterday'
+      }
+    ];
+    this.savePairingInvites(defaultInvites);
+    return defaultInvites;
+  }
+
+  savePairingInvites(invites) {
+    try {
+      localStorage.setItem('spiritual_karim_pairing_invites', JSON.stringify(invites));
+    } catch (e) {
+      console.warn('Could not save pairing invites', e);
+    }
+  }
+
+  createPairingInvite({ seekerName, seekerPhone, deviceModel, candidateCode = null }) {
+    const invites = this.getPairingInvites();
+    const profile = this.getActiveProfile();
+    const sponsorCode = profile.referenceCode || 'SKHM-ADM1-7788-9900';
+
+    // 1. Lineage Cycle & Self-Pairing Check
+    const lineageValidation = this.validateLineageRelationship(sponsorCode, candidateCode);
+    if (!lineageValidation.valid) {
+      return { error: true, message: lineageValidation.reason };
+    }
+
+    // 2. Downline Capacity Throttle: Max 5 active pending invites per mentor
+    const activePending = invites.filter(i => i.sponsorCode === sponsorCode && i.status === 'PENDING');
+    if (activePending.length >= 5) {
+      return { error: true, message: 'Invite quota reached: Maximum 5 pending pairing requests allowed simultaneously per mentor. Approve or reject pending requests first.' };
+    }
+
+    const cleanCode = sponsorCode.replace(/[^a-zA-Z0-9]/g, '');
+    const hardwareNonce = 'HW-' + Math.random().toString(36).substr(2, 6).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
+    
+    const newInvite = {
+      id: 'inv-' + Date.now().toString(36),
+      sponsorCode: sponsorCode,
+      seekerName: seekerName || 'New Seeker',
+      seekerPhone: seekerPhone || '+91 98000 00000',
+      seekerDeviceModel: deviceModel || 'Android Device',
+      hardwareNonce: hardwareNonce,
+      telegramLink: `https://t.me/SpiritualKarimBot?start=pair_${cleanCode}`,
+      apkDownloadUrl: 'https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk',
+      createdAtMs: Date.now(),
+      expiresAtMs: Date.now() + 24 * 60 * 60 * 1000,
+      status: 'PENDING',
+      resendCount: 0,
+      lastResendTimestamp: Date.now(),
+      formattedCreatedTime: 'Just Now'
+    };
+
+    invites.unshift(newInvite);
+    this.savePairingInvites(invites);
+
+    // Live Telemetry stream to Firebase Realtime Database
+    this.logDeviceEvent(newInvite.hardwareNonce, 'PAIRING_REQUESTED', `New seeker "${newInvite.seekerName}" requested pairing under sponsor ${sponsorCode}`, newInvite);
+
+    return newInvite;
+  }
+
+  approvePairingInvite(inviteId) {
+    const invites = this.getPairingInvites();
+    const item = invites.find(i => i.id === inviteId);
+    if (item) {
+      item.status = 'APPROVED';
+      item.approvedAtMs = Date.now();
+      this.savePairingInvites(invites);
+
+      const profile = this.getActiveProfile();
+      if (!profile.healerNetwork) profile.healerNetwork = [];
+
+      const existsInNet = profile.healerNetwork.some(n => n.name === item.seekerName || (n.refCode && n.refCode === item.hardwareNonce));
+      if (!existsInNet) {
+        profile.healerNetwork.push({
+          id: 'net-' + Date.now().toString().slice(-4),
+          name: item.seekerName,
+          refCode: item.hardwareNonce || this.generate16DigitCode('SKDV'),
+          role: 'Devotee (Level 5)',
+          activeCases: 1,
+          phone: item.seekerPhone || '',
+          deviceModel: item.seekerDeviceModel || ''
+        });
+      }
+
+      // Ensure seeker exists as a registered Devotee profile in directory
+      const existingProfile = this.profiles.find(p => p.name === item.seekerName || (item.seekerPhone && p.phone === item.seekerPhone));
+      if (!existingProfile) {
+        const newDevoteeProfile = {
+          id: 'prof-dev-' + Date.now().toString(36),
+          referenceCode: item.hardwareNonce || this.generate16DigitCode('SKDV'),
+          referredByCode: profile.referenceCode || 'SKHM-ADM1-7788-9900',
+          transferredCode: '',
+          name: item.seekerName,
+          phone: item.seekerPhone || '',
+          email: '',
+          profileType: 'DEVOTEE',
+          level: 5,
+          isPaid: false,
+          paymentStatus: 'FREE',
+          objective: 'Household cleansing, Three Diya practice, and ancestral karma resolution.',
+          selectedRemedies: ['three_diya', 'negativity'],
+          address: '',
+          city: '',
+          joinDate: new Date().toISOString().split('T')[0],
+          isActive: true,
+          notes: `Paired via 24h token with mentor ${profile.name} (${profile.referenceCode}). Device: ${item.seekerDeviceModel}`,
+          categoryTag: 'House Clean & Seekers',
+          seekerDiagnostics: { afflictionDuration: '', kuldeviIssues: '', targetOutcome: '' },
+          interestedSadhanas: [
+            { id: 'three_diya', name: 'Three Diya Process', category: 'Divine Remedy', priority: 'High', status: 'Interested' }
+          ],
+          houseCleanLevels: [
+            { id: 'hc-d1', levelNumber: 1, levelTitle: 'Level 1 — Self House Clean', status: 'NOT_STARTED', cleanPercentage: 0, cleanedDetails: '', mentorCode: profile.referenceCode, mentorName: profile.name, mentorRemarks: null, approvalDate: null },
+            { id: 'hc-d2', levelNumber: 2, levelTitle: 'Level 2 — Parents House Clean', status: 'NOT_STARTED', cleanPercentage: 0, cleanedDetails: '', mentorCode: profile.referenceCode, mentorName: profile.name, mentorRemarks: null, approvalDate: null },
+            { id: 'hc-d3', levelNumber: 3, levelTitle: 'Level 3 — Relative House Clean', status: 'NOT_STARTED', cleanPercentage: 0, cleanedDetails: '', mentorCode: profile.referenceCode, mentorName: profile.name, mentorRemarks: null, approvalDate: null }
+          ],
+          traineeSadhanas: [],
+          healerCompletedSadhanas: [],
+          healerNetwork: [],
+          lineage: {
+            currentFamily: { selfName: item.seekerName, selfTitle: 'Devotee Sadhak', spouseName: '', children: [], siblings: [] },
+            husbandAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' },
+            wifeAncestral: { fatherName: '', motherName: '', paternalGrandfather: '', paternalGrandmother: '', maternalGrandfather: '', maternalGrandmother: '', siblings: [], address: '' }
+          }
+        };
+        this.profiles.push(newDevoteeProfile);
+      }
+
+      this.saveProfiles(this.profiles);
+
+      // Log verified approval to Firebase Realtime DB
+      this.logDeviceEvent(item.hardwareNonce || item.id, 'PAIRING_APPROVED', `Pairing approved for "${item.seekerName}" by sponsor ${item.sponsorCode}`, item, 'SUCCESS');
+      return item;
+    }
+    return null;
+  }
+
+  rejectPairingInvite(inviteId) {
+    const invites = this.getPairingInvites();
+    const item = invites.find(i => i.id === inviteId);
+    if (item) {
+      item.status = 'REJECTED';
+      this.savePairingInvites(invites);
+      this.logDeviceEvent(item.hardwareNonce || item.id, 'PAIRING_REJECTED', `Pairing rejected for "${item.seekerName}" by sponsor ${item.sponsorCode}`, item, 'WARNING');
+      return item;
+    }
+    return null;
+  }
+
+  resendPairingInvite(inviteId) {
+    const invites = this.getPairingInvites();
+    const item = invites.find(i => i.id === inviteId);
+    if (item) {
+      // Exponential Backoff Check
+      const cooldownSecs = this.getResendCooldownRemaining(item);
+      if (cooldownSecs > 0) {
+        return { error: true, message: `Resend rate-limited. Please wait ${cooldownSecs} seconds before requesting another token.`, remainingSecs: cooldownSecs };
+      }
+
+      item.createdAtMs = Date.now();
+      item.expiresAtMs = Date.now() + 24 * 60 * 60 * 1000;
+      item.status = 'PENDING';
+      item.resendCount = (item.resendCount || 0) + 1;
+      item.lastResendTimestamp = Date.now();
+      item.formattedCreatedTime = 'Just Now (Refreshed)';
+      this.savePairingInvites(invites);
+
+      this.logDeviceEvent(item.hardwareNonce || item.id, 'PAIRING_RESENT', `24-Hour window refreshed for "${item.seekerName}" (Attempt #${item.resendCount})`, item);
+      return item;
+    }
+    return null;
+  }
+
+  /**
+   * Calculates Summary Metrics matching Android Compose HealersHubScreen
+   */
+  getSummaryMetrics(scopedList = null) {
+    const list = scopedList || this.profiles;
+    return {
+      total: list.length,
+      admin: list.filter(p => p.profileType === 'ADMIN' || p.level === 1).length,
+      healers: list.filter(p => p.profileType === 'HEALER' || p.level === 2 || p.level === 3).length,
+      trainees: list.filter(p => p.profileType === 'TRAINEE' || p.level === 4).length,
+      devotees: list.filter(p => p.profileType === 'DEVOTEE' || p.level === 5).length
+    };
+  }
+
+  /**
+   * Returns Role-Scoped Relevant Profiles matching Android RBAC logic
+   */
   getScopedProfiles(roleMode = null, activeProfile = null) {
     const role = roleMode || this.getRoleMode();
     const active = activeProfile || this.getActiveProfile();
-    if (!active) return this.profiles;
 
     if (role === 'MASTER' || role === 'ADMIN') {
-      // Top can see all profiles across the organization
+      // Top can see all bottoms
       return this.profiles;
     }
 
     if (role === 'HEALER') {
-      // Healer sees self + upline sponsor + all downlines below them. Cannot see Level 1 Founder Master or parallel healers.
+      // Healer sees self + all downlines below them. Bottom cannot see Level 1 Founder Master.
       const refCode = active.referenceCode || '';
       const downlineCodes = new Set([refCode]);
       let added = true;
@@ -166,30 +1803,33 @@ class ProfileModel {
           }
         }
       }
-      const sponsor = this.profiles.find(p => p.referenceCode === active.referredByCode && p.profileType !== 'ADMIN');
-      return this.profiles.filter(p => p.id === active.id || downlineCodes.has(p.referenceCode) || (sponsor && p.id === sponsor.id));
+      return this.profiles.filter(p => p.id === active.id || downlineCodes.has(p.referenceCode));
     }
 
     if (role === 'TRAINEE') {
-      // Trainee sees self + direct upline mentor + all devotee downlines below them.
+      // Trainee sees self + all downlines below them. Bottom cannot see Level 1..3 uplines.
       const refCode = active.referenceCode || '';
       const downlineCodes = new Set([refCode]);
-      for (const p of this.profiles) {
-        if (p.referredByCode === refCode) {
-          downlineCodes.add(p.referenceCode);
+      let added = true;
+      while (added) {
+        added = false;
+        for (const p of this.profiles) {
+          if (p.referredByCode && downlineCodes.has(p.referredByCode) && !downlineCodes.has(p.referenceCode)) {
+            downlineCodes.add(p.referenceCode);
+            added = true;
+          }
         }
       }
-      const sponsor = this.profiles.find(p => p.referenceCode === active.referredByCode && p.profileType !== 'ADMIN');
-      return this.profiles.filter(p => p.id === active.id || downlineCodes.has(p.referenceCode) || (sponsor && p.id === sponsor.id));
+      return this.profiles.filter(p => p.id === active.id || downlineCodes.has(p.referenceCode));
     }
 
     if (role === 'DEVOTEE') {
-      // Devotee can ONLY see self + direct connected upline mentor (sponsor). Cannot see global upper levels.
-      const sponsor = this.profiles.find(p => p.referenceCode === active.referredByCode && p.profileType !== 'ADMIN');
-      const downlines = this.profiles.filter(p => p.referredByCode === active.referenceCode);
-      return this.profiles.filter(p => p.id === active.id || (sponsor && p.id === sponsor.id) || downlines.some(d => d.id === p.id));
+      // Devotee sees self + direct downlines. Cannot see higher upline levels.
+      const refCode = active.referenceCode || '';
+      return this.profiles.filter(p => p.id === active.id || p.referredByCode === refCode);
     }
 
+    return this.profiles;
   }
 
   /**
@@ -198,7 +1838,7 @@ class ProfileModel {
   async fetchFromFirebaseRealtime() {
     const firebaseUrl = this.settings?.firebaseUrl || 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/';
     try {
-      const resp = await retryFetch(`${firebaseUrl.replace(/\/$/, '')}/profiles.json`);
+      const resp = await fetch(`${firebaseUrl.replace(/\/$/, '')}/profiles.json`);
       if (resp.ok) {
         const cloudData = await resp.json();
         if (cloudData && typeof cloudData === 'object') {
@@ -232,7 +1872,7 @@ class ProfileModel {
     const nodeKey = (profile.id || profile.referenceCode || 'prof-' + Date.now()).replace(/[^a-zA-Z0-9_-]/g, '_');
     try {
       if (navigator.onLine) {
-        await retryFetch(`${firebaseUrl.replace(/\/$/, '')}/profiles/${nodeKey}.json`, {
+        await fetch(`${firebaseUrl.replace(/\/$/, '')}/profiles/${nodeKey}.json`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(profile)
@@ -480,7 +2120,7 @@ class ProfileView {
 
     // Role Switcher & RBAC Controls
     this.selectRoleMode = document.getElementById('select-role-mode');
-    this.btnAdminSettings = document.getElementById('btn-admin-settings');
+    this.btnAdminSettings = document.getElementById('btn-admin-settings') || document.getElementById('sidebar-btn-admin-settings');
     this.adminSettingsModal = document.getElementById('admin-settings-modal');
 
     // Header Display Elements
@@ -592,7 +2232,7 @@ class ProfileView {
     this.sharePairingModalBody = document.getElementById('share-pairing-modal-body');
 
     // Settings Modal Elements & Controls
-    this.btnAdminSettings = document.getElementById('btn-admin-settings');
+    this.btnAdminSettings = document.getElementById('btn-admin-settings') || document.getElementById('sidebar-btn-admin-settings');
     this.adminSettingsModal = document.getElementById('admin-settings-modal');
     this.btnCloseAdminSettings = document.getElementById('btn-close-settings-modal') || document.getElementById('btn-close-admin-settings') || document.querySelector('#admin-settings-modal .icon-btn');
     this.btnSaveSettings = document.getElementById('btn-save-settings');
@@ -651,7 +2291,7 @@ class ProfileView {
     this._renderCategorizedTraineeSadhanas(profile.traineeSadhanas || []);
 
     // Healer Completed & Network
-    const hubProfiles = (typeof this.getScopedProfiles === 'function') ? this.getScopedProfiles(roleMode, profile) : (visibleProfiles || []);
+    const hubProfiles = this.allProfiles || visibleProfiles || [];
     this.renderAndroidHealersHub(hubProfiles, profile, roleMode);
     this._renderHealerCompleted(profile.healerCompletedSadhanas || []);
     this._renderHealerNetwork(profile.healerNetwork || []);
@@ -1450,65 +3090,12 @@ class ProfileView {
     `).join('');
   }
 
-    // Enforce 4-Tier Role-Based Access Control (RBAC) & Hierarchy Visibility Matrix
+  // Enforce 4-Tier Role-Based Access Control (RBAC) & Hierarchy Visibility Matrix
   enforceRBAC(roleMode = 'MASTER', settings = {}) {
     const isMaster = roleMode === 'MASTER' || roleMode === 'ADMIN';
     const isHealer = roleMode === 'HEALER';
     const isTrainee = roleMode === 'TRAINEE';
     const isDevotee = roleMode === 'DEVOTEE';
-
-    // 0. Main Navigation Tabs Filtering:
-    // Tab 1: Devotee Personal - visible to All
-    // Tab 2: Seeker Purpose - visible to All
-    // Tab 3: Trainee Sadhak - visible to Master, Healer, Trainee (HIDDEN for Devotee)
-    // Tab 4: Healer Connect - visible to Master, Healer (HIDDEN for Trainee, Devotee)
-    // Tab 5: Genealogy Tree - visible to Master, Healer, Trainee (HIDDEN for Devotee)
-    // Tab 6: Firebase RTDB Data - visible ONLY to Master (HIDDEN for Healer, Trainee, Devotee)
-    const tabConfig = {
-      'tab-devotee-personal': true,
-      'tab-seeker-purpose': true,
-      'tab-trainee-sadhak': isMaster || isHealer || isTrainee,
-      'tab-healer-connect': isMaster || isHealer,
-      'tab-genealogy-tree': isMaster || isHealer || isTrainee,
-      'tab-firebase-data': isMaster
-    };
-
-    document.querySelectorAll('.main-tab-btn[data-main-tab]').forEach(btn => {
-      const tabId = btn.getAttribute('data-main-tab');
-      const show = tabConfig[tabId] !== false;
-      btn.style.display = show ? 'flex' : 'none';
-    });
-
-    // Box 1 Header 3rd Column Genealogy Button:
-    const headerGenealogyBtn = document.getElementById('main-tab-tree-btn');
-    if (headerGenealogyBtn) {
-      headerGenealogyBtn.style.display = (isMaster || isHealer || isTrainee) ? 'flex' : 'none';
-    }
-
-    // Auto-switch to first visible tab if active tab was hidden
-    const activeBtn = document.querySelector('.main-tab-btn.active');
-    if (activeBtn && activeBtn.style.display === 'none') {
-      const firstVisibleBtn = document.querySelector('.main-tab-btn:not([style*="display: none"])');
-      if (firstVisibleBtn) {
-        firstVisibleBtn.click();
-      }
-    }
-
-    // 0.1 Sidebar RTDB Explorer Section Visibility (Master only)
-    const sidebarRtdbSection = document.getElementById('sidebar-rtdb-section') || document.querySelector('.sidebar-rtdb-section');
-    if (sidebarRtdbSection) {
-      sidebarRtdbSection.style.display = isMaster ? 'block' : 'none';
-    }
-    const rtdbSidebarBtn = document.getElementById('sidebar-rtdb-btn');
-    if (rtdbSidebarBtn) {
-      rtdbSidebarBtn.style.display = isMaster ? 'flex' : 'none';
-    }
-
-    // 0.2 Access Matrix Button Visibility (Master only)
-    const rbacMatrixBtn = document.getElementById('btn-open-rbac-matrix');
-    if (rbacMatrixBtn) {
-      rbacMatrixBtn.style.display = isMaster ? 'inline-flex' : 'none';
-    }
 
     // 1. App Hierarchy Tiers Legend Visibility (Image 1)
     // Master: 1, 2, 3, 4
@@ -1600,6 +3187,15 @@ class ProfileView {
       } else {
         this.btnAdminSettings.style.opacity = '1';
         this.btnAdminSettings.title = 'Open Master Admin & RBAC Settings';
+
+    const rbacMatrixBtns = [
+      document.getElementById('btn-open-rbac-matrix'),
+      document.getElementById('sidebar-btn-rbac-matrix')
+    ];
+    rbacMatrixBtns.forEach(btn => {
+      if (btn) btn.style.display = isMaster ? 'inline-flex' : 'none';
+    });
+
       }
     }
 
@@ -1731,6 +3327,19 @@ class ProfileView {
     }
   }
 
+  toggleRbacMatrixModal(forceState) {
+    const modal = document.getElementById('rbac-access-matrix-modal');
+    if (!modal) return;
+    const isOpen = typeof forceState === 'boolean' ? forceState : (!modal.classList.contains('open') && !modal.classList.contains('is-open'));
+    if (isOpen) {
+      modal.classList.add('open', 'is-open');
+      modal.setAttribute('aria-hidden', 'false');
+    } else {
+      modal.classList.remove('open', 'is-open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+  }
+
   toggleSettingsModal(forceState) {
     if (!this.adminSettingsModal) return;
     const isOpen = typeof forceState === 'boolean' ? forceState : !this.adminSettingsModal.classList.contains('open');
@@ -1748,10 +3357,10 @@ class ProfileView {
     if (!modal) return;
     const isOpen = typeof forceState === 'boolean' ? forceState : !modal.classList.contains('open');
     if (isOpen) {
-      modal.classList.add('open');
+      modal.classList.add('open', 'is-open');
       modal.setAttribute('aria-hidden', 'false');
     } else {
-      modal.classList.remove('open');
+      modal.classList.remove('open', 'is-open');
       modal.setAttribute('aria-hidden', 'true');
     }
   }
@@ -2046,6 +3655,10 @@ Installation & Activation Steps:
       if (el) el.checked = Boolean(val);
     };
 
+    setVal('setting-app-name', s.appName || 'Spiritual Karim Admin');
+    setVal('setting-org-name', s.orgName || 'Shree Spritual Karim Sansthan');
+    setVal('setting-firebase-url', s.firebaseUrl || 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/');
+    setChecked('setting-auto-cloud-sync', s.autoCloudSync !== false);
     setVal('setting-default-mentor-name', s.defaultMentorName);
     setVal('setting-default-mentor-code', s.defaultMentorCode);
     setVal('setting-telegram-bot-handle', s.telegramBotHandle);
@@ -2084,6 +3697,10 @@ Installation & Activation Steps:
     };
 
     return {
+      appName: getVal('setting-app-name', 'Spiritual Karim Admin'),
+      orgName: getVal('setting-org-name', 'Shree Spritual Karim Sansthan'),
+      firebaseUrl: getVal('setting-firebase-url', 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/'),
+      autoCloudSync: getChecked('setting-auto-cloud-sync', true),
       defaultMentorName: getVal('setting-default-mentor-name', 'Karim Ji (Founder)'),
       defaultMentorCode: getVal('setting-default-mentor-code', 'SKHM-ADM1-7788-9900'),
       telegramBotHandle: getVal('setting-telegram-bot-handle', 'SpiritualKarimBot'),
@@ -2227,6 +3844,68 @@ Installation & Activation Steps:
       const el = document.getElementById('legend-count-tier-' + t);
       if (el) el.textContent = counts[t];
     }
+  }
+
+  
+  initSadhanaListbox() {
+    const select = document.getElementById('select-sacred-sadhana');
+    const container = document.getElementById('sadhana-detail-preview-container');
+    if (!select || !container || typeof SADHANA_CATALOG === 'undefined') return;
+
+    const keys = Object.keys(SADHANA_CATALOG);
+    select.innerHTML = keys.map(k => {
+      const item = SADHANA_CATALOG[k] || {};
+      return '<option value="' + k + '">' + (item.icon || '🕉️') + ' ' + escapeHtmlUtil(item.title || k) + ' (' + escapeHtmlUtil(item.category || 'Sadhana') + ' • ' + escapeHtmlUtil(item.levelScope || 'All') + ')</option>';
+    }).join('');
+
+    this.renderSadhanaDetailPreview(select.value || keys[0]);
+  }
+
+  renderSadhanaDetailPreview(sadhanaId) {
+    const container = document.getElementById('sadhana-detail-preview-container');
+    if (!container || typeof SADHANA_CATALOG === 'undefined') return;
+    const item = SADHANA_CATALOG[sadhanaId] || SADHANA_CATALOG.sri_yantra || {};
+
+    container.innerHTML = `
+      <div class="detail-listbox-preview-card mt-3">
+        <div class="detail-preview-header">
+          <div class="detail-preview-title-row">
+            <span class="detail-preview-icon">${item.icon || '🕉️'}</span>
+            <div>
+              <h4 class="detail-preview-title">${escapeHtmlUtil(item.title || sadhanaId)}</h4>
+              <span style="font-size: 0.75rem; color: var(--gold-300);">${escapeHtmlUtil(item.category || 'Sacred Sadhana')} &bull; ${escapeHtmlUtil(item.levelScope || 'Universal')}</span>
+            </div>
+          </div>
+          <button type="button" class="btn btn-xs btn-gold btn-open-sadhana-drawer-from-preview" data-sadhana="${sadhanaId}" title="Open Full Ritual Steps Drawer">
+            📖 Full Prescription Drawer
+          </button>
+        </div>
+        <div class="detail-preview-grid">
+          <div class="detail-preview-item">
+            <div class="detail-preview-item-label">Auspicious Timing</div>
+            <div class="detail-preview-item-value">${escapeHtmlUtil(item.timing || 'Brahma Muhurta (04:00 - 06:00 AM)')}</div>
+          </div>
+          <div class="detail-preview-item">
+            <div class="detail-preview-item-label">Aasan &amp; Direction</div>
+            <div class="detail-preview-item-value">${escapeHtmlUtil(item.aasanDirection || 'East / North Facing')}</div>
+          </div>
+          <div class="detail-preview-item">
+            <div class="detail-preview-item-label">Sacred Ingredients</div>
+            <div class="detail-preview-item-value" style="font-size: 0.78rem;">${escapeHtmlUtil(item.ingredients || 'Cow Ghee Diya, Lotus Seed Mala, Gangajal')}</div>
+          </div>
+          <div class="detail-preview-item">
+            <div class="detail-preview-item-label">Primary Benefits</div>
+            <div class="detail-preview-item-value" style="font-size: 0.78rem;">${escapeHtmlUtil(item.benefits || 'Purification, Prosperity, Divine Aura')}</div>
+          </div>
+        </div>
+        ${item.mantra ? `
+          <div class="detail-preview-mantra">
+            <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.25rem;">Sacred Beej Mantra</div>
+            ${escapeHtmlUtil(item.mantra)}
+          </div>
+        ` : ''}
+      </div>
+    `;
   }
 
   showSlideToast(title, message, type = 'info', duration = 4500, actionBtn = null) {
@@ -3116,6 +4795,63 @@ Installation & Activation Steps:
     }
     if (!this.healersHubCardsContainer) return;
 
+    const gridBtn = document.getElementById('btn-layout-grid');
+    const tableBtn = document.getElementById('btn-layout-table');
+    const gridContainer = this.healersHubCardsContainer;
+    const tableContainer = document.getElementById('healers-hub-table-container');
+
+    if (gridBtn && tableBtn) {
+      gridBtn.classList.toggle('active', this.directoryLayout === 'GRID');
+      tableBtn.classList.toggle('active', this.directoryLayout === 'TABLE');
+    }
+
+    if (this.directoryLayout === 'TABLE' && tableContainer) {
+      if (gridContainer) gridContainer.style.display = 'none';
+      tableContainer.style.display = 'block';
+      tableContainer.innerHTML = `
+        <table class="healers-hub-table">
+          <thead>
+            <tr>
+              <th>Member</th>
+              <th>Role Tier</th>
+              <th>16-Digit Code</th>
+              <th>Sponsor Mentor</th>
+              <th>Phone / WhatsApp</th>
+              <th>City</th>
+              <th>Stamp</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filtered.map(p => `
+              <tr class="healer-table-row" data-id="${p.id}">
+                <td>
+                  <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <div class="avatar-circle ${getAvatarClass(p)}" style="width: 32px; height: 32px; font-size: 0.78rem;">${(p.name || 'U').substring(0, 2).toUpperCase()}</div>
+                    <strong style="color: var(--gold-300);">${escapeHtmlUtil(p.name || 'Untitled')}</strong>
+                  </div>
+                </td>
+                <td><span class="badge-status-pill ${getBadgeClass(p)}">${escapeHtmlUtil(p.profileType)} (L${p.level || 1})</span></td>
+                <td><code class="font-mono" style="font-size: 0.78rem; color: var(--gold-400);">${escapeHtmlUtil(p.referenceCode || 'N/A')}</code></td>
+                <td><code class="font-mono" style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtmlUtil(p.referredByCode || 'ROOT')}</code></td>
+                <td>${escapeHtmlUtil(p.phone || 'N/A')}</td>
+                <td>${escapeHtmlUtil(p.city || 'N/A')}</td>
+                <td><span class="stamp-badge ${p.paymentStatus === 'PAID' ? 'stamp-paid' : 'stamp-free'}">${p.paymentStatus || 'PAID'}</span></td>
+                <td style="text-align: right;">
+                  <button type="button" class="btn btn-xs btn-gold btn-hub-select-profile" data-id="${p.id}">View Profile</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      return;
+    } else {
+      if (tableContainer) tableContainer.style.display = 'none';
+      if (gridContainer) gridContainer.style.display = 'grid';
+    }
+
+
     if (filtered.length === 0) {
       this.healersHubCardsContainer.innerHTML = `
         <div class="healers-empty-state">
@@ -3724,6 +5460,7 @@ class ProfileController {
     this._renderCurrentState();
     this._bindNavigationTabs();
     this._bindSadhanaCatalogEvents();
+    this.view.initSadhanaListbox();
     this._bindEvents();
 
     window.addEventListener('online', () => {
@@ -4375,318 +6112,290 @@ class ProfileController {
     });
   }
 
+  
+  _bindRealtimeInputValidations() {
+    const validations = [
+      {
+        id: 'new-profile-name',
+        test: val => Boolean(val && val.trim().length >= 3),
+        msg: 'Name must be at least 3 characters'
+      },
+      {
+        id: 'new-profile-phone',
+        test: val => /^(\+?\d{1,4}[- ]?)?\d{10}$/.test((val || '').replace(/[\s-]/g, '')),
+        msg: 'Enter a valid 10-digit mobile number'
+      },
+      {
+        id: 'new-profile-sponsor',
+        test: val => !val || /^(ROOT|[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4})$/i.test(val.trim()),
+        msg: 'Must be ROOT or valid 16-digit code (e.g. SKHM-ADM1-7788-9900)'
+      },
+      {
+        id: 'input-name',
+        test: val => Boolean(val && val.trim().length >= 3),
+        msg: 'Name must be at least 3 characters'
+      },
+      {
+        id: 'input-phone',
+        test: val => !val || /^(\+?\d{1,4}[- ]?)?\d{10}$/.test(val.replace(/[\s-]/g, '')),
+        msg: 'Enter a valid 10-digit mobile number'
+      }
+    ];
+
+    validations.forEach(({ id, test, msg }) => {
+      const input = document.getElementById(id);
+      if (input) {
+        const handler = () => {
+          const val = input.value;
+          if (!val && !input.required) {
+            this.view.setValidationStatus(input, true, '');
+            return;
+          }
+          const ok = test(val);
+          this.view.setValidationStatus(input, ok, ok ? '✓ Valid format' : msg);
+        };
+        input.addEventListener('input', handler);
+        input.addEventListener('blur', handler);
+      }
+    });
+  }
+
+  
+  _bindEnterpriseDrawerEvents() {
+    const navItems = document.querySelectorAll('.drawer-nav-item');
+    if (!navItems || navItems.length === 0) return;
+
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        const id = item.id;
+        navItems.forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+
+        if (this.view.sidebarEl && this.view.sidebarEl.classList.contains('mobile-open')) {
+          this.view.toggleMobileSidebar(false);
+        }
+
+        switch (id) {
+          case 'nav-item-dashboard':
+            e.preventDefault();
+            const topBox = document.getElementById('main-profile-box-1');
+            if (topBox) topBox.scrollIntoView({ behavior: 'smooth' });
+            this.view.showSlideToast('Dashboard', 'Viewing Hero Profile Card & System Canvas', 'info', 2000);
+            break;
+
+          case 'nav-item-devices':
+          case 'nav-item-health':
+            e.preventDefault();
+            const flipper = document.getElementById('profile-card-flipper-wrapper');
+            if (flipper) {
+              flipper.classList.add('is-flipped');
+              const topBox2 = document.getElementById('main-profile-box-1');
+              if (topBox2) topBox2.scrollIntoView({ behavior: 'smooth' });
+              this.view.showSlideToast('Device Telemetry', '📡 24h Pairing QR & Cloud Telemetry active', 'info', 2500);
+            }
+            break;
+
+          case 'nav-item-radar':
+            e.preventDefault();
+            this.switchMainTab('tab-genealogy-tree');
+            this.view.renderAndroidHierarchyTree(this.model.profiles, 'ALL');
+            this.view.showSlideToast('Live Radar', '🌳 Visual MLM Spiderweb Hierarchy loaded', 'info', 2000);
+            break;
+
+          case 'nav-item-history':
+            e.preventDefault();
+            this.switchMainTab('tab-firebase-data');
+            this.view.showSlideToast('Location History', '🔥 Realtime DB table drill-down active', 'info', 2000);
+            break;
+
+          case 'nav-item-groups':
+            e.preventDefault();
+            this.switchMainTab('tab-healer-connect');
+            this.view.showSlideToast('Sangha Circles', '👥 Healer Connect & Guided Seekers Hub', 'info', 2000);
+            break;
+
+          case 'nav-item-safezones':
+            e.preventDefault();
+            this.switchMainTab('tab-devotee-personal');
+            this.view.switchSubTab('devotee-personal', 'devotee-sub-houseclean');
+            this.view.showSlideToast('Safe Zones', '🛡️ House Clean Levels (All Levels)', 'info', 2000);
+            break;
+
+          case 'nav-item-lineage':
+            e.preventDefault();
+            this.switchMainTab('tab-devotee-personal');
+            this.view.switchSubTab('devotee-personal', 'devotee-sub-lineage');
+            this.view.showSlideToast('Family Lineage', '👨‍👩‍👧 3-Generation Ancestral Lineage', 'info', 2000);
+            break;
+
+          case 'nav-item-notifications':
+            e.preventDefault();
+            this.view.showSlideToast('Telemetry Active', '🟢 Live RTDB Connected to spritualkarim-7b5fd', 'info', 3000);
+            break;
+
+          case 'nav-item-profile':
+            e.preventDefault();
+            this.switchMainTab('tab-devotee-personal');
+            this.view.switchSubTab('devotee-personal', 'devotee-sub-identity');
+            this.view.showSlideToast('Active Profile', '👤 Identity & Reference Configuration', 'info', 2000);
+            break;
+
+          case 'nav-item-settings':
+            e.preventDefault();
+            this.view.toggleSettingsModal(true);
+            break;
+
+          case 'nav-item-privacy':
+            e.preventDefault();
+            this.view.toggleRbacMatrixModal(true);
+            break;
+
+          case 'nav-item-support':
+            e.preventDefault();
+            if (this.view.goliGyanModal) {
+              this.view.goliGyanModal.classList.add('open');
+              this.view.goliGyanModal.setAttribute('aria-hidden', 'false');
+            }
+            break;
+
+          case 'nav-item-about':
+            e.preventDefault();
+            this.view.openCustomDialog({
+              icon: 'ℹ️',
+              title: 'Spiritual Karim Enterprise v5.0',
+              message: 'Supreme 4-Tier Spiritual Technology Platform • OOPS MVC Architecture with closed-loop multi-portal synchronization, 24h device pairing protocol, and Firebase Realtime Database telemetry.',
+              buttons: [{ label: 'Close', value: 'close', className: 'btn-gold' }]
+            });
+            break;
+
+          case 'nav-item-logout':
+            e.preventDefault();
+            this.view.openCustomDialog({
+              icon: '🚪',
+              title: 'Switch Role / Session',
+              message: 'Would you like to switch to Devotee mode or reset active profile session?',
+              buttons: [
+                { label: 'Switch to Devotee', value: 'devotee', className: 'btn-outline' },
+                { label: 'Stay as ' + this.model.getRoleMode(), value: 'cancel', className: 'btn-gold' }
+              ]
+            }).then(choice => {
+              if (choice === 'devotee') {
+                const roleSelect = document.getElementById('select-role-mode');
+                if (roleSelect) {
+                  roleSelect.value = 'DEVOTEE';
+                  roleSelect.dispatchEvent(new Event('change'));
+                }
+              }
+            });
+            break;
+        }
+      });
+    });
+  }
+
+
   _bindEvents() {
-    // ==========================================
-    // SIDEBAR & HEADER MODAL TRIGGER HANDLERS
-    // ==========================================
+    this._bindEnterpriseDrawerEvents();
+    // 1. 3D Card Flipper Direct & Click Handlers
+    const btnFlipToBack = document.getElementById('btn-flip-to-back');
+    const btnFlipToFront = document.getElementById('btn-flip-to-front');
+    const flipperWrapper = document.getElementById('profile-card-flipper-wrapper');
 
-    // 1. Share & Pair Modal
-    const openShareModal = () => {
-      const activeProf = this.model.getActiveProfile();
-      const modal = document.getElementById('share-pairing-modal');
-      const body = document.getElementById('share-pairing-modal-body');
-      if (modal && body && activeProf) {
-        const pairingUrl = 'https://spritualkarim.org/verify?sponsor=' + encodeURIComponent(activeProf.referenceCode) + '&role=DEVOTEE&t=' + Math.floor(Date.now() / 1000);
-        body.innerHTML = `
-          <div style="text-align: center; padding: 1rem 0;">
-            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Sponsor: <strong>${escapeHtmlUtil(activeProf.name)}</strong> (${escapeHtmlUtil(activeProf.profileType)})</div>
-            <div style="background: white; padding: 1rem; border-radius: var(--radius-md); display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-bottom: 1rem;">
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(pairingUrl)}" alt="Pairing QR Code" style="display: block; width: 180px; height: 180px;">
-            </div>
-            <div class="form-group mb-3">
-              <label class="form-label" style="font-size: 0.75rem;">16-Digit Mentor Reference Code</label>
-              <div style="display: flex; gap: 0.5rem; justify-content: center;">
-                <input type="text" readonly class="form-control font-mono" style="text-align: center; max-width: 280px; font-weight: 700; color: var(--gold-400);" value="${escapeHtmlUtil(activeProf.referenceCode)}">
-                <button type="button" class="btn btn-sm btn-gold" id="btn-copy-modal-ref-code">📋 Copy</button>
-              </div>
-            </div>
-            <div class="form-group mb-3">
-              <label class="form-label" style="font-size: 0.75rem;">24-Hour Cryptographic Pairing Invite URL</label>
-              <div style="display: flex; gap: 0.5rem; justify-content: center;">
-                <input type="text" readonly class="form-control font-mono" style="font-size: 0.75rem; text-align: center; max-width: 380px;" value="${pairingUrl}">
-                <button type="button" class="btn btn-sm btn-outline" id="btn-copy-pairing-url">📋 Copy URL</button>
-              </div>
-            </div>
-            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
-              <a href="https://api.whatsapp.com/send?text=${encodeURIComponent('Join Spiritual Karim via Mentor Invite: ' + pairingUrl)}" target="_blank" class="btn btn-sm btn-gold" style="background: #25D366; border-color: #25D366; color: white;">
-                💬 Share on WhatsApp
-              </a>
-            </div>
-          </div>
-        `;
-        modal.classList.add('is-open');
-        modal.setAttribute('aria-hidden', 'false');
+    if (btnFlipToBack && flipperWrapper) {
+      btnFlipToBack.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        flipperWrapper.classList.add('is-flipped');
+        this.view.showSlideToast('3D Telemetry Flipped', '📡 24h Device Pairing QR & RTDB Telemetry Active', 'info', 3000);
+      });
+    }
 
-        const btnCopyCode = document.getElementById('btn-copy-modal-ref-code');
-        if (btnCopyCode) {
-          btnCopyCode.addEventListener('click', () => {
-            navigator.clipboard.writeText(activeProf.referenceCode).then(() => {
-              this.view.showToast('📋 Copied Code: ' + activeProf.referenceCode);
-            });
-          });
-        }
-        const btnCopyUrl = document.getElementById('btn-copy-pairing-url');
-        if (btnCopyUrl) {
-          btnCopyUrl.addEventListener('click', () => {
-            navigator.clipboard.writeText(pairingUrl).then(() => {
-              this.view.showToast('📋 Copied 24h Pairing Invite URL');
-            });
-          });
-        }
-      }
-    };
+    if (btnFlipToFront && flipperWrapper) {
+      btnFlipToFront.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        flipperWrapper.classList.remove('is-flipped');
+        this.view.showSlideToast('3D Profile Flipped', '👤 Viewing Member Profile Identity Card', 'info', 2500);
+      });
+    }
 
-    ['btn-quick-share-pairing', 'sidebar-btn-share-pairing'].forEach(id => {
-      const btn = document.getElementById(id);
-      if (btn) btn.addEventListener('click', openShareModal);
-    });
+    // 2. Directory Layout Segmented Toggle Handlers (Grid Cards vs Table List)
+    const btnLayoutGrid = document.getElementById('btn-layout-grid');
+    const btnLayoutTable = document.getElementById('btn-layout-table');
+    if (btnLayoutGrid) {
+      btnLayoutGrid.addEventListener('click', () => {
+        this.view.directoryLayout = 'GRID';
+        if (typeof localStorage !== 'undefined') localStorage.setItem('sk_directory_layout', 'GRID');
+        const scoped = this.model.getScopedProfiles();
+        this.view.renderAndroidHealersHub(scoped, this.model.getActiveProfile(), this.model.getRoleMode());
+        this.view.showSlideToast('Layout Switched', '📇 Directory set to Grid Cards layout', 'info', 2000);
+      });
+    }
+    if (btnLayoutTable) {
+      btnLayoutTable.addEventListener('click', () => {
+        this.view.directoryLayout = 'TABLE';
+        if (typeof localStorage !== 'undefined') localStorage.setItem('sk_directory_layout', 'TABLE');
+        const scoped = this.model.getScopedProfiles();
+        this.view.renderAndroidHealersHub(scoped, this.model.getActiveProfile(), this.model.getRoleMode());
+        this.view.showSlideToast('Layout Switched', '📋 Directory set to Table List layout', 'info', 2000);
+      });
+    }
 
-    ['btn-close-share-modal', 'btn-close-share-footer'].forEach(id => {
-      const btn = document.getElementById(id);
-      const modal = document.getElementById('share-pairing-modal');
-      if (btn && modal) {
-        btn.addEventListener('click', () => {
-          modal.classList.remove('is-open');
-          modal.setAttribute('aria-hidden', 'true');
-        });
-      }
-    });
+    // 3. Sacred Sadhana Interactive Listbox Selection
+    const selectSacredSadhana = document.getElementById('select-sacred-sadhana');
+    if (selectSacredSadhana) {
+      selectSacredSadhana.addEventListener('change', (e) => {
+        this.view.renderSadhanaDetailPreview(e.target.value);
+        const item = (typeof SADHANA_CATALOG !== 'undefined') ? SADHANA_CATALOG[e.target.value] : null;
+        this.view.showSlideToast('Sadhana Loaded', 'Viewing details for ' + (item ? item.title : e.target.value), 'info', 2500);
+      });
+    }
 
-    // 2. Access Matrix Modal
+    // 4. RBAC Access Matrix Modal Listeners
     ['btn-open-rbac-matrix', 'sidebar-btn-rbac-matrix'].forEach(id => {
       const btn = document.getElementById(id);
-      const modalRbac = document.getElementById('rbac-access-matrix-modal');
-      if (btn && modalRbac) {
-        btn.addEventListener('click', () => {
-          modalRbac.classList.add('is-open');
-          modalRbac.setAttribute('aria-hidden', 'false');
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.view.toggleRbacMatrixModal(true);
         });
       }
     });
 
     ['btn-close-rbac-modal', 'btn-close-rbac-footer'].forEach(id => {
       const btn = document.getElementById(id);
-      const modalRbac = document.getElementById('rbac-access-matrix-modal');
-      if (btn && modalRbac) {
-        btn.addEventListener('click', () => {
-          modalRbac.classList.remove('is-open');
-          modalRbac.setAttribute('aria-hidden', 'true');
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.view.toggleRbacMatrixModal(false);
         });
       }
     });
 
-    // 3. Admin Settings Modal
+    // 5. 24h Share & Pairing Modal Listeners
+    ['btn-quick-share-pairing', 'sidebar-btn-share-pairing'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.view.toggleSharePairingModal(true);
+        });
+      }
+    });
+
+    // 6. Admin System Settings Modal Listeners
     ['btn-admin-settings', 'sidebar-btn-admin-settings'].forEach(id => {
       const btn = document.getElementById(id);
-      const modalSettings = document.getElementById('admin-settings-modal');
-      if (btn && modalSettings) {
-        btn.addEventListener('click', () => {
-          if (this.model.getRoleMode() !== 'MASTER') {
-            this.view.showToast('🔒 System Settings can only be modified in Master mode.');
-            return;
-          }
-          this.view.populateSettings(this.model.settings);
-          modalSettings.classList.add('is-open');
-          modalSettings.setAttribute('aria-hidden', 'false');
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.view.toggleSettingsModal(true);
         });
       }
     });
 
-    ['btn-close-settings-modal', 'btn-cancel-settings'].forEach(id => {
-      const btn = document.getElementById(id);
-      const modalSettings = document.getElementById('admin-settings-modal');
-      if (btn && modalSettings) {
-        btn.addEventListener('click', () => {
-          modalSettings.classList.remove('is-open');
-          modalSettings.setAttribute('aria-hidden', 'true');
-        });
-      }
-    });
-
-    
-    // ==============================================================
-    // GLOBAL DELEGATED CLICK LISTENER FOR SIDEBAR & SYSTEM TOOLS
-    // ==============================================================
-    document.addEventListener('click', (e) => {
-      // 1. New Profile Modal Trigger
-      const btnNewProf = e.target.closest('#btn-create-profile');
-      if (btnNewProf) {
-        e.preventDefault();
-        const activeProf = this.model.getActiveProfile();
-        const modal = document.getElementById('create-profile-modal');
-        const sponsorInput = document.getElementById('new-profile-sponsor');
-        const nameInput = document.getElementById('new-profile-name');
-        if (sponsorInput && activeProf) {
-          sponsorInput.value = activeProf.referenceCode || 'SKHM-ADM1-7788-9900';
-        }
-        if (nameInput) nameInput.value = '';
-        if (modal) {
-          modal.classList.add('is-open');
-          modal.setAttribute('aria-hidden', 'false');
-        }
-        return;
-      }
-
-      // Close New Profile Modal
-      if (e.target.closest('#btn-close-create-profile-modal, #btn-cancel-create-profile')) {
-        const modal = document.getElementById('create-profile-modal');
-        if (modal) {
-          modal.classList.remove('is-open');
-          modal.setAttribute('aria-hidden', 'true');
-        }
-        return;
-      }
-
-      // Submit New Profile
-      if (e.target.closest('#btn-submit-create-profile')) {
-        const name = (document.getElementById('new-profile-name')?.value || '').trim();
-        const phone = (document.getElementById('new-profile-phone')?.value || '').trim();
-        const city = (document.getElementById('new-profile-city')?.value || '').trim();
-        const role = document.getElementById('new-profile-role')?.value || 'DEVOTEE';
-        const sponsor = (document.getElementById('new-profile-sponsor')?.value || '').trim() || 'SKHM-ADM1-7788-9900';
-        const isPaid = (document.getElementById('new-profile-membership')?.value || 'PAID') === 'PAID';
-
-        if (!name) {
-          this.view.showToast('⚠️ Please enter a Full Name for the new member.');
-          return;
-        }
-
-        const prefix = role === 'ADMIN' ? 'SKHM' : (role === 'HEALER' ? 'SKHL' : (role === 'TRAINEE' ? 'SKTR' : 'SKDV'));
-        const randCode = prefix + '-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-        const newId = 'prof-' + role.toLowerCase() + '-' + Date.now();
-
-        const levelMap = { 'ADMIN': 1, 'HEALER': 2, 'TRAINEE': 4, 'DEVOTEE': 5 };
-
-        const newProfile = {
-          id: newId,
-          name: name,
-          profileType: role,
-          level: levelMap[role] || 5,
-          referenceCode: randCode,
-          referredByCode: sponsor,
-          phone: phone || '+91 98000 00000',
-          city: city || 'National',
-          isPaid: isPaid,
-          paymentStatus: isPaid ? 'PAID' : 'FREE',
-          isActive: true,
-          lineage: { currentFamily: { spouseName: '', children: [], siblings: [] }, husbandAncestral: { siblings: [] }, wifeAncestral: { siblings: [] } },
-          houseCleanLevels: [{ id: 'hc1', name: 'Level 1: Space Purification', status: 'IN_PROGRESS' }],
-          interestedSadhanas: [{ id: 'sri_yantra', title: 'Sri Yantra Sadhana', isPaid: isPaid, paymentStatus: isPaid ? 'PAID' : 'FREE' }],
-          traineeSadhanas: [],
-          healerCompletedSadhanas: [],
-          healerNetwork: []
-        };
-
-        this.model.profiles.push(newProfile);
-        this.model.saveProfiles(this.model.profiles);
-        this.model.setActiveProfileId(newId);
-        this._renderCurrentState();
-
-        const modal = document.getElementById('create-profile-modal');
-        if (modal) {
-          modal.classList.remove('is-open');
-          modal.setAttribute('aria-hidden', 'true');
-        }
-        this.view.showToast('🎉 Created new profile for ' + name + ' (' + role + ')');
-        return;
-      }
-
-      // 2. Share & Pair Modal Trigger
-      if (e.target.closest('#sidebar-btn-share-pairing, #btn-quick-share-pairing')) {
-        e.preventDefault();
-        openShareModal();
-        return;
-      }
-
-      // 3. Access Matrix Modal Trigger
-      if (e.target.closest('#sidebar-btn-rbac-matrix, #btn-open-rbac-matrix')) {
-        e.preventDefault();
-        const modal = document.getElementById('rbac-access-matrix-modal');
-        if (modal) {
-          modal.classList.add('is-open');
-          modal.setAttribute('aria-hidden', 'false');
-        }
-        return;
-      }
-
-      // 4. Admin Settings Modal Trigger
-      if (e.target.closest('#sidebar-btn-admin-settings, #btn-admin-settings')) {
-        e.preventDefault();
-        if (this.model.getRoleMode() !== 'MASTER') {
-          this.view.showToast('🔒 System Settings can only be modified in Master mode.');
-          return;
-        }
-        this.view.populateSettings(this.model.settings);
-        const modal = document.getElementById('admin-settings-modal');
-        if (modal) {
-          modal.classList.add('is-open');
-          modal.setAttribute('aria-hidden', 'false');
-        }
-        return;
-      }
-
-      // 5. Copy 16-Digit Code Button
-      if (e.target.closest('#btn-copy-ref-code')) {
-        const activeProf = this.model.getActiveProfile();
-        if (activeProf && activeProf.referenceCode) {
-          navigator.clipboard.writeText(activeProf.referenceCode).then(() => {
-            this.view.showToast('📋 Copied Code: ' + activeProf.referenceCode);
-          });
-        }
-        return;
-      }
-
-      // 6. Generate New Code Button
-      if (e.target.closest('#btn-gen-ref-code')) {
-        const activeProf = this.model.getActiveProfile();
-        if (activeProf) {
-          const prefix = activeProf.profileType === 'ADMIN' ? 'SKHM' : (activeProf.profileType === 'HEALER' ? 'SKHL' : (activeProf.profileType === 'TRAINEE' ? 'SKTR' : 'SKDV'));
-          const newCode = prefix + '-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-          activeProf.referenceCode = newCode;
-          this.model.saveProfiles(this.model.profiles);
-          this._renderCurrentState();
-          this.view.showToast('🎲 Generated New Code: ' + newCode);
-        }
-        return;
-      }
-
-      // 7. Toggle JSON Drawer Button
-      if (e.target.closest('#btn-toggle-json-drawer')) {
-        const drawer = document.getElementById('json-drawer');
-        const backdrop = document.getElementById('json-drawer-backdrop');
-        if (drawer) {
-          drawer.classList.add('is-open');
-          drawer.setAttribute('aria-hidden', 'false');
-          if (backdrop) backdrop.classList.add('is-open');
-          this.view._updateJSONPreview(this.model.getActiveProfile());
-        }
-        return;
-      }
-
-      // 8. Open Firebase RTDB Table
-      if (e.target.closest('#btn-sidebar-open-rtdb, #main-tab-firebase-btn')) {
-        this.switchMainTab('tab-firebase-data');
-        this.view.showToast('🔥 Opened Firebase Realtime Database Explorer');
-        return;
-      }
-
-      // 9. Drilldown into specific RTDB collection from sidebar
-      const drillBtn = e.target.closest('[data-rtdb-drill]');
-      if (drillBtn) {
-        const rootName = drillBtn.getAttribute('data-rtdb-drill');
-        this.switchMainTab('tab-firebase-data');
-        this.view.rtdbActiveRootFilter = rootName;
-        // Also update chip active class in RTDB
-        document.querySelectorAll('#rtdb-filter-chips .rtdb-chip-btn').forEach(c => {
-          if (c.getAttribute('data-rtdb-root') === rootName) c.classList.add('active');
-          else c.classList.remove('active');
-        });
-        this.view.renderFirebaseDataTable(this.model);
-        this.view.showToast('📁 Drilled into /' + rootName);
-        return;
-      }
-    });
-
+    // 7. Real-Time Textbox Validation Listeners
+    this._bindRealtimeInputValidations();
 
     // 0. Theme Switcher Event Listener
     if (this.view.btnThemeToggle) {
@@ -4882,7 +6591,7 @@ class ProfileController {
     }
 
     // Quick Share & Pairing Modal Trigger
-    const btnQuickSharePairing = document.getElementById('btn-quick-share-pairing');
+    const btnQuickSharePairing = document.getElementById('btn-quick-share-pairing') || document.getElementById('sidebar-btn-share-pairing');
     if (btnQuickSharePairing) {
       btnQuickSharePairing.addEventListener('click', () => {
         const profile = this.model.getActiveProfile();
@@ -5126,12 +6835,30 @@ class ProfileController {
 
     const btnResetSettings = document.getElementById('btn-reset-settings');
     if (btnResetSettings) {
-      btnResetSettings.addEventListener('click', () => {
-        if (confirm('Reset system settings to factory defaults?')) {
-          const defaults = this.model._getDefaultSettings();
-          this.model.saveSettings(defaults);
-          this.view.populateSettings(defaults);
-          this.view.showToast('Settings reset to factory defaults.');
+      btnResetSettings.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const choice = await this.view.openCustomDialog({
+          title: 'System Settings Safe Reset',
+          message: 'Choose an operational reset action for Spiritual Karim system settings and database cache.',
+          icon: '⚠️',
+          options: [
+            { label: '🔄 Restore Factory Defaults', value: 'DEFAULTS', class: 'btn-danger' },
+            { label: '☁️ Resync from Cloud Firebase', value: 'CLOUD_RESYNC', class: 'btn-gold' },
+            { label: 'Cancel', value: false, class: 'btn-outline' }
+          ]
+        });
+
+        if (choice === 'DEFAULTS') {
+          const def = this.model.getDefaultSettings();
+          this.model.saveSettings(def);
+          this.view.populateSettings(def);
+          this.view.enforceRBAC(this.model.getRoleMode(), def);
+          this.view.showSlideToast('Reset Complete', 'System settings restored to factory defaults.', 'success', 3500);
+        } else if (choice === 'CLOUD_RESYNC') {
+          await this.model.fetchFromFirebaseRealtime();
+          this.view.populateSettings(this.model.settings);
+          this._renderCurrentState();
+          this.view.showSlideToast('Cloud Synced', 'Settings and nodes resynchronized from Firebase RTDB.', 'success', 3500);
         }
       });
     }

@@ -1,8 +1,7 @@
 /**
  * FirebaseSyncEngine.js
- * Bi-Directional Cloud Synchronization with Firebase Realtime Database
+ * Master Firebase Realtime Database Data Minimization Engine
  */
-
 class FirebaseSyncEngine {
   static init() {
     this.config = {
@@ -69,6 +68,6 @@ class FirebaseSyncEngine {
   }
 }
 
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { FirebaseSyncEngine };
+if (typeof window !== 'undefined') {
+  window.FirebaseSyncEngine = FirebaseSyncEngine;
 }
