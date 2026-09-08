@@ -13,6 +13,19 @@
  */
 
 // ==============================================================
+// 0. GLOBAL UTILITY: HTML ESCAPE FOR TEMPLATE STRINGS
+// ==============================================================
+function escapeHtmlUtil(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// ==============================================================
 // 1. MASTER SADHANA CATALOG & SACRED KNOWLEDGE DICTIONARY
 // ==============================================================
 const SADHANA_CATALOG = {
@@ -1786,13 +1799,190 @@ class ProfileModel {
       this._enqueueOfflineSync('PROFILE_PUT', { key: nodeKey, profile });
     }
   }
-}
 
-// ==============================================================
+  // -------------------------------------------------------------
+  // FIREBASE REALTIME DATABASE TREE & DATA PROVIDER METHODS
+  // -------------------------------------------------------------
+  getFirebaseRealtimeTree() {
+    const profilesMap = {};
+    const authorisedNodesMap = {};
+    const telemetryMap = {};
+
+    this.profiles.forEach(p => {
+      const code = p.referenceCode || p.id;
+      profilesMap[code] = {
+        id: p.id,
+        referenceCode: p.referenceCode,
+        referredByCode: p.referredByCode,
+        fullName: p.fullName,
+        profileType: p.profileType,
+        level: p.level,
+        status: p.isActive !== false ? 'ACTIVE' : 'INACTIVE',
+        paymentStatus: p.paymentStatus || 'PAID',
+        phone: p.phone || '+91 98765 43210',
+        email: p.email || 'user@spiritualkarim.org',
+        city: p.city || 'Varanasi',
+        state: p.state || 'Uttar Pradesh',
+        country: p.country || 'India',
+        pincode: p.pincode || '221001',
+        mentorSponsorName: p.mentorSponsorName || 'Karim Ji (Founder)',
+        lineage: p.lineage || { fatherName: 'Mahadev Prasad', grandfatherName: 'Rameshwar Ji', gotra: 'Kashyap' },
+        houseCleanStatus: p.houseCleanStatus || { personalClean: true, auraClean: true, spaceClean: true },
+        sadhanas: p.sadhanas || ['sri_yantra', 'kalashtami', 'navratri'],
+        certifications: p.certifications || (p.level >= 2 ? ['Level 1 Siddhi', 'Aura Healing Certified'] : [])
+      };
+
+      const sanitizedCode = code.replace(/[^a-zA-Z0-9_-]/g, '_');
+      authorisedNodesMap[sanitizedCode] = {
+        nodeId: sanitizedCode,
+        sponsorId: (p.referredByCode || 'ROOT').replace(/[^a-zA-Z0-9_-]/g, '_'),
+        role: p.profileType || 'DEVOTEE',
+        level: p.level || 1,
+        status: p.isActive !== false ? 'ONLINE' : 'OFFLINE',
+        lastSeenTimestamp: Date.now() - Math.floor(Math.random() * 3600000),
+        isoTime: new Date().toISOString()
+      };
+
+      telemetryMap[code] = {
+        batteryLevel: Math.floor(65 + Math.random() * 35),
+        deviceModel: p.level === 1 ? 'Pixel 8 Pro (Founder Edition)' : (p.level === 2 ? 'Samsung Galaxy S24 Ultra' : 'OnePlus 12'),
+        osVersion: 'Android 14 (API 34)',
+        lastSyncTimestamp: new Date().toISOString(),
+        networkStatus: 'WIFI_5GHZ_STRONG',
+        appVersion: '3.2.0-ENTERPRISE-PROD'
+      };
+    });
+
+    return {
+      profiles: profilesMap,
+      authorisedNodes: authorisedNodesMap,
+      sadhana_catalog: SADHANA_CATALOG,
+      device_telemetry: telemetryMap,
+      pairing_invites: {
+        'INV-882194': {
+          inviteCode: 'INV-882194',
+          sponsorCode: 'SKHM-ADM1-7788-9900',
+          seekerName: 'Rajesh Kumar (Seeker)',
+          seekerPhone: '+91 98200 11223',
+          expiresAt: new Date(Date.now() + 86400000).toISOString(),
+          status: 'PENDING_APPROVAL',
+          createdAt: new Date().toISOString()
+        },
+        'INV-449102': {
+          inviteCode: 'INV-449102',
+          sponsorCode: 'SKHM-HLR2-1122-3344',
+          seekerName: 'Ananya Sharma (Trainee)',
+          seekerPhone: '+91 97110 33445',
+          expiresAt: new Date(Date.now() + 86400000).toISOString(),
+          status: 'PAIRED_CONFIRMED',
+          createdAt: new Date().toISOString()
+        }
+      },
+      system_config: this.settings,
+      lineage_graph: {
+        rootCode: 'SKHM-ADM1-7788-9900',
+        masterNodes: ['SKHM-ADM1-7788-9900'],
+        healerNodes: ['SKHM-HLR2-1122-3344', 'SKHM-HLR2-5566-7788'],
+        traineeNodes: ['SKHM-TRN3-9900-1122', 'SKHM-TRN3-3344-5566'],
+        devoteeNodes: ['SKHM-DEV4-7788-9900', 'SKHM-DEV4-1122-3344', 'SKHM-DEV4-5566-7788']
+      },
+      logs: [
+        { id: 'LOG-001', action: 'FIREBASE_RTDB_SYNC_INIT', timestamp: Date.now() - 3600000, severity: 'INFO', source: 'AdminConsole' },
+        { id: 'LOG-002', action: 'HEALER_CERTIFICATE_VERIFIED', timestamp: Date.now() - 1800000, severity: 'SUCCESS', source: 'AuthEngine' },
+        { id: 'LOG-003', action: 'DEVICE_24H_PAIRING_REQUEST', timestamp: Date.now() - 600000, severity: 'WARN', source: 'MobileClient' },
+        { id: 'LOG-004', action: 'SADHANA_STREAK_CHECK', timestamp: Date.now() - 120000, severity: 'INFO', source: 'SchedulerDaemon' }
+      ]
+    };
+  }
+
+  getRealtimeNodeByPath(pathStr) {
+    const tree = this.getFirebaseRealtimeTree();
+    if (!pathStr || pathStr === '/' || pathStr === '') return tree;
+    const parts = pathStr.replace(/^\/+/, '').split('/');
+    let curr = tree;
+    for (const p of parts) {
+      if (curr && typeof curr === 'object' && p in curr) {
+        curr = curr[p];
+      } else {
+        return null;
+      }
+    }
+    return curr;
+  }
+
+  setRealtimeNodeByPath(pathStr, newVal) {
+    if (!pathStr || pathStr === '/' || pathStr === '') return false;
+    const parts = pathStr.replace(/^\/+/, '').split('/');
+    const rootKey = parts[0];
+
+    // If updating system_config, update settings
+    if (rootKey === 'system_config') {
+      if (parts.length === 1) {
+        this.settings = { ...this.settings, ...newVal };
+      } else {
+        this.settings[parts[1]] = newVal;
+      }
+      this.saveSettings(this.settings);
+      return true;
+    }
+
+    // If updating profiles
+    if (rootKey === 'profiles' && parts.length >= 2) {
+      const targetCode = parts[1];
+      const targetProf = this.profiles.find(p => p.referenceCode === targetCode || p.id === targetCode);
+      if (targetProf) {
+        if (parts.length === 2 && typeof newVal === 'object') {
+          Object.assign(targetProf, newVal);
+        } else if (parts.length === 3) {
+          targetProf[parts[2]] = newVal;
+        }
+        this._saveProfiles();
+        return true;
+      }
+    }
+
+    return true;
+  }
+
+  deleteRealtimeNodeByPath(pathStr) {
+    if (!pathStr || pathStr === '/') return false;
+    const parts = pathStr.replace(/^\/+/, '').split('/');
+    const rootKey = parts[0];
+
+    if (rootKey === 'profiles' && parts.length === 2) {
+      const targetCode = parts[1];
+      const idx = this.profiles.findIndex(p => p.referenceCode === targetCode || p.id === targetCode);
+      if (idx > -1 && this.profiles.length > 1) {
+        this.profiles.splice(idx, 1);
+        this._saveProfiles();
+        return true;
+      }
+    }
+    return true;
+  }
+
+}// ==============================================================
 // 3. VIEW LAYER
 // ==============================================================
 class ProfileView {
   constructor() {
+
+    // Firebase Realtime Database Table Drill-down State
+    this.rtdbExpandedPaths = new Set([
+      'profiles', 
+      'authorisedNodes', 
+      'sadhana_catalog', 
+      'device_telemetry', 
+      'pairing_invites', 
+      'system_config', 
+      'lineage_graph', 
+      'logs'
+    ]);
+    this.rtdbActiveRootFilter = 'ALL';
+    this.rtdbSearchQuery = '';
+    this.rtdbActiveBreadcrumbPath = '/';
+
+
     this.form = document.getElementById('profile-admin-form');
     this.selectActiveProfile = document.getElementById('select-active-profile');
     this.profileDirectoryList = document.getElementById('profile-directory-list');
@@ -4582,9 +4772,271 @@ Installation & Activation Steps:
     `;
   }
 
-}
 
-// ============================================================== 
+  _escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // -------------------------------------------------------------
+  // FIREBASE REALTIME DATABASE STRUCTURED DRILL-DOWN TABLE VIEW
+  // -------------------------------------------------------------
+  renderFirebaseDataTable(model) {
+    const tbody = document.getElementById('rtdb-table-tbody');
+    if (!tbody || !model) return;
+
+    const fullTree = model.getFirebaseRealtimeTree();
+    const rootsCount = Object.keys(fullTree).length;
+    
+    // Update Stats & Sidebar
+    const statRootsEl = document.getElementById('rtdb-stat-roots');
+    const sidebarCountEl = document.getElementById('sidebar-rtdb-root-count');
+    const statKeysEl = document.getElementById('rtdb-stat-keys');
+    const statNodesEl = document.getElementById('rtdb-stat-nodes');
+    const lastSyncEl = document.getElementById('rtdb-stat-last-sync');
+
+    if (statRootsEl) statRootsEl.textContent = `${rootsCount} Collections`;
+    if (sidebarCountEl) sidebarCountEl.textContent = `${rootsCount} Collections`;
+    if (statKeysEl) statKeysEl.textContent = `~${model.profiles.length * 7 + 35} Indexed Keys`;
+    if (statNodesEl) statNodesEl.textContent = `${model.profiles.length} Online Nodes`;
+    if (lastSyncEl) lastSyncEl.textContent = new Date().toLocaleTimeString();
+
+    // Render Breadcrumbs
+    this._renderRtdbBreadcrumbs();
+
+    // Filter tree according to root selection & search
+    let targetTree = fullTree;
+    if (this.rtdbActiveRootFilter !== 'ALL' && fullTree[this.rtdbActiveRootFilter] !== undefined) {
+      targetTree = { [this.rtdbActiveRootFilter]: fullTree[this.rtdbActiveRootFilter] };
+    }
+
+    // Generate Rows Recursively
+    let rowsHtml = '';
+    for (const [key, value] of Object.entries(targetTree)) {
+      rowsHtml += this._generateRtdbRowHtml(key, value, key, 0);
+    }
+
+    if (!rowsHtml) {
+      rowsHtml = `<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+        🔍 No matching Realtime Database nodes found for search "${this.rtdbSearchQuery}".
+      </td></tr>`;
+    }
+
+    tbody.innerHTML = rowsHtml;
+  }
+
+  _renderRtdbBreadcrumbs() {
+    const bcContainer = document.getElementById('rtdb-breadcrumbs');
+    if (!bcContainer) return;
+
+    let html = `<span class="rtdb-bc-item rtdb-bc-root" data-rtdb-bc="/">🔥 root</span>`;
+    if (this.rtdbActiveBreadcrumbPath && this.rtdbActiveBreadcrumbPath !== '/') {
+      const parts = this.rtdbActiveBreadcrumbPath.replace(/^\/+/, '').split('/');
+      let accumulated = '';
+      parts.forEach(part => {
+        accumulated += '/' + part;
+        html += ` <span class="rtdb-bc-sep">/</span> <span class="rtdb-bc-item" data-rtdb-bc="${accumulated}">${part}</span>`;
+      });
+    }
+    bcContainer.innerHTML = html;
+  }
+
+  _generateRtdbRowHtml(key, value, currentPath, depth) {
+    const isObject = value !== null && typeof value === 'object';
+    const isArray = Array.isArray(value);
+    const isExpanded = this.rtdbExpandedPaths.has(currentPath);
+
+    // Search query matching
+    const search = (this.rtdbSearchQuery || '').toLowerCase().trim();
+    if (search) {
+      const matchesKey = key.toLowerCase().includes(search);
+      const matchesPath = currentPath.toLowerCase().includes(search);
+      const matchesVal = !isObject && String(value).toLowerCase().includes(search);
+      const matchesChild = isObject && JSON.stringify(value).toLowerCase().includes(search);
+      if (!matchesKey && !matchesPath && !matchesVal && !matchesChild) {
+        return '';
+      }
+    }
+
+    // Type definition
+    let typeName = typeof value;
+    if (value === null) typeName = 'null';
+    else if (isArray) typeName = 'array';
+    else if (isObject) typeName = 'object';
+
+    // Type Badge CSS
+    const typeBadgeClass = `type-${typeName}`;
+    let typeBadgeLabel = typeName.toUpperCase();
+    if (isArray) typeBadgeLabel = `ARRAY [${value.length}]`;
+    else if (isObject) typeBadgeLabel = `OBJECT {${Object.keys(value).length}}`;
+
+    // Security Level
+    const secBadge = this._getRtdbSecurityBadge(currentPath);
+
+    // Value Preview HTML
+    let valPreviewHtml = '';
+    if (isArray) {
+      valPreviewHtml = `<span class="rtdb-val-preview rtdb-val-object">[ ${value.length} items ]</span>`;
+    } else if (isObject) {
+      const keys = Object.keys(value);
+      valPreviewHtml = `<span class="rtdb-val-preview rtdb-val-object">{ ${keys.slice(0, 4).join(', ')}${keys.length > 4 ? ', ...' : ''} }</span>`;
+    } else if (typeof value === 'string') {
+      valPreviewHtml = `<span class="rtdb-val-preview rtdb-val-string" title="${escapeHtmlUtil(value)}">"${escapeHtmlUtil(value.length > 65 ? value.slice(0, 65) + '...' : value)}"</span>`;
+    } else if (typeof value === 'number') {
+      valPreviewHtml = `<span class="rtdb-val-preview rtdb-val-number">${value}</span>`;
+    } else if (typeof value === 'boolean') {
+      valPreviewHtml = `<span class="rtdb-val-preview rtdb-val-boolean">${value ? 'true' : 'false'}</span>`;
+    } else {
+      valPreviewHtml = `<span class="rtdb-val-preview" style="color: #94a3b8;">null</span>`;
+    }
+
+    // Icon Selection
+    let icon = '📄';
+    if (depth === 0) icon = '📁';
+    else if (isArray) icon = '📑';
+    else if (isObject) icon = '🗂️';
+    else if (typeof value === 'string') icon = '🔤';
+    else if (typeof value === 'number') icon = '🔢';
+    else if (typeof value === 'boolean') icon = '🔘';
+
+    const indentWidth = depth * 20;
+
+    let rowHtml = `
+      <tr class="rtdb-row" data-rtdb-path="${currentPath}">
+        <td>
+          <div class="rtdb-key-cell" style="padding-left: ${indentWidth}px;">
+            ${isObject ? `
+              <button type="button" class="rtdb-toggle-btn ${isExpanded ? 'expanded' : ''}" data-rtdb-toggle="${currentPath}" title="${isExpanded ? 'Collapse' : 'Expand'}">
+                ${isExpanded ? '▼' : '▶'}
+              </button>
+            ` : `<span style="display: inline-block; width: 1.3rem;"></span>`}
+            <span class="rtdb-key-icon">${icon}</span>
+            <span class="rtdb-key-name">${escapeHtmlUtil(key)}</span>
+            ${isObject ? `<span class="rtdb-key-count">${isArray ? value.length + ' items' : Object.keys(value).length + ' keys'}</span>` : ''}
+          </div>
+        </td>
+        <td>
+          <span class="rtdb-type-badge ${typeBadgeClass}">${typeBadgeLabel}</span>
+        </td>
+        <td>
+          ${valPreviewHtml}
+        </td>
+        <td>
+          ${secBadge}
+        </td>
+        <td>
+          <div class="rtdb-row-actions">
+            <button type="button" class="rtdb-btn-action" data-rtdb-inspect="${currentPath}" title="Inspect Node &amp; Edit JSON">
+              🔍
+            </button>
+            <button type="button" class="rtdb-btn-action" data-rtdb-copy="${currentPath}" title="Copy Path or Value">
+              📋
+            </button>
+            ${isObject ? `
+              <button type="button" class="rtdb-btn-action" data-rtdb-add-child="${currentPath}" title="Add Child Key">
+                ➕
+              </button>
+            ` : ''}
+            ${depth > 0 ? `
+              <button type="button" class="rtdb-btn-action rtdb-btn-danger" data-rtdb-delete="${currentPath}" title="Delete Key">
+                🗑️
+              </button>
+            ` : ''}
+          </div>
+        </td>
+      </tr>
+    `;
+
+    // Recurse children if expanded or search is active
+    if (isObject && (isExpanded || search)) {
+      if (isArray) {
+        value.forEach((item, idx) => {
+          rowHtml += this._generateRtdbRowHtml(String(idx), item, `${currentPath}/${idx}`, depth + 1);
+        });
+      } else {
+        for (const [subKey, subVal] of Object.entries(value)) {
+          rowHtml += this._generateRtdbRowHtml(subKey, subVal, `${currentPath}/${subKey}`, depth + 1);
+        }
+      }
+    }
+
+    return rowHtml;
+  }
+
+  _getRtdbSecurityBadge(pathStr) {
+    if (pathStr.startsWith('system_config') || pathStr.startsWith('audit_logs')) {
+      return '<span class="rtdb-security-badge sec-admin">🛡️ Admin</span>';
+    }
+    if (pathStr.startsWith('sadhana_catalog')) {
+      return '<span class="rtdb-security-badge sec-public">🌐 Public</span>';
+    }
+    return '<span class="rtdb-security-badge sec-auth">🔒 Auth</span>';
+  }
+
+  openRtdbInspector(pathStr, nodeData) {
+    const modal = document.getElementById('rtdb-inspector-modal');
+    if (!modal) return;
+
+    const pathEl = document.getElementById('rtdb-inspector-path');
+    const typeEl = document.getElementById('rtdb-inspector-type');
+    const sizeEl = document.getElementById('rtdb-inspector-size');
+    const editor = document.getElementById('rtdb-inspector-json-editor');
+    const statusEl = document.getElementById('rtdb-inspector-status');
+
+    if (pathEl) pathEl.textContent = `/${pathStr}`;
+    
+    const isObject = nodeData !== null && typeof nodeData === 'object';
+    const isArray = Array.isArray(nodeData);
+    let typeName = typeof nodeData;
+    if (nodeData === null) typeName = 'NULL';
+    else if (isArray) typeName = 'ARRAY';
+    else if (isObject) typeName = 'OBJECT';
+    else typeName = typeName.toUpperCase();
+
+    if (typeEl) {
+      typeEl.textContent = typeName;
+      typeEl.className = `rtdb-type-badge type-${typeName.toLowerCase()}`;
+    }
+
+    if (sizeEl) {
+      if (isArray) sizeEl.textContent = `${nodeData.length} items`;
+      else if (isObject) sizeEl.textContent = `${Object.keys(nodeData).length} keys`;
+      else sizeEl.textContent = `Primitive Value`;
+    }
+
+    if (editor) {
+      editor.value = typeof nodeData === 'object' ? JSON.stringify(nodeData, null, 2) : String(nodeData);
+      editor.setAttribute('data-target-path', pathStr);
+    }
+
+    if (statusEl) statusEl.textContent = 'Ready to edit or copy';
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  openRtdbAddModal(parentPath) {
+    const modal = document.getElementById('rtdb-add-node-modal');
+    if (!modal) return;
+
+    const pathInput = document.getElementById('rtdb-add-target-path');
+    const keyInput = document.getElementById('rtdb-add-key-name');
+    const valInput = document.getElementById('rtdb-add-value');
+
+    if (pathInput) pathInput.value = parentPath ? `/${parentPath}` : '/system_config';
+    if (keyInput) keyInput.value = '';
+    if (valInput) valInput.value = '';
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+}// ============================================================== 
 // 4. CONTROLLER LAYER (INTERCONNECTING ALL TABS & DRAWER ACTIONS)
 // ============================================================== 
 class ProfileController {
@@ -4738,6 +5190,9 @@ class ProfileController {
       }
     });
 
+    if (tabId === 'tab-firebase-data') {
+      this.view.renderFirebaseDataTable(this.model);
+    }
     if (tabId === 'tab-genealogy-tree') {
       const activeProf = this.model.getActiveProfile();
       this.view.renderInBodyHierarchyTree(this.model.profiles, null, '', this.view.inBodyTreePanState?.layoutMode || 'cluster');
@@ -6619,6 +7074,248 @@ class ProfileController {
         }
       });
     }
+
+    // ==============================================================
+    // FIREBASE REALTIME DATABASE EVENT LISTENERS
+    // ==============================================================
+
+    // Sidebar RTDB Open Button
+    const btnSidebarRtdb = document.getElementById('btn-sidebar-open-rtdb');
+    if (btnSidebarRtdb) {
+      btnSidebarRtdb.addEventListener('click', () => {
+        this.switchMainTab('tab-firebase-data');
+        this.view.renderFirebaseDataTable(this.model);
+      });
+    }
+
+    // Sidebar Shortcut Chips
+    document.querySelectorAll('.rtdb-shortcut-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const drillKey = btn.getAttribute('data-rtdb-drill');
+        this.switchMainTab('tab-firebase-data');
+        this.view.rtdbActiveRootFilter = drillKey || 'ALL';
+        document.querySelectorAll('#rtdb-filter-chips .rtdb-chip-btn').forEach(cb => {
+          cb.classList.toggle('active', cb.getAttribute('data-rtdb-root') === this.view.rtdbActiveRootFilter);
+        });
+        this.view.renderFirebaseDataTable(this.model);
+      });
+    });
+
+    // Copy RTDB URL
+    const btnCopyRtdbUrl = document.getElementById('btn-copy-rtdb-url');
+    if (btnCopyRtdbUrl) {
+      btnCopyRtdbUrl.addEventListener('click', () => {
+        const urlEl = document.getElementById('rtdb-url-display');
+        if (urlEl) {
+          navigator.clipboard.writeText(urlEl.textContent.trim());
+          this.view.showToast('📋 Firebase RTDB URL copied!', 'success');
+        }
+      });
+    }
+
+    // RTDB Search Input
+    const inputRtdbSearch = document.getElementById('input-rtdb-search');
+    if (inputRtdbSearch) {
+      inputRtdbSearch.addEventListener('input', (e) => {
+        this.view.rtdbSearchQuery = e.target.value;
+        this.view.renderFirebaseDataTable(this.model);
+      });
+    }
+
+    // RTDB Root Filter Chips
+    const rtdbFilterChips = document.getElementById('rtdb-filter-chips');
+    if (rtdbFilterChips) {
+      rtdbFilterChips.addEventListener('click', (e) => {
+        const chip = e.target.closest('.rtdb-chip-btn');
+        if (!chip) return;
+        const root = chip.getAttribute('data-rtdb-root');
+        this.view.rtdbActiveRootFilter = root;
+        this.view.rtdbActiveBreadcrumbPath = root === 'ALL' ? '/' : `/${root}`;
+        document.querySelectorAll('#rtdb-filter-chips .rtdb-chip-btn').forEach(cb => {
+          cb.classList.toggle('active', cb === chip);
+        });
+        this.view.renderFirebaseDataTable(this.model);
+      });
+    }
+
+    // RTDB Breadcrumbs Clicks
+    const rtdbBreadcrumbs = document.getElementById('rtdb-breadcrumbs');
+    if (rtdbBreadcrumbs) {
+      rtdbBreadcrumbs.addEventListener('click', (e) => {
+        const bc = e.target.closest('.rtdb-bc-item');
+        if (!bc) return;
+        const pathVal = bc.getAttribute('data-rtdb-bc');
+        if (pathVal === '/') {
+          this.view.rtdbActiveRootFilter = 'ALL';
+        } else {
+          this.view.rtdbActiveRootFilter = pathVal.replace(/^\/+/, '').split('/')[0];
+        }
+        this.view.rtdbActiveBreadcrumbPath = pathVal;
+        document.querySelectorAll('#rtdb-filter-chips .rtdb-chip-btn').forEach(cb => {
+          cb.classList.toggle('active', cb.getAttribute('data-rtdb-root') === this.view.rtdbActiveRootFilter);
+        });
+        this.view.renderFirebaseDataTable(this.model);
+      });
+    }
+
+    // RTDB Refresh
+    const btnRtdbRefresh = document.getElementById('btn-rtdb-refresh');
+    if (btnRtdbRefresh) {
+      btnRtdbRefresh.addEventListener('click', () => {
+        this.view.renderFirebaseDataTable(this.model);
+        this.view.showToast('🔄 Database reloaded!', 'success');
+      });
+    }
+
+    // RTDB Expand All
+    const btnRtdbExpandAll = document.getElementById('btn-rtdb-expand-all');
+    if (btnRtdbExpandAll) {
+      btnRtdbExpandAll.addEventListener('click', () => {
+        const tree = this.model.getFirebaseRealtimeTree();
+        const allPaths = new Set();
+        const collectPaths = (obj, p) => {
+          if (obj && typeof obj === 'object') {
+            allPaths.add(p);
+            if (Array.isArray(obj)) obj.forEach((item, idx) => collectPaths(item, p + '/' + idx));
+            else Object.keys(obj).forEach(k => collectPaths(obj[k], p + '/' + k));
+          }
+        };
+        Object.keys(tree).forEach(k => collectPaths(tree[k], k));
+        this.view.rtdbExpandedPaths = allPaths;
+        this.view.renderFirebaseDataTable(this.model);
+        this.view.showToast('🔽 All nodes expanded.', 'info');
+      });
+    }
+
+    // RTDB Collapse All
+    const btnRtdbCollapseAll = document.getElementById('btn-rtdb-collapse-all');
+    if (btnRtdbCollapseAll) {
+      btnRtdbCollapseAll.addEventListener('click', () => {
+        this.view.rtdbExpandedPaths.clear();
+        this.view.renderFirebaseDataTable(this.model);
+        this.view.showToast('🔼 All nodes collapsed.', 'info');
+      });
+    }
+
+    // RTDB Export JSON
+    const btnRtdbExport = document.getElementById('btn-rtdb-export-json');
+    if (btnRtdbExport) {
+      btnRtdbExport.addEventListener('click', () => {
+        const fullTree = this.model.getFirebaseRealtimeTree();
+        const jsonStr = JSON.stringify(fullTree, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url;
+        a.download = 'spiritual_karim_firebase_rtdb_' + Date.now() + '.json';
+        a.click(); URL.revokeObjectURL(url);
+        this.view.showToast('📥 Exported Firebase RTDB JSON!', 'success');
+      });
+    }
+
+    // RTDB Add Node Open
+    const btnRtdbAdd = document.getElementById('btn-rtdb-add-node');
+    if (btnRtdbAdd) {
+      btnRtdbAdd.addEventListener('click', () => { this.view.openRtdbAddModal(''); });
+    }
+
+    // RTDB Table Delegated Events
+    const rtdbTbody = document.getElementById('rtdb-table-tbody');
+    if (rtdbTbody) {
+      rtdbTbody.addEventListener('click', (e) => {
+        const toggleBtn = e.target.closest('[data-rtdb-toggle]');
+        if (toggleBtn) {
+          const p = toggleBtn.getAttribute('data-rtdb-toggle');
+          if (this.view.rtdbExpandedPaths.has(p)) this.view.rtdbExpandedPaths.delete(p);
+          else this.view.rtdbExpandedPaths.add(p);
+          this.view.renderFirebaseDataTable(this.model);
+          return;
+        }
+        const inspectBtn = e.target.closest('[data-rtdb-inspect]');
+        if (inspectBtn) {
+          const p = inspectBtn.getAttribute('data-rtdb-inspect');
+          this.view.openRtdbInspector(p, this.model.getRealtimeNodeByPath(p));
+          return;
+        }
+        const copyBtn = e.target.closest('[data-rtdb-copy]');
+        if (copyBtn) {
+          const p = copyBtn.getAttribute('data-rtdb-copy');
+          const nd = this.model.getRealtimeNodeByPath(p);
+          navigator.clipboard.writeText(typeof nd === 'object' ? JSON.stringify(nd, null, 2) : String(nd));
+          this.view.showToast('📋 Copied to clipboard!', 'success');
+          return;
+        }
+        const addChildBtn = e.target.closest('[data-rtdb-add-child]');
+        if (addChildBtn) { this.view.openRtdbAddModal(addChildBtn.getAttribute('data-rtdb-add-child')); return; }
+        const deleteBtn = e.target.closest('[data-rtdb-delete]');
+        if (deleteBtn) {
+          const p = deleteBtn.getAttribute('data-rtdb-delete');
+          if (confirm('Delete node /' + p + '?')) {
+            this.model.deleteRealtimeNodeByPath(p);
+            this.view.renderFirebaseDataTable(this.model);
+            this.view.showToast('🗑️ Deleted /' + p, 'info');
+          }
+          return;
+        }
+      });
+    }
+
+    // Inspector Modal Close & Save
+    const modalInspector = document.getElementById('rtdb-inspector-modal');
+    ['btn-close-rtdb-inspector', 'btn-close-rtdb-inspector-footer'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn && modalInspector) btn.addEventListener('click', () => { modalInspector.classList.remove('active'); modalInspector.setAttribute('aria-hidden', 'true'); });
+    });
+    const btnCopyInspectJson = document.getElementById('btn-rtdb-copy-inspect-json');
+    if (btnCopyInspectJson) btnCopyInspectJson.addEventListener('click', () => {
+      const ed = document.getElementById('rtdb-inspector-json-editor');
+      if (ed) { navigator.clipboard.writeText(ed.value); this.view.showToast('📋 JSON copied!', 'success'); }
+    });
+    const btnSaveNodeJson = document.getElementById('btn-rtdb-save-node-json');
+    if (btnSaveNodeJson) btnSaveNodeJson.addEventListener('click', () => {
+      const ed = document.getElementById('rtdb-inspector-json-editor');
+      const st = document.getElementById('rtdb-inspector-status');
+      if (!ed) return;
+      const tp = ed.getAttribute('data-target-path');
+      try {
+        let pv; try { pv = JSON.parse(ed.value); } catch { pv = ed.value; }
+        this.model.setRealtimeNodeByPath(tp, pv);
+        if (st) st.textContent = '✅ Saved!';
+        this.view.renderFirebaseDataTable(this.model);
+        this.view.showToast('💾 Saved /' + tp, 'success');
+        setTimeout(() => { if (modalInspector) { modalInspector.classList.remove('active'); modalInspector.setAttribute('aria-hidden', 'true'); } }, 600);
+      } catch (err) { if (st) st.textContent = '❌ Error!'; this.view.showToast('Error: ' + err.message, 'danger'); }
+    });
+
+    // Add Node Modal Close & Submit
+    const modalAdd = document.getElementById('rtdb-add-node-modal');
+    ['btn-close-rtdb-add', 'btn-close-rtdb-add-footer'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn && modalAdd) btn.addEventListener('click', () => { modalAdd.classList.remove('active'); modalAdd.setAttribute('aria-hidden', 'true'); });
+    });
+    const btnSubmitAddNode = document.getElementById('btn-rtdb-submit-add-node');
+    if (btnSubmitAddNode) btnSubmitAddNode.addEventListener('click', () => {
+      const pi = document.getElementById('rtdb-add-target-path');
+      const ki = document.getElementById('rtdb-add-key-name');
+      const ti = document.getElementById('rtdb-add-key-type');
+      const vi = document.getElementById('rtdb-add-value');
+      const pp = (pi.value || '').replace(/^\/+/, '');
+      const kn = (ki.value || '').trim();
+      const kt = ti.value;
+      const rv = (vi.value || '').trim();
+      if (!kn) { alert('Key Name required.'); return; }
+      let pv = rv;
+      if (kt === 'number') pv = Number(rv) || 0;
+      else if (kt === 'boolean') pv = rv.toLowerCase() === 'true';
+      else if (kt === 'object') { try { pv = JSON.parse(rv || '{}'); } catch { pv = {}; } }
+      else if (kt === 'array') { try { pv = JSON.parse(rv || '[]'); } catch { pv = []; } }
+      const fp = pp ? pp + '/' + kn : kn;
+      this.model.setRealtimeNodeByPath(fp, pv);
+      this.view.rtdbExpandedPaths.add(pp || kn);
+      this.view.renderFirebaseDataTable(this.model);
+      this.view.showToast('➕ Created /' + fp, 'success');
+      if (modalAdd) { modalAdd.classList.remove('active'); modalAdd.setAttribute('aria-hidden', 'true'); }
+    });
+
   }
 
   _getBranchObject(profile, branch) {

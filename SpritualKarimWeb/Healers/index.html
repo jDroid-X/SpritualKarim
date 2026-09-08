@@ -199,6 +199,41 @@
           <span>⚙️</span> View App JSON
         </button>
       </div>
+          <div class="sidebar-section">
+        <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>🔥 Firebase Realtime DB</span>
+          <span class="badge-live-pulse" title="Connected to spritualkarim-7b5fd">🟢 Live</span>
+        </div>
+        <div class="sidebar-rtdb-card">
+          <div class="sidebar-rtdb-meta">
+            <span class="rtdb-chip">⚡ Sync Active</span>
+            <span class="rtdb-chip-nodes" id="sidebar-rtdb-root-count">8 Collections</span>
+          </div>
+          <button type="button" id="btn-sidebar-open-rtdb" class="btn btn-sm btn-gold w-100 mb-2" title="Open Realtime Database in Table Format with Structured Drill-down">
+            <span>📊</span> Firebase Data Table
+          </button>
+          <div class="sidebar-rtdb-shortcuts" id="sidebar-rtdb-shortcuts">
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="profiles" title="Drill into /profiles">
+              <span>📁</span> /profiles
+            </button>
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="authorisedNodes" title="Drill into /authorisedNodes">
+              <span>🔑</span> /nodes
+            </button>
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="sadhana_catalog" title="Drill into /sadhana_catalog">
+              <span>🔯</span> /sadhanas
+            </button>
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="device_telemetry" title="Drill into /device_telemetry">
+              <span>📡</span> /telemetry
+            </button>
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="system_config" title="Drill into /system_config">
+              <span>⚙️</span> /config
+            </button>
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="pairing_invites" title="Drill into /pairing_invites">
+              <span>📲</span> /pairing
+            </button>
+          </div>
+        </div>
+      </div>
     </aside>
 
     <!-- Left Slide-Out Tier Profiles Panel -->
@@ -298,6 +333,14 @@
             <div class="tab-label-wrap">
               <span class="tab-main-title">4. Healer Connect</span>
               <span class="tab-sub-title">Siddhi Completed &bull; Seekers Guided</span>
+            </div>
+          </button>
+
+          <button type="button" class="main-tab-btn" data-main-tab="tab-firebase-data" id="main-tab-firebase-btn" title="Open Firebase Realtime Database Structured Table Drill-down">
+            <span class="tab-icon">🔥</span>
+            <div class="tab-label-wrap">
+              <span class="tab-main-title">5. Firebase Data</span>
+              <span class="tab-sub-title">Realtime DB &bull; Table Drill-down</span>
             </div>
           </button>
         </div>
@@ -1235,6 +1278,127 @@
                       <button type="button" class="segmented-btn" data-tree-view="canvas" id="btn-view-canvas">🕸️ Canvas</button>
                     </div>
                   </div>
+
+          <!-- ############################################################
+               TAB 5: FIREBASE REALTIME DATABASE STRUCTURED DRILL-DOWN
+               ############################################################ -->
+          <div class="main-tab-content-panel" id="tab-firebase-data">
+            
+            <!-- Firebase Header & Telemetry Hero Card -->
+            <div class="card rtdb-hero-card">
+              <div class="rtdb-hero-header">
+                <div class="rtdb-title-group">
+                  <div class="rtdb-hero-icon">🔥</div>
+                  <div>
+                    <h3 class="rtdb-main-title">Firebase Realtime Database Explorer</h3>
+                    <div class="rtdb-subtitle-row">
+                      <span class="rtdb-status-badge status-live">🟢 Realtime Sync Active</span>
+                      <span class="rtdb-project-pill">Project: <strong>spritualkarim-7b5fd</strong></span>
+                      <span class="rtdb-region-pill">Region: us-central1 (default-rtdb)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="rtdb-endpoint-box">
+                  <div class="rtdb-url-label">Database URL Endpoint</div>
+                  <div class="rtdb-url-value-group">
+                    <code id="rtdb-url-display" class="rtdb-url-code">https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/</code>
+                    <button type="button" class="btn btn-xs btn-outline" id="btn-copy-rtdb-url" title="Copy Firebase URL">📋 Copy</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Database Stat Metrics Grid -->
+              <div class="rtdb-metrics-grid mt-3">
+                <div class="rtdb-metric-box">
+                  <span class="rtdb-metric-label">Root Collections</span>
+                  <span class="rtdb-metric-val" id="rtdb-stat-roots">8 Nodes</span>
+                </div>
+                <div class="rtdb-metric-box">
+                  <span class="rtdb-metric-label">Total Indexed Keys</span>
+                  <span class="rtdb-metric-val" id="rtdb-stat-keys">~54 Keys</span>
+                </div>
+                <div class="rtdb-metric-box">
+                  <span class="rtdb-metric-label">Online Authorized Nodes</span>
+                  <span class="rtdb-metric-val" id="rtdb-stat-nodes">10 Devices</span>
+                </div>
+                <div class="rtdb-metric-box">
+                  <span class="rtdb-metric-label">Security Rules Mode</span>
+                  <span class="rtdb-metric-val" style="color: var(--role-trainee);">🔒 RBAC Validated</span>
+                </div>
+                <div class="rtdb-metric-box">
+                  <span class="rtdb-metric-label">Last Database Sync</span>
+                  <span class="rtdb-metric-val" id="rtdb-stat-last-sync">Just now</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Toolbar & Root Filter Chips -->
+            <div class="card mt-3">
+              <div class="rtdb-toolbar-row">
+                <div class="rtdb-search-wrap">
+                  <input type="search" id="input-rtdb-search" class="form-control form-control-sm" placeholder="🔍 Search database path, key, value or data type (e.g. 'SKHM', 'mantra', 'ADMIN')...">
+                </div>
+
+                <div class="rtdb-action-btn-group">
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-rtdb-refresh" title="Reload live data from Firebase &amp; Local Store">
+                    <span>🔄</span> Refresh
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-rtdb-expand-all" title="Expand all nested table rows">
+                    <span>🔽</span> Expand All
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-rtdb-collapse-all" title="Collapse all nested table rows">
+                    <span>🔼</span> Collapse All
+                  </button>
+                  <button type="button" class="btn btn-sm btn-gold" id="btn-rtdb-add-node" title="Add new child key or node">
+                    <span>➕</span> Add Node
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-rtdb-export-json" title="Export complete database as JSON">
+                    <span>📥</span> Export JSON
+                  </button>
+                </div>
+              </div>
+
+              <!-- Root Collection Filter Chips -->
+              <div class="rtdb-filter-chips-bar mt-2" id="rtdb-filter-chips">
+                <button type="button" class="rtdb-chip-btn active" data-rtdb-root="ALL">🌐 All Collections (Root)</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="profiles">📁 /profiles</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="authorisedNodes">🔑 /authorisedNodes</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="sadhana_catalog">🔯 /sadhana_catalog</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="device_telemetry">📡 /device_telemetry</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="pairing_invites">📲 /pairing_invites</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="system_config">⚙️ /system_config</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="lineage_graph">🌳 /lineage_graph</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="logs">📜 /logs</button>
+              </div>
+
+              <!-- Interactive Breadcrumb Navigation -->
+              <div class="rtdb-breadcrumbs-bar mt-2" id="rtdb-breadcrumbs">
+                <span class="rtdb-bc-item rtdb-bc-root" data-rtdb-bc="/">🔥 root</span>
+              </div>
+            </div>
+
+            <!-- Structured Drill-Down Table Container -->
+            <div class="card mt-3" style="padding: 0; overflow: hidden;">
+              <div class="rtdb-table-responsive-wrapper">
+                <table class="rtdb-drilldown-table" id="rtdb-drilldown-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 38%;">Key / Path Hierarchy</th>
+                      <th style="width: 14%;">Type &amp; Items</th>
+                      <th style="width: 28%;">Value / Data Preview</th>
+                      <th style="width: 10%;">Security</th>
+                      <th style="width: 10%; text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rtdb-table-tbody">
+                    <!-- Dynamically populated with expandable tree rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
                 </div>
 
                 <!-- Level Generation Filter Chips -->
@@ -1678,6 +1842,86 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-  <script src="../js/profile-admin.js"></script>
+  <script src="../js/profile-admin.js?v=rtdb_1788784060153"></script>
+
+  <!-- ==============================================================
+       MODAL: FIREBASE RTDB DATA INSPECTOR & JSON EDITOR
+       ============================================================== -->
+  <div id="rtdb-inspector-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card" style="max-width: 720px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">🔍</span>
+          <div>
+            <h3 class="modal-title" id="rtdb-inspector-title">Realtime Node Inspector</h3>
+            <span style="font-size: 0.75rem; color: var(--text-gold);" id="rtdb-inspector-path">/profiles/SKHM-ADM1-7788-9900</span>
+          </div>
+        </div>
+        <button id="btn-close-rtdb-inspector" class="icon-btn">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="rtdb-inspector-meta-row">
+          <span class="rtdb-type-badge" id="rtdb-inspector-type">OBJECT</span>
+          <span id="rtdb-inspector-size">7 Keys</span>
+          <button type="button" class="btn btn-xs btn-outline" id="btn-rtdb-copy-inspect-json">📋 Copy JSON</button>
+        </div>
+        <div class="rtdb-code-editor-wrap">
+          <textarea id="rtdb-inspector-json-editor" class="form-control font-mono" rows="14" spellcheck="false"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);" id="rtdb-inspector-status">Ready</span>
+        <div style="display: flex; gap: 0.5rem;">
+          <button id="btn-rtdb-save-node-json" class="btn btn-gold">💾 Save &amp; Sync Node</button>
+          <button id="btn-close-rtdb-inspector-footer" class="btn btn-outline">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       MODAL: ADD NEW FIREBASE NODE / KEY
+       ============================================================== -->
+  <div id="rtdb-add-node-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">➕</span>
+          <h3 class="modal-title">Add Realtime Database Key</h3>
+        </div>
+        <button id="btn-close-rtdb-add" class="icon-btn">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="form-group">
+          <label class="form-label" for="rtdb-add-target-path">Parent Path *</label>
+          <input type="text" id="rtdb-add-target-path" class="form-control font-mono" value="/system_config">
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="rtdb-add-key-name">Key Name *</label>
+            <input type="text" id="rtdb-add-key-name" class="form-control font-mono" placeholder="e.g. maintenanceMode">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="rtdb-add-key-type">Data Type</label>
+            <select id="rtdb-add-key-type" class="form-control">
+              <option value="string">String (Text)</option>
+              <option value="number">Number</option>
+              <option value="boolean">Boolean (true/false)</option>
+              <option value="object">Object (JSON)</option>
+              <option value="array">Array (List)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rtdb-add-value">Initial Value</label>
+          <textarea id="rtdb-add-value" class="form-control font-mono" rows="4" placeholder="Enter string, number, boolean or JSON object..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button id="btn-close-rtdb-add-footer" class="btn btn-outline">Cancel</button>
+        <button id="btn-rtdb-submit-add-node" class="btn btn-gold">➕ Create Realtime Key</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

@@ -6477,3 +6477,630 @@ html[data-theme="light"] .healers-hub-banner-card {
   align-items: center;
   gap: 0.4rem;
 }
+
+
+/* ==============================================================
+   FIREBASE REALTIME DATABASE SIDEBAR & STRUCTURED TABLE DRILLDOWN
+   ============================================================== */
+
+/* Glowing Pulse Badge */
+.badge-live-pulse {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 9999px;
+  animation: pulse-live 2s infinite ease-in-out;
+}
+
+@keyframes pulse-live {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 8px 2px rgba(16, 185, 129, 0.6); }
+}
+
+/* Sidebar RTDB Card */
+.sidebar-rtdb-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: var(--radius-md, 10px);
+  padding: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-rtdb-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  color: var(--text-muted, #857b9e);
+}
+
+.rtdb-chip {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.rtdb-chip-nodes {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--gold-400, #f5d365);
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.68rem;
+}
+
+.sidebar-rtdb-shortcuts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+}
+
+.rtdb-shortcut-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary, #c7c0da);
+  font-size: 0.72rem;
+  font-family: var(--font-mono, monospace);
+  padding: 0.3rem 0.45rem;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.rtdb-shortcut-btn:hover {
+  background: rgba(212, 175, 55, 0.18);
+  color: var(--gold-300, #fae596);
+  border-color: var(--gold-500, #d4af37);
+  transform: translateY(-1px);
+}
+
+/* ==============================================================
+   TAB 5: FIREBASE REALTIME DB HERO & EXPLORER
+   ============================================================== */
+
+.rtdb-hero-card {
+  background: linear-gradient(135deg, rgba(30, 20, 48, 0.9) 0%, rgba(20, 12, 34, 0.95) 100%);
+  border: 1.5px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.rtdb-hero-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.rtdb-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.rtdb-hero-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid var(--gold-500);
+  border-radius: 12px;
+  padding: 0.5rem;
+}
+
+.rtdb-main-title {
+  font-family: var(--font-heading, serif);
+  font-size: 1.35rem;
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 0.3rem 0;
+  letter-spacing: 0.02em;
+}
+
+.rtdb-subtitle-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+}
+
+.rtdb-status-badge {
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.rtdb-project-pill, .rtdb-region-pill {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary, #c7c0da);
+}
+
+.rtdb-endpoint-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rtdb-url-label {
+  font-size: 0.68rem;
+  color: var(--text-muted, #857b9e);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rtdb-url-value-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rtdb-url-code {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  color: var(--gold-300, #fae596);
+  word-break: break-all;
+}
+
+/* Metrics Grid */
+.rtdb-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.65rem;
+}
+
+.rtdb-metric-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.rtdb-metric-label {
+  font-size: 0.68rem;
+  color: var(--text-muted, #857b9e);
+  text-transform: uppercase;
+}
+
+.rtdb-metric-val {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary, #ffffff);
+}
+
+/* Toolbar, Search & Action Buttons */
+.rtdb-toolbar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.rtdb-search-wrap {
+  flex: 1 1 320px;
+}
+
+.rtdb-action-btn-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* Filter Chips Bar */
+.rtdb-filter-chips-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.rtdb-chip-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary, #c7c0da);
+  font-size: 0.75rem;
+  font-family: var(--font-mono, monospace);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rtdb-chip-btn:hover {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--gold-300, #fae596);
+  border-color: var(--gold-500);
+}
+
+.rtdb-chip-btn.active {
+  background: var(--gold-500, #d4af37);
+  color: #000000;
+  font-weight: 700;
+  border-color: var(--gold-400);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.35);
+}
+
+/* Breadcrumbs Navigation */
+.rtdb-breadcrumbs-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-family: var(--font-mono, monospace);
+  color: var(--text-muted, #857b9e);
+  padding: 0.35rem 0.6rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.rtdb-bc-item {
+  color: var(--gold-400, #f5d365);
+  cursor: pointer;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+}
+
+.rtdb-bc-item:hover {
+  background: rgba(212, 175, 55, 0.2);
+  text-decoration: underline;
+}
+
+.rtdb-bc-sep {
+  color: var(--text-muted, #857b9e);
+}
+
+/* ==============================================================
+   STRUCTURED DRILL-DOWN TABLE FORMAT
+   ============================================================== */
+
+.rtdb-table-responsive-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.rtdb-drilldown-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.rtdb-drilldown-table thead {
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+}
+
+.rtdb-drilldown-table th {
+  padding: 0.65rem 0.85rem;
+  font-family: var(--font-heading, serif);
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: var(--gold-400, #f5d365);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.rtdb-drilldown-table td {
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+}
+
+.rtdb-row {
+  transition: background-color 0.15s ease;
+}
+
+.rtdb-row:hover {
+  background: rgba(212, 175, 55, 0.06);
+}
+
+.rtdb-row-highlight {
+  background: rgba(212, 175, 55, 0.12) !important;
+}
+
+/* Key Hierarchy Column & Indentation */
+.rtdb-key-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono, monospace);
+  color: var(--text-primary, #ffffff);
+}
+
+.rtdb-depth-indent {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.rtdb-toggle-btn {
+  background: none;
+  border: none;
+  color: var(--gold-400, #f5d365);
+  cursor: pointer;
+  padding: 0.15rem 0.35rem;
+  font-size: 0.72rem;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.rtdb-toggle-btn:hover {
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.rtdb-toggle-btn.expanded {
+  transform: rotate(90deg);
+}
+
+.rtdb-key-icon {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.rtdb-key-name {
+  font-weight: 600;
+  color: var(--text-primary, #ffffff);
+}
+
+.rtdb-key-count {
+  font-size: 0.68rem;
+  color: var(--text-muted, #857b9e);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  margin-left: 0.25rem;
+}
+
+/* Type Badges */
+.rtdb-type-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.type-object { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
+.type-array { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+.type-string { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+.type-number { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+.type-boolean { background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4); }
+.type-null { background: rgba(148, 163, 184, 0.2); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); }
+
+/* Value Preview */
+.rtdb-val-preview {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  max-width: 380px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.rtdb-val-string { color: #86efac; }
+.rtdb-val-number { color: #fde047; font-weight: 600; }
+.rtdb-val-boolean { color: #f472b6; font-weight: 700; }
+.rtdb-val-object { color: var(--text-muted, #857b9e); font-style: italic; }
+
+/* Security Badges */
+.rtdb-security-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sec-auth { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35); }
+.sec-admin { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); }
+.sec-public { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.35); }
+
+/* Row Actions */
+.rtdb-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+
+.rtdb-btn-action {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary, #c7c0da);
+  font-size: 0.72rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rtdb-btn-action:hover {
+  background: rgba(212, 175, 55, 0.2);
+  color: var(--gold-300, #fae596);
+  border-color: var(--gold-500);
+}
+
+.rtdb-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+  border-color: #ef4444;
+}
+
+/* ==============================================================
+   LIGHT THEME OVERRIDES FOR FIREBASE REALTIME DB
+   ============================================================== */
+
+html[data-theme="light"] .sidebar-rtdb-card {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-theme="light"] .sidebar-rtdb-meta {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .rtdb-chip-nodes {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+html[data-theme="light"] .rtdb-shortcut-btn {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #334155 !important;
+}
+
+html[data-theme="light"] .rtdb-shortcut-btn:hover {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  border-color: #d97706 !important;
+}
+
+html[data-theme="light"] .rtdb-hero-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1.5px solid rgba(180, 130, 20, 0.4) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-theme="light"] .rtdb-main-title {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .rtdb-project-pill, 
+html[data-theme="light"] .rtdb-region-pill {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html[data-theme="light"] .rtdb-endpoint-box {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .rtdb-url-label {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .rtdb-url-code {
+  color: #92400e !important;
+}
+
+html[data-theme="light"] .rtdb-metric-box {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .rtdb-metric-label {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .rtdb-metric-val {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .rtdb-chip-btn {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html[data-theme="light"] .rtdb-chip-btn:hover {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+html[data-theme="light"] .rtdb-chip-btn.active {
+  background: #d97706 !important;
+  color: #ffffff !important;
+  border-color: #b45309 !important;
+}
+
+html[data-theme="light"] .rtdb-breadcrumbs-bar {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+html[data-theme="light"] .rtdb-bc-item {
+  color: #92400e !important;
+}
+
+html[data-theme="light"] .rtdb-drilldown-table thead {
+  background: #f8fafc !important;
+  border-bottom: 2px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .rtdb-drilldown-table th {
+  color: #92400e !important;
+}
+
+html[data-theme="light"] .rtdb-drilldown-table td {
+  border-bottom: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .rtdb-row:hover {
+  background: #fef9c3 !important;
+}
+
+html[data-theme="light"] .rtdb-key-name {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .rtdb-val-string { color: #15803d !important; }
+html[data-theme="light"] .rtdb-val-number { color: #b45309 !important; }
+html[data-theme="light"] .rtdb-val-boolean { color: #be185d !important; }
+html[data-theme="light"] .rtdb-val-object { color: #64748b !important; }
+
+html[data-theme="light"] .rtdb-btn-action {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html[data-theme="light"] .rtdb-btn-action:hover {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  border-color: #d97706 !important;
+}
