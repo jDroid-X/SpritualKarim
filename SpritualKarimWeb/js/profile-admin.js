@@ -6332,138 +6332,176 @@ class ProfileController {
   }
 
   
-  _bindEnterpriseDrawerEvents() {
+  _bindSidebarNavigationAndTierEvents() {
+    // 1. Navigation items in sidebar
     const navItems = document.querySelectorAll('.drawer-nav-item');
-    if (!navItems || navItems.length === 0) return;
-
     navItems.forEach(item => {
       item.addEventListener('click', (e) => {
-        const id = item.id;
+        e.preventDefault();
         navItems.forEach(n => n.classList.remove('active'));
         item.classList.add('active');
 
+        // Close mobile drawer if open
         if (this.view.sidebarEl && this.view.sidebarEl.classList.contains('mobile-open')) {
           this.view.toggleMobileSidebar(false);
         }
 
-        switch (id) {
-          case 'nav-item-dashboard':
-            e.preventDefault();
-            const topBox = document.getElementById('main-profile-box-1');
-            if (topBox) topBox.scrollIntoView({ behavior: 'smooth' });
-            this.view.showSlideToast('Dashboard', 'Viewing Hero Profile Card & System Canvas', 'info', 2000);
+        const target = item.getAttribute('data-nav-target');
+        switch (target) {
+          case 'dashboard': {
+            const el = document.getElementById('main-profile-box-1');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+            this.view.showSlideToast('Dashboard', 'Viewing Hero Profile Card & Canvas', 'info', 2000);
+            break;
+          }
+          case 'tab-devotee-personal':
+            this.switchMainTab('tab-devotee-personal');
+            this.view.switchSubTab('devotee-personal', 'devotee-sub-identity');
+            this.view.showSlideToast('Devotee Personal', '🌟 Tab 1: Personal Identity & Lineage', 'info', 2000);
             break;
 
-          case 'nav-item-devices':
-          case 'nav-item-health':
-            e.preventDefault();
+          case 'tab-seeker-purpose':
+            this.switchMainTab('tab-seeker-purpose');
+            this.view.showSlideToast('Seeker Purpose', '🎯 Tab 2: Goals & Sacred Sadhana Catalog', 'info', 2000);
+            break;
+
+          case 'tab-trainee-sadhak':
+            this.switchMainTab('tab-trainee-sadhak');
+            this.view.showSlideToast('Trainee Sadhak', '🌿 Tab 3: Level-Wise Sadhanas & Memos', 'info', 2000);
+            break;
+
+          case 'tab-healer-connect':
+            this.switchMainTab('tab-healer-connect');
+            this.view.showSlideToast('Healer Connect', '👑 Tab 4: Healers Hub & Guided Seekers', 'info', 2000);
+            break;
+
+          case 'tab-genealogy-tree':
+            this.switchMainTab('tab-genealogy-tree');
+            this.view.renderInBodyHierarchyTree(this.model.profiles, null, '', this.view.inBodyTreePanState?.layoutMode || 'cluster');
+            this.view.showSlideToast('Genealogy Tree', '🌳 Tab 5: 5-Level MLM Canvas Spiderweb', 'info', 2000);
+            break;
+
+          case 'tab-firebase-data':
+            this.switchMainTab('tab-firebase-data');
+            this.view.renderFirebaseDataTable(this.model);
+            this.view.showSlideToast('Firebase Data', '🔥 Tab 6: Realtime DB Structured Drill-down', 'info', 2000);
+            break;
+
+          case 'telemetry-qr': {
             const flipper = document.getElementById('profile-card-flipper-wrapper');
             if (flipper) {
               flipper.classList.add('is-flipped');
-              const topBox2 = document.getElementById('main-profile-box-1');
-              if (topBox2) topBox2.scrollIntoView({ behavior: 'smooth' });
-              this.view.showSlideToast('Device Telemetry', '📡 24h Pairing QR & Cloud Telemetry active', 'info', 2500);
+              const el = document.getElementById('main-profile-box-1');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              this.view.showSlideToast('Device Telemetry', '📡 24h Device Pairing QR & Cloud Telemetry', 'info', 2500);
             }
             break;
-
-          case 'nav-item-radar':
-            e.preventDefault();
-            this.switchMainTab('tab-genealogy-tree');
-            this.view.renderAndroidHierarchyTree(this.model.profiles, 'ALL');
-            this.view.showSlideToast('Live Radar', '🌳 Visual MLM Spiderweb Hierarchy loaded', 'info', 2000);
-            break;
-
-          case 'nav-item-history':
-            e.preventDefault();
-            this.switchMainTab('tab-firebase-data');
-            this.view.showSlideToast('Location History', '🔥 Realtime DB table drill-down active', 'info', 2000);
-            break;
-
-          case 'nav-item-groups':
-            e.preventDefault();
-            this.switchMainTab('tab-healer-connect');
-            this.view.showSlideToast('Sangha Circles', '👥 Healer Connect & Guided Seekers Hub', 'info', 2000);
-            break;
-
-          case 'nav-item-safezones':
-            e.preventDefault();
-            this.switchMainTab('tab-devotee-personal');
-            this.view.switchSubTab('devotee-personal', 'devotee-sub-houseclean');
-            this.view.showSlideToast('Safe Zones', '🛡️ House Clean Levels (All Levels)', 'info', 2000);
-            break;
-
-          case 'nav-item-lineage':
-            e.preventDefault();
+          }
+          case 'lineage':
             this.switchMainTab('tab-devotee-personal');
             this.view.switchSubTab('devotee-personal', 'devotee-sub-lineage');
-            this.view.showSlideToast('Family Lineage', '👨‍👩‍👧 3-Generation Ancestral Lineage', 'info', 2000);
+            this.view.showSlideToast('Ancestral Lineage', '👨‍👩‍👧 3-Generation Ancestral Lineage Tree', 'info', 2000);
             break;
 
-          case 'nav-item-notifications':
-            e.preventDefault();
-            this.view.showSlideToast('Telemetry Active', '🟢 Live RTDB Connected to spritualkarim-7b5fd', 'info', 3000);
-            break;
-
-          case 'nav-item-profile':
-            e.preventDefault();
+          case 'houseclean':
             this.switchMainTab('tab-devotee-personal');
-            this.view.switchSubTab('devotee-personal', 'devotee-sub-identity');
-            this.view.showSlideToast('Active Profile', '👤 Identity & Reference Configuration', 'info', 2000);
-            break;
-
-          case 'nav-item-settings':
-            e.preventDefault();
-            this.view.toggleSettingsModal(true, this.model.getAuthMatrix(), this.model.getRoleMode());
-            break;
-
-          case 'nav-item-privacy':
-            e.preventDefault();
-            this.view.toggleRbacMatrixModal(true);
-            break;
-
-          case 'nav-item-support':
-            e.preventDefault();
-            if (this.view.goliGyanModal) {
-              this.view.goliGyanModal.classList.add('open');
-              this.view.goliGyanModal.setAttribute('aria-hidden', 'false');
-            }
-            break;
-
-          case 'nav-item-about':
-            e.preventDefault();
-            this.view.openCustomDialog({
-              icon: 'ℹ️',
-              title: 'Spiritual Karim Enterprise v5.0',
-              message: 'Supreme 4-Tier Spiritual Technology Platform • OOPS MVC Architecture with closed-loop multi-portal synchronization, 24h device pairing protocol, and Firebase Realtime Database telemetry.',
-              buttons: [{ label: 'Close', value: 'close', className: 'btn-gold' }]
-            });
-            break;
-
-          case 'nav-item-logout':
-            e.preventDefault();
-            this.view.openCustomDialog({
-              icon: '🚪',
-              title: 'Switch Role / Session',
-              message: 'Would you like to switch to Devotee mode or reset active profile session?',
-              buttons: [
-                { label: 'Switch to Devotee', value: 'devotee', className: 'btn-outline' },
-                { label: 'Stay as ' + this.model.getRoleMode(), value: 'cancel', className: 'btn-gold' }
-              ]
-            }).then(choice => {
-              if (choice === 'devotee') {
-                const roleSelect = document.getElementById('select-role-mode');
-                if (roleSelect) {
-                  roleSelect.value = 'DEVOTEE';
-                  roleSelect.dispatchEvent(new Event('change'));
-                }
-              }
-            });
+            this.view.switchSubTab('devotee-personal', 'devotee-sub-houseclean');
+            this.view.showSlideToast('House Clean Sanctum', '🧹 House Clean Status & Levels', 'info', 2000);
             break;
         }
       });
     });
-  }
 
+    // 2. App Hierarchy Tiers in Sidebar (Actively change role, tab and filter!)
+    document.querySelectorAll('#hierarchy-legend-container .legend-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const tier = parseInt(item.getAttribute('data-tier'), 10);
+        
+        // Highlight active item
+        document.querySelectorAll('#hierarchy-legend-container .legend-item').forEach(it => it.classList.remove('active'));
+        item.classList.add('active');
+
+        // Also update corresponding nav item
+        document.querySelectorAll('.drawer-nav-item').forEach(n => n.classList.remove('active'));
+
+        if (tier === 1) {
+          // Admin Master -> Switch to MASTER role & Tab 1
+          if (this.view.selectRoleMode) {
+            this.view.selectRoleMode.value = 'MASTER';
+            this.view.selectRoleMode.dispatchEvent(new Event('change'));
+          }
+          this.switchMainTab('tab-devotee-personal');
+          this.view.showSlideToast('Admin Master Tier', '👑 Viewing Master Founder Profiles & Controls', 'info', 2500);
+        } else if (tier === 2) {
+          // Healer Connect -> Switch to HEALER role & Tab 4 (Healers Hub)
+          if (this.view.selectRoleMode) {
+            this.view.selectRoleMode.value = 'HEALER';
+            this.view.selectRoleMode.dispatchEvent(new Event('change'));
+          }
+          this.switchMainTab('tab-healer-connect');
+          const navHealer = document.getElementById('nav-item-healer-page');
+          if (navHealer) navHealer.classList.add('active');
+          this.view.showSlideToast('Healer Connect Tier', '🛡️ Switched to Certified Healers Hub (Tab 4)', 'info', 2500);
+        } else if (tier === 3) {
+          // Trainee Sadhak -> Switch to TRAINEE role & Tab 3
+          if (this.view.selectRoleMode) {
+            this.view.selectRoleMode.value = 'TRAINEE';
+            this.view.selectRoleMode.dispatchEvent(new Event('change'));
+          }
+          this.switchMainTab('tab-trainee-sadhak');
+          const navTrainee = document.getElementById('nav-item-trainee-page');
+          if (navTrainee) navTrainee.classList.add('active');
+          this.view.showSlideToast('Trainee Sadhak Tier', '🌿 Switched to Trainee Mentorship & Sadhanas (Tab 3)', 'info', 2500);
+        } else if (tier === 4) {
+          // Devotee / Seeker -> Switch to DEVOTEE role & Tab 1
+          if (this.view.selectRoleMode) {
+            this.view.selectRoleMode.value = 'DEVOTEE';
+            this.view.selectRoleMode.dispatchEvent(new Event('change'));
+          }
+          this.switchMainTab('tab-devotee-personal');
+          const navDevotee = document.getElementById('nav-item-devotee-page');
+          if (navDevotee) navDevotee.classList.add('active');
+          this.view.showSlideToast('Devotee Seeker Tier', '🌟 Switched to Devotee Personal Workspace (Tab 1)', 'info', 2500);
+        }
+
+        // Also open flyout panel if user wants detailed profile cards
+        this.view.openTierPanel(tier, this.model.profiles, this.model.activeProfileId);
+      });
+    });
+
+    // 3. Dedicated Sub-Portal Links (Actively switch role mode & view!)
+    document.querySelectorAll('#sidebar-dedicated-portals .sub-portal-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const tier = parseInt(link.getAttribute('data-portal-tier'), 10);
+        // Only prevent default if we can handle in-page smoothly
+        if (window.location.protocol !== 'file:') {
+          e.preventDefault();
+        }
+
+        document.querySelectorAll('#sidebar-dedicated-portals .sub-portal-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        const roleMap = { 1: 'MASTER', 2: 'HEALER', 3: 'TRAINEE', 4: 'DEVOTEE' };
+        const targetRole = roleMap[tier] || 'MASTER';
+
+        if (this.view.selectRoleMode) {
+          this.view.selectRoleMode.value = targetRole;
+          this.view.selectRoleMode.dispatchEvent(new Event('change'));
+        }
+
+        if (tier === 2) {
+          this.switchMainTab('tab-healer-connect');
+        } else if (tier === 3) {
+          this.switchMainTab('tab-trainee-sadhak');
+        } else {
+          this.switchMainTab('tab-devotee-personal');
+        }
+
+        this.view.showSlideToast('Portal Switched', `🏛️ Active Portal: ${link.textContent.trim()}`, 'info', 2500);
+      });
+    });
+  }
 
   _bindEvents() {
 
@@ -6519,7 +6557,7 @@ class ProfileController {
       });
     }
 
-    this._bindEnterpriseDrawerEvents();
+    this._bindSidebarNavigationAndTierEvents();
     // 1. 3D Card Flipper Direct & Click Handlers
     const btnFlipToBack = document.getElementById('btn-flip-to-back');
     const btnFlipToFront = document.getElementById('btn-flip-to-front');
