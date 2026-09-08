@@ -1808,50 +1808,102 @@ class ProfileModel {
     const authorisedNodesMap = {};
     const telemetryMap = {};
 
+    const calculateDescendants = (refCode) => {
+      const descendants = [];
+      const queue = [refCode];
+      const visited = new Set([refCode]);
+      while (queue.length > 0) {
+        const currentCode = queue.shift();
+        const children = this.profiles.filter(p => p.referredByCode === currentCode);
+        for (const child of children) {
+          if (!visited.has(child.referenceCode)) {
+            visited.add(child.referenceCode);
+            descendants.push(child.referenceCode);
+            queue.push(child.referenceCode);
+          }
+        }
+      }
+      return descendants;
+    };
+
     this.profiles.forEach(p => {
       const code = p.referenceCode || p.id;
+      const directDownlines = this.profiles.filter(c => c.referredByCode === code).map(c => c.referenceCode);
+      const allDescendants = calculateDescendants(code);
+
+      // Average House Clean % calculation
+      let avgHouseCleanPct = 0;
+      if (p.houseCleanLevels && p.houseCleanLevels.length > 0) {
+        const total = p.houseCleanLevels.reduce((acc, h) => acc + (Number(h.cleanPercentage) || 0), 0);
+        avgHouseCleanPct = Math.round(total / p.houseCleanLevels.length);
+      } else {
+        avgHouseCleanPct = p.level === 1 ? 100 : (p.level === 2 ? 95 : (p.level === 3 ? 75 : 45));
+      }
+
       profilesMap[code] = {
         id: p.id,
         referenceCode: p.referenceCode,
-        referredByCode: p.referredByCode,
-        fullName: p.fullName,
-        profileType: p.profileType,
-        level: p.level,
-        status: p.isActive !== false ? 'ACTIVE' : 'INACTIVE',
-        paymentStatus: p.paymentStatus || 'PAID',
+        referredByCode: p.referredByCode || 'ROOT-0000-0000-0000',
+        transferredCode: p.transferredCode || '',
+        name: p.name || 'Seeker',
         phone: p.phone || '+91 98765 43210',
         email: p.email || 'user@spiritualkarim.org',
+        profileType: p.profileType || 'DEVOTEE',
+        level: p.level || 1,
+        status: p.isActive !== false ? 'ACTIVE' : 'INACTIVE',
+        paymentStatus: p.paymentStatus || (p.isPaid ? 'PAID' : 'FREE'),
         city: p.city || 'Varanasi',
-        state: p.state || 'Uttar Pradesh',
-        country: p.country || 'India',
-        pincode: p.pincode || '221001',
-        mentorSponsorName: p.mentorSponsorName || 'Karim Ji (Founder)',
-        lineage: p.lineage || { fatherName: 'Mahadev Prasad', grandfatherName: 'Rameshwar Ji', gotra: 'Kashyap' },
-        houseCleanStatus: p.houseCleanStatus || { personalClean: true, auraClean: true, spaceClean: true },
-        sadhanas: p.sadhanas || ['sri_yantra', 'kalashtami', 'navratri'],
-        certifications: p.certifications || (p.level >= 2 ? ['Level 1 Siddhi', 'Aura Healing Certified'] : [])
+        address: p.address || '',
+        objective: p.objective || '',
+        categoryTag: p.categoryTag || '',
+        selectedRemedies: p.selectedRemedies || [],
+        interestedSadhanas: p.interestedSadhanas || [],
+        houseCleanLevels: p.houseCleanLevels || [],
+        traineeSadhanas: p.traineeSadhanas || [],
+        healerCompletedSadhanas: p.healerCompletedSadhanas || [],
+        healerNetwork: p.healerNetwork || [],
+        lineage: p.lineage || {},
+        seekerDiagnostics: p.seekerDiagnostics || {},
+        joinDate: p.joinDate || '2024-01-01',
+        connectedDownlines: directDownlines,
+        connectedDownlineCount: directDownlines.length,
+        connectedDescendantsCount: allDescendants.length
       };
 
-      const sanitizedCode = code.replace(/[^a-zA-Z0-9_-]/g, '_');
-      authorisedNodesMap[sanitizedCode] = {
-        nodeId: sanitizedCode,
-        sponsorId: (p.referredByCode || 'ROOT').replace(/[^a-zA-Z0-9_-]/g, '_'),
+      authorisedNodesMap[code] = {
+        referenceCode: p.referenceCode,
+        sponsorCode: p.referredByCode || 'ROOT-0000-0000-0000',
         role: p.profileType || 'DEVOTEE',
         level: p.level || 1,
-        status: p.isActive !== false ? 'ONLINE' : 'OFFLINE',
-        lastSeenTimestamp: Date.now() - Math.floor(Math.random() * 3600000),
-        isoTime: new Date().toISOString()
+        status: p.isActive !== false ? 'ACTIVE' : 'INACTIVE',
+        deviceFingerprintHash: 'HASH_' + (p.referenceCode || '').replace(/[^A-Z0-9]/g, '').slice(-8),
+        houseCleanPct: avgHouseCleanPct,
+        japaCount: p.level === 1 ? 108000 : (p.level === 2 ? 54000 : (p.level === 3 ? 21000 : 4500)),
+        connectedDownlines: directDownlines,
+        connectedDownlineCount: directDownlines.length,
+        connectedDescendantsCount: allDescendants.length,
+        lastSeenTimestamp: Date.now() - Math.floor(Math.random() * 1800000),
+        lastHeartbeat: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
       };
 
       telemetryMap[code] = {
-        batteryLevel: Math.floor(65 + Math.random() * 35),
-        deviceModel: p.level === 1 ? 'Pixel 8 Pro (Founder Edition)' : (p.level === 2 ? 'Samsung Galaxy S24 Ultra' : 'OnePlus 12'),
+        referenceCode: p.referenceCode,
+        batteryLevel: Math.floor(70 + Math.random() * 30),
+        deviceModel: p.level === 1 ? 'Pixel 8 Pro (Founder Edition)' : (p.level === 2 ? 'Samsung Galaxy S24 Ultra' : (p.level === 3 ? 'OnePlus 12' : 'Xiaomi 14')),
         osVersion: 'Android 14 (API 34)',
         lastSyncTimestamp: new Date().toISOString(),
-        networkStatus: 'WIFI_5GHZ_STRONG',
-        appVersion: '3.2.0-ENTERPRISE-PROD'
+        networkStatus: 'WIFI_5GHZ_ONLINE',
+        appVersion: '3.2.0-PROD'
       };
     });
+
+    const lineageGraph = {
+      rootCode: 'SKHM-ADM1-7788-9900',
+      masterNodes: this.profiles.filter(p => p.profileType === 'ADMIN' || p.level === 1).map(p => p.referenceCode),
+      healerNodes: this.profiles.filter(p => p.profileType === 'HEALER' || p.level === 2).map(p => p.referenceCode),
+      traineeNodes: this.profiles.filter(p => p.profileType === 'TRAINEE' || p.level === 3).map(p => p.referenceCode),
+      devoteeNodes: this.profiles.filter(p => p.profileType === 'DEVOTEE' || p.level >= 4).map(p => p.referenceCode)
+    };
 
     return {
       profiles: profilesMap,
@@ -1870,22 +1922,16 @@ class ProfileModel {
         },
         'INV-449102': {
           inviteCode: 'INV-449102',
-          sponsorCode: 'SKHM-HLR2-1122-3344',
-          seekerName: 'Ananya Sharma (Trainee)',
-          seekerPhone: '+91 97110 33445',
+          sponsorCode: 'SKHM-HLR2-3344-5566',
+          seekerName: 'Amitabh Sen (Trainee)',
+          seekerPhone: '+91 98450 77889',
           expiresAt: new Date(Date.now() + 86400000).toISOString(),
           status: 'PAIRED_CONFIRMED',
           createdAt: new Date().toISOString()
         }
       },
       system_config: this.settings,
-      lineage_graph: {
-        rootCode: 'SKHM-ADM1-7788-9900',
-        masterNodes: ['SKHM-ADM1-7788-9900'],
-        healerNodes: ['SKHM-HLR2-1122-3344', 'SKHM-HLR2-5566-7788'],
-        traineeNodes: ['SKHM-TRN3-9900-1122', 'SKHM-TRN3-3344-5566'],
-        devoteeNodes: ['SKHM-DEV4-7788-9900', 'SKHM-DEV4-1122-3344', 'SKHM-DEV4-5566-7788']
-      },
+      lineage_graph: lineageGraph,
       logs: [
         { id: 'LOG-001', action: 'FIREBASE_RTDB_SYNC_INIT', timestamp: Date.now() - 3600000, severity: 'INFO', source: 'AdminConsole' },
         { id: 'LOG-002', action: 'HEALER_CERTIFICATE_VERIFIED', timestamp: Date.now() - 1800000, severity: 'SUCCESS', source: 'AuthEngine' },
@@ -4847,6 +4893,7 @@ Installation & Activation Steps:
   }
 
   _generateRtdbRowHtml(key, value, currentPath, depth) {
+    const esc = (s) => { if (s === null || s === undefined) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); };
     const isObject = value !== null && typeof value === 'object';
     const isArray = Array.isArray(value);
     const isExpanded = this.rtdbExpandedPaths.has(currentPath);
@@ -4886,7 +4933,7 @@ Installation & Activation Steps:
       const keys = Object.keys(value);
       valPreviewHtml = `<span class="rtdb-val-preview rtdb-val-object">{ ${keys.slice(0, 4).join(', ')}${keys.length > 4 ? ', ...' : ''} }</span>`;
     } else if (typeof value === 'string') {
-      valPreviewHtml = `<span class="rtdb-val-preview rtdb-val-string" title="${escapeHtmlUtil(value)}">"${escapeHtmlUtil(value.length > 65 ? value.slice(0, 65) + '...' : value)}"</span>`;
+      valPreviewHtml = `<span class="rtdb-val-preview rtdb-val-string" title="${esc(value)}">"${esc(value.length > 65 ? value.slice(0, 65) + '...' : value)}"</span>`;
     } else if (typeof value === 'number') {
       valPreviewHtml = `<span class="rtdb-val-preview rtdb-val-number">${value}</span>`;
     } else if (typeof value === 'boolean') {
@@ -4916,7 +4963,7 @@ Installation & Activation Steps:
               </button>
             ` : `<span style="display: inline-block; width: 1.3rem;"></span>`}
             <span class="rtdb-key-icon">${icon}</span>
-            <span class="rtdb-key-name">${escapeHtmlUtil(key)}</span>
+            <span class="rtdb-key-name">${esc(key)}</span>
             ${isObject ? `<span class="rtdb-key-count">${isArray ? value.length + ' items' : Object.keys(value).length + ' keys'}</span>` : ''}
           </div>
         </td>
