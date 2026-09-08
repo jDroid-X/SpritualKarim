@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/profile-admin.css?v=sk_v5_1788883375845">
+  <link rel="stylesheet" href="css/profile-admin.css?v=sk_v5_1788883569610">
 </head>
 <body data-portal-mode="master">
   <!-- Top Admin Control Header (2-Row Smart Fit Layout) -->
@@ -118,17 +118,6 @@
     <!-- Left Navigation & Enterprise Drawer (User Rule 7 Standard Compliant) -->
     <aside class="admin-sidebar" id="admin-enterprise-drawer">
       
-      <!-- Quick Directory Filter Search (User Rule) -->
-      <div class="sidebar-section">
-        <div class="sidebar-heading">🔍 Quick Member Directory</div>
-        <div class="sidebar-search-wrap">
-          <input type="search" id="input-directory-search" class="form-control form-control-sm" placeholder="Search profiles...">
-        </div>
-        <div id="profile-directory-list" class="profile-directory-list" style="max-height: 180px; overflow-y: auto;">
-          <!-- Dynamically populated if needed -->
-        </div>
-      </div>
-
       <!-- Enterprise Drawer Section 2: Hierarchy Tiers -->
       <div class="sidebar-section">
         <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
@@ -2257,7 +2246,7 @@
   </div>
 
   <!-- External Vendor & Core Logic Scripts -->
-  <script src="js/profile-admin.js?v=sk_v5_1788883375845"></script>
+  <script src="js/profile-admin.js?v=sk_v5_1788883569610"></script>
 
   <!-- ==============================================================
        SLIDE-IN NOTIFICATIONS STACK & CUSTOM DIALOG BACKDROP
@@ -2383,6 +2372,8 @@
   <!-- Hidden Bridge for Dual-ID & Backward Compatibility -->
   <div style="display:none;" aria-hidden="true">
     <button type="button" id="btn-close-admin-settings"></button>
+    <input type="hidden" id="input-directory-search">
+    <div id="profile-directory-list" style="display:none;"></div>
     <button type="button" id="btn-cancel-settings"></button>
     <button type="button" id="setting-allow-devotee-delete"></button>
     <button type="button" id="setting-healer-team-view"></button>
