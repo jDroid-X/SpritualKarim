@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1788883569610">
+  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1788884991103">
 </head>
 <body data-portal-role="DEVOTEE" class="portal-devotee">
   <!-- Top Admin Control Header (2-Row Smart Fit Layout) -->
@@ -2246,7 +2246,7 @@
   </div>
 
   <!-- External Vendor & Core Logic Scripts -->
-  <script src="../js/profile-admin.js?v=sk_v5_1788883569610"></script>
+  <script src="../js/profile-admin.js?v=sk_v5_1788884991103"></script>
 
   <!-- ==============================================================
        SLIDE-IN NOTIFICATIONS STACK & CUSTOM DIALOG BACKDROP
@@ -2314,7 +2314,45 @@
           <textarea id="rtdb-inspector-json-editor" class="form-control font-mono" rows="12" style="font-size: 0.82rem; line-height: 1.4; resize: vertical;"></textarea>
         </div>
         <div id="rtdb-inspector-status" style="font-size: 0.78rem; margin-top: 0.5rem; color: var(--text-muted);">Ready to modify.</div>
-      </div>
+      
+        <!-- Setting Group: Dynamic Role Authorization Matrix (Screen & Element Panels) -->
+        <div class="auth-matrix-container" id="auth-matrix-settings-section">
+          <div class="auth-matrix-header-bar">
+            <div class="auth-matrix-title-group">
+              <span style="font-size: 1.4rem;">🛡️</span>
+              <div>
+                <h4 class="auth-matrix-title">Dynamic Role Authorization Matrix</h4>
+                <p class="auth-matrix-subtitle">Master Role Portal Configuration: Tick to display, Untick to hide for each role.</p>
+              </div>
+            </div>
+            <div class="auth-matrix-actions-row" style="margin-top: 0;">
+              <button type="button" class="btn btn-xs btn-outline" id="btn-reset-auth-matrix" title="Reset to Default Permissions">🔄 Reset Default</button>
+              <button type="button" class="btn btn-xs btn-gold" id="btn-save-auth-matrix" title="Save &amp; Apply Matrix Across All Portals">💾 Save &amp; Apply</button>
+            </div>
+          </div>
+
+          <div class="auth-matrix-table-wrap">
+            <table class="auth-matrix-table" id="auth-matrix-table">
+              <thead>
+                <tr>
+                  <th style="min-width: 220px;">🖥️ Screen / Element Item</th>
+                  <th class="col-role" style="color: var(--role-admin, #8b5cf6);">👑 Master</th>
+                  <th class="col-role" style="color: var(--role-healer, #10b981);">🌿 Healer</th>
+                  <th class="col-role" style="color: var(--role-trainee, #f59e0b);">📿 Trainee</th>
+                  <th class="col-role" style="color: var(--role-devotee, #3b82f6);">🌟 Devotee</th>
+                </tr>
+              </thead>
+              <tbody id="auth-matrix-tbody">
+                <!-- Dynamically populated by renderAuthMatrixInSettings -->
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top: 0.65rem; font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">
+            <span>ℹ️</span> <em>Changes take effect immediately across all screens upon clicking "Save &amp; Apply". Master role has permission to customize.</em>
+          </div>
+        </div>
+
+</div>
       <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
         <button type="button" class="btn btn-outline btn-sm" id="btn-rtdb-copy-inspect-json">📋 Copy JSON</button>
         <div style="display: flex; gap: 0.5rem;">

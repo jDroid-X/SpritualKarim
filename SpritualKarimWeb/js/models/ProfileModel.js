@@ -159,26 +159,195 @@ class ProfileModel {
     }
   }
 
+  
+  getDefaultAuthMatrix() {
+    return [
+      // --- SCREEN PANELS (TABS) ---
+      {
+        id: 'tab_devotee_personal',
+        name: 'Tab 1: Devotee Personal (Identity, Lineage, House Clean)',
+        type: 'SCREEN',
+        targetId: 'tab-devotee-personal',
+        tabBtnTarget: 'tab-devotee-personal',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: true
+      },
+      {
+        id: 'tab_seeker_purpose',
+        name: 'Tab 2: Seeker Purpose (Goals, Sadhana List & Preview)',
+        type: 'SCREEN',
+        targetId: 'tab-seeker-purpose',
+        tabBtnTarget: 'tab-seeker-purpose',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: true
+      },
+      {
+        id: 'tab_trainee_sadhak',
+        name: 'Tab 3: Trainee Sadhak (Level Wise Sadhanas & Memos)',
+        type: 'SCREEN',
+        targetId: 'tab-trainee-sadhak',
+        tabBtnTarget: 'tab-trainee-sadhak',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: false
+      },
+      {
+        id: 'tab_healer_connect',
+        name: 'Tab 4: Healer Connect (Healers Hub Directory)',
+        type: 'SCREEN',
+        targetId: 'tab-healer-connect',
+        tabBtnTarget: 'tab-healer-connect',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: false,
+        DEVOTEE: false
+      },
+      {
+        id: 'tab_genealogy_tree',
+        name: 'Tab 5: Genealogy Tree (Visual MLM Spiderweb Canvas)',
+        type: 'SCREEN',
+        targetId: 'tab-genealogy-tree',
+        tabBtnTarget: 'tab-genealogy-tree',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: false
+      },
+      {
+        id: 'tab_firebase_data',
+        name: 'Tab 6: Firebase Data (Realtime DB Table Drill-down)',
+        type: 'SCREEN',
+        targetId: 'tab-firebase-data',
+        tabBtnTarget: 'tab-firebase-data',
+        MASTER: true,
+        HEALER: false,
+        TRAINEE: false,
+        DEVOTEE: false
+      },
+
+      // --- ELEMENT PANELS (CONTROLS & WIDGETS) ---
+      {
+        id: 'elem_3d_flipper',
+        name: 'Hero 3D Card Flipper (QR Pairing & Node Telemetry)',
+        type: 'ELEMENT',
+        selector: '#profile-card-flipper-wrapper',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: true
+      },
+      {
+        id: 'elem_save_sync_btn',
+        name: 'Header: Save & Sync Pulse Button',
+        type: 'ELEMENT',
+        selector: '#btn-save-profile',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: true
+      },
+      {
+        id: 'elem_import_export_btns',
+        name: 'Header: Import & Export JSON Payload Buttons',
+        type: 'ELEMENT',
+        selector: '#btn-import-json, #btn-export-json',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: false,
+        DEVOTEE: false
+      },
+      {
+        id: 'elem_sidebar_tiers',
+        name: 'Sidebar: App Hierarchy Tiers & Tree Button',
+        type: 'ELEMENT',
+        selector: '#hierarchy-legend-container',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: false
+      },
+      {
+        id: 'elem_sidebar_portals',
+        name: 'Sidebar: Dedicated Sub-Portal Links',
+        type: 'ELEMENT',
+        selector: '#sidebar-dedicated-portals',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: true
+      },
+      {
+        id: 'elem_sidebar_rtdb',
+        name: 'Sidebar: Firebase Realtime DB Card',
+        type: 'ELEMENT',
+        selector: '.sidebar-rtdb-card',
+        MASTER: true,
+        HEALER: false,
+        TRAINEE: false,
+        DEVOTEE: false
+      },
+      {
+        id: 'elem_sidebar_tools',
+        name: 'Sidebar: System Tools & Actions',
+        type: 'ELEMENT',
+        selector: '#sidebar-tools-section',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: false,
+        DEVOTEE: false
+      }
+    ];
+  }
+
+  getAuthMatrix() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem('sk_auth_matrix_v5');
+        if (stored) {
+          return JSON.parse(stored);
+        }
+      }
+    } catch (e) {
+      console.warn('Error loading auth matrix from localStorage:', e);
+    }
+    return this.getDefaultAuthMatrix();
+  }
+
+  saveAuthMatrix(matrix) {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('sk_auth_matrix_v5', JSON.stringify(matrix));
+      }
+      return true;
+    } catch (e) {
+      console.error('Error saving auth matrix:', e);
+      return false;
+    }
+  }
+
+
   getVisibleProfiles() {
-    if (this.roleMode === 'MASTER') {
+    const mode = this.roleMode || 'MASTER';
+
+    if (mode === 'MASTER') {
       return this.profiles;
     }
 
-    if (this.roleMode === 'HEALER') {
-      // Healer can see Healer, Trainee, Devotee (no Admin Master)
-      return this.profiles.filter(p => p.profileType !== 'ADMIN' && p.level !== 1);
+    if (mode === 'HEALER') {
+      return this.profiles.filter(p => p.profileType === 'HEALER');
     }
 
-    if (this.roleMode === 'TRAINEE') {
-      // Trainee can see Trainee, Devotee (no Admin or Healer)
-      return this.profiles.filter(p => p.profileType === 'TRAINEE' || p.profileType === 'DEVOTEE');
+    if (mode === 'TRAINEE') {
+      return this.profiles.filter(p => p.profileType === 'TRAINEE');
     }
 
-    if (this.roleMode === 'DEVOTEE') {
-      const active = this.getActiveProfile();
-      // Devotee sees own profile / devotees only (cannot see upper levels structure)
-      const devotees = this.profiles.filter(p => p.id === active?.id || p.profileType === 'DEVOTEE');
-      return devotees.length > 0 ? devotees : [active];
+    if (mode === 'DEVOTEE') {
+      return this.profiles.filter(p => p.profileType === 'DEVOTEE');
     }
 
     return this.profiles;

@@ -7995,3 +7995,391 @@ body {
     transform: translateX(0) scale(1);
   }
 }
+
+
+/* ==========================================================================
+   COMPREHENSIVE LIGHT THEME OVERHAUL (100% LIGHT MODE FIDELITY)
+   ========================================================================== */
+
+html[data-theme="light"],
+[data-theme="light"] {
+  --bg-main: #f4f6f9 !important;
+  --bg-deep-canvas: #f4f6f9 !important;
+  --bg-sidebar: #ffffff !important;
+  --bg-card: #ffffff !important;
+  --bg-card-elevated: #f8fafc !important;
+  --bg-surface-elevated: #ffffff !important;
+  --bg-surface-glass: rgba(255, 255, 255, 0.95) !important;
+  --bg-surface-card: rgba(255, 255, 255, 0.98) !important;
+  --bg-input: #ffffff !important;
+  --bg-input-focus: #f8fafc !important;
+  --bg-input-glass: #ffffff !important;
+
+  --border-color: rgba(180, 130, 20, 0.4) !important;
+  --border-subtle: rgba(0, 0, 0, 0.1) !important;
+  --border-glass-gold: rgba(180, 130, 20, 0.35) !important;
+  --border-glass-subtle: rgba(0, 0, 0, 0.08) !important;
+
+  --text-primary: #0f172a !important;
+  --text-secondary: #334155 !important;
+  --text-muted: #64748b !important;
+  --text-gold: #9e6400 !important;
+
+  --topbar-bg: #ffffff !important;
+  --drawer-bg: #ffffff !important;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Light Theme Body & Canvas */
+html[data-theme="light"] body {
+  background-color: #f4f6f9 !important;
+  background-image: 
+    radial-gradient(circle at 10% 15%, rgba(139, 92, 246, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 90% 85%, rgba(212, 175, 55, 0.06) 0%, transparent 45%) !important;
+  color: #0f172a !important;
+}
+
+/* Light Theme Topbar */
+html[data-theme="light"] .admin-topbar.multi-row-header {
+  background: #ffffff !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-theme="light"] .topbar-row-primary {
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+html[data-theme="light"] .topbar-row-secondary {
+  background: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .admin-title {
+  background: linear-gradient(135deg, #9e6400 0%, #b47500 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+html[data-theme="light"] .role-selector-pill,
+html[data-theme="light"] .profile-selector-pill {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+html[data-theme="light"] .role-mode-dropdown,
+html[data-theme="light"] .profile-dropdown {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .role-mode-dropdown option,
+html[data-theme="light"] .profile-dropdown option {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Light Theme Sidebar */
+html[data-theme="light"] .admin-sidebar {
+  background: #ffffff !important;
+  border-right: 1.5px solid #e2e8f0 !important;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.03) !important;
+}
+
+html[data-theme="light"] .sidebar-heading {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .sidebar-rtdb-card {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .rtdb-shortcut-btn {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html[data-theme="light"] .rtdb-shortcut-btn:hover {
+  background: #fef9c3 !important;
+  color: #8c5800 !important;
+}
+
+/* Light Theme 3D Profile Card Flipper (Front & Back) */
+html[data-theme="light"] .card-flipper-front {
+  background: #ffffff !important;
+  border: 1.5px solid #d4af37 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06), 0 0 12px rgba(212, 175, 55, 0.15) !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .card-flipper-back {
+  background: #f8fafc !important;
+  border: 1.5px solid #b47500 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .profile-name-title {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .flipper-back-title {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .telemetry-grid {
+  border-color: #e2e8f0 !important;
+}
+
+html[data-theme="light"] .telemetry-item {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+html[data-theme="light"] .telemetry-item-label {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .telemetry-item-val {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .telemetry-qr-section {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .telemetry-qr-text {
+  color: #334155 !important;
+}
+
+/* Light Theme Floating Segmented Tab Dock */
+html[data-theme="light"] .main-tabs-nav-bar {
+  background: #e2e8f0 !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-theme="light"] .main-tab-btn {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html[data-theme="light"] .main-tab-btn:hover {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .main-tab-btn.active {
+  background: linear-gradient(135deg, #ffd700 0%, #fae596 100%) !important;
+  border-color: #b47500 !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 10px rgba(180, 130, 20, 0.25) !important;
+}
+
+html[data-theme="light"] .main-tab-btn .tab-main-title {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .main-tab-btn .tab-sub-title {
+  color: #64748b !important;
+}
+
+/* Light Theme Forms, Cards & Inputs */
+html[data-theme="light"] .card {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .card-title {
+  color: #8c5800 !important;
+}
+
+html[data-theme="light"] .form-label {
+  color: #1e293b !important;
+}
+
+html[data-theme="light"] .form-control {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .form-control:focus {
+  background: #ffffff !important;
+  border-color: #b47500 !important;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25) !important;
+}
+
+html[data-theme="light"] .sub-tabs-nav-bar {
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .sub-tab-btn {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html[data-theme="light"] .sub-tab-btn.active {
+  background: #ffd700 !important;
+  color: #0f172a !important;
+  border-color: #b47500 !important;
+}
+
+/* ==========================================================================
+   DYNAMIC ROLE AUTHORIZATION MATRIX STYLING (SETTINGS MODAL)
+   ========================================================================== */
+.auth-matrix-container {
+  margin-top: 1.25rem;
+  background: var(--bg-surface-elevated, #161026);
+  border: 1.5px solid var(--border-glass-gold, rgba(212, 175, 55, 0.3));
+  border-radius: var(--radius-lg, 14px);
+  padding: 1.25rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme="light"] .auth-matrix-container {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+}
+
+.auth-matrix-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.auth-matrix-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.auth-matrix-title {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gold-400, #ffd700);
+  margin: 0;
+}
+
+html[data-theme="light"] .auth-matrix-title {
+  color: #8c5800 !important;
+}
+
+.auth-matrix-subtitle {
+  font-size: 0.76rem;
+  color: var(--text-muted, #857b9e);
+  margin: 0;
+}
+
+.auth-matrix-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: var(--radius-md, 10px);
+}
+
+html[data-theme="light"] .auth-matrix-table-wrap {
+  border-color: #cbd5e1 !important;
+}
+
+.auth-matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.auth-matrix-table th {
+  padding: 0.75rem 0.85rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted, #94a3b8);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-bottom: 1.5px solid var(--border-glass-gold, rgba(212, 175, 55, 0.25));
+}
+
+html[data-theme="light"] .auth-matrix-table th {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border-bottom-color: #cbd5e1 !important;
+}
+
+.auth-matrix-table th.col-role {
+  text-align: center;
+  width: 110px;
+}
+
+.auth-matrix-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+}
+
+html[data-theme="light"] .auth-matrix-table td {
+  border-bottom-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+.auth-matrix-table tr:hover {
+  background: rgba(212, 175, 55, 0.04);
+}
+
+html[data-theme="light"] .auth-matrix-table tr:hover {
+  background: #fef9c3 !important;
+}
+
+.auth-matrix-group-row td {
+  background: rgba(139, 92, 246, 0.12);
+  color: var(--gold-400, #ffd700);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 0.55rem 0.85rem;
+  border-top: 1.5px solid rgba(139, 92, 246, 0.25);
+}
+
+html[data-theme="light"] .auth-matrix-group-row td {
+  background: #e0e7ff !important;
+  color: #3730a3 !important;
+  border-top-color: #cbd5e1 !important;
+}
+
+.auth-matrix-cell-check {
+  text-align: center;
+}
+
+/* Custom Styled Checkbox */
+.matrix-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.matrix-checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #d4af37;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.auth-matrix-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}

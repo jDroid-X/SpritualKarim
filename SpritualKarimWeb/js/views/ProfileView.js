@@ -229,11 +229,12 @@ class ProfileView {
 
   _renderDropdown(activeProfile, visibleProfiles) {
     if (!this.selectActiveProfile) return;
-    this.selectActiveProfile.innerHTML = visibleProfiles.map(p => `
-      <option value="${p.id}" ${p.id === activeProfile.id ? 'selected' : ''}>
-        ${p.name} (${p.profileType} • Level ${p.level})
-      </option>
-    `).join('');
+    this.selectActiveProfile.innerHTML = visibleProfiles.map(p => {
+      const isSelected = activeProfile && (p.id === activeProfile.id);
+      return `<option value="${p.id}" ${isSelected ? 'selected' : ''}>
+        ${p.name} • [${p.referenceCode}] (${p.profileType} L${p.level})
+      </option>`;
+    }).join('');
   }
 
   _renderDirectory(activeProfile, visibleProfiles) {

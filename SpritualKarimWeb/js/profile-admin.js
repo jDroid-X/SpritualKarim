@@ -649,26 +649,195 @@ class ProfileModel {
     }
   }
 
+  
+  getDefaultAuthMatrix() {
+    return [
+      // --- SCREEN PANELS (TABS) ---
+      {
+        id: 'tab_devotee_personal',
+        name: 'Tab 1: Devotee Personal (Identity, Lineage, House Clean)',
+        type: 'SCREEN',
+        targetId: 'tab-devotee-personal',
+        tabBtnTarget: 'tab-devotee-personal',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: true
+      },
+      {
+        id: 'tab_seeker_purpose',
+        name: 'Tab 2: Seeker Purpose (Goals, Sadhana List & Preview)',
+        type: 'SCREEN',
+        targetId: 'tab-seeker-purpose',
+        tabBtnTarget: 'tab-seeker-purpose',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: true
+      },
+      {
+        id: 'tab_trainee_sadhak',
+        name: 'Tab 3: Trainee Sadhak (Level Wise Sadhanas & Memos)',
+        type: 'SCREEN',
+        targetId: 'tab-trainee-sadhak',
+        tabBtnTarget: 'tab-trainee-sadhak',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: false
+      },
+      {
+        id: 'tab_healer_connect',
+        name: 'Tab 4: Healer Connect (Healers Hub Directory)',
+        type: 'SCREEN',
+        targetId: 'tab-healer-connect',
+        tabBtnTarget: 'tab-healer-connect',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: false,
+        DEVOTEE: false
+      },
+      {
+        id: 'tab_genealogy_tree',
+        name: 'Tab 5: Genealogy Tree (Visual MLM Spiderweb Canvas)',
+        type: 'SCREEN',
+        targetId: 'tab-genealogy-tree',
+        tabBtnTarget: 'tab-genealogy-tree',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: false
+      },
+      {
+        id: 'tab_firebase_data',
+        name: 'Tab 6: Firebase Data (Realtime DB Table Drill-down)',
+        type: 'SCREEN',
+        targetId: 'tab-firebase-data',
+        tabBtnTarget: 'tab-firebase-data',
+        MASTER: true,
+        HEALER: false,
+        TRAINEE: false,
+        DEVOTEE: false
+      },
+
+      // --- ELEMENT PANELS (CONTROLS & WIDGETS) ---
+      {
+        id: 'elem_3d_flipper',
+        name: 'Hero 3D Card Flipper (QR Pairing & Node Telemetry)',
+        type: 'ELEMENT',
+        selector: '#profile-card-flipper-wrapper',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: true
+      },
+      {
+        id: 'elem_save_sync_btn',
+        name: 'Header: Save & Sync Pulse Button',
+        type: 'ELEMENT',
+        selector: '#btn-save-profile',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: true
+      },
+      {
+        id: 'elem_import_export_btns',
+        name: 'Header: Import & Export JSON Payload Buttons',
+        type: 'ELEMENT',
+        selector: '#btn-import-json, #btn-export-json',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: false,
+        DEVOTEE: false
+      },
+      {
+        id: 'elem_sidebar_tiers',
+        name: 'Sidebar: App Hierarchy Tiers & Tree Button',
+        type: 'ELEMENT',
+        selector: '#hierarchy-legend-container',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: false
+      },
+      {
+        id: 'elem_sidebar_portals',
+        name: 'Sidebar: Dedicated Sub-Portal Links',
+        type: 'ELEMENT',
+        selector: '#sidebar-dedicated-portals',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: true,
+        DEVOTEE: true
+      },
+      {
+        id: 'elem_sidebar_rtdb',
+        name: 'Sidebar: Firebase Realtime DB Card',
+        type: 'ELEMENT',
+        selector: '.sidebar-rtdb-card',
+        MASTER: true,
+        HEALER: false,
+        TRAINEE: false,
+        DEVOTEE: false
+      },
+      {
+        id: 'elem_sidebar_tools',
+        name: 'Sidebar: System Tools & Actions',
+        type: 'ELEMENT',
+        selector: '#sidebar-tools-section',
+        MASTER: true,
+        HEALER: true,
+        TRAINEE: false,
+        DEVOTEE: false
+      }
+    ];
+  }
+
+  getAuthMatrix() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem('sk_auth_matrix_v5');
+        if (stored) {
+          return JSON.parse(stored);
+        }
+      }
+    } catch (e) {
+      console.warn('Error loading auth matrix from localStorage:', e);
+    }
+    return this.getDefaultAuthMatrix();
+  }
+
+  saveAuthMatrix(matrix) {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('sk_auth_matrix_v5', JSON.stringify(matrix));
+      }
+      return true;
+    } catch (e) {
+      console.error('Error saving auth matrix:', e);
+      return false;
+    }
+  }
+
+
   getVisibleProfiles() {
-    if (this.roleMode === 'MASTER') {
+    const mode = this.roleMode || 'MASTER';
+
+    if (mode === 'MASTER') {
       return this.profiles;
     }
 
-    if (this.roleMode === 'HEALER') {
-      // Healer can see Healer, Trainee, Devotee (no Admin Master)
-      return this.profiles.filter(p => p.profileType !== 'ADMIN' && p.level !== 1);
+    if (mode === 'HEALER') {
+      return this.profiles.filter(p => p.profileType === 'HEALER');
     }
 
-    if (this.roleMode === 'TRAINEE') {
-      // Trainee can see Trainee, Devotee (no Admin or Healer)
-      return this.profiles.filter(p => p.profileType === 'TRAINEE' || p.profileType === 'DEVOTEE');
+    if (mode === 'TRAINEE') {
+      return this.profiles.filter(p => p.profileType === 'TRAINEE');
     }
 
-    if (this.roleMode === 'DEVOTEE') {
-      const active = this.getActiveProfile();
-      // Devotee sees own profile / devotees only (cannot see upper levels structure)
-      const devotees = this.profiles.filter(p => p.id === active?.id || p.profileType === 'DEVOTEE');
-      return devotees.length > 0 ? devotees : [active];
+    if (mode === 'DEVOTEE') {
+      return this.profiles.filter(p => p.profileType === 'DEVOTEE');
     }
 
     return this.profiles;
@@ -2320,11 +2489,12 @@ class ProfileView {
 
   _renderDropdown(activeProfile, visibleProfiles) {
     if (!this.selectActiveProfile) return;
-    this.selectActiveProfile.innerHTML = visibleProfiles.map(p => `
-      <option value="${p.id}" ${p.id === activeProfile.id ? 'selected' : ''}>
-        ${p.name} (${p.profileType} • Level ${p.level})
-      </option>
-    `).join('');
+    this.selectActiveProfile.innerHTML = visibleProfiles.map(p => {
+      const isSelected = activeProfile && (p.id === activeProfile.id);
+      return `<option value="${p.id}" ${isSelected ? 'selected' : ''}>
+        ${p.name} • [${p.referenceCode}] (${p.profileType} L${p.level})
+      </option>`;
+    }).join('');
   }
 
   _renderDirectory(activeProfile, visibleProfiles) {
@@ -5542,6 +5712,7 @@ class ProfileController {
     const settings = this.model.settings;
     this.view.allProfiles = this.model.profiles;
     this.view.render(active, visibleProfiles, roleMode, settings);
+    this.view.applyDynamicAuthMatrix(this.model.getAuthMatrix(), roleMode);
     this._filterRemedies();
   }
 
@@ -6242,7 +6413,7 @@ class ProfileController {
 
           case 'nav-item-settings':
             e.preventDefault();
-            this.view.toggleSettingsModal(true);
+            this.view.toggleSettingsModal(true, this.model.getAuthMatrix(), this.model.getRoleMode());
             break;
 
           case 'nav-item-privacy':
@@ -6295,6 +6466,59 @@ class ProfileController {
 
 
   _bindEvents() {
+
+    // Dynamic Role Authorization Matrix Actions in Settings
+    const btnSaveAuthMatrix = document.getElementById('btn-save-auth-matrix');
+    if (btnSaveAuthMatrix) {
+      btnSaveAuthMatrix.addEventListener('click', (e) => {
+        e.preventDefault();
+        const currentRole = this.model.getRoleMode();
+        if (currentRole !== 'MASTER') {
+          this.view.showSlideToast('Access Restricted', 'Only Master role can modify the Authorization Matrix', 'warning', 3000);
+          return;
+        }
+
+        const matrix = this.model.getAuthMatrix();
+        const rows = document.querySelectorAll('#auth-matrix-tbody tr[data-item-id]');
+
+        rows.forEach(row => {
+          const itemId = row.getAttribute('data-item-id');
+          const item = matrix.find(m => m.id === itemId);
+          if (item) {
+            const roles = ['MASTER', 'HEALER', 'TRAINEE', 'DEVOTEE'];
+            roles.forEach(r => {
+              const chk = row.querySelector(`.matrix-role-check[data-role="${r}"]`);
+              if (chk) {
+                item[r] = chk.checked;
+              }
+            });
+          }
+        });
+
+        this.model.saveAuthMatrix(matrix);
+        this.view.applyDynamicAuthMatrix(matrix, currentRole);
+        this.view.showSlideToast('Matrix Updated', '🛡️ Authorization Matrix saved and applied in real-time!', 'success', 3000);
+      });
+    }
+
+    const btnResetAuthMatrix = document.getElementById('btn-reset-auth-matrix');
+    if (btnResetAuthMatrix) {
+      btnResetAuthMatrix.addEventListener('click', (e) => {
+        e.preventDefault();
+        const currentRole = this.model.getRoleMode();
+        if (currentRole !== 'MASTER') {
+          this.view.showSlideToast('Access Restricted', 'Only Master role can reset the Authorization Matrix', 'warning', 3000);
+          return;
+        }
+
+        const defaultMatrix = this.model.getDefaultAuthMatrix();
+        this.model.saveAuthMatrix(defaultMatrix);
+        this.view.renderAuthMatrixInSettings(defaultMatrix, currentRole);
+        this.view.applyDynamicAuthMatrix(defaultMatrix, currentRole);
+        this.view.showSlideToast('Matrix Reset', '🔄 Default authorization permissions restored', 'info', 2500);
+      });
+    }
+
     this._bindEnterpriseDrawerEvents();
     // 1. 3D Card Flipper Direct & Click Handlers
     const btnFlipToBack = document.getElementById('btn-flip-to-back');
@@ -6802,11 +7026,26 @@ class ProfileController {
     // Active Profile Role Dropdown Switcher (MASTER | HEALER | DEVOTEE)
     if (this.view.selectRoleMode) {
       this.view.selectRoleMode.addEventListener('change', (e) => {
-        const newRole = e.target.value;
-        this.model.setRoleMode(newRole);
-        this._renderCurrentState();
-        this.view.showToast(`Role mode switched to: ${newRole}`);
-      });
+      const newRole = e.target.value;
+      this.model.setRoleMode(newRole);
+
+      // Auto-scope and select first matching profile of this role tier
+      const roleProfiles = this.model.getVisibleProfiles();
+      if (roleProfiles && roleProfiles.length > 0) {
+        this.model.setActiveProfileId(roleProfiles[0].id);
+      }
+
+      // Apply dynamic authorization matrix visibility
+      const matrix = this.model.getAuthMatrix();
+      this.view.applyDynamicAuthMatrix(matrix, newRole);
+
+      // Apply portal styling to body
+      document.body.setAttribute('data-portal-role', newRole);
+
+      // Re-render UI state
+      this._renderCurrentState();
+      this.view.showSlideToast('Role Switched', `Viewing as ${newRole} • Profiles scoped to ${newRole}`, 'info', 2500);
+    });
     }
 
     // Admin & RBAC Settings Modal Actions

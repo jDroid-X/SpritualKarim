@@ -95,6 +95,7 @@ class ProfileController {
     const settings = this.model.settings;
     this.view.allProfiles = this.model.profiles;
     this.view.render(active, visibleProfiles, roleMode, settings);
+    this.view.applyDynamicAuthMatrix(this.model.getAuthMatrix(), roleMode);
     this._filterRemedies();
   }
 
@@ -795,7 +796,7 @@ class ProfileController {
 
           case 'nav-item-settings':
             e.preventDefault();
-            this.view.toggleSettingsModal(true);
+            this.view.toggleSettingsModal(true, this.model.getAuthMatrix(), this.model.getRoleMode());
             break;
 
           case 'nav-item-privacy':
@@ -848,6 +849,59 @@ class ProfileController {
 
 
   _bindEvents() {
+
+    // Dynamic Role Authorization Matrix Actions in Settings
+    const btnSaveAuthMatrix = document.getElementById('btn-save-auth-matrix');
+    if (btnSaveAuthMatrix) {
+      btnSaveAuthMatrix.addEventListener('click', (e) => {
+        e.preventDefault();
+        const currentRole = this.model.getRoleMode();
+        if (currentRole !== 'MASTER') {
+          this.view.showSlideToast('Access Restricted', 'Only Master role can modify the Authorization Matrix', 'warning', 3000);
+          return;
+        }
+
+        const matrix = this.model.getAuthMatrix();
+        const rows = document.querySelectorAll('#auth-matrix-tbody tr[data-item-id]');
+
+        rows.forEach(row => {
+          const itemId = row.getAttribute('data-item-id');
+          const item = matrix.find(m => m.id === itemId);
+          if (item) {
+            const roles = ['MASTER', 'HEALER', 'TRAINEE', 'DEVOTEE'];
+            roles.forEach(r => {
+              const chk = row.querySelector(`.matrix-role-check[data-role="${r}"]`);
+              if (chk) {
+                item[r] = chk.checked;
+              }
+            });
+          }
+        });
+
+        this.model.saveAuthMatrix(matrix);
+        this.view.applyDynamicAuthMatrix(matrix, currentRole);
+        this.view.showSlideToast('Matrix Updated', '🛡️ Authorization Matrix saved and applied in real-time!', 'success', 3000);
+      });
+    }
+
+    const btnResetAuthMatrix = document.getElementById('btn-reset-auth-matrix');
+    if (btnResetAuthMatrix) {
+      btnResetAuthMatrix.addEventListener('click', (e) => {
+        e.preventDefault();
+        const currentRole = this.model.getRoleMode();
+        if (currentRole !== 'MASTER') {
+          this.view.showSlideToast('Access Restricted', 'Only Master role can reset the Authorization Matrix', 'warning', 3000);
+          return;
+        }
+
+        const defaultMatrix = this.model.getDefaultAuthMatrix();
+        this.model.saveAuthMatrix(defaultMatrix);
+        this.view.renderAuthMatrixInSettings(defaultMatrix, currentRole);
+        this.view.applyDynamicAuthMatrix(defaultMatrix, currentRole);
+        this.view.showSlideToast('Matrix Reset', '🔄 Default authorization permissions restored', 'info', 2500);
+      });
+    }
+
     this._bindEnterpriseDrawerEvents();
     // 1. 3D Card Flipper Direct & Click Handlers
     const btnFlipToBack = document.getElementById('btn-flip-to-back');
@@ -1355,11 +1409,26 @@ class ProfileController {
     // Active Profile Role Dropdown Switcher (MASTER | HEALER | DEVOTEE)
     if (this.view.selectRoleMode) {
       this.view.selectRoleMode.addEventListener('change', (e) => {
-        const newRole = e.target.value;
-        this.model.setRoleMode(newRole);
-        this._renderCurrentState();
-        this.view.showToast(`Role mode switched to: ${newRole}`);
-      });
+      const newRole = e.target.value;
+      this.model.setRoleMode(newRole);
+
+      // Auto-scope and select first matching profile of this role tier
+      const roleProfiles = this.model.getVisibleProfiles();
+      if (roleProfiles && roleProfiles.length > 0) {
+        this.model.setActiveProfileId(roleProfiles[0].id);
+      }
+
+      // Apply dynamic authorization matrix visibility
+      const matrix = this.model.getAuthMatrix();
+      this.view.applyDynamicAuthMatrix(matrix, newRole);
+
+      // Apply portal styling to body
+      document.body.setAttribute('data-portal-role', newRole);
+
+      // Re-render UI state
+      this._renderCurrentState();
+      this.view.showSlideToast('Role Switched', `Viewing as ${newRole} • Profiles scoped to ${newRole}`, 'info', 2500);
+    });
     }
 
     // Admin & RBAC Settings Modal Actions
