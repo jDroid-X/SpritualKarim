@@ -679,14 +679,18 @@ ProfileView.prototype.toggleSettingsModal = function(forceState) {
 };
 
 ProfileView.prototype.toggleSharePairingModal = function(forceState) {
-    if (!this.sharePairingModal) return;
-    const isOpen = typeof forceState === 'boolean' ? forceState : !this.sharePairingModal.classList.contains('open');
+    const modal = this.sharePairingModal || document.getElementById('share-pairing-modal');
+    if (!modal) return;
+    this.sharePairingModal = modal;
+    const isOpen = typeof forceState === 'boolean' ? forceState : !modal.classList.contains('open');
     if (isOpen) {
-      this.sharePairingModal.classList.add('open');
-      this.sharePairingModal.setAttribute('aria-hidden', 'false');
+      modal.classList.add('open', 'is-open');
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden', 'false');
     } else {
-      this.sharePairingModal.classList.remove('open');
-      this.sharePairingModal.setAttribute('aria-hidden', 'true');
+      modal.classList.remove('open', 'is-open');
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
     }
 };
 

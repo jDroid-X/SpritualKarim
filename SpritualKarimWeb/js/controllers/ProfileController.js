@@ -240,6 +240,20 @@ class ProfileController {
     if (tabId === "tab-firebase-data") {
       this.view.renderFirebaseDataTable(this.model);
     }
+    if (tabId === "tab-pending-approvals") {
+      const profile = this.model.getActiveProfile();
+      this.view.renderSharePairingModal(
+        profile,
+        this.model.getPairingInvites(),
+      );
+      this.view.toggleSharePairingModal(true);
+      setTimeout(() => {
+        const target = document.querySelector(".pending-approvals-card");
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 150);
+    }
     if (tabId === "tab-genealogy-tree") {
       const activeProf = this.model.getActiveProfile();
       this.view.renderInBodyHierarchyTree(
@@ -1930,6 +1944,28 @@ class ProfileController {
 
     // Delegate click handler for Pairing actions in table
     document.addEventListener("click", (e) => {
+      // Open Share & Pair Modal
+      const btnSharePair = e.target.closest("#sidebar-btn-share-pairing, #btn-quick-share-pairing, .btn-open-share-pairing");
+      if (btnSharePair) {
+        e.preventDefault();
+        const profile = this.model.getActiveProfile();
+        this.view.renderSharePairingModal(profile, this.model.getPairingInvites());
+        this.view.toggleSharePairingModal(true);
+        return;
+      }
+
+      // Close Share & Pair Modal
+      const btnCloseShare = e.target.closest("#btn-close-share-pairing-modal, .modal-close");
+      if (btnCloseShare && btnCloseShare.closest("#share-pairing-modal")) {
+        e.preventDefault();
+        this.view.toggleSharePairingModal(false);
+        return;
+      }
+      if (e.target && e.target.id === "share-pairing-modal") {
+        this.view.toggleSharePairingModal(false);
+        return;
+      }
+
       // Approve Pairing
       const btnApprove = e.target.closest(".btn-approve-pairing");
       if (btnApprove) {

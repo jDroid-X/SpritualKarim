@@ -307,8 +307,8 @@
                     </div>
                   </div>
 
-                  <!-- 2nd Column: Reference Meta & Flip Trigger -->
-                  <div class="header-card-actions-row" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                  <!-- 2nd Column: Reference Meta & Flip Trigger (Hidden per layout update) -->
+                  <div class="header-card-actions-row" style="display: none;">
                     <button type="button" class="btn btn-xs btn-outline" id="btn-copy-header-ref-code" title="Copy 16-Digit Code" style="font-family: monospace; font-size: 0.78rem;">
                       📋 <span id="header-ref-code-text"><span id="display-ref-code">SKHM-ADM1-7788-9900</span></span><span id="display-sponsor-code" style="display:none;">ROOT-0000-0000-0000</span>
                     </button>
@@ -317,13 +317,26 @@
                     </button>
                   </div>
 
-                  <!-- 3rd Column: Top Right Genealogy Tab -->
-                  <div class="header-col-genealogy-tab">
-                    <button type="button" class="main-tab-btn header-genealogy-tab-btn" data-main-tab="tab-genealogy-tree" id="main-tab-tree-btn" title="Open Organization Hierarchy &amp; Genealogy Spiderweb Tree">
+                  <!-- Right Column: Genealogy Tab on Top, Pending Approval Tab Below -->
+                  <div class="header-right-tabs-stack" style="display: flex; flex-direction: column; gap: 0.45rem; align-items: flex-end; margin-left: auto;">
+                    <!-- Genealogy Tree Tab Button -->
+                    <button type="button" class="main-tab-btn header-genealogy-tab-btn" data-main-tab="tab-genealogy-tree" id="main-tab-tree-btn" title="Open Organization Hierarchy &amp; Genealogy Spiderweb Tree" style="min-width: 220px; justify-content: flex-start;">
                       <span class="tab-icon">🌳</span>
                       <div class="tab-label-wrap">
                         <span class="tab-main-title">Genealogy Tree</span>
                         <span class="tab-sub-title">Visual MLM &bull; Spiderweb Canvas</span>
+                      </div>
+                    </button>
+
+                    <!-- Pending Approval Tab Button with Dynamic Count -->
+                    <button type="button" class="main-tab-btn header-approval-tab-btn" data-main-tab="tab-pending-approvals" id="main-tab-approval-btn" title="Review &amp; Approve Pending Devotee Applicants" style="min-width: 220px; justify-content: flex-start;">
+                      <span class="tab-icon">⏳</span>
+                      <div class="tab-label-wrap" style="width: 100%;">
+                        <div class="tab-main-title" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                          <span>Pending Approval</span>
+                          <span class="badge-count" id="header-pending-approval-count" style="display: inline-block; background: #eab308; color: #000; font-weight: 800; border-radius: 999px; padding: 0.1rem 0.55rem; font-size: 0.75rem; margin-left: 0.4rem;">0</span>
+                        </div>
+                        <span class="tab-sub-title">Seeker Queue &bull; 24h Verification</span>
                       </div>
                     </button>
                   </div>
@@ -2216,7 +2229,7 @@
   </div>
 
   <!-- Share & Invite Seeker Modal (24-Hour Protocol & Multi-Channel) -->
-  <div id="share-pairing-modal" class="admin-modal-overlay">
+  <div id="share-pairing-modal" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none;">
     <div class="admin-modal-dialog modal-lg">
       <div class="modal-header">
         <div class="modal-header-title">

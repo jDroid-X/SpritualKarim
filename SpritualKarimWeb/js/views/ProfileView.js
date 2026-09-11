@@ -204,9 +204,17 @@ class ProfileView {
       startY: 0,
       layoutMode: "cluster",
     };
+    this.sharePairingModal = document.getElementById("share-pairing-modal");
     this.sharePairingModalBody = document.getElementById(
       "share-pairing-modal-body",
     );
+    this.btnCloseSharePairingModal = document.getElementById(
+      "btn-close-share-pairing-modal",
+    );
+    this.headerPendingApprovalCount = document.getElementById(
+      "header-pending-approval-count",
+    );
+    this.mainTabApprovalBtn = document.getElementById("main-tab-approval-btn");
 
     // Settings Modal Elements & Controls
     this.btnAdminSettings =
@@ -583,7 +591,7 @@ class ProfileView {
                       </div>
                     </div>
                   </div>
-                  <div class="header-card-actions-row" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                  <div class="header-card-actions-row" style="display: none;">
                     <button type="button" class="btn btn-xs btn-outline" id="btn-copy-header-ref-code" title="Copy 16-Digit Code" style="font-family: monospace; font-size: 0.78rem;">
                       📋 <span id="header-ref-code-text">${profile.referenceCode || "SKHM-XXXX-XXXX-XXXX"}</span>
                     </button>
@@ -592,13 +600,24 @@ class ProfileView {
                     </button>
                   </div>
 
-                  <!-- 3rd Column: Top Right Genealogy Tab Button -->
-                  <div class="header-col-genealogy-tab">
-                    <button type="button" class="main-tab-btn header-genealogy-tab-btn" data-main-tab="tab-genealogy-tree" id="main-tab-tree-btn" title="Open Organization Hierarchy &amp; Genealogy Spiderweb Tree">
+                  <!-- Right Column: Genealogy Tab on Top, Pending Approval Tab Below -->
+                  <div class="header-right-tabs-stack" style="display: flex; flex-direction: column; gap: 0.45rem; align-items: flex-end; margin-left: auto;">
+                    <button type="button" class="main-tab-btn header-genealogy-tab-btn" data-main-tab="tab-genealogy-tree" id="main-tab-tree-btn" title="Open Organization Hierarchy &amp; Genealogy Spiderweb Tree" style="min-width: 220px; justify-content: flex-start;">
                       <span class="tab-icon">🌳</span>
                       <div class="tab-label-wrap">
                         <span class="tab-main-title">Genealogy Tree</span>
                         <span class="tab-sub-title">Visual MLM &bull; Spiderweb Canvas</span>
+                      </div>
+                    </button>
+
+                    <button type="button" class="main-tab-btn header-approval-tab-btn" data-main-tab="tab-pending-approvals" id="main-tab-approval-btn" title="Review &amp; Approve Pending Devotee Applicants" style="min-width: 220px; justify-content: flex-start;">
+                      <span class="tab-icon">⏳</span>
+                      <div class="tab-label-wrap" style="width: 100%;">
+                        <div class="tab-main-title" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                          <span>Pending Approval</span>
+                          <span class="badge-count" id="header-pending-approval-count" style="display: inline-block; background: #eab308; color: #000; font-weight: 800; border-radius: 999px; padding: 0.1rem 0.55rem; font-size: 0.75rem; margin-left: 0.4rem;">0</span>
+                        </div>
+                        <span class="tab-sub-title">Seeker Queue &bull; 24h Verification</span>
                       </div>
                     </button>
                   </div>
@@ -1648,17 +1667,21 @@ class ProfileView {
   }
 
   toggleSharePairingModal(forceState) {
-    const modal = document.getElementById("share-pairing-modal");
+    const modal =
+      this.sharePairingModal || document.getElementById("share-pairing-modal");
     if (!modal) return;
+    this.sharePairingModal = modal;
     const isOpen =
       typeof forceState === "boolean"
         ? forceState
         : !modal.classList.contains("open");
     if (isOpen) {
       modal.classList.add("open", "is-open");
+      modal.style.display = "flex";
       modal.setAttribute("aria-hidden", "false");
     } else {
       modal.classList.remove("open", "is-open");
+      modal.style.display = "none";
       modal.setAttribute("aria-hidden", "true");
     }
   }
@@ -1681,12 +1704,15 @@ class ProfileView {
     const apkDownloadUrl =
       "https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk";
     const repoUrl = "https://github.com/jDroid-X/SpritualKarim";
+    const origin = window.location.origin || "";
+    const pathPrefix = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+    const joinUrl = `${origin}${pathPrefix}/join.html?sponsor=${encodeURIComponent(sponsorCode)}`;
     const webPortalUrl =
       "https://jdroid-x.github.io/SpritualKarim/SpritualKarimWeb/";
     const telegramBotHandle = "SpiritualKarimBot";
     const telegramLink = `https://t.me/${telegramBotHandle}?start=pair_${cleanCode}_${activePin}`;
 
-    const payloadText = `🕉️SPIRITUAL KARIM ? SACRED LINEAGE PAIRING INVITE
+    const payloadText = `🕉️ SPIRITUAL KARIM • SACRED LINEAGE PAIRING INVITE
 
 Mentor: ${profile.name || "Karim Ji"} (Level ${profile.level || 1})
 16-Digit Reference Code: ${sponsorCode}
@@ -1694,24 +1720,44 @@ Mentor: ${profile.name || "Karim Ji"} (Level ${profile.level || 1})
 Connection Type: Downline Member (Level-Down Seekers & Trainees)
 Assigned Role: Devotee (Personal & Lineage Sadhana)
 
-Verification Method: Mobile Number OTP & Telegram Bot
+Direct Induction Link: ${joinUrl}
 Activation Pairing PIN: ${activePin}
 Telegram Bot Pairing: ${telegramLink}
 
-⌛ Link Validity: Valid for 24 Hours only (Upline approval required). Multiple resends allowed.
+⌛ Link Validity: Valid for 24 Hours only (Upline approval required).
 📦 Direct Release APK: ${apkDownloadUrl}
 🌐 Online Web Portal: ${webPortalUrl}
 🌐 GitHub Repository & Updates: ${repoUrl}
 
 Installation & Activation Steps:
-1. Download and install the Spiritual Karim Android App or open the Web Portal link.
-2. Enter the 16-Digit Sponsor Reference Code (${sponsorCode}) and 6-Digit Activation PIN (${activePin}).
+1. Open the Direct Induction Link: ${joinUrl}
+2. Your sponsor code (${sponsorCode}) is automatically filled.
 3. Once validated, your upline mentor confirms activation to begin real-time lineage synchronization!`;
 
     const encodedPayload = encodeURIComponent(payloadText);
     const encodedApk = encodeURIComponent(apkDownloadUrl);
 
     body.innerHTML = `
+      <!-- Prominent Direct Devotee Registration Link (Click to Copy & Add Profiles) -->
+      <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(212, 175, 55, 0.12)); border: 1.5px solid #10b981; border-radius: 0.65rem; padding: 0.9rem 1.15rem; margin-bottom: 1rem; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="font-size: 0.82rem; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.4rem;">
+            <span>🔗</span> Direct Devotee Registration &amp; Onboarding Link
+          </span>
+          <span style="font-size: 0.72rem; color: var(--gold-400); font-weight: 600;">Auto-fills Sponsor ${sponsorCode}</span>
+        </div>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0 0 0.5rem 0;">Share this link to onboard new Devotees, Seekers, or Trainees into your downline:</p>
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <input type="text" id="input-direct-devotee-link" readonly value="${joinUrl}" style="flex: 1; min-width: 240px; font-family: var(--font-mono, monospace); font-size: 0.8rem; padding: 0.5rem 0.75rem; background: rgba(0,0,0,0.35); border: 1px solid var(--border-color); border-radius: 4px; color: #f0fdf4;">
+          <button type="button" class="btn btn-sm btn-gold" id="btn-copy-direct-devotee-link" data-link="${joinUrl}" title="Copy Direct Registration Link to Clipboard" style="font-weight: 700; display: flex; align-items: center; gap: 0.35rem; white-space: nowrap; padding: 0.5rem 0.9rem;">
+            📋 Copy Link
+          </button>
+          <a href="${joinUrl}" target="_blank" class="btn btn-sm btn-outline" title="Open Registration Page in New Tab" style="display: flex; align-items: center; gap: 0.35rem; white-space: nowrap; text-decoration: none; padding: 0.5rem 0.8rem;">
+            🚀 Open Page
+          </a>
+        </div>
+      </div>
+
       <!-- 1. Source Code Display Banner (Matching Android App Surface) -->
       <div style="background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 0.65rem; padding: 0.85rem 1.15rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
         <div>
@@ -1832,6 +1878,22 @@ Installation & Activation Steps:
     `;
 
     this.renderPendingApprovalsRows(invites);
+
+    const copyDirectLinkBtn = body.querySelector("#btn-copy-direct-devotee-link");
+    if (copyDirectLinkBtn) {
+      copyDirectLinkBtn.addEventListener("click", () => {
+        const link = copyDirectLinkBtn.getAttribute("data-link") || "";
+        if (navigator.clipboard && link) {
+          navigator.clipboard.writeText(link).then(() => {
+            this.showToast("✓ Copied Devotee Registration Link to clipboard!", "success");
+          }).catch(() => {
+            const input = body.querySelector("#input-direct-devotee-link");
+            if (input) { input.select(); document.execCommand("copy"); }
+            this.showToast("✓ Copied Devotee Registration Link to clipboard!", "success");
+          });
+        }
+      });
+    }
 
     const copyBtn = body.querySelector("#btn-copy-pairing-payload");
     if (copyBtn) {
@@ -2259,16 +2321,29 @@ Installation & Activation Steps:
     );
     const count = pendingList.length;
 
+    const headerCount =
+      this.headerPendingApprovalCount ||
+      document.getElementById("header-pending-approval-count");
+    if (headerCount) {
+      headerCount.textContent = count;
+      headerCount.style.background = count > 0 ? "#eab308" : "rgba(255, 255, 255, 0.15)";
+      headerCount.style.color = count > 0 ? "#000000" : "var(--text-muted)";
+    }
+
     if (isMentor && count > 0) {
-      this.pendingApprovalBanner.style.display = "inline-flex";
-      if (this.approvalNotificationText) {
-        this.approvalNotificationText.textContent = `${count} Devotee Application${count > 1 ? "s" : ""} Pending Approval`;
-      }
-      if (this.approvalNotificationCount) {
-        this.approvalNotificationCount.textContent = count;
+      if (this.pendingApprovalBanner) {
+        this.pendingApprovalBanner.style.display = "inline-flex";
+        if (this.approvalNotificationText) {
+          this.approvalNotificationText.textContent = `${count} Devotee Application${count > 1 ? "s" : ""} Pending Approval`;
+        }
+        if (this.approvalNotificationCount) {
+          this.approvalNotificationCount.textContent = count;
+        }
       }
     } else {
-      this.pendingApprovalBanner.style.display = "none";
+      if (this.pendingApprovalBanner) {
+        this.pendingApprovalBanner.style.display = "none";
+      }
     }
   }
 
