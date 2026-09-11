@@ -1,0 +1,284 @@
+{
+  "profiles": {
+    "prof_master_karim": {
+      "id": "prof_master_karim",
+      "referenceCode": "SKHM-ADM1-7788-9900",
+      "name": "Karim Ji (Founder)",
+      "profileType": "ADMIN",
+      "level": 1,
+      "categoryTag": "Spiritual Cleansing & Guidance",
+      "referredByCode": "ROOT-0000-0000-0000",
+      "phone": "+91 98765 43210",
+      "email": "master@spiritualkarim.org",
+      "city": "Mumbai, Maharashtra",
+      "address": "Sansthan Central Ashram, Malabar Hill",
+      "notes": "Founder Master Guide and Chief Spiritual Preceptor",
+      "isActive": true,
+      "paymentStatus": "PAID",
+      "joinDate": "2024-01-01",
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Karim Ji",
+          "selfTitle": "Founder & Master Guide",
+          "spouseName": "Sadhvi Ji",
+          "children": []
+        }
+      },
+      "houseCleanLogs": [
+        {
+          "auditId": "hcl_init_001",
+          "level": 1,
+          "score": 95,
+          "mentorSignature": "SKHM-ADM1-7788-9900",
+          "timestamp": 1704067200000,
+          "notes": "Initial purification audit verified"
+        }
+      ],
+      "dailyDiyaLogs": [
+        {
+          "logId": "ddl_init_001",
+          "date": "2026-09-11",
+          "streakCount": 254,
+          "oilTypes": ["Cow Ghee", "Til Oil"],
+          "timestamp": 1789128000000
+        }
+      ],
+      "inProgressSadhanas": [
+        {
+          "sadhanaId": "sri_yantra",
+          "title": "Sri Yantra Maha Sadhana",
+          "category": "Wealth & Divine Harmony",
+          "startDate": "2026-01-01",
+          "targetDays": 41,
+          "completedDays": 41,
+          "status": "COMPLETED"
+        }
+      ]
+    },
+    "prof_healer_anand": {
+      "id": "prof_healer_anand",
+      "referenceCode": "SKHM-HLR2-1122-3344",
+      "name": "Anand Mohan Sharma",
+      "profileType": "HEALER",
+      "level": 2,
+      "categoryTag": "Energy Alignment",
+      "referredByCode": "SKHM-ADM1-7788-9900",
+      "phone": "+91 98234 56789",
+      "email": "anand.healer@spiritualkarim.org",
+      "city": "Pune, Maharashtra",
+      "address": "Koregaon Park Ashram Branch",
+      "notes": "Senior Healer guiding Pune Devotee Circle",
+      "isActive": true,
+      "paymentStatus": "PAID",
+      "joinDate": "2024-03-15",
+      "houseCleanLogs": [],
+      "dailyDiyaLogs": [],
+      "inProgressSadhanas": []
+    },
+    "prof_trainee_radha": {
+      "id": "prof_trainee_radha",
+      "referenceCode": "SKHM-TRN4-5566-7788",
+      "name": "Radha Devi",
+      "profileType": "TRAINEE",
+      "level": 4,
+      "categoryTag": "Sadhana Mentorship",
+      "referredByCode": "SKHM-HLR2-1122-3344",
+      "phone": "+91 91234 56780",
+      "email": "radha.trainee@spiritualkarim.org",
+      "city": "Ahmedabad, Gujarat",
+      "address": "Navrangpura Spiritual Center",
+      "notes": "Mentorship Trainee assisting seekers",
+      "isActive": true,
+      "paymentStatus": "PAID",
+      "joinDate": "2024-06-10",
+      "houseCleanLogs": [],
+      "dailyDiyaLogs": [],
+      "inProgressSadhanas": []
+    },
+    "prof_devotee_suresh": {
+      "id": "prof_devotee_suresh",
+      "referenceCode": "SKHM-DEV5-9988-1122",
+      "name": "Suresh Patel",
+      "profileType": "DEVOTEE",
+      "level": 5,
+      "categoryTag": "Family Harmony",
+      "referredByCode": "SKHM-TRN4-5566-7788",
+      "phone": "+91 99887 76655",
+      "email": "suresh.patel@gmail.com",
+      "city": "Surat, Gujarat",
+      "address": "Ring Road Residential Complex",
+      "notes": "Active Devotee Seeker",
+      "isActive": true,
+      "paymentStatus": "PAID",
+      "joinDate": "2024-08-20",
+      "houseCleanLogs": [],
+      "dailyDiyaLogs": [],
+      "inProgressSadhanas": []
+    }
+  },
+  "pairing_invites": {
+    "pair_token_778899": {
+      "token": "pair_token_778899",
+      "pin": "778899",
+      "sponsorCode": "SKHM-ADM1-7788-9900",
+      "targetDevoteeId": "prof_devotee_suresh",
+      "status": "APPROVED",
+      "expiresAt": 1789214400000,
+      "createdAt": 1789128000000
+    }
+  },
+  "sadhana_catalog": {
+    "sri_yantra": {
+      "id": "sri_yantra",
+      "icon": "🔯",
+      "title": "Sri Yantra Maha Sadhana",
+      "category": "Prosperity & Harmony",
+      "levelScope": "Universal (All Tiers)",
+      "targetDays": 41,
+      "timing": "Brahma Muhurta (04:00 – 06:00 AM)",
+      "aasanDirection": "East / North Facing (Yellow Silk Aasan)",
+      "ingredients": "Cow Ghee Diya, Lotus Seed Mala, Pure Gangajal",
+      "benefits": "Purification of home vastu, abundance, inner peace",
+      "mantra": "ॐ श्रीं ह्रीं क्लीं ग्लौं गं गणपतये वर वरद सर्वजनं मे वशमानय स्वाहा ॥"
+    },
+    "maha_mrityunjaya": {
+      "id": "maha_mrityunjaya",
+      "icon": "🔱",
+      "title": "Maha Mrityunjaya Anushthan",
+      "category": "Health & Vitality Protection",
+      "levelScope": "Healers & Trainees",
+      "targetDays": 21,
+      "timing": "Pradosh Sandhya (06:00 – 07:30 PM)",
+      "aasanDirection": "North Facing (Kusha Aasan)",
+      "ingredients": "Rudraksha Mala, Bilva Leaves, Vibhuti",
+      "benefits": "Protection from afflictions, vital longevity",
+      "mantra": "ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् । उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात् ॥"
+    },
+    "navarna_chandi": {
+      "id": "navarna_chandi",
+      "icon": "⚔️",
+      "title": "Navarna Chandi Kavach",
+      "category": "Spiritual Shield & Cleansing",
+      "levelScope": "Healers & Masters",
+      "targetDays": 9,
+      "timing": "Midnight Sandhya (11:30 PM – 01:00 AM)",
+      "aasanDirection": "North-East (Red Wool Aasan)",
+      "ingredients": "Chandi Yantra, Red Sandalwood Mala, Kumkum",
+      "benefits": "Total psychic shield, removal of negative astral cords",
+      "mantra": "ॐ ऐं ह्रीं क्लीं चामुण्डायै विच्चे ॥"
+    }
+  },
+  "device_telemetry": {
+    "node_tele_001": {
+      "deviceId": "node_tele_001",
+      "profileId": "prof_master_karim",
+      "nodeReference": "SKHM-ADM1-7788-9900",
+      "heartbeat": 1789128000000,
+      "batteryLevel": 98,
+      "osVersion": "Android 14 (API 34)",
+      "gpsSpoofDetected": false,
+      "airplaneModeDetected": false,
+      "cloudSyncState": "SYNCED"
+    }
+  },
+  "system_config": {
+    "appName": "Spiritual Karim Admin",
+    "orgName": "Shree Spritual Karim Sansthan",
+    "firebaseUrl": "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/",
+    "defaultMentorCode": "SKHM-ADM1-7788-9900",
+    "defaultMentorName": "Karim Ji (Founder)",
+    "rootSponsorCode": "ROOT-0000-0000-0000",
+    "cleanMinApprovalPercent": 75,
+    "pairingInviteTimeoutHours": 24,
+    "maxUploadSizeBytes": 5242880,
+    "otpCooldownSeconds": 60,
+    "otpMaxAttempts": 3,
+    "autoSaveMode": "INSTANT",
+    "defaultRoleMode": "MASTER",
+    "speechLang": "en-US"
+  },
+  "lineage_graph": {
+    "SKHM-ADM1-7788-9900": {
+      "code": "SKHM-ADM1-7788-9900",
+      "name": "Karim Ji (Founder)",
+      "parentCode": "ROOT",
+      "depth": 1,
+      "downline": ["SKHM-HLR2-1122-3344"]
+    },
+    "SKHM-HLR2-1122-3344": {
+      "code": "SKHM-HLR2-1122-3344",
+      "name": "Anand Mohan Sharma",
+      "parentCode": "SKHM-ADM1-7788-9900",
+      "depth": 2,
+      "downline": ["SKHM-TRN4-5566-7788"]
+    },
+    "SKHM-TRN4-5566-7788": {
+      "code": "SKHM-TRN4-5566-7788",
+      "name": "Radha Devi",
+      "parentCode": "SKHM-HLR2-1122-3344",
+      "depth": 3,
+      "downline": ["SKHM-DEV5-9988-1122"]
+    },
+    "SKHM-DEV5-9988-1122": {
+      "code": "SKHM-DEV5-9988-1122",
+      "name": "Suresh Patel",
+      "parentCode": "SKHM-TRN4-5566-7788",
+      "depth": 4,
+      "downline": []
+    }
+  },
+  "house_clean_logs": [
+    {
+      "auditId": "hcl_init_001",
+      "devoteeId": "prof_master_karim",
+      "level": 1,
+      "score": 95,
+      "mentorSignature": "SKHM-ADM1-7788-9900",
+      "timestamp": 1704067200000,
+      "notes": "Verified initial baseline spiritual purification."
+    }
+  ],
+  "daily_diya_logs": [
+    {
+      "logId": "ddl_init_001",
+      "devoteeId": "prof_master_karim",
+      "date": "2026-09-11",
+      "streakCount": 254,
+      "oilTypes": ["Cow Ghee"],
+      "timestamp": 1789128000000
+    }
+  ],
+  "audit_logs": [
+    {
+      "auditId": "aud_001",
+      "action": "SYSTEM_INITIALIZATION",
+      "actorId": "prof_master_karim",
+      "targetId": "system_config",
+      "timestamp": 1789128000000,
+      "isoTime": "2026-09-11T12:00:00Z"
+    }
+  ],
+  "appeals": {},
+  "authorisedNodes": {
+    "SKHM-ADM1-7788-9900": {
+      "nodeCode": "SKHM-ADM1-7788-9900",
+      "role": "ADMIN",
+      "active": true
+    },
+    "SKHM-HLR2-1122-3344": {
+      "nodeCode": "SKHM-HLR2-1122-3344",
+      "role": "HEALER",
+      "active": true
+    },
+    "SKHM-TRN4-5566-7788": {
+      "nodeCode": "SKHM-TRN4-5566-7788",
+      "role": "TRAINEE",
+      "active": true
+    },
+    "SKHM-DEV5-9988-1122": {
+      "nodeCode": "SKHM-DEV5-9988-1122",
+      "role": "DEVOTEE",
+      "active": true
+    }
+  }
+}

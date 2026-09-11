@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shree Spritual Karim Sansthan - Universal Transactional Lifecycle</title>
+<meta name="description" content="Universal Transactional Lifecycle - One Lifecycle. Every Spiritual Object. Shree Spritual Karim Sansthan Web Platform.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cinzel:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#fff;color:#111827;font-size:14px}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,#1a1a2e 0%,#2d1b69 60%,#1a3a5c 100%);color:#fff;text-align:center;padding:1.1rem 1.5rem .9rem;position:relative}
+.hdr::after{content:'';display:block;position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#d4af37,#f59e0b,#d4af37)}
+.hdr-om{font-size:1.5rem;opacity:.6;margin-bottom:.15rem}
+.hdr-org{font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.7;margin-bottom:.2rem}
+.hdr-title{font-family:'Cinzel',serif;font-size:1.5rem;font-weight:800;color:#f0ebe0;letter-spacing:.3px}
+.hdr-tag{font-size:.72rem;color:rgba(240,235,224,.65);margin-top:.2rem;font-style:italic}
+.hdr-sub{font-size:.63rem;color:rgba(240,235,224,.5);margin-top:.15rem}
+
+/* ── MAIN LAYOUT ── */
+.page{display:grid;grid-template-columns:165px 1fr 165px;gap:.85rem;padding:1rem 1.1rem;min-height:calc(100vh - 120px)}
+
+/* ── SIDEBAR ── */
+.sidebar{display:flex;flex-direction:column;gap:.65rem}
+.scard{background:#fff;border:1.5px solid #e5e7eb;border-radius:.6rem;padding:.65rem .7rem;position:relative;overflow:hidden}
+.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sc-blue::before{background:#2563eb}.sc-amber::before{background:#d97706}.sc-purple::before{background:#7c3aed}.sc-green::before{background:#059669}
+.sc-teal::before{background:#0891b2}.sc-red::before{background:#dc2626}.sc-pink::before{background:#be185d}.sc-slate::before{background:#475569}
+.sc-hdr{display:flex;align-items:center;gap:.4rem;margin-bottom:.45rem}
+.sc-ico{font-size:1.05rem;flex-shrink:0}
+.sc-title{font-size:.63rem;font-weight:800;color:#111827;line-height:1.2;flex:1}
+.sc-badge{font-size:.48rem;font-weight:700;padding:.08rem .3rem;border-radius:.2rem;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.bg-blue{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.bg-amber{background:#fffbeb;color:#d97706;border:1px solid #fde68a}
+.bg-purple{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.bg-green{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
+.bg-teal{background:#ecfeff;color:#0891b2;border:1px solid #a5f3fc}
+.bg-red{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.bg-pink{background:#fdf2f8;color:#be185d;border:1px solid #fbcfe8}
+.bg-slate{background:#f8fafc;color:#475569;border:1px solid #e2e8f0}
+.sc-desc{font-size:.56rem;color:#6b7280;line-height:1.6;margin-bottom:.35rem}
+.sc-list{list-style:none;padding:0;font-size:.55rem;color:#374151;line-height:1.65}
+.sc-list li{display:flex;align-items:flex-start;gap:.3rem;padding-left:.1rem}
+.sc-list li::before{content:'•';font-size:.55rem;margin-top:.1rem;flex-shrink:0}
+.sc-blue .sc-list li::before{color:#2563eb}
+.sc-amber .sc-list li::before{color:#d97706}
+.sc-purple .sc-list li::before{color:#7c3aed}
+.sc-green .sc-list li::before{color:#059669}
+.sc-teal .sc-list li::before{color:#0891b2}
+.sc-red .sc-list li::before{color:#dc2626}
+.sc-pink .sc-list li::before{color:#be185d}
+.sc-slate .sc-list li::before{color:#475569}
+.sc-tag{display:inline-block;font-size:.5rem;font-weight:700;padding:.08rem .3rem;border-radius:.2rem;margin:.1rem .08rem 0;border:1px solid}
+
+/* ── CENTER COLUMN ── */
+.center{display:flex;flex-direction:column;gap:.85rem}
+.lc-banner{background:linear-gradient(135deg,#f0f9ff,#eff6ff);border:1.5px solid #bfdbfe;border-radius:.7rem;padding:.55rem .85rem;text-align:center}
+.lc-banner h2{font-size:.78rem;font-weight:800;color:#1e40af;letter-spacing:.3px;text-transform:uppercase}
+.lc-banner p{font-size:.6rem;color:#3b82f6;margin-top:.15rem}
+
+/* ── STEPS GRID ── */
+.steps-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.step{background:#fff;border:1.5px solid #e5e7eb;border-radius:.65rem;padding:.65rem .7rem;position:relative;transition:all .15s;cursor:default}
+.step:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.09)}
+.step-hdr{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:#fff;flex-shrink:0;font-family:'Cinzel',serif}
+.step-ico{font-size:1.1rem;flex-shrink:0}
+.step-title{font-size:.66rem;font-weight:800;color:#111827;line-height:1.2}
+.step-status{font-size:.48rem;font-weight:700;padding:.1rem .3rem;border-radius:.2rem;margin-left:auto;text-transform:uppercase;white-space:nowrap;letter-spacing:.04em;flex-shrink:0}
+.step-body{font-size:.55rem;color:#6b7280;line-height:1.6;margin-bottom:.35rem}
+.step-attrs{list-style:none;padding:0;font-size:.56rem;color:#374151;line-height:1.65}
+.step-attrs li::before{content:'→ ';font-size:.5rem}
+/* step colour themes */
+.s1{border-top:3px solid #2563eb}.s1 .step-num{background:#2563eb}.s1 .step-attrs li::before,.s1 .step-title{color:#2563eb}
+.s2{border-top:3px solid #7c3aed}.s2 .step-num{background:#7c3aed}.s2 .step-attrs li::before,.s2 .step-title{color:#7c3aed}
+.s3{border-top:3px solid #0891b2}.s3 .step-num{background:#0891b2}.s3 .step-attrs li::before,.s3 .step-title{color:#0891b2}
+.s4{border-top:3px solid #d97706}.s4 .step-num{background:#d97706}.s4 .step-attrs li::before,.s4 .step-title{color:#d97706}
+.s5{border-top:3px solid #059669}.s5 .step-num{background:#059669}.s5 .step-attrs li::before,.s5 .step-title{color:#059669}
+.s6{border-top:3px solid #be185d}.s6 .step-num{background:#be185d}.s6 .step-attrs li::before,.s6 .step-title{color:#be185d}
+.s7{border-top:3px solid #6366f1}.s7 .step-num{background:#6366f1}.s7 .step-attrs li::before,.s7 .step-title{color:#6366f1}
+.s8{border-top:3px solid #dc2626}.s8 .step-num{background:#dc2626}.s8 .step-attrs li::before,.s8 .step-title{color:#dc2626}
+.s9{border-top:3px solid #475569}.s9 .step-num{background:#475569}.s9 .step-attrs li::before,.s9 .step-title{color:#475569}
+.s10{border-top:3px solid #d4af37}.s10 .step-num{background:linear-gradient(135deg,#d4af37,#b8960c)}.s10 .step-attrs li::before,.s10 .step-title{color:#b8960c}
+
+/* ── WHY POWERFUL BANNER ── */
+.why-bar{background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:.65rem;padding:.75rem 1rem;color:#fff;margin-top:.25rem}
+.why-title{font-size:.65rem;font-weight:800;color:#fbbf24;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.55rem;display:flex;align-items:center;gap:.5rem}
+.why-title::after{content:'';flex:1;height:1px;background:rgba(251,191,36,.25)}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.why-item{display:flex;align-items:flex-start;gap:.4rem;font-size:.56rem;color:#cbd5e1;line-height:1.5}
+.why-ico{font-size:.9rem;flex-shrink:0;margin-top:.08rem}
+
+/* ── EXAMPLES BAR ── */
+.ex-bar{background:#f8fafc;border:1.5px solid #e5e7eb;border-radius:.65rem;padding:.65rem 1rem;margin-top:.25rem}
+.ex-title{font-size:.6rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+.ex-grid{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center}
+.ex-obj{display:flex;align-items:center;gap:.3rem;background:#fff;border:1.5px solid #e5e7eb;border-radius:.45rem;padding:.35rem .6rem;font-size:.58rem;font-weight:600;color:#374151;transition:all .15s;cursor:default}
+.ex-obj:hover{border-color:#6366f1;color:#6366f1;background:#f5f3ff;transform:translateY(-1px)}
+.ex-ico{font-size:1rem}
+.ex-lbl{line-height:1.2;font-size:.55rem;font-weight:700}
+.ex-sub{font-size:.48rem;color:#9ca3af;font-weight:400}
+
+/* ── ACTION BAR ── */
+.ab{position:fixed;bottom:1.25rem;right:1.25rem;display:flex;flex-direction:column;gap:.4rem;z-index:100}
+.abn{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;font-size:.72rem;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.18);transition:all .18s;display:flex;align-items:center;justify-content:center}
+.abn:hover{transform:scale(1.1)}
+.abpr{background:linear-gradient(135deg,#d4af37,#b8960c);color:#fff}
+.abtp{background:#1e293b;color:#fbbf24;border:1px solid #d4af37}
+@media print{.ab{display:none}body{background:#fff;-webkit-print-color-adjust:exact}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-om">&#2384;</div>
+  <div class="hdr-org">Shree Spritual Karim Sansthan &mdash; Platform</div>
+  <div class="hdr-title">UNIVERSAL TRANSACTIONAL LIFECYCLE</div>
+  <div class="hdr-tag">One Lifecycle. Every Spiritual Business Object.</div>
+  <div class="hdr-sub">Works for all platform objects: Profile, Sadhana, House Clean, Pairing Invite, Remedy, Lineage, Healer Certification, Firebase Node</div>
+</div>
+
+<!-- ARCHITECTURE SUITE NAVIGATION -->
+<div style="background:#ffffff; border-bottom:1px solid #e2e8f0; padding:0.65rem 1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; position:sticky; top:0; z-index:100; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+  <div style="display:flex; gap:0.45rem; align-items:center; flex-wrap:wrap;">
+    <span style="font-size:0.72rem; font-weight:700; color:#64748b; margin-right:0.25rem;">ARCHITECTURE SUITE:</span>
+    <a href="platform-overview.html" style="font-size:0.73rem; font-weight:600; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">① Platform Overview</a>
+    <a href="workflow-architecture.html" style="font-size:0.73rem; font-weight:600; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">② Business Objects</a>
+    <a href="transaction-lifecycle.html" style="font-size:0.73rem; font-weight:700; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe;">③ Universal Lifecycle</a>
+    <a href="devotee-registration-workflow.html" style="font-size:0.73rem; font-weight:600; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">④ Devotee Flowchart (HITL)</a>
+    <a href="devotee-registration-workflow1.html" style="font-size:0.73rem; font-weight:600; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">⑤ Devotee Stages (Original)</a>
+    <a href="data-structure-workflow.html" style="font-size:0.73rem; font-weight:600; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">⑥ Data Structure &amp; Hierarchy</a>
+  </div>
+  <button onclick="window.print()" style="font-size:0.73rem; font-weight:700; padding:0.35rem 0.8rem; border-radius:0.4rem; border:1px solid #2563eb; background:#2563eb; color:#ffffff; cursor:pointer;">🖨️ Print / Save PDF</button>
+</div>
+
+<!-- MAIN 3-COLUMN LAYOUT -->
+<div class="page">
+
+  <!-- ── LEFT SIDEBAR ── -->
+  <div class="sidebar">
+
+    <div class="scard sc-blue">
+      <div class="sc-hdr">
+        <div class="sc-ico">&#128196;</div>
+        <div class="sc-title">Profile Documents</div>
+        <div class="sc-badge bg-blue">Forms</div>
+      </div>
+      <div class="sc-desc">Manage, version, and store all registration and lineage documents throughout the lifecycle.</div>
+      <ul class="sc-list">
+        <li>join.html 5-Step Form</li>
+        <li>Devotee Induction Form</li>
+        <li>Ancestral Lineage Records</li>
+        <li>House Clean Verification</li>
+        <li>Sadhana Commitment Docs</li>
+        <li>Goli Gyan Consent</li>
+        <li>Export JSON Profile</li>
+        <li>Pairing Invite Document</li>
+      </ul>
+    </div>
+
+    <div class="scard sc-amber">
+      <div class="sc-hdr">
+        <div class="sc-ico">&#128276;</div>
+        <div class="sc-title">Notifications &amp; Alerts</div>
+        <div class="sc-badge bg-amber">Live</div>
+      </div>
+      <div class="sc-desc">Real-time alerts and notifications at every stage of the spiritual lifecycle.</div>
+      <ul class="sc-list">
+        <li>Pending Approval Bell</li>
+        <li>24h PIN Expiry Alert</li>
+        <li>Duplicate Profile Warning</li>
+        <li>Firebase Sync Status</li>
+        <li>Power-Loss Detection</li>
+        <li>Session Timeout (25m warn)</li>
+        <li>Telegram Bot Alerts</li>
+        <li>Pending Count Badge</li>
+      </ul>
+    </div>
+
+    <div class="scard sc-purple">
+      <div class="sc-hdr">
+        <div class="sc-ico">&#128737;</div>
+        <div class="sc-title">RBAC &amp; SLA Config</div>
+        <div class="sc-badge bg-purple">RBAC</div>
+      </div>
+      <div class="sc-desc">Define SLA rules, RBAC policies, and role-based visibility across all 5 portals.</div>
+      <ul class="sc-list">
+        <li>74+ Screen Element Rules</li>
+        <li>SLA: 24h Pairing Approval</li>
+        <li>SLA: 30m Session Timeout</li>
+        <li>sk_auth_matrix_v5</li>
+        <li>Cross-Tab Live Policy Sync</li>
+        <li>Category Collapse Groups</li>
+        <li>Search &amp; Filter Rules</li>
+      </ul>
+    </div>
+
+    <div class="scard sc-green">
+      <div class="sc-hdr">
+        <div class="sc-ico">&#129302;</div>
+        <div class="sc-title">System Intelligence</div>
+        <div class="sc-badge bg-green">AI/ML</div>
+      </div>
+      <div class="sc-desc">System-driven intelligence engines providing automated decisions and validations.</div>
+      <ul class="sc-list">
+        <li>Circular Sponsor Detection</li>
+        <li>Duplicate Prevention Engine</li>
+        <li>Auto Ref Code Formatter</li>
+        <li>Role-Aware Form Rendering</li>
+        <li>Portal Auto-Detection</li>
+        <li>Debounce Auto-Save</li>
+        <li>Firebase Merge: Cloud Wins</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- ── CENTER COLUMN ── -->
+  <div class="center">
+
+    <div class="lc-banner">
+      <h2>&#128258; 10-Stage Universal Spiritual Lifecycle &mdash; All Objects Follow This Path</h2>
+      <p>Profile &bull; Sadhana &bull; House Clean &bull; Pairing Invite &bull; Remedy &bull; Lineage &bull; Healer Certification &bull; Firebase Sync Node</p>
+    </div>
+
+    <div class="steps-grid">
+
+      <!-- STEP 1 -->
+      <div class="step s1">
+        <div class="step-hdr">
+          <div class="step-num">1</div>
+          <div class="step-ico">&#128221;</div>
+          <div class="step-title">CREATE</div>
+          <div class="step-status bg-blue">Initiate</div>
+        </div>
+        <div class="step-body">Capture new devotee / spiritual object with all required details via one of 4 registration systems.</div>
+        <ul class="step-attrs">
+          <li>Admin creates via Masters Portal (1-step)</li>
+          <li>Seeker self-registers via join.html (5-step)</li>
+          <li>Healer sends Share &amp; Pair Invite (2-step)</li>
+          <li>Role Tier assigned (Admin/Healer/Trainee/Devotee)</li>
+          <li>Auto-generate 16-Digit Reference Code</li>
+          <li>Duplicate email + phone check fires</li>
+          <li>Stored: sk_admin_profiles_v3</li>
+        </ul>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step s2">
+        <div class="step-hdr">
+          <div class="step-num">2</div>
+          <div class="step-ico">&#9989;</div>
+          <div class="step-title">VALIDATE</div>
+          <div class="step-status bg-purple">Guard</div>
+        </div>
+        <div class="step-body">Validate data, rules, policies, and boundary constraints before object proceeds.</div>
+        <ul class="step-attrs">
+          <li>XSS sanitize all inputs (escapeHtml)</li>
+          <li>Sponsor Ref Code existence check</li>
+          <li>Circular sponsor tree detection</li>
+          <li>24h Security PIN verification</li>
+          <li>Race condition guard on duplicate</li>
+          <li>Firebase Security Rules enforced</li>
+          <li>Required fields: Name, Phone, Role</li>
+        </ul>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step s3">
+        <div class="step-hdr">
+          <div class="step-num">3</div>
+          <div class="step-ico">&#127995;</div>
+          <div class="step-title">ASSIGN</div>
+          <div class="step-status bg-teal">Link</div>
+        </div>
+        <div class="step-body">Assign to correct Mentor/Healer upline and set role tier hierarchy based on RBAC rules.</div>
+        <ul class="step-attrs">
+          <li>Upline Healer linked via Sponsor Code</li>
+          <li>Default Mentor: Karim Ji (Founder)</li>
+          <li>Role Tier: MASTER/HEALER/TRAINEE/DEVOTEE</li>
+          <li>Org Level auto-calculated (1-10)</li>
+          <li>Portal View assigned per role tier</li>
+          <li>RBAC Auth Matrix rules applied to UI</li>
+          <li>5-Level Genealogy Tree position set</li>
+        </ul>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step s4">
+        <div class="step-hdr">
+          <div class="step-num">4</div>
+          <div class="step-ico">&#128202;</div>
+          <div class="step-title">REVIEW / APPROVAL</div>
+          <div class="step-status bg-amber">24h Gate</div>
+        </div>
+        <div class="step-body">Review by upline Healer or Admin and decide required approvals before proceeding.</div>
+        <ul class="step-attrs">
+          <li>Pending Approval Bell on Dashboard</li>
+          <li>Upline reviews devotee application (24h)</li>
+          <li>Count Badge shows pending count</li>
+          <li>Approval auto-expires at 24h boundary</li>
+          <li>Healer verifies 4 Sacred Pillars consent</li>
+          <li>QR PIN one-time verification token</li>
+          <li>Status: Pending → Approved/Rejected</li>
+        </ul>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step s5">
+        <div class="step-hdr">
+          <div class="step-num">5</div>
+          <div class="step-ico">&#128293;</div>
+          <div class="step-title">EXECUTION</div>
+          <div class="step-status bg-green">Active</div>
+        </div>
+        <div class="step-body">Devotee executes the spiritual task or sadhana practice as per the 4 Sacred Pillars guidance.</div>
+        <ul class="step-attrs">
+          <li>3 Diya Sadhana: 6:15-7:00 PM window</li>
+          <li>Daily Japa: 108 repetitions</li>
+          <li>House Clean: Level 1 (Self Home)</li>
+          <li>Ancestral Lineage: 3-Gen data entry</li>
+          <li>Remedy prescribed (Tab 2: Seeker)</li>
+          <li>Goli Gyan Guide referenced</li>
+          <li>Mentor notified via Telegram Bot</li>
+        </ul>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="step s6">
+        <div class="step-hdr">
+          <div class="step-num">6</div>
+          <div class="step-ico">&#128202;</div>
+          <div class="step-title">MONITOR</div>
+          <div class="step-status bg-pink">Track</div>
+        </div>
+        <div class="step-body">Track progress, KPIs, SLA milestones, and completion status across all sadhana levels.</div>
+        <ul class="step-attrs">
+          <li>11 Malas Streak Target (daily)</li>
+          <li>House Clean: 3-Level Progress</li>
+          <li>Sadhana completion % per level</li>
+          <li>Firebase Heartbeat: 15s interval</li>
+          <li>Session Timeout Monitor: 25m warn</li>
+          <li>Cross-tab sync via Storage Events</li>
+          <li>Dashboard progress tiles per Tab</li>
+        </ul>
+      </div>
+
+      <!-- STEP 7 -->
+      <div class="step s7">
+        <div class="step-hdr">
+          <div class="step-num">7</div>
+          <div class="step-ico">&#127942;</div>
+          <div class="step-title">COMPLETE</div>
+          <div class="step-status" style="background:#f5f3ff;color:#6366f1;border:1px solid #ddd6fe">Milestone</div>
+        </div>
+        <div class="step-body">Mark as complete after successful execution and level verification by Mentor/Healer.</div>
+        <ul class="step-attrs">
+          <li>House Clean Level 1 → 2 → 3 completed</li>
+          <li>Sadhana: Trainee level unlocked</li>
+          <li>Genealogy tree tier count updated</li>
+          <li>Healer Connect Tab activated</li>
+          <li>Completion records written to Firebase</li>
+          <li>Mentor formally marks level complete</li>
+          <li>Profile status updated: Trainee → Healer</li>
+        </ul>
+      </div>
+
+      <!-- STEP 8 -->
+      <div class="step s8">
+        <div class="step-hdr">
+          <div class="step-num">8</div>
+          <div class="step-ico">&#128274;</div>
+          <div class="step-title">CLOSE</div>
+          <div class="step-status bg-red">Certified</div>
+        </div>
+        <div class="step-body">Close the lifecycle transaction, update final records, and notify all related parties of completion.</div>
+        <ul class="step-attrs">
+          <li>Healer certification achieved (Siddhi)</li>
+          <li>Role upgraded: TRAINEE → HEALER</li>
+          <li>Certified Healers Hub card activated</li>
+          <li>RBAC Matrix updated for new role</li>
+          <li>5-Level tree position as Healer node</li>
+          <li>Firebase /profiles record finalized</li>
+          <li>Telegram notification to Founder</li>
+        </ul>
+      </div>
+
+      <!-- STEP 9 -->
+      <div class="step s9">
+        <div class="step-hdr">
+          <div class="step-num">9</div>
+          <div class="step-ico">&#128452;</div>
+          <div class="step-title">ARCHIVE</div>
+          <div class="step-status bg-slate">Stored</div>
+        </div>
+        <div class="step-body">Archive securely as per data retention policy. All records preserved in Firebase RTDB and localStorage.</div>
+        <ul class="step-attrs">
+          <li>Profile JSON export (Android bridge)</li>
+          <li>Firebase /profiles permanent record</li>
+          <li>sk_admin_profiles_v3 localStorage</li>
+          <li>sk_last_write_ts timestamp sealed</li>
+          <li>/device_telemetry final node written</li>
+          <li>Inactive toggle preserves data</li>
+          <li>Genealogy node remains in MLM tree</li>
+        </ul>
+      </div>
+
+      <!-- STEP 10 -->
+      <div class="step s10">
+        <div class="step-hdr">
+          <div class="step-num">10</div>
+          <div class="step-ico">&#128201;</div>
+          <div class="step-title">AUDIT &amp; ANALYTICS</div>
+          <div class="step-status" style="background:#fffbeb;color:#b8960c;border:1px solid #fde68a">Insight</div>
+        </div>
+        <div class="step-body">Complete audit trail for compliance and governance. Actionable analytics on platform performance.</div>
+        <ul class="step-attrs">
+          <li>RBAC Admin Page full audit log</li>
+          <li>Firebase RTDB Explorer (Tab 6)</li>
+          <li>Genealogy tree MLM analytics</li>
+          <li>Tier count badges per level</li>
+          <li>Role distribution (74+ elements)</li>
+          <li>Pairing invite conversion metrics</li>
+          <li>NotebookLM Portal: AI analysis</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- WHY POWERFUL BANNER -->
+    <div class="why-bar">
+      <div class="why-title">&#128293; WHY THIS IS POWERFUL</div>
+      <div class="why-grid">
+        <div class="why-item"><div class="why-ico">&#127775;</div>Every spiritual object (Profile, Sadhana, Remedy, Pairing) follows the same lifecycle &mdash; no custom flows needed</div>
+        <div class="why-item"><div class="why-ico">&#128274;</div>Granular RBAC with 74+ screen elements ensures only right-role access at each lifecycle stage</div>
+        <div class="why-item"><div class="why-ico">&#127795;</div>3-Generation ancestral lineage and 5-level MLM tree fully managed within one unified lifecycle</div>
+        <div class="why-item"><div class="why-ico">&#128260;</div>Dual-write Firebase + localStorage with 15s heartbeat means zero data loss across any stage</div>
+        <div class="why-item"><div class="why-ico">&#128241;</div>Android APK and Web Platform share the same JSON lifecycle data model via bridge protocol</div>
+        <div class="why-item"><div class="why-ico">&#128202;</div>Faster mentor onboarding, better compliance, operational efficiency &amp; full audit visibility</div>
+      </div>
+    </div>
+
+    <!-- EXAMPLES BAR -->
+    <div class="ex-bar">
+      <div class="ex-title">EXAMPLES OF PLATFORM OBJECTS USING THIS LIFECYCLE</div>
+      <div class="ex-grid">
+        <div class="ex-obj"><div class="ex-ico">&#128100;</div><div><div class="ex-lbl">Profile</div><div class="ex-sub">Devotee Record</div></div></div>
+        <div class="ex-obj"><div class="ex-ico">&#128367;</div><div><div class="ex-lbl">Sadhana</div><div class="ex-sub">Practice Object</div></div></div>
+        <div class="ex-obj"><div class="ex-ico">&#127775;</div><div><div class="ex-lbl">Remedy</div><div class="ex-sub">Healing Catalog</div></div></div>
+        <div class="ex-obj"><div class="ex-ico">&#129529;</div><div><div class="ex-lbl">House Clean</div><div class="ex-sub">3-Level Process</div></div></div>
+        <div class="ex-obj"><div class="ex-ico">&#128242;</div><div><div class="ex-lbl">Pairing Invite</div><div class="ex-sub">QR / PIN Token</div></div></div>
+        <div class="ex-obj"><div class="ex-ico">&#127795;</div><div><div class="ex-lbl">Lineage</div><div class="ex-sub">3-Gen Pitru Karma</div></div></div>
+        <div class="ex-obj"><div class="ex-ico">&#128081;</div><div><div class="ex-lbl">Healer Cert</div><div class="ex-sub">Siddhi Record</div></div></div>
+        <div class="ex-obj"><div class="ex-ico">&#128293;</div><div><div class="ex-lbl">Firebase Node</div><div class="ex-sub">RTDB Sync Object</div></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── RIGHT SIDEBAR ── -->
+  <div class="sidebar">
+
+    <div class="scard sc-teal">
+      <div class="sc-hdr">
+        <div class="sc-ico">&#128190;</div>
+        <div class="sc-title">Attachments &amp; Exports</div>
+        <div class="sc-badge bg-teal">Data</div>
+      </div>
+      <div class="sc-desc">Attach files, sync JSON payloads, and bridge data across Web and Android platforms.</div>
+      <ul class="sc-list">
+        <li>JSON Profile Export File</li>
+        <li>Android APK Import Payload</li>
+        <li>QR Code Device Token</li>
+        <li>Firebase RTDB JSON Node</li>
+        <li>Sadhana Catalog Export</li>
+        <li>RBAC Matrix JSON Backup</li>
+        <li>Genealogy Tree Screenshot</li>
+        <li>Goli Gyan PDF Printout</li>
+      </ul>
+    </div>
+
+    <div class="scard sc-red">
+      <div class="sc-hdr">
+        <div class="sc-ico">&#128172;</div>
+        <div class="sc-title">Mentor Notes &amp; Comments</div>
+        <div class="sc-badge bg-red">Collab</div>
+      </div>
+      <div class="sc-desc">Contextual discussion and collaboration across lifecycle. Healer and Admin notes per devotee.</div>
+      <ul class="sc-list">
+        <li>Healer Approval Comments</li>
+        <li>Telegram Bot Messages</li>
+        <li>Internal Mentor Notes</li>
+        <li>Trainee Progress Remarks</li>
+        <li>House Clean Observations</li>
+        <li>Sadhana Progress Notes</li>
+        <li>Founder Review Annotations</li>
+      </ul>
+    </div>
+
+    <div class="scard sc-pink">
+      <div class="sc-hdr">
+        <div class="sc-ico">&#128336;</div>
+        <div class="sc-title">Revision History</div>
+        <div class="sc-badge bg-pink">Versions</div>
+      </div>
+      <div class="sc-desc">Track every change with versioned timestamps. Firebase and localStorage both maintain state history.</div>
+      <ul class="sc-list">
+        <li>sk_last_write_ts tracking</li>
+        <li>Firebase update timestamps</li>
+        <li>Role tier change log</li>
+        <li>Profile edit history</li>
+        <li>RBAC matrix versioning (v5)</li>
+        <li>Profile schema versions (v3)</li>
+        <li>House Clean level changes</li>
+        <li>Corrective action records</li>
+      </ul>
+    </div>
+
+    <div class="scard sc-slate">
+      <div class="sc-hdr">
+        <div class="sc-ico">&#128202;</div>
+        <div class="sc-title">Audit Trail &amp; Governance</div>
+        <div class="sc-badge bg-slate">Audit</div>
+      </div>
+      <div class="sc-desc">Complete audit log for compliance, RBAC governance, and Firebase security rule enforcement.</div>
+      <ul class="sc-list">
+        <li>RBAC Admin Page full log</li>
+        <li>Firebase RTDB Explorer Tab 6</li>
+        <li>Before / After profile diffs</li>
+        <li>Security rule violation log</li>
+        <li>Pairing PIN audit records</li>
+        <li>Role assignment audit trail</li>
+        <li>Inaccessible page attempt log</li>
+        <li>Device telemetry audit nodes</li>
+      </ul>
+    </div>
+
+  </div>
+
+</div><!-- /page -->
+
+<div class="ab">
+  <button class="abn abpr" onclick="window.print()" title="Print / PDF">PDF</button>
+  <button class="abn abtp" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Top">TOP</button>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RBAC Access Matrix — Admin Portal</title>
+  <link rel="stylesheet" href="css/profile-admin.css">
+  <style>
+    :root {
+      --gold-400: #d4af37;
+      --gold-500: #b8941f;
+      --role-admin: #8b5cf6;
+      --role-healer: #10b981;
+      --role-trainee: #f59e0b;
+      --role-devotee: #3b82f6;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg-main, #0f0a1a);
+      color: var(--text-primary, #f1ecdf);
+      min-height: 100vh;
+    }
+    
+    .rbac-header {
+      background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(139,92,246,0.15));
+      border-bottom: 1px solid rgba(212,175,55,0.3);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    
+    .rbac-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0;
+      font-family: 'Cinzel', serif;
+      font-size: 1.25rem;
+      color: var(--gold-400);
+    }
+    
+    .rbac-back-link {
+      color: var(--text-secondary, #94a3b8);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--border-subtle, rgba(255,255,255,0.1));
+      border-radius: 0.375rem;
+      transition: all 0.2s;
+    }
+    
+    .rbac-back-link:hover {
+      background: var(--gold-400);
+      color: #000;
+      border-color: var(--gold-400);
+    }
+    
+    .rbac-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    
+    .rbac-controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    .rbac-search {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+    
+    .rbac-search input {
+      width: 100%;
+      padding: 0.65rem 0.75rem 0.65rem 2.5rem;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 0.5rem;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+    
+    .rbac-search::before {
+      content: '🔍';
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+    }
+    
+    .rbac-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .btn-rbac {
+      padding: 0.6rem 1.25rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    
+    .btn-rbac-gold {
+      background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+      color: #000;
+    }
+    
+    .btn-rbac-gold:hover {
+      box-shadow: 0 0 20px rgba(212,175,55,0.4);
+    }
+    
+    .btn-rbac-outline {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--text-primary);
+    }
+    
+    .btn-rbac-outline:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .rbac-table-wrapper {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+    
+    .rbac-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    
+    .rbac-table th {
+      background: rgba(212,175,55,0.1);
+      padding: 0.875rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--gold-400);
+      border-bottom: 1px solid rgba(212,175,55,0.2);
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+    }
+    
+    .rbac-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      vertical-align: middle;
+    }
+    
+    .rbac-table tr:hover {
+      background: rgba(255,255,255,0.03);
+    }
+    
+    .rbac-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .element-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .element-id {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: monospace;
+      margin-top: 0.25rem;
+    }
+    
+    .type-badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      background: rgba(139,92,246,0.2);
+      color: #a78bfa;
+    }
+    
+    .type-badge.screen { background: rgba(239,68,68,0.2); color: #f87171; }
+    .type-badge.subtab { background: rgba(245,158,11,0.2); color: #fbbf24; }
+    .type-badge.card { background: rgba(16,185,129,0.2); color: #34d399; }
+    .type-badge.button { background: rgba(59,130,246,0.2); color: #60a5fa; }
+    .type-badge.modal { background: rgba(168,85,247,0.2); color: #c084fc; }
+    .type-badge.panel { background: rgba(6,182,212,0.2); color: #22d3ee; }
+    .type-badge.section { background: rgba(168,85,247,0.2); color: #c084fc; }
+    .type-badge.drawer { background: rgba(236,72,153,0.2); color: #f472b6; }
+    
+    .checkbox-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    
+    .role-check {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    
+    .role-check input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: var(--gold-400);
+    }
+    
+    .portal-check {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    
+    .portal-check input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      accent-color: var(--gold-400);
+    }
+    
+    .category-row {
+      background: rgba(212,175,55,0.08) !important;
+      cursor: pointer;
+    }
+    
+    .category-row td {
+      font-weight: 700;
+      color: var(--gold-400);
+      font-size: 0.9rem;
+      padding: 0.75rem 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    
+    .category-row.collapsed .cat-toggle::before {
+      content: '▶ ';
+    }
+    
+    .category-row:not(.collapsed) .cat-toggle::before {
+      content: '▼ ';
+    }
+    
+    .category-items.collapsed {
+      display: none;
+    }
+    
+    .indent-level-1 { padding-left: 2.5rem !important; }
+    .indent-level-2 { padding-left: 4rem !important; }
+    
+    .save-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 0.5rem;
+      color: #10b981;
+      font-size: 0.85rem;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .sync-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 0.5rem;
+      color: #60a5fa;
+      font-size: 0.8rem;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .matrix-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .summary-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      text-align: center;
+    }
+    
+    .summary-count {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold-400);
+      line-height: 1;
+    }
+    
+    .summary-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .autosave-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: 1rem;
+    }
+    
+    @media (max-width: 1024px) {
+      .rbac-table { font-size: 0.78rem; }
+      .rbac-table th, .rbac-table td { padding: 0.5rem; }
+      .role-check, .portal-check { font-size: 0.65rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="rbac-header">
+    <h1 class="rbac-title">
+      <span>🛡️</span>
+      RBAC Access Matrix — Portal Permissions
+    </h1>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <span class="sync-indicator" id="syncStatus" style="display: none;">
+        🔄 Synced across tabs
+      </span>
+      <a href="index.html" class="rbac-back-link">← Back to Main Portal</a>
+    </div>
+  </div>
+  
+  <div class="rbac-container">
+    <!-- Summary Cards -->
+    <div class="matrix-summary" id="matrixSummary">
+      <div class="summary-card">
+        <div class="summary-count" id="totalElements">0</div>
+        <div class="summary-label">Total Elements</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-count" id="visibleByAll">0</div>
+        <div class="summary-label">Visible to All</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-count" id="restricted">0</div>
+        <div class="summary-label">Restricted</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-count" id="lastSaved">—</div>
+        <div class="summary-label">Last Saved</div>
+      </div>
+    </div>
+    
+    <!-- Controls -->
+    <div class="rbac-controls">
+      <div class="rbac-search">
+        <input type="text" id="rbacSearchInput" placeholder="Search elements by name or ID...">
+      </div>
+      <div class="rbac-actions">
+        <button type="button" class="btn-rbac btn-rbac-outline" id="btnResetDefaults">
+          🔄 Reset to Defaults
+        </button>
+        <button type="button" class="btn-rbac btn-rbac-gold" id="btnSaveMatrix">
+          💾 Save & Apply Matrix
+        </button>
+      </div>
+      <span class="autosave-status" id="autosaveStatus"></span>
+    </div>
+    
+    <!-- Table Wrapper -->
+    <div class="rbac-table-wrapper">
+      <table class="rbac-table" id="rbacTable">
+        <thead>
+          <tr>
+            <th style="width: 35%;">Element / Screen</th>
+            <th style="width: 8%;">Type</th>
+            <th style="width: 22%;">Role Access</th>
+            <th style="width: 25%;">Portal Visibility</th>
+            <th style="width: 10%;">Category</th>
+          </tr>
+        </thead>
+        <tbody id="rbacTableBody">
+          <!-- Dynamically populated -->
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Status Indicator -->
+    <div id="saveStatus"></div>
+  </div>
+  
+  <!-- Load MVC dependencies -->
+  <script src="js/models/ScreenAuthMatrix.js"></script>
+  <script>
+    // ============================================================
+    // RBAC ACCESS MATRIX ADMIN PAGE — Enhanced v2
+    // ============================================================
+    
+    const STORAGE_KEY = 'sk_auth_matrix_v5';
+    let matrixData = [];
+    let searchQuery = '';
+    let collapsedCategories = new Set();
+    let autoSaveTimer = null;
+    
+    /**
+     * Initialize the RBAC Matrix Editor
+     */
+    function init() {
+      loadMatrix();
+      renderTable();
+      updateSummary();
+      
+      // Listen for storage changes from other tabs (sync)
+      window.addEventListener('storage', handleStorageChange);
+      
+      // Event listeners
+      document.getElementById('btnSaveMatrix').addEventListener('click', saveMatrix);
+      document.getElementById('btnResetDefaults').addEventListener('click', resetToDefaults);
+      document.getElementById('rbacSearchInput').addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase();
+        renderTable();
+      });
+    }
+    
+    /**
+     * Handle storage events from other tabs/windows
+     */
+    function handleStorageChange(e) {
+      if (e.key === STORAGE_KEY) {
+        loadMatrix();
+        renderTable();
+        updateSummary();
+        showSyncIndicator();
+      }
+    }
+    
+    /**
+     * Show sync indicator temporarily
+     */
+    function showSyncIndicator() {
+      const indicator = document.getElementById('syncStatus');
+      indicator.style.display = 'flex';
+      setTimeout(() => {
+        indicator.style.display = 'none';
+      }, 3000);
+    }
+    
+    /**
+     * Load matrix from localStorage or use defaults
+     */
+    function loadMatrix() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) {
+            // Normalize: ensure top-level role properties exist
+            matrixData = parsed.map(item => ({
+              ...item,
+              MASTER: item.MASTER !== undefined ? item.MASTER : (item.roles?.MASTER || false),
+              HEALER: item.HEALER !== undefined ? item.HEALER : (item.roles?.HEALER || false),
+              TRAINEE: item.TRAINEE !== undefined ? item.TRAINEE : (item.roles?.TRAINEE || false),
+              DEVOTEE: item.DEVOTEE !== undefined ? item.DEVOTEE : (item.roles?.DEVOTEE || false),
+              portalVisible: item.portalVisible || {}
+            }));
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to load auth matrix:', e);
+      }
+      // Use default definition from ScreenAuthMatrix
+      matrixData = ScreenAuthMatrix.getDefaultAuthMatrix();
+    }
+    
+    /**
+     * Save matrix to localStorage
+     */
+    async function saveMatrix() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(matrixData));
+        
+        // Update timestamp
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('lastSaved').textContent = timeStr;
+        
+        // Show success indicator
+        const statusEl = document.getElementById('saveStatus');
+        statusEl.innerHTML = '<div class="save-indicator">✓ Auth Matrix saved successfully (' + STORAGE_KEY + ')</div>';
+        setTimeout(() => { statusEl.innerHTML = ''; }, 3000);
+        
+        updateSummary();
+      } catch (e) {
+        alert('Failed to save: ' + e.message);
+      }
+    }
+    
+    /**
+     * Reset to default matrix definition
+     */
+    function resetToDefaults() {
+      if (!confirm('Reset all permissions to defaults? This will clear customizations.')) return;
+      
+      matrixData = ScreenAuthMatrix.getDefaultAuthMatrix();
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (e) {}
+      
+      renderTable();
+      updateSummary();
+      document.getElementById('lastSaved').textContent = 'Reset';
+    }
+    
+    /**
+     * Toggle category collapse state
+     */
+    function toggleCategory(category) {
+      if (collapsedCategories.has(category)) {
+        collapsedCategories.delete(category);
+      } else {
+        collapsedCategories.add(category);
+      }
+      renderTable();
+    }
+    
+    /**
+     * Render the matrix table
+     */
+    function renderTable() {
+      const tbody = document.getElementById('rbacTableBody');
+      const grouped = groupByCategory(matrixData);
+      
+      let html = '';
+      Object.entries(grouped).forEach(([category, items]) => {
+        const isCollapsed = collapsedCategories.has(category);
+        
+        // Category header row (clickable to toggle)
+        html += `
+          <tr class="category-row ${isCollapsed ? 'collapsed' : ''}" data-category="${escapeHtml(category)}" onclick="toggleCategory('${category.replace(/'/g, "\\'")}')">
+            <td colspan="5">
+              <span class="cat-toggle">${items.length} items</span> ${escapeHtml(category)}
+            </td>
+          </tr>
+        `;
+        
+        // Items container (can be collapsed)
+        html += `<tr><td colspan="5" class="category-items ${isCollapsed ? 'collapsed' : ''}">`;
+        html += '<table class="rbac-table" style="margin: 0;"><tbody>';
+        
+        // Items
+        items.forEach(item => {
+          const label = item.label || item.name || '';
+          const selector = item.selector || '';
+          const matchesSearch = !searchQuery || 
+            label.toLowerCase().includes(searchQuery) ||
+            (item.id && item.id.toLowerCase().includes(searchQuery)) ||
+            (selector && selector.toLowerCase().includes(searchQuery));
+          
+          if (!matchesSearch && searchQuery) return;
+          
+          const indentClass = item.level === 1 ? 'indent-level-1' : (item.level === 2 ? 'indent-level-2' : '');
+          
+          html += `
+            <tr data-item-id="${item.id}" class="${indentClass}">
+              <td>
+                <div class="element-name">${escapeHtml(label)}</div>
+                ${item.id && item.id !== label ? `<div class="element-id">#${escapeHtml(item.id)}</div>` : ''}
+              </td>
+              <td>
+                <span class="type-badge ${getTypeClass(item.type)}">${escapeHtml(item.type)}</span>
+              </td>
+              <td>
+                <div class="checkbox-group">
+                  <label class="role-check">
+                    <input type="checkbox" data-role="MASTER" ${isAllowed(item.MASTER)} onchange="updateRole('${item.id}', 'MASTER', this.checked)">
+                    👑
+                  </label>
+                  <label class="role-check">
+                    <input type="checkbox" data-role="HEALER" ${isAllowed(item.HEALER)} onchange="updateRole('${item.id}', 'HEALER', this.checked)">
+                    🌿
+                  </label>
+                  <label class="role-check">
+                    <input type="checkbox" data-role="TRAINEE" ${isAllowed(item.TRAINEE)} onchange="updateRole('${item.id}', 'TRAINEE', this.checked)">
+                    📿
+                  </label>
+                  <label class="role-check">
+                    <input type="checkbox" data-role="DEVOTEE" ${isAllowed(item.DEVOTEE)} onchange="updateRole('${item.id}', 'DEVOTEE', this.checked)">
+                    🌟
+                  </label>
+                </div>
+              </td>
+              <td>
+                <div class="checkbox-group">
+                  <label class="portal-check">
+                    <input type="checkbox" data-portal="masters" ${isAllowed(item.portalVisible.masters)} onchange="updatePortal('${item.id}', 'masters', this.checked)">
+                    Masters
+                  </label>
+                  <label class="portal-check">
+                    <input type="checkbox" data-portal="healers" ${isAllowed(item.portalVisible.healers)} onchange="updatePortal('${item.id}', 'healers', this.checked)">
+                    Healers
+                  </label>
+                  <label class="portal-check">
+                    <input type="checkbox" data-portal="trainee" ${isAllowed(item.portalVisible.trainee)} onchange="updatePortal('${item.id}', 'trainee', this.checked)">
+                    Trainee
+                  </label>
+                  <label class="portal-check">
+                    <input type="checkbox" data-portal="devotee" ${isAllowed(item.portalVisible.devotee)} onchange="updatePortal('${item.id}', 'devotee', this.checked)">
+                    Devotee
+                  </label>
+                </div>
+              </td>
+              <td style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(category)}</td>
+            </tr>
+          `;
+        });
+        
+        html += '</tbody></table></td></tr>';
+      });
+      
+      tbody.innerHTML = html;
+    }
+    
+    /**
+     * Update role permission for an element
+     */
+    function updateRole(itemId, role, value) {
+      const item = matrixData.find(m => m.id === itemId);
+      if (item) {
+        item[role] = value;
+        scheduleAutoSave();
+        updateSummary();
+      }
+    }
+    
+    /**
+     * Update portal visibility for an element
+     */
+    function updatePortal(itemId, portal, value) {
+      const item = matrixData.find(m => m.id === itemId);
+      if (item) {
+        item.portalVisible = item.portalVisible || {};
+        item.portalVisible[portal] = value;
+        scheduleAutoSave();
+      }
+    }
+    
+    /**
+     * Schedule auto-save with debounce (500ms)
+     */
+    function scheduleAutoSave() {
+      if (autoSaveTimer) clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(async () => {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(matrixData));
+          const now = new Date();
+          const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+          document.getElementById('lastSaved').textContent = timeStr;
+          document.getElementById('autosaveStatus').textContent = 'Auto-saved';
+          setTimeout(() => {
+            document.getElementById('autosaveStatus').textContent = '';
+          }, 2000);
+        } catch (e) {
+          console.error('Auto-save failed:', e);
+        }
+      }, 500);
+    }
+    
+    /**
+     * Group matrix items by category
+     */
+    function groupByCategory(data) {
+      const groups = {};
+      data.forEach(item => {
+        const cat = item.category || 'Other';
+        if (!groups[cat]) groups[cat] = [];
+        groups[cat].push(item);
+      });
+      return groups;
+    }
+    
+    /**
+     * Update summary statistics
+     */
+    function updateSummary() {
+      const total = matrixData.length;
+      const visibleAll = matrixData.filter(item => 
+        item.MASTER && item.HEALER && item.TRAINEE && item.DEVOTEE
+      ).length;
+      const restricted = total - visibleAll;
+      
+      document.getElementById('totalElements').textContent = total;
+      document.getElementById('visibleByAll').textContent = visibleAll;
+      document.getElementById('restricted').textContent = restricted;
+    }
+    
+    // Helper functions
+    function isAllowed(value) {
+      return value !== false ? 'checked' : '';
+    }
+    
+    function getTypeClass(type) {
+      const map = {
+        'SCREEN': 'screen',
+        'SUBTAB': 'subtab',
+        'CARD': 'card',
+        'BUTTON': 'button',
+        'MODAL': 'modal',
+        'PANEL': 'panel',
+        'SECTION': 'section',
+        'DRAWER': 'drawer'
+      };
+      return map[type] || '';
+    }
+    
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

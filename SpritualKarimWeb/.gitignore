@@ -1,0 +1,4 @@
+scratch/
+.playwright-mcp/
+*.exe
+*.log

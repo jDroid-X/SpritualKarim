@@ -1,10 +1,12 @@
 /**
- * FirebaseSyncEngine.js
- * Master Firebase Realtime Database Data Minimization Engine
+ * FirebaseSyncEngine - Centralized Firebase integration
+ * Uses centralized config from appConfig.js
  */
+
 class FirebaseSyncEngine {
   static init() {
-    this.config = {
+    // Use centralized config
+    this.config = typeof appConfig !== 'undefined' ? appConfig.firebase : {
       apiKey: "AIzaSy_SpiritualKarim_Enterprise_Key",
       authDomain: "spritualkarim-7b5fd.firebaseapp.com",
       databaseURL: "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com",
@@ -18,7 +20,7 @@ class FirebaseSyncEngine {
       try {
         firebase.initializeApp(this.config);
         this.db = firebase.database();
-        console.log("🔥 [Firebase RTDB] Initialized with Data Minimization Mode (Project: spritualkarim-7b5fd)");
+        console.log("[Firebase RTDB] Initialized with Data Minimization Mode");
         this.listenToOnlineNodes();
       } catch (err) {
         console.warn("Firebase RTDB init notice:", err.message);
@@ -27,8 +29,7 @@ class FirebaseSyncEngine {
   }
 
   /**
-   * Publishes strictly pseudonymized node data to Firebase Realtime Database.
-   * Strips all private contact info, real names, and ancestral tree details.
+   * Publishes strictly pseudonymized node data to Firebase
    */
   static publishMinimalNodeStatus(profile) {
     if (!this.db || !profile) return;
@@ -46,7 +47,6 @@ class FirebaseSyncEngine {
 
       this.db.ref('authorisedNodes/' + sanitizedCode).set(minimalPayload);
       
-      // Log telemetry event
       this.db.ref('logs').push().set({
         action: 'NODE_STATUS_UPDATE',
         nodeId: sanitizedCode,
@@ -62,12 +62,10 @@ class FirebaseSyncEngine {
     this.db.ref('authorisedNodes').limitToLast(20).on('value', (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        console.log("🔥 [Firebase Live Active Nodes]:", Object.keys(data).length, "devices online.");
+        console.log("[Firebase Live Active Nodes]:", Object.keys(data).length, "devices online.");
       }
     });
   }
 }
 
-if (typeof window !== 'undefined') {
-  window.FirebaseSyncEngine = FirebaseSyncEngine;
-}
+window.FirebaseSyncEngine = FirebaseSyncEngine;

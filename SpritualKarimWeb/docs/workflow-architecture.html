@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shree Spritual Karim Sansthan - Website Workflow Architecture</title>
+<meta name="description" content="Business Object Architecture - Core Objects and Their Relationships for Shree Spritual Karim Sansthan Web Platform">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cinzel:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f7;--white:#ffffff;--border:#d1d5db;
+  --txt:#1a1a2e;--muted:#6b7280;--head:#111827;
+  --c1:#2563eb;--c1l:#eff6ff;--c1b:#bfdbfe;
+  --c2:#7c3aed;--c2l:#f5f3ff;--c2b:#ddd6fe;
+  --c3:#059669;--c3l:#ecfdf5;--c3b:#a7f3d0;
+  --c4:#d97706;--c4l:#fffbeb;--c4b:#fde68a;
+  --c5:#dc2626;--c5l:#fef2f2;--c5b:#fecaca;
+  --c6:#0891b2;--c6l:#ecfeff;--c6b:#a5f3fc;
+  --c7:#7c3aed;--c7l:#f5f3ff;--c7b:#ddd6fe;
+  --c8:#be185d;--c8l:#fdf2f8;--c8b:#fbcfe8;
+  --gold:#d4af37;--shadow:0 2px 8px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+/* ---- PAGE HEADER ---- */
+.page-hdr{background:linear-gradient(135deg,#1a1a2e 0%,#2d1b69 50%,#1a3a5c 100%);padding:1.4rem 2rem 1.1rem;text-align:center;position:relative}
+.page-hdr::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),#f59e0b,var(--gold))}
+.hdr-om{font-size:1.6rem;opacity:.7;margin-bottom:.2rem}
+.hdr-title{font-family:'Cinzel',serif;font-size:1.6rem;font-weight:800;color:#f0ebe0;letter-spacing:.5px}
+.hdr-sub{font-size:.82rem;color:rgba(240,235,224,.65);margin-top:.25rem}
+.hdr-pills{display:flex;justify-content:center;gap:.6rem;margin-top:.65rem;flex-wrap:wrap}
+.hpill{font-size:.62rem;font-weight:700;padding:.15rem .6rem;border-radius:2rem;letter-spacing:.05em;text-transform:uppercase;border:1px solid}
+.hp1{background:rgba(212,175,55,.15);color:#f0d060;border-color:rgba(212,175,55,.4)}
+.hp2{background:rgba(96,165,250,.12);color:#93c5fd;border-color:rgba(96,165,250,.35)}
+.hp3{background:rgba(110,231,183,.12);color:#6ee7b7;border-color:rgba(110,231,183,.35)}
+/* ---- CANVAS ---- */
+.canvas{padding:1.25rem 1.5rem 1.5rem}
+/* ---- ARCH TITLE ---- */
+.arch-title{text-align:center;margin-bottom:1rem}
+.arch-title h2{font-size:1.25rem;font-weight:800;color:var(--head);letter-spacing:.2px}
+.arch-title p{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+/* ---- MAIN GRID ---- */
+.arch-main{display:grid;grid-template-columns:1fr 140px;gap:1rem;align-items:start}
+.arch-body{display:flex;flex-direction:column;gap:.85rem}
+/* ---- FLOW ROW (TOP) ---- */
+.flow-bar{display:flex;align-items:stretch;gap:0;background:linear-gradient(90deg,rgba(37,99,235,.05),rgba(124,58,237,.05));border:1px solid var(--c1b);border-radius:.75rem;padding:.65rem .5rem;overflow-x:auto}
+.flow-node{flex:1;min-width:100px;display:flex;flex-direction:column;align-items:center;position:relative}
+.flow-node:not(:last-child)::after{content:'';position:absolute;right:-18px;top:50%;transform:translateY(-50%);width:16px;height:2px;background:var(--c1);z-index:1}
+.flow-node:not(:last-child)::before{content:'';position:absolute;right:-9px;top:50%;transform:translateY(-50%) rotate(45deg);width:7px;height:7px;border-right:2px solid var(--c1);border-top:2px solid var(--c1);z-index:2}
+.fn-inner{background:#fff;border:1.5px solid var(--c1b);border-radius:.55rem;padding:.5rem .45rem;text-align:center;width:calc(100% - 30px);transition:transform .15s,box-shadow .15s;cursor:default}
+.fn-inner:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(37,99,235,.18)}
+.fn-num{width:20px;height:20px;border-radius:50%;background:var(--c1);color:#fff;font-size:.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto .25rem}
+.fn-ico{font-size:1.15rem;margin-bottom:.15rem}
+.fn-title{font-size:.6rem;font-weight:700;color:var(--c1);line-height:1.2;margin-bottom:.15rem}
+.fn-attrs{list-style:none;padding:0;font-size:.54rem;color:var(--muted);line-height:1.55;text-align:left}
+.fn-attrs li::before{content:'- ';color:var(--c1)}
+/* ---- FLOW LABEL ---- */
+.flow-label{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem;display:flex;align-items:center;gap:.35rem}
+.fl-line{flex:1;height:1px}
+/* ---- OBJECT ROW ---- */
+.obj-row{display:grid;gap:.65rem}
+.obj-row-3{grid-template-columns:repeat(3,1fr)}
+.obj-row-4{grid-template-columns:repeat(4,1fr)}
+.obj-row-5{grid-template-columns:repeat(5,1fr)}
+.obj-row-2{grid-template-columns:repeat(2,1fr)}
+/* ---- OBJECT CARD ---- */
+.ob{background:#fff;border-radius:.6rem;border:1.5px solid var(--border);padding:.6rem .65rem;transition:all .15s;cursor:default;position:relative;overflow:hidden}
+.ob::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ob:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.1)}
+/* category colours */
+.cat-seeker{border-color:var(--c1b)}.cat-seeker::before{background:var(--c1)}
+.cat-healer{border-color:var(--c3b)}.cat-healer::before{background:var(--c3)}
+.cat-trainee{border-color:var(--c4b)}.cat-trainee::before{background:var(--c4)}
+.cat-sadhana{border-color:var(--c2b)}.cat-sadhana::before{background:var(--c2)}
+.cat-ops{border-color:var(--c6b)}.cat-ops::before{background:var(--c6)}
+.cat-gov{border-color:var(--c8b)}.cat-gov::before{background:var(--c8)}
+.cat-firebase{border-color:#fcd34d}.cat-firebase::before{background:#f59e0b}
+.cat-sys{border-color:#d1d5db}.cat-sys::before{background:#6b7280}
+/* ob header */
+.ob-hdr{display:flex;align-items:center;gap:.45rem;margin-bottom:.4rem}
+.ob-ico{font-size:1.1rem;flex-shrink:0}
+.ob-name{font-size:.65rem;font-weight:800;color:var(--head);line-height:1.2;font-family:'Inter',sans-serif}
+.ob-badge{font-size:.48rem;font-weight:700;padding:.1rem .35rem;border-radius:.25rem;margin-left:auto;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;flex-shrink:0}
+.cat-seeker .ob-badge{background:var(--c1l);color:var(--c1);border:1px solid var(--c1b)}
+.cat-healer .ob-badge{background:var(--c3l);color:var(--c3);border:1px solid var(--c3b)}
+.cat-trainee .ob-badge{background:var(--c4l);color:var(--c4);border:1px solid var(--c4b)}
+.cat-sadhana .ob-badge{background:var(--c2l);color:var(--c2);border:1px solid var(--c2b)}
+.cat-ops .ob-badge{background:var(--c6l);color:var(--c6);border:1px solid var(--c6b)}
+.cat-gov .ob-badge{background:var(--c8l);color:var(--c8);border:1px solid var(--c8b)}
+.cat-firebase .ob-badge{background:#fffbeb;color:#d97706;border:1px solid #fde68a}
+.cat-sys .ob-badge{background:#f9fafb;color:#6b7280;border:1px solid #e5e7eb}
+.ob-attrs{list-style:none;padding:0;font-size:.56rem;color:var(--muted);line-height:1.65}
+.ob-attrs li::before{content:'► ';font-size:.4rem}
+.cat-seeker .ob-attrs li::before{color:var(--c1)}
+.cat-healer .ob-attrs li::before{color:var(--c3)}
+.cat-trainee .ob-attrs li::before{color:var(--c4)}
+.cat-sadhana .ob-attrs li::before{color:var(--c2)}
+.cat-ops .ob-attrs li::before{color:var(--c6)}
+.cat-gov .ob-attrs li::before{color:var(--c8)}
+.cat-firebase .ob-attrs li::before{color:#f59e0b}
+.cat-sys .ob-attrs li::before{color:#6b7280}
+/* ---- REL LABEL ---- */
+.rel-lbl{font-size:.52rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;text-align:center;padding:.1rem 0}
+/* ---- CONNECTOR STRIP ---- */
+.connector{display:flex;align-items:center;gap:.35rem;padding:.2rem .5rem}
+.con-line{flex:1;height:1.5px;background:var(--border);position:relative}
+.con-line::after{content:'►';position:absolute;right:-6px;top:-7px;font-size:.6rem;color:var(--muted)}
+.con-txt{font-size:.55rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+/* ---- MASTER OBJECTS BAR ---- */
+.master-bar{background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:.75rem;padding:.85rem 1rem;margin-top:.5rem}
+.master-title{font-size:.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem}
+.master-title::after{content:'';flex:1;height:1px;background:rgba(148,163,184,.3)}
+.master-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.55rem}
+.mb{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:.5rem;padding:.55rem .6rem;transition:all .15s;cursor:default}
+.mb:hover{background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.mb-hdr{display:flex;align-items:center;gap:.35rem;margin-bottom:.35rem}
+.mb-ico{font-size:1rem;flex-shrink:0}
+.mb-name{font-size:.6rem;font-weight:700;color:#e2e8f0;line-height:1.2}
+.mb-attrs{list-style:none;padding:0;font-size:.52rem;color:#94a3b8;line-height:1.6}
+.mb-attrs li::before{content:'- ';color:#64748b}
+/* ---- LEGEND ---- */
+.legend{background:#fff;border:1.5px solid var(--border);border-radius:.65rem;padding:.75rem .7rem;position:sticky;top:1rem}
+.leg-title{font-size:.65rem;font-weight:800;color:var(--head);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem;padding-bottom:.35rem;border-bottom:2px solid var(--border)}
+.leg-section{margin-bottom:.65rem}
+.leg-sec-title{font-size:.55rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem}
+.leg-item{display:flex;align-items:center;gap:.4rem;margin-bottom:.28rem;font-size:.58rem;color:var(--txt)}
+.leg-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+.leg-line{width:22px;height:2px;flex-shrink:0}
+.leg-dash{width:22px;height:0;border-top:2px dashed;flex-shrink:0}
+/* ---- BENEFITS ---- */
+.benefits{background:#f0fdf4;border:1.5px solid var(--c3b);border-radius:.65rem;padding:.7rem;margin-top:.65rem}
+.ben-title{font-size:.62rem;font-weight:800;color:var(--c3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem}
+.ben-item{display:flex;align-items:flex-start;gap:.35rem;font-size:.56rem;color:#065f46;margin-bottom:.3rem;line-height:1.4}
+.ben-ico{font-size:.8rem;flex-shrink:0;margin-top:.05rem}
+/* ---- NOTES ---- */
+.notes-box{background:#fffbeb;border:1.5px solid #fde68a;border-radius:.65rem;padding:.65rem;margin-top:.65rem}
+.notes-title{font-size:.62rem;font-weight:800;color:var(--c4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem}
+.note-item{font-size:.55rem;color:#92400e;margin-bottom:.28rem;line-height:1.4;padding-left:.75rem;position:relative}
+.note-item::before{content:'i';position:absolute;left:0;top:0;font-style:italic;font-weight:800;font-size:.55rem;color:var(--c4)}
+/* ---- RELATIONSHIP ARROWS (VISUAL) ---- */
+.rel-row{display:flex;align-items:center;gap:0;padding:.15rem .5rem}
+.rel-box{background:rgba(37,99,235,.07);border:1px solid var(--c1b);border-radius:.35rem;padding:.12rem .4rem;font-size:.52rem;font-weight:600;color:var(--c1);white-space:nowrap}
+.rel-arr{font-size:.65rem;color:var(--muted);padding:0 .2rem}
+.rel-lbl2{font-size:.5rem;color:var(--muted);font-style:italic;white-space:nowrap}
+/* ---- PORTAL BADGES ROW ---- */
+.portal-row{display:flex;gap:.5rem;flex-wrap:wrap;padding:.5rem 0}
+.por-badge{display:flex;align-items:center;gap:.3rem;padding:.25rem .6rem;border-radius:2rem;font-size:.58rem;font-weight:700}
+.por1{background:#f5f3ff;border:1px solid #ddd6fe;color:#7c3aed}
+.por2{background:#ecfdf5;border:1px solid #a7f3d0;color:#059669}
+.por3{background:#fffbeb;border:1px solid #fde68a;color:#d97706}
+.por4{background:#eff6ff;border:1px solid #bfdbfe;color:#2563eb}
+.por5{background:#fdf2f8;border:1px solid #fbcfe8;color:#be185d}
+/* ---- PRINT ---- */
+@media print{body{background:#fff}.page-hdr{background:#1a1a2e!important;-webkit-print-color-adjust:exact}.master-bar{background:#1e293b!important;-webkit-print-color-adjust:exact}}
+/* ---- ACTION ---- */
+.ab{position:fixed;bottom:1.25rem;right:1.25rem;display:flex;flex-direction:column;gap:.4rem;z-index:100}
+.abn{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;font-size:.75rem;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:all .18s;display:flex;align-items:center;justify-content:center}
+.abn:hover{transform:scale(1.1)}
+.abpr{background:linear-gradient(135deg,#d4af37,#b8960c);color:#fff}
+.abtp{background:#1e293b;color:#f0d060;border:1px solid #d4af37}
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-hdr">
+  <div class="hdr-om">&#2384;</div>
+  <div class="hdr-title">SHREE SPRITUAL KARIM SANSTHAN</div>
+  <div class="hdr-sub">Website Workflow &amp; Business Object Architecture &mdash; Core Objects and Their Relationships</div>
+  <div class="hdr-pills">
+    <span class="hpill hp1">MVC/MVVM Architecture</span>
+    <span class="hpill hp2">Firebase RTDB + localStorage</span>
+    <span class="hpill hp3">4-Tier RBAC &bull; 74+ Elements</span>
+    <span class="hpill hp1">5 Portals &bull; Android + Web</span>
+  </div>
+</div>
+
+<!-- ARCHITECTURE SUITE NAVIGATION -->
+<div style="background:#ffffff; border-bottom:1px solid #e2e8f0; padding:0.65rem 1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; position:sticky; top:0; z-index:100; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+  <div style="display:flex; gap:0.45rem; align-items:center; flex-wrap:wrap;">
+    <span style="font-size:0.72rem; font-weight:700; color:#64748b; margin-right:0.25rem;">ARCHITECTURE SUITE:</span>
+    <a href="platform-overview.html" style="font-size:0.73rem; font-weight:600; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">① Platform Overview</a>
+    <a href="workflow-architecture.html" style="font-size:0.73rem; font-weight:700; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe;">② Business Objects</a>
+    <a href="transaction-lifecycle.html" style="font-size:0.73rem; font-weight:600; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">③ Universal Lifecycle</a>
+    <a href="devotee-registration-workflow.html" style="font-size:0.73rem; font-weight:600; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">④ Devotee Flowchart (HITL)</a>
+    <a href="devotee-registration-workflow1.html" style="font-size:0.73rem; font-weight:600; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">⑤ Devotee Stages (Original)</a>
+    <a href="data-structure-workflow.html" style="font-size:0.73rem; font-weight:600; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">⑥ Data Structure &amp; Hierarchy</a>
+    <a href="core-operations-workflow.html" style="font-size:0.73rem; font-weight:600; padding:0.3rem 0.65rem; border-radius:0.4rem; text-decoration:none; background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">⑦ Core Operations &amp; Workflows</a>
+  </div>
+  <button onclick="window.print()" style="font-size:0.73rem; font-weight:700; padding:0.35rem 0.8rem; border-radius:0.4rem; border:1px solid #2563eb; background:#2563eb; color:#ffffff; cursor:pointer;">🖨️ Print / Save PDF</button>
+</div>
+
+<div class="canvas">
+  <div class="arch-title">
+    <h2>Business Object Architecture &mdash; Core Objects and Their Relationships</h2>
+    <p>Data flow, relationships, and dependencies across the Spiritual Karim Web &amp; Mobile Platform</p>
+  </div>
+
+  <div class="arch-main">
+    <!-- MAIN BODY -->
+    <div class="arch-body">
+
+      <!-- PORTAL ACCESS ROW (entry points) -->
+      <div>
+        <div class="flow-label" style="color:#2563eb">
+          <span>&#9312;</span>
+          <span style="color:#2563eb">USER ENTRY CHANNELS</span>
+          <span class="fl-line" style="background:#bfdbfe"></span>
+          <span style="color:#6b7280;font-weight:400;text-transform:none;letter-spacing:0">Seeker discovers platform via multiple channels</span>
+        </div>
+        <div class="flow-bar">
+          <div class="flow-node">
+            <div class="fn-inner">
+              <div class="fn-num">1</div>
+              <div class="fn-ico">&#127760;</div>
+              <div class="fn-title">Web Portal (GitHub Pages)</div>
+              <ul class="fn-attrs"><li>Public index.html</li><li>join.html Wizard</li><li>login.html Gate</li><li>Goli Gyan Page</li></ul>
+            </div>
+          </div>
+          <div class="flow-node">
+            <div class="fn-inner">
+              <div class="fn-num">2</div>
+              <div class="fn-ico">&#128241;</div>
+              <div class="fn-title">Android Mobile App</div>
+              <ul class="fn-attrs"><li>app-release.apk</li><li>JSON Sync Bridge</li><li>Import / Export</li><li>REST + WSS v3.8</li></ul>
+            </div>
+          </div>
+          <div class="flow-node">
+            <div class="fn-inner">
+              <div class="fn-num">3</div>
+              <div class="fn-ico">&#128279;</div>
+              <div class="fn-title">QR / Pairing Invite Link</div>
+              <ul class="fn-attrs"><li>Share &amp; Pair Invite</li><li>24h Security PIN</li><li>Healer-Generated</li><li>pairing_invites</li></ul>
+            </div>
+          </div>
+          <div class="flow-node">
+            <div class="fn-inner">
+              <div class="fn-num">4</div>
+              <div class="fn-ico">&#128233;</div>
+              <div class="fn-title">Direct Admin Add</div>
+              <ul class="fn-attrs"><li>Master Portal</li><li>Admin Dashboard</li><li>1-Step Creation</li><li>Immediate Active</li></ul>
+            </div>
+          </div>
+          <div class="flow-node">
+            <div class="fn-inner">
+              <div class="fn-num">5</div>
+              <div class="fn-ico">&#128214;</div>
+              <div class="fn-title">Goli Gyan Guide</div>
+              <ul class="fn-attrs"><li>Public Page</li><li>Bilingual Manual</li><li>Seeker Education</li><li>4 Sacred Pillars</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 2: PROFILE + LINEAGE + PAIRING + RBAC -->
+      <div>
+        <div class="flow-label" style="color:#7c3aed">
+          <span>&#9313;</span>
+          <span style="color:#7c3aed">CORE IDENTITY OBJECTS</span>
+          <span class="fl-line" style="background:#ddd6fe"></span>
+          <span style="color:#6b7280;font-weight:400;text-transform:none;letter-spacing:0">Profile created &rarr; Pairing verified &rarr; Lineage recorded &rarr; Access granted</span>
+        </div>
+        <div class="obj-row obj-row-4">
+
+          <!-- PROFILE / DEVOTEE -->
+          <div class="ob cat-seeker">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#128100;</div>
+              <div class="ob-name">Profile / Devotee</div>
+              <div class="ob-badge">Core Entity</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>Full Name, DOB, Gender</li>
+              <li>Email, Phone, Address</li>
+              <li>Role Tier (ADMIN/HEALER/TRAINEE/DEVOTEE)</li>
+              <li>16-Digit Reference Code</li>
+              <li>Sponsor / Upline Code</li>
+              <li>Org Level (1-10)</li>
+              <li>Membership Status (Paid/Free)</li>
+              <li>Active / Inactive Toggle</li>
+              <li>Category Tag (Functional)</li>
+            </ul>
+          </div>
+
+          <!-- PAIRING / INVITE -->
+          <div class="ob cat-ops">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#128242;</div>
+              <div class="ob-name">Pairing &amp; Invite</div>
+              <div class="ob-badge">Operations</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>24h Security PIN</li>
+              <li>QR Code Token</li>
+              <li>Upline Sponsor Code</li>
+              <li>Expiry Timestamp (24h)</li>
+              <li>Approval Status</li>
+              <li>Device Protocol v3.8</li>
+              <li>pairing_invites Collection</li>
+              <li>Share Link Generator</li>
+            </ul>
+          </div>
+
+          <!-- RBAC / AUTH MATRIX -->
+          <div class="ob cat-gov">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#128737;</div>
+              <div class="ob-name">RBAC Auth Matrix</div>
+              <div class="ob-badge">Governance</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>74+ Screen Element Rules</li>
+              <li>Role: MASTER/HEALER/TRAINEE/DEVOTEE</li>
+              <li>Portal Visibility per Role</li>
+              <li>sk_auth_matrix_v5 (localStorage)</li>
+              <li>Auto-save + Cross-tab Sync</li>
+              <li>Search, Filter, Category Collapse</li>
+              <li>Standalone: rbac-admin.html</li>
+            </ul>
+          </div>
+
+          <!-- SESSION / SECURITY -->
+          <div class="ob cat-gov">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#128274;</div>
+              <div class="ob-name">Security &amp; Session</div>
+              <div class="ob-badge">Governance</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>Session Timeout 30 min</li>
+              <li>Warn at 25 min</li>
+              <li>XSS: escapeHtml() all inputs</li>
+              <li>Portal Detection at load</li>
+              <li>Firebase Security Rules</li>
+              <li>Duplicate Prevention guard</li>
+              <li>Race Condition debounce</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ROW 3: LINEAGE + HOUSE CLEAN + SADHANA + REMEDY + HEALER -->
+      <div>
+        <div class="flow-label" style="color:#059669">
+          <span>&#9314;</span>
+          <span style="color:#059669">SPIRITUAL PRACTICE OBJECTS</span>
+          <span class="fl-line" style="background:#a7f3d0"></span>
+          <span style="color:#6b7280;font-weight:400;text-transform:none;letter-spacing:0">Linked to Profile &rarr; Recorded in Tabs &rarr; Synced to Firebase</span>
+        </div>
+        <div class="obj-row obj-row-5">
+
+          <!-- LINEAGE -->
+          <div class="ob cat-seeker">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#127795;</div>
+              <div class="ob-name">Ancestral Lineage</div>
+              <div class="ob-badge">Seeker</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>3-Generation Pitru Karma</li>
+              <li>Maternal Lineage Tree</li>
+              <li>Paternal Lineage Tree</li>
+              <li>Kuldevi / Kuldevta</li>
+              <li>Custom Lineage Nodes</li>
+              <li>Hierarchy Card View</li>
+              <li>Tab 1: Devotee Personal</li>
+            </ul>
+          </div>
+
+          <!-- HOUSE CLEAN -->
+          <div class="ob cat-seeker">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#129529;</div>
+              <div class="ob-name">House Clean</div>
+              <div class="ob-badge">Seeker</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>Level 1: Self Home</li>
+              <li>Level 2: Parents Home</li>
+              <li>Level 3: Relatives Home</li>
+              <li>Verification Log Records</li>
+              <li>Mentor Approval Gate</li>
+              <li>Tab 1 (Devotee) + Tab 2 (Seeker)</li>
+            </ul>
+          </div>
+
+          <!-- SADHANA -->
+          <div class="ob cat-sadhana">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#128367;</div>
+              <div class="ob-name">Sadhana</div>
+              <div class="ob-badge">Sadhana</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>3 Diya (Morning + Evening)</li>
+              <li>Daily Japa 108 Counter</li>
+              <li>11 Malas Streak Target</li>
+              <li>6:15-7:00 PM Evening Sanctum</li>
+              <li>Sacred Sadhanas Catalog</li>
+              <li>/sadhana_catalog Firebase</li>
+              <li>Tab 2 (Seeker) + Tab 3 (Trainee)</li>
+            </ul>
+          </div>
+
+          <!-- REMEDY -->
+          <div class="ob cat-sadhana">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#127775;</div>
+              <div class="ob-name">Remedy Catalog</div>
+              <div class="ob-badge">Sadhana</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>Prescribed Remedies</li>
+              <li>Divine Remedies &amp; Havans</li>
+              <li>Energy Cleansing Practices</li>
+              <li>Karmic Healing Sessions</li>
+              <li>Category Filter Toolbar</li>
+              <li>Custom Remedy Add</li>
+              <li>Tab 2 (Seeker) + Tab 3 (Trainee)</li>
+            </ul>
+          </div>
+
+          <!-- GOLI GYAN -->
+          <div class="ob cat-trainee">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#128214;</div>
+              <div class="ob-name">Goli Gyan Knowledge</div>
+              <div class="ob-badge">Trainee</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>Bilingual Seeker Manual</li>
+              <li>Sacred Practice Guidelines</li>
+              <li>4 Sacred Pillars Content</li>
+              <li>Quick Modal in All Portals</li>
+              <li>Standalone: GOLI_GYAN.html</li>
+              <li>Tab 3 Button Access</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ROW 4: HEALER + GENEALOGY + FIREBASE + PORTAL -->
+      <div>
+        <div class="flow-label" style="color:#d97706">
+          <span>&#9315;</span>
+          <span style="color:#d97706">MANAGEMENT &amp; DATA OBJECTS</span>
+          <span class="fl-line" style="background:#fde68a"></span>
+          <span style="color:#6b7280;font-weight:400;text-transform:none;letter-spacing:0">Higher-tier management, visualization, and cloud data objects</span>
+        </div>
+        <div class="obj-row obj-row-4">
+
+          <!-- HEALER NETWORK -->
+          <div class="ob cat-healer">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#128081;</div>
+              <div class="ob-name">Healer Network</div>
+              <div class="ob-badge">Healer</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>Certified Healers Hub</li>
+              <li>Completed Sadhanas List</li>
+              <li>Mentorship Network Cards</li>
+              <li>Hub Metrics Strip</li>
+              <li>5-Level Healer Tree</li>
+              <li>Link Devotee to Healer</li>
+              <li>Healer Portal: Healers/</li>
+              <li>Tab 4: Healer Connect</li>
+            </ul>
+          </div>
+
+          <!-- GENEALOGY TREE -->
+          <div class="ob cat-trainee">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#127957;</div>
+              <div class="ob-name">Genealogy / MLM Tree</div>
+              <div class="ob-badge">Visualization</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>5-Level Recursive List View</li>
+              <li>Spiderweb Canvas View</li>
+              <li>MLM Org Hierarchy Display</li>
+              <li>Generation Filter Chips</li>
+              <li>Smart Fit / Zoom Controls</li>
+              <li>Tier Count Badges (1-4)</li>
+              <li>Tab 5: Genealogy Tree</li>
+            </ul>
+          </div>
+
+          <!-- FIREBASE RTDB -->
+          <div class="ob cat-firebase">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#128293;</div>
+              <div class="ob-name">Firebase RTDB</div>
+              <div class="ob-badge">Cloud DB</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>8 Root Collections</li>
+              <li>Realtime Drill-Down Table</li>
+              <li>Breadcrumb Navigation</li>
+              <li>REST + WSS Protocol</li>
+              <li>Add / Export JSON Nodes</li>
+              <li>Live Sync (15s heartbeat)</li>
+              <li>Tab 6: Firebase Data (Master)</li>
+            </ul>
+          </div>
+
+          <!-- SYSTEM SETTINGS -->
+          <div class="ob cat-sys">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#9881;</div>
+              <div class="ob-name">System Settings</div>
+              <div class="ob-badge">Config</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>Default Mentor: Karim Ji (Founder)</li>
+              <li>Telegram Bot: SpiritualKarimBot</li>
+              <li>3 Diya Window: 6:15-7:00 PM</li>
+              <li>Japa Target: 108 / 11 Malas</li>
+              <li>Auto-Save: INSTANT mode</li>
+              <li>Speech Language: en-US</li>
+              <li>sk_admin_system_settings_v1</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- WORKFLOW OBJECTS ROW -->
+      <div>
+        <div class="flow-label" style="color:#0891b2">
+          <span>&#9316;</span>
+          <span style="color:#0891b2">WORKFLOW &amp; PROCESS OBJECTS</span>
+          <span class="fl-line" style="background:#a5f3fc"></span>
+          <span style="color:#6b7280;font-weight:400;text-transform:none;letter-spacing:0">Registration flows, approval gates, and data sync processes</span>
+        </div>
+        <div class="obj-row obj-row-4">
+
+          <!-- REGISTRATION WORKFLOW -->
+          <div class="ob cat-ops">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#128203;</div>
+              <div class="ob-name">Registration Workflow</div>
+              <div class="ob-badge">Operations</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>System 1: Direct Admin (1 step)</li>
+              <li>System 2: Seeker Wizard (5 steps)</li>
+              <li>System 3: Pairing Invite (2 steps)</li>
+              <li>System 4: Post-Creation (1 step)</li>
+              <li>Duplicate Check: email + phone</li>
+              <li>Upline Approval: 24h timeout</li>
+            </ul>
+          </div>
+
+          <!-- FIREBASE SYNC ENGINE -->
+          <div class="ob cat-ops">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#128260;</div>
+              <div class="ob-name">Firebase Sync Engine</div>
+              <div class="ob-badge">Operations</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>Dual-Write: Local + Firebase</li>
+              <li>Merge Strategy: Firebase wins</li>
+              <li>Power-Loss Heartbeat: 15s</li>
+              <li>sk_last_write_ts timestamp</li>
+              <li>Cross-tab Storage Event Sync</li>
+              <li>Auto-save on every change</li>
+            </ul>
+          </div>
+
+          <!-- JSON DOCUMENT BRIDGE -->
+          <div class="ob cat-ops">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#128196;</div>
+              <div class="ob-name">JSON Document Bridge</div>
+              <div class="ob-badge">Operations</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>Import JSON (Android App payload)</li>
+              <li>Export JSON (to mobile app)</li>
+              <li>Profile Payload Structure</li>
+              <li>Import Modal (Masters/Healers)</li>
+              <li>Export Button (all portals)</li>
+              <li>Full MVC data serialization</li>
+            </ul>
+          </div>
+
+          <!-- APPROVAL GATE -->
+          <div class="ob cat-gov">
+            <div class="ob-hdr">
+              <div class="ob-ico">&#9989;</div>
+              <div class="ob-name">Approval &amp; Notification</div>
+              <div class="ob-badge">Governance</div>
+            </div>
+            <ul class="ob-attrs">
+              <li>Devotee Application Pending Bell</li>
+              <li>Approval Notification Banner</li>
+              <li>Count Badge on Dashboard</li>
+              <li>Upline Review: 24h window</li>
+              <li>Pending Approval Pill</li>
+              <li>Auto-expire if not approved</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PORTALS STRIP -->
+      <div>
+        <div class="flow-label" style="color:#be185d">
+          <span>&#9317;</span>
+          <span style="color:#be185d">5 DEDICATED ROLE PORTALS</span>
+          <span class="fl-line" style="background:#fbcfe8"></span>
+        </div>
+        <div class="portal-row">
+          <div class="por-badge por1">&#127963; Masters Portal &bull; Tier 1 &bull; Full Control</div>
+          <div class="por-badge por2">&#127807; Healers Portal &bull; Tier 2 &bull; Team + Seekers</div>
+          <div class="por-badge por3">&#128287; Trainee Portal &bull; Tier 3 &bull; In-Progress</div>
+          <div class="por-badge por4">&#127775; Devotee Portal &bull; Tier 4 &bull; Personal Only</div>
+          <div class="por-badge por5">&#128279; Public Portal &bull; Open &bull; join.html + GOLI</div>
+        </div>
+      </div>
+
+      <!-- MASTER OBJECTS BAR -->
+      <div class="master-bar">
+        <div class="master-title">MASTER DATA OBJECTS &mdash; Managed in localStorage + Firebase RTDB (Single Source of Truth)</div>
+        <div class="master-grid">
+
+          <div class="mb">
+            <div class="mb-hdr"><div class="mb-ico">&#128100;</div><div class="mb-name">Profile Master</div></div>
+            <ul class="mb-attrs"><li>sk_admin_profiles_v3</li><li>All profile records</li><li>Role, Tier, Codes</li><li>Contact + Address</li><li>Payment status</li></ul>
+          </div>
+
+          <div class="mb">
+            <div class="mb-hdr"><div class="mb-ico">&#128737;</div><div class="mb-name">Auth Matrix Master</div></div>
+            <ul class="mb-attrs"><li>sk_auth_matrix_v5</li><li>74+ element rules</li><li>Role visibility flags</li><li>Portal visibility gates</li><li>Auto-save on change</li></ul>
+          </div>
+
+          <div class="mb">
+            <div class="mb-hdr"><div class="mb-ico">&#128367;</div><div class="mb-name">Sadhana Catalog Master</div></div>
+            <ul class="mb-attrs"><li>/sadhana_catalog Firebase</li><li>Sacred practices list</li><li>Remedies + Havans</li><li>Energy Cleansing items</li><li>Custom additions</li></ul>
+          </div>
+
+          <div class="mb">
+            <div class="mb-hdr"><div class="mb-ico">&#128242;</div><div class="mb-name">Pairing Invites Master</div></div>
+            <ul class="mb-attrs"><li>sk_pairing_invites</li><li>/pairing_invites Firebase</li><li>24h PIN records</li><li>Sponsor code links</li><li>Expiry timestamps</li></ul>
+          </div>
+
+          <div class="mb">
+            <div class="mb-hdr"><div class="mb-ico">&#9881;</div><div class="mb-name">System Config Master</div></div>
+            <ul class="mb-attrs"><li>sk_admin_system_settings_v1</li><li>/system_config Firebase</li><li>Mentor defaults</li><li>Sadhana targets</li><li>Feature flags</li></ul>
+          </div>
+
+          <div class="mb">
+            <div class="mb-hdr"><div class="mb-ico">&#128225;</div><div class="mb-name">Device Telemetry Master</div></div>
+            <ul class="mb-attrs"><li>/device_telemetry Firebase</li><li>/authorisedNodes Firebase</li><li>Node reference codes</li><li>Cloud sync status</li><li>Protocol: REST+WSS v3.8</li></ul>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /arch-body -->
+
+    <!-- LEGEND SIDEBAR -->
+    <div>
+      <div class="legend">
+        <div class="leg-title">LEGEND</div>
+
+        <div class="leg-section">
+          <div class="leg-sec-title">Relationship Types</div>
+          <div class="leg-item"><div class="leg-line" style="background:#1a1a2e"></div>Direct Relationship</div>
+          <div class="leg-item"><div class="leg-dash" style="border-color:#6b7280;color:#6b7280"></div>Indirect Relationship</div>
+          <div class="leg-item"><div class="leg-line" style="background:#d4af37"></div>Data Sync Flow</div>
+          <div class="leg-item"><div class="leg-line" style="background:#f59e0b;height:3px"></div>Firebase Write</div>
+        </div>
+
+        <div class="leg-section">
+          <div class="leg-sec-title">Object Categories</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#2563eb"></div>Seeker &amp; Identity</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#059669"></div>Healer &amp; Certification</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#d97706"></div>Trainee &amp; Progress</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#7c3aed"></div>Sadhana &amp; Remedies</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#0891b2"></div>Operations &amp; Workflow</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div>Firebase / Cloud</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#be185d"></div>Governance &amp; RBAC</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#6b7280"></div>Config &amp; System</div>
+        </div>
+
+        <div class="leg-section">
+          <div class="leg-sec-title">Portal Tiers</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#7c3aed;border-radius:50%"></div>Tier 1: Admin Master</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#059669;border-radius:50%"></div>Tier 2: Healer Connect</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#d97706;border-radius:50%"></div>Tier 3: Trainee Sadhak</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#2563eb;border-radius:50%"></div>Tier 4: Devotee/Seeker</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#be185d;border-radius:50%"></div>Public Open Access</div>
+        </div>
+
+        <div class="leg-section">
+          <div class="leg-sec-title">Key localStorage Keys</div>
+          <div style="font-size:.52rem;color:#6b7280;line-height:1.75;font-family:monospace">
+            sk_admin_profiles_v3<br>
+            sk_auth_matrix_v5<br>
+            sk_pairing_invites<br>
+            sk_admin_system_settings_v1<br>
+            sk_admin_active_profile_id_v3<br>
+            sk_admin_active_role_mode_v1<br>
+            sk_last_write_ts
+          </div>
+        </div>
+      </div>
+
+      <!-- BENEFITS -->
+      <div class="benefits">
+        <div class="ben-title">BUSINESS BENEFITS</div>
+        <div class="ben-item"><div class="ben-ico">&#9889;</div>End-to-end Seeker-to-Healer journey tracked</div>
+        <div class="ben-item"><div class="ben-ico">&#128737;</div>Granular RBAC (74+ screen elements)</div>
+        <div class="ben-item"><div class="ben-ico">&#127795;</div>3-Gen lineage + MLM 5-Level tree</div>
+        <div class="ben-item"><div class="ben-ico">&#128293;</div>Realtime Firebase dual-write sync</div>
+        <div class="ben-item"><div class="ben-ico">&#128241;</div>Android APK + Web JSON bridge</div>
+        <div class="ben-item"><div class="ben-ico">&#128275;</div>Zero data loss (15s heartbeat)</div>
+      </div>
+
+      <!-- NOTES -->
+      <div class="notes-box">
+        <div class="notes-title">NOTES</div>
+        <div class="note-item">All profiles linked via 16-digit Reference Code hierarchy</div>
+        <div class="note-item">Firebase always wins on data merge conflict</div>
+        <div class="note-item">All portals share same MVC codebase (role-gated)</div>
+        <div class="note-item">All screen elements have RBAC rules defined</div>
+      </div>
+    </div>
+  </div><!-- /arch-main -->
+
+
+  <!-- ========================================================================= -->
+  <!-- ENTERPRISE ARCHITECTURE EXTENSIONS (DATABASE, BACKEND & NOTIFICATIONS) -->
+  <!-- ========================================================================= -->
+  <div style="margin-top:2rem; border-top:2px solid #e2e8f0; padding-top:1.5rem;">
+    
+    <!-- EXTENSION 1: RELATIONAL ER SCHEMA -->
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:0.75rem; padding:1.25rem 1.5rem; margin-bottom:1.5rem; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <div style="font-size:0.92rem; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem;">
+        <span>🗄️</span> <span>Database Entity-Relationship (ER) Schema &amp; Object Mapping</span>
+      </div>
+      <p style="font-size:0.75rem; color:#64748b; margin-bottom:0.85rem; line-height:1.5;">
+        Formalized relationship table governing the 5 core business entities in the Spiritual Karim ecosystem.
+        Enforces foreign key cascades, data types, uniqueness constraints, and anti-loop integrity checks.
+      </p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.72rem; text-align:left;">
+          <thead>
+            <tr style="background:#f8fafc; border-bottom:1.5px solid #e2e8f0; color:#334155;">
+              <th style="padding:0.5rem 0.6rem;">Business Object Model</th>
+              <th style="padding:0.5rem 0.6rem;">Database Table / Path</th>
+              <th style="padding:0.5rem 0.6rem;">Primary &amp; Foreign Keys</th>
+              <th style="padding:0.5rem 0.6rem;">Integrity &amp; Unique Constraints</th>
+              <th style="padding:0.5rem 0.6rem;">Cascade Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>DevoteeProfileModel</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>/profiles/{id}</code> &bull; <code>Devotees</code></td>
+              <td style="padding:0.45rem 0.6rem;">PK: <code>devotee_id</code><br>FK: <code>mentor_id &rarr; Devotees(id)</code></td>
+              <td style="padding:0.45rem 0.6rem;">UNIQUE(<code>mobile</code>), UNIQUE(<code>ref_code</code>)</td>
+              <td style="padding:0.45rem 0.6rem;">RESTRICT delete if child devotees assigned; Reassign required</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>PairingTicketModel</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>/pairing_invites/{ticketId}</code></td>
+              <td style="padding:0.45rem 0.6rem;">PK: <code>ticket_id</code><br>FK: <code>devotee_id</code>, <code>mentor_id</code></td>
+              <td style="padding:0.45rem 0.6rem;">TTL &le; 24h; Unique active pairing per devotee</td>
+              <td style="padding:0.45rem 0.6rem;">SET STATUS='EXPIRED' on timeout; Immutable audit history retained</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>HouseCleanAuditModel</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>/house_clean_logs/{id}</code></td>
+              <td style="padding:0.45rem 0.6rem;">PK: <code>audit_id</code><br>FK: <code>devotee_id</code>, <code>healer_id</code></td>
+              <td style="padding:0.45rem 0.6rem;">Score &ge; 75% for sign-off; Photo SHA-256 verified</td>
+              <td style="padding:0.45rem 0.6rem;">CASCADE delete only on initial draft; Locked once verified</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>SadhanaPrescriptionModel</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>/remedy_prescriptions/{id}</code></td>
+              <td style="padding:0.45rem 0.6rem;">PK: <code>prescription_id</code><br>FK: <code>devotee_id</code>, <code>prescribed_by</code></td>
+              <td style="padding:0.45rem 0.6rem;">Stage 1..4 progression check; Nonce signature</td>
+              <td style="padding:0.45rem 0.6rem;">Preserved in devotee spiritual health history</td>
+            </tr>
+            <tr>
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>SignalWorkflowModel</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>/device_telemetry/{id}</code></td>
+              <td style="padding:0.45rem 0.6rem;">PK: <code>event_id</code><br>FK: <code>actor_devotee_id</code></td>
+              <td style="padding:0.45rem 0.6rem;">15s Heartbeat cadence; Monotonic timestamp</td>
+              <td style="padding:0.45rem 0.6rem;">Rolling 90-day archive; Critical events permanently stored</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EXTENSION 2: BACKEND SERVICE LAYER CONTRACTS -->
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:0.75rem; padding:1.25rem 1.5rem; margin-bottom:1.5rem; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <div style="font-size:0.92rem; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem;">
+        <span>⚙️</span> <span>Backend Service Layer Contracts &amp; Transaction Boundaries (OOPS MVC)</span>
+      </div>
+      <p style="font-size:0.75rem; color:#64748b; margin-bottom:0.85rem; line-height:1.5;">
+        Defines the service interfaces isolating business logic from UI rendering and raw persistence.
+      </p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(290px, 1fr)); gap:1rem;">
+        <div style="border:1px solid #e2e8f0; background:#f8fafc; border-radius:0.5rem; padding:0.85rem;">
+          <div style="font-weight:700; font-size:0.78rem; color:#2563eb; font-family:'JetBrains Mono',monospace;">IPairingService</div>
+          <ul style="font-size:0.68rem; color:#475569; margin-top:0.35rem; line-height:1.6; list-style:none; padding-left:0;">
+            <li>&bull; <code>generatePairingPin(devoteeId, sponsorCode): Ticket</code></li>
+            <li>&bull; <code>validatePin(pin, ticketId): ValidationResult</code></li>
+            <li>&bull; <code>approvePairing(ticketId, mentorSignature): boolean</code></li>
+            <li>&bull; <code>rejectPairing(ticketId, reason): boolean</code></li>
+          </ul>
+        </div>
+        <div style="border:1px solid #e2e8f0; background:#f8fafc; border-radius:0.5rem; padding:0.85rem;">
+          <div style="font-weight:700; font-size:0.78rem; color:#059669; font-family:'JetBrains Mono',monospace;">IHouseCleanAuditService</div>
+          <ul style="font-size:0.68rem; color:#475569; margin-top:0.35rem; line-height:1.6; list-style:none; padding-left:0;">
+            <li>&bull; <code>submitHouseCleanProof(devoteeId, level, photoBase64)</code></li>
+            <li>&bull; <code>evaluateChecklist(checklistItems[]): number (Pct)</code></li>
+            <li>&bull; <code>issueSignoff(auditId, healerId, eSign): SignoffCert</code></li>
+            <li>&bull; <code>requestRemediation(auditId, notes): boolean</code></li>
+          </ul>
+        </div>
+        <div style="border:1px solid #e2e8f0; background:#f8fafc; border-radius:0.5rem; padding:0.85rem;">
+          <div style="font-weight:700; font-size:0.78rem; color:#d97706; font-family:'JetBrains Mono',monospace;">INotificationService</div>
+          <ul style="font-size:0.68rem; color:#475569; margin-top:0.35rem; line-height:1.6; list-style:none; padding-left:0;">
+            <li>&bull; <code>dispatchSmsOtp(mobile): OtpChallenge</code></li>
+            <li>&bull; <code>sendWhatsAppWelcome(devoteeId, templateId)</code></li>
+            <li>&bull; <code>pushMentorAlert(healerId, eventPayload)</code></li>
+            <li>&bull; <code>scheduleDiyaReminder(devoteeId, '18:15')</code></li>
+          </ul>
+        </div>
+        <div style="border:1px solid #e2e8f0; background:#f8fafc; border-radius:0.5rem; padding:0.85rem;">
+          <div style="font-weight:700; font-size:0.78rem; color:#7c3aed; font-family:'JetBrains Mono',monospace;">ISecurityAuditService</div>
+          <ul style="font-size:0.68rem; color:#475569; margin-top:0.35rem; line-height:1.6; list-style:none; padding-left:0;">
+            <li>&bull; <code>verifyScreenAuth(role, elementSelector): boolean</code></li>
+            <li>&bull; <code>detectCircularDownline(devoteeId, targetMentorId)</code></li>
+            <li>&bull; <code>recordTelemetryEvent(actorId, eventCode, metadata)</code></li>
+            <li>&bull; <code>executeMasterOverride(founderId, targetId, action)</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXTENSION 3: HITL DISPUTE & HUMAN VERIFICATION GATEWAYS -->
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:0.75rem; padding:1.25rem 1.5rem; margin-bottom:1.5rem; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <div style="font-size:0.92rem; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem;">
+        <span>👥</span> <span>Human-in-the-Loop (HITL) Verification Gateways &amp; Dispute Protocols</span>
+      </div>
+      <p style="font-size:0.75rem; color:#64748b; margin-bottom:0.85rem; line-height:1.5;">
+        Critical business decisions require explicit human consensus to preserve spiritual integrity and avoid automated misclassifications.
+      </p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1rem;">
+        <div style="border-left:3px solid #059669; background:#f8fafc; border-radius:0.4rem; padding:0.75rem;">
+          <div style="font-weight:700; font-size:0.76rem; color:#0f172a;">GATEWAY 1: Sanctum Photo Verification</div>
+          <p style="font-size:0.7rem; color:#475569; margin-top:0.3rem;">Mentor physically inspects altar photo for 3 mandatory elements: clean brass/clay diya, unobstructed pooja thali, and zero clutter. Automated AI pre-scans, but human mentor issues final cryptographic sign-off.</p>
+        </div>
+        <div style="border-left:3px solid #d97706; background:#f8fafc; border-radius:0.4rem; padding:0.75rem;">
+          <div style="font-weight:700; font-size:0.76rem; color:#0f172a;">GATEWAY 2: Disputed Mentorship Pairing</div>
+          <p style="font-size:0.7rem; color:#475569; margin-top:0.3rem;">If a seeker enters an incorrect mentor reference code or the mentor rejects the pairing, the ticket is not discarded. It enters an interactive arbitration queue where the devotee can re-select or escalate to Master Admin.</p>
+        </div>
+        <div style="border-left:3px solid #7c3aed; background:#f8fafc; border-radius:0.4rem; padding:0.75rem;">
+          <div style="font-weight:700; font-size:0.76rem; color:#0f172a;">GATEWAY 3: Trainee Sadhak Promotion</div>
+          <p style="font-size:0.7rem; color:#475569; margin-top:0.3rem;">Promoting a devotee to Trainee Sadhak requires two distinct human approvals: (1) Assigned Mentor certification of 21 consecutive days of Three Diya practice, and (2) Master Admin review of the lineage records.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /canvas -->
+
+<!-- ACTION BAR -->
+<div class="ab">
+  <button class="abn abpr" onclick="window.print()" title="Print / Save as PDF">PDF</button>
+  <button class="abn abtp" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top">TOP</button>
+</div>
+
+</body>
+</html>

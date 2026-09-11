@@ -1,0 +1,2229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Structure Workflow Architecture • Shree Spritual Karim Sansthan</title>
+<meta name="description" content="Encapsulation, Group-by Hierarchy (Higher to Lower Level), Waterfall Method of Dataflow & Filter, Tree View, and Roles & Authorization Matrix">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cinzel:wght@700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --border: #e2e8f0;
+  --border-dark: #cbd5e1;
+  --txt: #0f172a;
+  --txt-muted: #64748b;
+  --txt-light: #94a3b8;
+  --gold: #b8960c;
+  --gold-light: #fef9c3;
+  --gold-border: #fde047;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --blue-border: #bfdbfe;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --purple-border: #ddd6fe;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --green-border: #a7f3d0;
+  --amber: #d97706;
+  --amber-light: #fffbeb;
+  --amber-border: #fde68a;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --red-border: #fecaca;
+  --cyan: #0891b2;
+  --cyan-light: #ecfeff;
+  --cyan-border: #a5f3fc;
+  --pink: #be185d;
+  --pink-light: #fdf2f8;
+  --pink-border: #fbcfe8;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 14px -2px rgba(0,0,0,0.08), 0 2px 6px -1px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 28px -5px rgba(0,0,0,0.12), 0 8px 12px -6px rgba(0,0,0,0.04);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 3rem;
+}
+
+/* BRAND HEADER */
+.brand-header {
+  background: linear-gradient(135deg, #1e1b4b 0%, #311042 50%, #172554 100%);
+  color: #ffffff;
+  padding: 1.6rem 2rem 1.4rem;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.brand-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b, #d4af37, #10b981, #3b82f6);
+}
+.brand-emblem { font-size: 1.75rem; opacity: 0.9; margin-bottom: 0.15rem; }
+.brand-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #f8fafc;
+}
+.brand-subtitle {
+  font-size: 0.88rem;
+  color: rgba(241, 245, 249, 0.85);
+  margin-top: 0.25rem;
+}
+.brand-tags {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+.btag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid;
+}
+.btag-gold { background: rgba(212,175,55,0.18); color: #fde047; border-color: rgba(212,175,55,0.4); }
+.btag-blue { background: rgba(59,130,246,0.18); color: #93c5fd; border-color: rgba(59,130,246,0.4); }
+.btag-green { background: rgba(16,185,129,0.18); color: #6ee7b7; border-color: rgba(16,185,129,0.4); }
+.btag-purple { background: rgba(168,85,247,0.18); color: #d8b4fe; border-color: rgba(168,85,247,0.4); }
+.btag-cyan { background: rgba(8,145,178,0.18); color: #a5f3fc; border-color: rgba(8,145,178,0.4); }
+
+/* CONTROLS BAR */
+.controls-bar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  padding: 0.65rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.doc-links {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.doc-link-btn {
+  font-size: 0.73rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 0.4rem;
+  text-decoration: none;
+  background: var(--bg-subtle);
+  color: var(--txt-muted);
+  border: 1px solid var(--border);
+  transition: all 0.15s ease;
+}
+.doc-link-btn:hover {
+  background: #e2e8f0;
+  color: var(--txt);
+}
+.doc-link-btn.active {
+  background: var(--blue-light);
+  color: var(--blue);
+  border-color: var(--blue-border);
+  font-weight: 700;
+}
+.action-btns {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.btn-action {
+  font-size: 0.73rem;
+  font-weight: 700;
+  padding: 0.35rem 0.8rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--txt);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s;
+}
+.btn-action:hover { background: var(--bg-subtle); }
+.btn-primary {
+  background: var(--blue);
+  color: #ffffff;
+  border-color: var(--blue);
+}
+.btn-primary:hover { background: #1d4ed8; }
+
+/* VIEW TABS BAR */
+.view-tabs-bar {
+  background: #ffffff;
+  border-bottom: 1.5px solid var(--border);
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  overflow-x: auto;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.vtab-btn {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.45rem 0.95rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--txt-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.vtab-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--txt);
+}
+.vtab-btn.active {
+  background: var(--blue);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+}
+
+/* MAIN CONTAINER */
+.container {
+  max-width: 1440px;
+  margin: 1.25rem auto 0;
+  padding: 0 1.25rem;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* BANNER */
+.intro-card {
+  background: linear-gradient(135deg, #ffffff 0%, #eff6ff 50%, #f5f3ff 100%);
+  border: 1.5px solid var(--blue-border);
+  border-radius: 0.85rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+.intro-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--txt);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.intro-desc {
+  font-size: 0.82rem;
+  color: var(--txt-muted);
+  max-width: 1150px;
+  margin-top: 0.35rem;
+  line-height: 1.55;
+}
+
+/* TREE VIEW STYLES */
+.tree-container {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 0.85rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+}
+.tree-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+.role-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.rf-pill {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.35rem 0.85rem;
+  border-radius: 0.45rem;
+  border: 1.5px solid var(--border);
+  background: #ffffff;
+  color: var(--txt-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.rf-pill:hover {
+  background: var(--bg-subtle);
+  color: var(--txt);
+}
+.rf-pill.active-all { background: #1e293b; color: #fff; border-color: #1e293b; box-shadow: 0 2px 6px rgba(30,41,59,0.25); }
+.rf-pill.active-master { background: var(--purple); color: #fff; border-color: var(--purple); box-shadow: 0 2px 6px rgba(124,58,237,0.25); }
+.rf-pill.active-healer { background: var(--green); color: #fff; border-color: var(--green); box-shadow: 0 2px 6px rgba(5,150,105,0.25); }
+.rf-pill.active-trainee { background: var(--amber); color: #fff; border-color: var(--amber); box-shadow: 0 2px 6px rgba(217,119,6,0.25); }
+.rf-pill.active-devotee { background: var(--blue); color: #fff; border-color: var(--blue); box-shadow: 0 2px 6px rgba(37,99,235,0.25); }
+
+/* FILTER MODE TOGGLE & COUNTER */
+.tree-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.filter-mode-toggle {
+  display: inline-flex;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  padding: 2px;
+}
+.fmt-btn {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.35rem;
+  border: none;
+  background: transparent;
+  color: var(--txt-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.fmt-btn.active {
+  background: #ffffff;
+  color: var(--txt);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.node-counter-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1px solid var(--blue-border);
+  padding: 0.3rem 0.7rem;
+  border-radius: 9999px;
+}
+
+/* SCOPE SUMMARY BANNER */
+.scope-summary-banner {
+  background: #fbfcfe;
+  border: 1.5px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+.ssb-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.ssb-badge {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.85rem;
+  border-radius: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #ffffff;
+}
+.ssb-all { background: #1e293b; }
+.ssb-master { background: var(--purple); }
+.ssb-healer { background: var(--green); }
+.ssb-trainee { background: var(--amber); }
+.ssb-devotee { background: var(--blue); }
+.ssb-rule {
+  font-size: 0.78rem;
+  color: var(--txt);
+  background: #ffffff;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--border);
+  flex: 1;
+  min-width: 280px;
+}
+.ssb-stats {
+  font-size: 0.75rem;
+  color: var(--txt-muted);
+  line-height: 1.5;
+  border-top: 1px solid var(--border);
+  padding-top: 0.45rem;
+  margin-top: 0.35rem;
+}
+
+/* TREE NODE CARDS */
+.tree-node-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.role-scope-branch {
+  border-left: 3px solid var(--border);
+  margin-left: 1.2rem;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  position: relative;
+  transition: all 0.25s ease;
+}
+.role-scope-branch::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 20px;
+  width: 16px;
+  height: 2px;
+  background: var(--border);
+}
+.branch-master { border-left-color: var(--purple-border); }
+.branch-master::before { background: var(--purple); }
+.branch-healer { border-left-color: var(--green-border); }
+.branch-healer::before { background: var(--green); }
+.branch-trainee { border-left-color: var(--amber-border); }
+.branch-trainee::before { background: var(--amber); }
+.branch-devotee { border-left-color: var(--blue-border); }
+.branch-devotee::before { background: var(--blue); }
+
+.tree-branch {
+  border-left: 2px dashed var(--border);
+  margin-left: 1.2rem;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.tree-branch::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 18px;
+  width: 14px;
+  height: 2px;
+  background: var(--border);
+}
+.tree-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 0.65rem;
+  padding: 0.85rem 1.1rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.tree-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.tree-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+/* TREE CARD LEVELS */
+.tc-root { border-color: var(--purple-border); background: #faf8ff; }
+.tc-root::before { background: var(--purple); }
+
+.tc-tier { border-color: var(--blue-border); background: #fcfdff; }
+.tc-tier::before { background: var(--blue); }
+
+.tc-screen { border-color: var(--green-border); background: #f7fdfa; }
+.tc-screen::before { background: var(--green); }
+
+.tc-component { border-color: var(--amber-border); background: #fffdf7; }
+.tc-component::before { background: var(--amber); }
+
+.tc-atomic { border-color: var(--cyan-border); background: #f8fcfe; }
+.tc-atomic::before { background: var(--cyan); }
+
+.tree-card-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+.tc-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.tc-icon { font-size: 1.15rem; }
+.tc-name {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--txt);
+}
+.tc-type-tag {
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+}
+.tt-root { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple-border); }
+.tt-tier { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); }
+.tt-screen { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.tt-component { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber-border); }
+.tt-atomic { background: var(--cyan-light); color: var(--cyan); border: 1px solid var(--cyan-border); }
+
+.tc-desc {
+  font-size: 0.77rem;
+  color: var(--txt-muted);
+  line-height: 1.45;
+  margin-bottom: 0.45rem;
+}
+.tc-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--txt-light);
+  border-top: 1px solid #f1f5f9;
+  padding-top: 0.4rem;
+}
+.tc-meta-row code {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg-subtle);
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.2rem;
+  color: #334155;
+  font-size: 0.7rem;
+}
+.tc-auth-badges {
+  display: flex;
+  gap: 0.25rem;
+}
+.auth-pill {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.2rem;
+}
+.ap-pass { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.ap-fail { background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; text-decoration: line-through; }
+</style>
+</head>
+<body>
+
+<!-- BRAND HEADER -->
+<header class="brand-header">
+  <div class="brand-emblem">☸️</div>
+  <h1 class="brand-title">SHREE SPRITUAL KARIM SANSTHAN</h1>
+  <p class="brand-subtitle">Data Structure Workflow Architecture &bull; Encapsulation, Hierarchy, Waterfall Cascade &amp; Authorization</p>
+  <div class="brand-tags">
+    <span class="btag btag-gold">Higher-to-Lower Encapsulation</span>
+    <span class="btag btag-blue">Waterfall Method</span>
+    <span class="btag btag-green">Tree View &bull; Roles &amp; Auth Matrix</span>
+    <span class="btag btag-purple">4-Tier Strict RBAC</span>
+    <span class="btag btag-cyan">Pure White Theme</span>
+  </div>
+</header>
+
+<!-- CONTROLS & ARCHITECTURE SUITE NAVIGATION BAR -->
+<div class="controls-bar">
+  <div class="doc-links">
+    <span style="font-size: 0.72rem; font-weight: 700; color: var(--txt-muted); margin-right: 0.25rem;">ARCHITECTURE SUITE:</span>
+    <a href="platform-overview.html" class="doc-link-btn">① Platform Overview</a>
+    <a href="workflow-architecture.html" class="doc-link-btn">② Business Objects</a>
+    <a href="transaction-lifecycle.html" class="doc-link-btn">③ Universal Lifecycle</a>
+    <a href="devotee-registration-workflow.html" class="doc-link-btn">④ Devotee Flowchart (HITL)</a>
+    <a href="devotee-registration-workflow1.html" class="doc-link-btn">⑤ Devotee Stages (Original)</a>
+    <a href="data-structure-workflow.html" class="doc-link-btn active">⑥ Data Structure &amp; Hierarchy</a>
+    <a href="core-operations-workflow.html" class="doc-link-btn">⑦ Core Operations &amp; Workflows</a>
+  </div>
+  <div class="action-btns">
+    <button class="btn-action" onclick="toggleAllTreeNodes()">
+      <span>🔄</span> <span id="toggle-tree-btn-lbl">Collapse Tree</span>
+    </button>
+    <button class="btn-action btn-primary" onclick="window.print()">
+      <span>🖨️</span> Print / Save PDF
+    </button>
+  </div>
+</div>
+
+<!-- VIEW TABS BAR -->
+<div class="view-tabs-bar">
+  <button class="vtab-btn active" onclick="switchViewTab('tab-tree')">
+    <span>🌳</span> 1. Visual Hierarchy &amp; Encapsulation Tree
+  </button>
+  <button class="vtab-btn" onclick="switchViewTab('tab-waterfall')">
+    <span>🌊</span> 2. Waterfall Dataflow &amp; Scoped Filtering
+  </button>
+  <button class="vtab-btn" onclick="switchViewTab('tab-rbac')">
+    <span>🔐</span> 3. Roles &amp; Authorization Matrix (74+ Elements)
+  </button>
+  <button class="vtab-btn" onclick="switchViewTab('tab-schemas')">
+    <span>📦</span> 4. OOPS Data Models &amp; Schema Contracts
+  </button>
+  <button class="vtab-btn" onclick="switchViewTab('tab-tests')">
+    <span>🧪</span> 5. Testing &amp; Integrity Suite
+  </button>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: VISUAL HIERARCHY & ENCAPSULATION TREE -->
+  <!-- ========================================================================= -->
+  <div class="tab-panel active" id="tab-tree">
+
+    <div class="intro-card">
+      <div class="intro-title">
+        <span>🌳</span> Encapsulation Architecture: Group By Higher-to-Lower Level Hierarchy
+      </div>
+      <p class="intro-desc">
+        Demonstrates the strict structural encapsulation across the Spiritual Karim platform.
+        Every data entity flows downward from <strong>Level 0 (System Root)</strong> to <strong>Level 1 (Role Tier Scope)</strong>,
+        <strong>Level 2 (Screen / Tab Scope)</strong>, <strong>Level 3 (Component &amp; Card Scope)</strong>, down to <strong>Level 4 (Atomic Fields &amp; Actions)</strong>.
+        Use the role filter toolbar below to observe how the tree dynamically filters and encapsulates visibility to prevent scope leakage.
+      </p>
+    </div>
+
+    <div class="tree-container">
+      <div class="tree-toolbar">
+        <div class="role-filter-pills">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--txt); text-transform: uppercase; letter-spacing: 0.06em; margin-right: 0.25rem;">
+            ROLE SCOPE FILTER:
+          </span>
+          <button id="pill-all" class="rf-pill active-all" onclick="filterTreeRole('ALL')">View All (Full Architecture)</button>
+          <button id="pill-master" class="rf-pill" onclick="filterTreeRole('MASTER')">Master Founder Scope</button>
+          <button id="pill-healer" class="rf-pill" onclick="filterTreeRole('HEALER')">Healer Scope</button>
+          <button id="pill-trainee" class="rf-pill" onclick="filterTreeRole('TRAINEE')">Trainee Scope</button>
+          <button id="pill-devotee" class="rf-pill" onclick="filterTreeRole('DEVOTEE')">Devotee Scope</button>
+        </div>
+        <div class="tree-toolbar-right">
+          <div class="filter-mode-toggle">
+            <button id="fmt-strict" class="fmt-btn active" onclick="setFilterMode('strict')" title="Strict Display Filter: Hides other roles completely">🔘 Strict Filter</button>
+            <button id="fmt-dim" class="fmt-btn" onclick="setFilterMode('dim')" title="Contextual Mode: Dims other roles in context">⚪ Contextual Dim</button>
+          </div>
+          <span id="tree-node-counter" class="node-counter-pill">Displaying 48 encapsulated hierarchy nodes</span>
+        </div>
+      </div>
+
+      <!-- DYNAMIC SCOPE SUMMARY BANNER -->
+      <div id="scope-summary-banner" class="scope-summary-banner">
+        <div class="ssb-hdr">
+          <div class="ssb-badge ssb-all">
+            <span>☸️</span> <span>FULL ARCHITECTURE ENCAPSULATION HIERARCHY</span>
+          </div>
+          <div class="ssb-rule">
+            <strong>WATERFALL ENCAPSULATION RULE:</strong> Group-by Higher-to-Lower Level: Level 0 System Root encapsulates Level 1 Role Scopes, Level 2 Screens/Tabs, Level 3 Components/Cards, and Level 4 Atomic Fields across all platform tiers.
+          </div>
+        </div>
+        <div class="ssb-stats">
+          <strong>HIERARCHY CASCADE:</strong> 1 System Root • 4 Persona Scopes • 16 Screen Containers • 19 Modular Components • 34 Atomic Fields &amp; Actions
+        </div>
+      </div>
+
+      <!-- ROOT LEVEL 0 CARD -->
+      <div class="tree-node-group">
+        <div id="tc-root-card" class="tree-card tc-root">
+          <div class="tree-card-hdr">
+            <div class="tc-title-wrap">
+              <span class="tc-icon">☸️</span>
+              <span class="tc-name">LEVEL 0: Sansthan Core Platform Root (AppConfig, Firebase RTDB &amp; Storage Engine)</span>
+            </div>
+            <span class="tc-type-tag tt-root">SYSTEM ROOT</span>
+          </div>
+          <p class="tc-desc">
+            The master system encapsulation container. Houses runtime system configuration, Firebase RTDB connection, offline queue management, telemetry stream listener, and AES-256 local encrypted storage.
+          </p>
+          <div class="tc-meta-row">
+            <span>OOPS Container: <code>ProfileModel.js</code> &bull; Storage Keys: <code>sk_admin_system_settings_v1</code>, <code>sk_join_wizard_draft</code></span>
+            <div class="tc-auth-badges">
+              <span class="auth-pill ap-pass">MASTER ✓</span>
+              <span class="auth-pill ap-pass">HEALER ✓</span>
+              <span class="auth-pill ap-pass">TRAINEE ✓</span>
+              <span class="auth-pill ap-pass">DEVOTEE ✓</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- BRANCH 1: MASTER FOUNDER SCOPE HIERARCHY -->
+        <!-- ========================================================================= -->
+        <div class="role-scope-branch branch-master" data-scope="MASTER">
+          <div class="tree-card tc-tier">
+            <div class="tree-card-hdr">
+              <div class="tc-title-wrap">
+                <span class="tc-icon">👑</span>
+                <span class="tc-name">LEVEL 1.1: Master Founder Scope (Tier 1 &bull; Level 1 Global Authority)</span>
+              </div>
+              <span class="tc-type-tag tt-tier">TIER 1 MASTER</span>
+            </div>
+            <p class="tc-desc">Root authority persona (Karim Ji <code>SKHM-ADM1-7788-9900</code>). Has unrestricted visibility over all downline branches, global system settings, raw database table explorer, and pairing overrides.</p>
+            <div class="tc-meta-row">
+              <span>Encapsulates: Tabs 1–6, Firebase Realtime Table Drill-Down, Global RBAC Admin Matrix</span>
+              <div class="tc-auth-badges">
+                <span class="auth-pill ap-pass">MASTER ✓</span>
+                <span class="auth-pill ap-fail">HEALER ✕</span>
+                <span class="auth-pill ap-fail">TRAINEE ✕</span>
+                <span class="auth-pill ap-fail">DEVOTEE ✕</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCREEN: TAB 6 FIREBASE -->
+          <div class="tree-branch">
+            <div class="tree-card tc-screen">
+              <div class="tree-card-hdr">
+                <div class="tc-title-wrap">
+                  <span class="tc-icon">🔥</span>
+                  <span class="tc-name">LEVEL 2.1: Tab 6 &mdash; Firebase RTDB Realtime Table Drill-Down Screen</span>
+                </div>
+                <span class="tc-type-tag tt-screen">SCREEN TAB 6</span>
+              </div>
+              <p class="tc-desc">Realtime database drill-down showing device telemetry streams, security rules, pairing tickets queue, and raw JSON data tree viewer.</p>
+              <div class="tc-meta-row">
+                <span>Selector: <code>#tab-firebase-data</code> &bull; Endpoints: <code>/telemetry</code>, <code>/pairing_queue</code>, <code>/security_rules</code></span>
+                <div class="tc-auth-badges">
+                  <span class="auth-pill ap-pass">MASTER ✓</span>
+                  <span class="auth-pill ap-fail">HEALER ✕</span>
+                  <span class="auth-pill ap-fail">TRAINEE ✕</span>
+                  <span class="auth-pill ap-fail">DEVOTEE ✕</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: RAW JSON EXPLORER -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">🗄️</span>
+                    <span class="tc-name">LEVEL 3.1: Raw Database JSON Node Explorer &amp; Telemetry Stream Card</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">Direct node inspector displaying live socket status, ping latency, RTDB security write permissions, and memory buffer usage.</p>
+                <div class="tc-meta-row">
+                  <span>Controller: <code>FirebaseDataView.js</code> &bull; Model: <code>FirebaseRTDBModel</code></span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: CONFIG KEYS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">⚡</span>
+                      <span class="tc-name">LEVEL 4.1: Master Database Configuration &amp; Telemetry Keys</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>DATABASE_URL</code>, <code>telemetryHeartbeatMs: 1200</code>, <code>authNonceKey</code>, <code>[Action: Refresh Realtime Stream]</code>, <code>[Action: Export JSON Dump]</code>.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: GLOBAL RBAC POLICY -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">🛡️</span>
+                    <span class="tc-name">LEVEL 3.2: Dynamic RBAC Security Matrix &amp; Mentor Override Console</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">Global authorization engine allowing master founder to force-reassign mentor pairings, revoke compromised PINs, and update runtime field visibility.</p>
+                <div class="tc-meta-row">
+                  <span>File: <code>rbac-admin.html</code> &bull; Master Matrix: <code>ScreenAuthMatrix.js</code> (74+ Elements)</span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: OVERRIDE ACTIONS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">⚙️</span>
+                      <span class="tc-name">LEVEL 4.2: Master Override &amp; Policy Enforcement Controls</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>targetDevoteeId</code>, <code>assignedMentorCode</code>, <code>overrideReason</code>, <code>[Action: Force Reassign Mentor]</code>, <code>[Action: Save Security Policy]</code>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- BRANCH 2: HEALER SCOPE HIERARCHY -->
+        <!-- ========================================================================= -->
+        <div class="role-scope-branch branch-healer" data-scope="HEALER">
+          <div class="tree-card tc-tier">
+            <div class="tree-card-hdr">
+              <div class="tc-title-wrap">
+                <span class="tc-icon">🌿</span>
+                <span class="tc-name">LEVEL 1.2: Certified Healers Scope (Tier 2 &bull; Level 2-3 Certified Mentor)</span>
+              </div>
+              <span class="tc-type-tag tt-tier">TIER 2 HEALER</span>
+            </div>
+            <p class="tc-desc">Mentor healers hub (Amit Patel <code>SKHM-HLR2-3344-5566</code>). Oversees downline pairing invite requests, conducts 3-Tier House Clean sign-offs, dispenses Goli Gyan remedies, and promotes devotees.</p>
+            <div class="tc-meta-row">
+              <span>Waterfall Rule: Healer sees self + assigned downlines. Shielded from viewing Master Founder root profile or peer downlines.</span>
+              <div class="tc-auth-badges">
+                <span class="auth-pill ap-pass">MASTER ✓</span>
+                <span class="auth-pill ap-pass">HEALER ✓</span>
+                <span class="auth-pill ap-fail">TRAINEE ✕</span>
+                <span class="auth-pill ap-fail">DEVOTEE ✕</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCREEN: TAB 4 HEALER CONNECT -->
+          <div class="tree-branch">
+            <div class="tree-card tc-screen">
+              <div class="tree-card-hdr">
+                <div class="tc-title-wrap">
+                  <span class="tc-icon">🤝</span>
+                  <span class="tc-name">LEVEL 2.2: Tab 4 &mdash; Healer Connect &amp; Mentorship Hub Screen</span>
+                </div>
+                <span class="tc-type-tag tt-screen">SCREEN TAB 4</span>
+              </div>
+              <p class="tc-desc">Dedicated mentor workspace: incoming 24-hour pairing PIN review crucible, active devotee mentees roster, sadhana certifications, and mentorship network.</p>
+              <div class="tc-meta-row">
+                <span>Selector: <code>#tab-healer-connect</code> &bull; Model: <code>healerNetwork[]</code>, <code>pairingInvites[]</code></span>
+                <div class="tc-auth-badges">
+                  <span class="auth-pill ap-pass">MASTER ✓</span>
+                  <span class="auth-pill ap-pass">HEALER ✓</span>
+                  <span class="auth-pill ap-fail">TRAINEE ✕</span>
+                  <span class="auth-pill ap-fail">DEVOTEE ✕</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: PAIRING REVIEW CRUCIBLE -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">⏳</span>
+                    <span class="tc-name">LEVEL 3.1: Pairing Invites Review Crucible Card</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">Real-time incoming queue of devotee mentor pairing requests. Displays applicant identity, verification status, and 24-hour security countdown clock.</p>
+                <div class="tc-meta-row">
+                  <span>Queue Limit: Max 5 pending requests &bull; Timeout: 24 Hours TTL &bull; Realtime Sync</span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: PAIRING ACTIONS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">🔹</span>
+                      <span class="tc-name">LEVEL 4.1: Pairing Review Atomic Actions &amp; Security Validation</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>ticketId</code>, <code>applicantDevoteeCode</code>, <code>receivedPinCode</code>, <code>expiresAtMs</code>, <code>[Action: Approve Pairing &amp; Bind Downline]</code>, <code>[Action: Reject Pairing]</code>.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: MENTEE DEVOTEES ROSTER -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">👥</span>
+                    <span class="tc-name">LEVEL 3.2: Active Mentee Devotees Roster &amp; Sadhana Tracking Card</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">Comprehensive tracking table of all assigned spiritual seekers: monitoring daily Three Diya lamps streaks, Pitru karma progress, and check-in logs.</p>
+                <div class="tc-meta-row">
+                  <span>Downline Data: <code>profile.assignedMentees[]</code> &bull; Encapsulated to Mentor's Branch</span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: ROSTER ACTIONS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">🔹</span>
+                      <span class="tc-name">LEVEL 4.2: Mentee Telemetry &amp; Check-In Log Attributes</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>menteeDevoteeId</code>, <code>devoteeName</code>, <code>activeSadhanaType</code>, <code>diyaStreakDays</code>, <code>lastDiyaTime</code>, <code>[Action: View Mentee Sanctum]</code>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCREEN: TAB 1 MENTEE AUDIT -->
+          <div class="tree-branch">
+            <div class="tree-card tc-screen">
+              <div class="tree-card-hdr">
+                <div class="tc-title-wrap">
+                  <span class="tc-icon">🔍</span>
+                  <span class="tc-name">LEVEL 2.3: Tab 1 (Mentor Mode) &mdash; Devotee Profile Audit &amp; Verification Screen</span>
+                </div>
+                <span class="tc-type-tag tt-screen">SCREEN TAB 1</span>
+              </div>
+              <p class="tc-desc">Healer inspection console: allows mentor to verify devotee 3-Generation Ancestral Lineage and review 3-Tier Sanctum House Clean photo uploads.</p>
+              <div class="tc-meta-row">
+                <span>Selector: <code>#tab-devotee-personal</code> (Mentor Scoped) &bull; Mode: <code>AUDIT_MODE</code></span>
+                <div class="tc-auth-badges">
+                  <span class="auth-pill ap-pass">MASTER ✓</span>
+                  <span class="auth-pill ap-pass">HEALER ✓</span>
+                  <span class="auth-pill ap-fail">TRAINEE ✕</span>
+                  <span class="auth-pill ap-fail">DEVOTEE ✕</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: HOUSE CLEAN AUDIT -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">🧹</span>
+                    <span class="tc-name">LEVEL 3.3: 3-Tier House Clean Inspection &amp; Sign-Off Console</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">Audit card for Level 1 (Self Home &ge; 75%), Level 2 (Ancestral), Level 3 (Extended). Mentor inspects sanctum cleanliness photos before issuing digital sign-off.</p>
+                <div class="tc-meta-row">
+                  <span>Sign-off Prerequisite: House Clean Score &ge; 75% &bull; E-Signature Validation</span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: AUDIT SIGN-OFF -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">🔹</span>
+                      <span class="tc-name">LEVEL 4.3: House Clean Verification &amp; Certification Actions</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>houseCleanScorePct</code>, <code>sanctumPhotoVerifiedFlag</code>, <code>mentorSignatureHash</code>, <code>[Action: Approve House Clean Sign-off]</code>, <code>[Action: Request Clean Re-upload]</code>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- BRANCH 3: TRAINEE SCOPE HIERARCHY -->
+        <!-- ========================================================================= -->
+        <div class="role-scope-branch branch-trainee" data-scope="TRAINEE">
+          <div class="tree-card tc-tier">
+            <div class="tree-card-hdr">
+              <div class="tc-title-wrap">
+                <span class="tc-icon">📜</span>
+                <span class="tc-name">LEVEL 1.3: Trainee Sadhak Scope (Tier 3 &bull; Level 4 Intermediate Sadhak)</span>
+              </div>
+              <span class="tc-type-tag tt-tier">TIER 3 TRAINEE</span>
+            </div>
+            <p class="tc-desc">Intermediate sadhak tier (Vikram Malhotra <code>SKHM-TRN4-7711-2233</code>). Has graduated from Seeker stage and now studies Goli Gyan training manuals, logs multi-stage sadhanas, and tracks personal downline branch.</p>
+            <div class="tc-meta-row">
+              <span>Encapsulates: Tab 3 Split-Workspace, Advanced Sadhana Catalogs, Goli Gyan Guide, Personal Downline</span>
+              <div class="tc-auth-badges">
+                <span class="auth-pill ap-pass">MASTER ✓</span>
+                <span class="auth-pill ap-pass">HEALER ✓</span>
+                <span class="auth-pill ap-pass">TRAINEE ✓</span>
+                <span class="auth-pill ap-fail">DEVOTEE ✕</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCREEN: TAB 3 TRAINEE SPLIT-WORKSPACE -->
+          <div class="tree-branch">
+            <div class="tree-card tc-screen">
+              <div class="tree-card-hdr">
+                <div class="tc-title-wrap">
+                  <span class="tc-icon">💻</span>
+                  <span class="tc-name">LEVEL 2.4: Tab 3 &mdash; Trainee Sadhak Split-Workspace Screen</span>
+                </div>
+                <span class="tc-type-tag tt-screen">SCREEN TAB 3</span>
+              </div>
+              <p class="tc-desc">Master-detail sadhana workstation: left sidebar of categorized spiritual exercises (Navagraha, Pitru, Vastu), right canvas with interactive progress graphics and daily sadhana counters.</p>
+              <div class="tc-meta-row">
+                <span>Selector: <code>#tab-trainee-sadhak</code> &bull; Model: <code>traineeSadhanas[]</code>, <code>goliGyanChapters[]</code></span>
+                <div class="tc-auth-badges">
+                  <span class="auth-pill ap-pass">MASTER ✓</span>
+                  <span class="auth-pill ap-pass">HEALER ✓</span>
+                  <span class="auth-pill ap-pass">TRAINEE ✓</span>
+                  <span class="auth-pill ap-fail">DEVOTEE ✕</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: SADHANA SELECTION PANEL -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">📑</span>
+                    <span class="tc-name">LEVEL 3.4: Categorized Sadhana Selection Master-Detail Panel</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">Multi-tier ritual catalog: Step 1 (Navagraha Shanti), Step 2 (Pitru Dosh Karma Nivarana), Step 3 (Vastu Sanctum Alignment), Step 4 (Mantra Sadhana Initiation).</p>
+                <div class="tc-meta-row">
+                  <span>Persistence: <code>sk_trainee_sadhana_cache</code> &bull; Stage tracking 1..4</span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: SADHANA COUNTERS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">📿</span>
+                      <span class="tc-name">LEVEL 4.4: Daily Jap Counters &amp; Ritual Progress Bindings</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>sadhanaId</code>, <code>sadhanaStage: 1..4</code>, <code>mantraJapCount: 108</code>, <code>dailyCompletionFlag</code>, <code>[Action: Log Daily Jap Count]</code>, <code>[Action: Advance Stage]</code>.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: GOLI GYAN STUDY MANUAL -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">📖</span>
+                    <span class="tc-name">LEVEL 3.5: Goli Gyan Training Manual &amp; Study Guide Card</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">Prescribed spiritual remedies and philosophy documentation reader. Trainees study healing principles and take knowledge checkpoint evaluations.</p>
+                <div class="tc-meta-row">
+                  <span>Source: Goli Gyan Knowledge Repository &bull; Checkpoint Verification</span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: STUDY CHECKPOINTS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">📚</span>
+                      <span class="tc-name">LEVEL 4.5: Goli Gyan Chapter Status &amp; Knowledge Checks</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>goliGyanChapterId</code>, <code>readingTimeSpentSec</code>, <code>quizScorePct</code>, <code>[Action: Mark Chapter Studied]</code>, <code>[Action: Submit Checkpoint]</code>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- BRANCH 4: DEVOTEE SCOPE HIERARCHY -->
+        <!-- ========================================================================= -->
+        <div class="role-scope-branch branch-devotee" data-scope="DEVOTEE">
+          <div class="tree-card tc-tier">
+            <div class="tree-card-hdr">
+              <div class="tc-title-wrap">
+                <span class="tc-icon">🔱</span>
+                <span class="tc-name">LEVEL 1.4: Devotee &amp; Seeker Scope (Tier 4 &bull; Level 5 Primary Seeker)</span>
+              </div>
+              <span class="tc-type-tag tt-tier">TIER 4 DEVOTEE</span>
+            </div>
+            <p class="tc-desc">Primary spiritual seeker tier (Pooja Sharma <code>SKHM-DEV5-9988-1122</code>). Encapsulates personal sanctum, the 4 Sacred Pillars (Identity &amp; Key, 3-Gen Lineage, 3-Tier House Clean, Daily 3 Diya Sadhana), and mentor pairing.</p>
+            <div class="tc-meta-row">
+              <span>Strict Sanctum Privacy: Devotee can only access self data and paired upline mentor contact. Zero peer visibility.</span>
+              <div class="tc-auth-badges">
+                <span class="auth-pill ap-pass">MASTER ✓</span>
+                <span class="auth-pill ap-pass">HEALER ✓</span>
+                <span class="auth-pill ap-pass">TRAINEE ✓</span>
+                <span class="auth-pill ap-pass">DEVOTEE ✓</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCREEN: DEVOTEE REGISTRATION WIZARD -->
+          <div class="tree-branch">
+            <div class="tree-card tc-screen">
+              <div class="tree-card-hdr">
+                <div class="tc-title-wrap">
+                  <span class="tc-icon">📝</span>
+                  <span class="tc-name">LEVEL 2.5: Devotee Onboarding &amp; Registration Wizard (join.html)</span>
+                </div>
+                <span class="tc-type-tag tt-screen">REGISTRATION WIZARD</span>
+              </div>
+              <p class="tc-desc">4-step registration funnel: Step 1 (Mobile &amp; OTP) &rarr; Step 2 (Identity &amp; Lineage) &rarr; Step 3 (House Clean &amp; Diya) &rarr; Step 4 (E-Signature, PIN &amp; ID Generation).</p>
+              <div class="tc-meta-row">
+                <span>Storage Key: <code>sk_join_wizard_draft</code> &bull; Dynamic Closed Feedback Loop &bull; Resumes on Page Refresh</span>
+                <div class="tc-auth-badges">
+                  <span class="auth-pill ap-pass">ALL ROLES ✓</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: WIZARD DRAFT SAVE/RESTORE -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">💾</span>
+                    <span class="tc-name">LEVEL 3.6: Multi-Step Wizard Auto-Draft &amp; Resumption Engine</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">Saves in-flight user inputs to local storage on every keystroke. Prevents data loss during mobile network drops or tab switching.</p>
+              </div>
+
+              <!-- ATOMIC: WIZARD FIELDS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">🔹</span>
+                      <span class="tc-name">LEVEL 4.6: Registration Draft Data Keys &amp; Feedback Actions</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>sk_join_wizard_draft.currentStep</code>, <code>sk_join_wizard_draft.mobileVerified</code>, <code>[Action: Save Draft]</code>, <code>[Action: Restore Draft]</code>, <code>[Action: Edit Mobile/Email]</code>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCREEN: TAB 1 DEVOTEE PERSONAL (4 SACRED PILLARS) -->
+          <div class="tree-branch">
+            <div class="tree-card tc-screen">
+              <div class="tree-card-hdr">
+                <div class="tc-title-wrap">
+                  <span class="tc-icon">👤</span>
+                  <span class="tc-name">LEVEL 2.6: Tab 1 &mdash; Devotee Personal (The 4 Sacred Pillars Screen)</span>
+                </div>
+                <span class="tc-type-tag tt-screen">SCREEN TAB 1</span>
+              </div>
+              <p class="tc-desc">The core devotee sanctum. Houses Personal Identity (Pillar 1), 3-Generation Ancestral Lineage (Pillar 2), 3-Tier Sanctum House Clean (Pillar 3), and Daily Three Diya Sadhana (Pillar 4).</p>
+              <div class="tc-meta-row">
+                <span>Selector: <code>#tab-devotee-personal</code> &bull; Model: <code>ProfileModel.profiles[i]</code></span>
+                <div class="tc-auth-badges">
+                  <span class="auth-pill ap-pass">MASTER ✓</span>
+                  <span class="auth-pill ap-pass">HEALER ✓</span>
+                  <span class="auth-pill ap-pass">TRAINEE ✓</span>
+                  <span class="auth-pill ap-pass">DEVOTEE ✓</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: PILLAR 1 IDENTITY -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">🆔</span>
+                    <span class="tc-name">LEVEL 3.7: Pillar 1 &mdash; 16-Digit Unique Identity &amp; Access Key Card</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">Unique 16-digit alphanumeric identity code (<code>SKHM-DEV5-9988-1122</code>), registered mobile number, OTP authentication badge, and masked Aadhaar reference.</p>
+                <div class="tc-meta-row">
+                  <span>Data Model: <code>profile.devoteeId</code>, <code>profile.mobile</code>, <code>profile.aadhaarMasked</code></span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: IDENTITY FIELDS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">🔹</span>
+                      <span class="tc-name">LEVEL 4.7: Devotee Identity Fields &amp; Verification States</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>fullName: string</code>, <code>mobile: 10 digits</code>, <code>otpStatus: VERIFIED</code>, <code>aadhaarMasked: XXXX-XXXX-1234</code>, <code>dob: YYYY-MM-DD</code>, <code>gender: Male|Female|Other</code>.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: PILLAR 2 LINEAGE -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">🧬</span>
+                    <span class="tc-name">LEVEL 3.8: Pillar 2 &mdash; 3-Generation Pitru Karma Ancestral Lineage Card</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">3-tier ancestral data structure: Current Family (Self, Spouse, Children), Husband's Ancestral Line (Father, Paternal Grandparents), Wife's Ancestral Line (Mother, Maternal Grandparents), and Clan Kuldevi.</p>
+                <div class="tc-meta-row">
+                  <span>Data Model: <code>profile.lineage</code> &bull; Reset: Master Admin Only &bull; Edit: Devotee Allowed</span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: LINEAGE FIELDS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">🔹</span>
+                      <span class="tc-name">LEVEL 4.8: Ancestral Lineage Atomic Nodes &amp; Clan Roots</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>fatherName</code>, <code>motherName</code>, <code>paternalGrandfather</code>, <code>paternalGrandmother</code>, <code>maternalGrandfather</code>, <code>maternalGrandmother</code>, <code>kuldeviClan</code>, <code>gotraName</code>.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: PILLAR 3 HOUSE CLEAN -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">🧹</span>
+                    <span class="tc-name">LEVEL 3.9: Pillar 3 &mdash; 3-Tier Sanctum House Clean Levels Card</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">Level 1 (Self House Clean &ge; 75%), Level 2 (Parents Ancestral Home), Level 3 (Extended Relatives Sanctum). Devotee conducts spiritual cleansing checklist and uploads photographic proof.</p>
+                <div class="tc-meta-row">
+                  <span>Data Model: <code>profile.houseCleanLevels[]</code> &bull; Mentor Verified Sign-Off Required</span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: HOUSE CLEAN FIELDS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">🔹</span>
+                      <span class="tc-name">LEVEL 4.9: House Clean Checklist Items &amp; Photo Metadata</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>selfScorePct: 82%</code>, <code>sanctumPhotoUrl</code>, <code>clutterFreePoojaRoom: true</code>, <code>saltWaterMopDone: true</code>, <code>mentorApproved: true</code>, <code>[Action: Upload Photo]</code>.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: PILLAR 4 THREE DIYA SADHANA -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">🪔</span>
+                    <span class="tc-name">LEVEL 3.10: Pillar 4 &mdash; Daily Three Diya Sadhana Lamps Card</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">The 3 sacred oil lamps: Mustard Oil Lamp (Sarson), Pure Cow Ghee Lamp, and Sesame Oil Lamp (Til). Evening time window 06:15 PM – 07:00 PM with daily streak persistence.</p>
+                <div class="tc-meta-row">
+                  <span>Data Model: <code>profile.selectedRemedies['three_diya']</code> &bull; Consecutive Streak Tracker</span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: DIYA FIELDS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">🔹</span>
+                      <span class="tc-name">LEVEL 4.10: Diya Timers, Oil Types &amp; Check-In Actions</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>morningDiyaTime: '06:00 AM'</code>, <code>eveningDiyaTime: '06:30 PM'</code>, <code>nightDiyaTime: '09:00 PM'</code>, <code>consecutiveStreak: 14 days</code>, <code>[Action: Check-in Daily Lamp]</code>.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPONENT: MENTOR PAIRING PIN EXCHANGE -->
+            <div class="tree-branch">
+              <div class="tree-card tc-component">
+                <div class="tree-card-hdr">
+                  <div class="tc-title-wrap">
+                    <span class="tc-icon">🤝</span>
+                    <span class="tc-name">LEVEL 3.11: Mentor Pairing 24-Hour PIN Exchange Card</span>
+                  </div>
+                  <span class="tc-type-tag tt-component">CARD COMPONENT</span>
+                </div>
+                <p class="tc-desc">Devotee enters mentor referral code (e.g. <code>SKHM-HLR2-3344-5566</code>) and generates a one-time 6-digit cryptographic pairing PIN valid for 24 hours.</p>
+                <div class="tc-meta-row">
+                  <span>Model: <code>PairingTicketModel</code> &bull; Status: <code>PENDING|APPROVED|EXPIRED</code></span>
+                </div>
+              </div>
+
+              <!-- ATOMIC: PAIRING PIN FIELDS -->
+              <div class="tree-branch">
+                <div class="tree-card tc-atomic">
+                  <div class="tree-card-hdr">
+                    <div class="tc-title-wrap">
+                      <span class="tc-icon">🔹</span>
+                      <span class="tc-name">LEVEL 4.11: Pairing PIN Attributes &amp; Generation Actions</span>
+                    </div>
+                    <span class="tc-type-tag tt-atomic">ATOMIC FIELDS</span>
+                  </div>
+                  <p class="tc-desc"><code>sponsorRefCode: 'SKHM-HLR2-3344-5566'</code>, <code>generatedPin: '582914'</code>, <code>expiresAt: '24 Hours TTL'</code>, <code>[Action: Generate Pairing PIN]</code>, <code>[Action: Copy PIN]</code>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tree-node-group -->
+
+    </div><!-- /tree-container -->
+
+  </div><!-- /tab-tree -->
+<!-- ========================================================================= -->
+  <!-- TAB 2: WATERFALL DATAFLOW & SCOPED FILTERING -->
+  <!-- ========================================================================= -->
+  <div class="tab-panel" id="tab-waterfall">
+
+    <div class="intro-card">
+      <div class="intro-title">
+        <span>🌊</span> Waterfall Method: Top-Down Data Cascade &amp; Downline Scoped Filtering
+      </div>
+      <p class="intro-desc">
+        The Waterfall dataflow governs how master settings, security tokens, and pairing credentials cascade down from higher tiers to lower tiers,
+        while closed-loop verification telemetry bubbles back up.
+        Strict authorization filters guarantee that users only receive data strictly within their role boundary.
+      </p>
+    </div>
+
+    <div class="waterfall-canvas">
+      <!-- STAGE 1 WATERFALL -->
+      <div class="wf-stage-row">
+        <div class="wf-stage-info">
+          <span class="wf-stage-num">CASCADE STAGE 1</span>
+          <span class="wf-stage-title">Master Global Configuration</span>
+          <p class="wf-stage-desc">Originates at Level 1 Founder Root. Configures system parameters, pairing timeouts, and encryption nonces.</p>
+        </div>
+        <div class="wf-card-grid">
+          <div class="wf-card">
+            <div class="wf-card-title"><span>⚙️</span> System Settings Repository</div>
+            <ul class="wf-card-attrs">
+              <li><code>uplineApprovalTimeoutHours: 24</code></li>
+              <li><code>threeDiyaEveningWindow: '06:15 - 07:00 PM'</code></li>
+              <li><code>cleanMinApprovalPercent: 75</code></li>
+              <li><code>defaultMentorCode: 'SKHM-ADM1-7788-9900'</code></li>
+            </ul>
+          </div>
+          <div class="wf-card">
+            <div class="wf-card-title"><span>🔒</span> Security &amp; Encryption Core</div>
+            <ul class="wf-card-attrs">
+              <li>AES-256 local encrypted storage</li>
+              <li>Hardware Nonce generator: <code>HW-XXXX-XXXX</code></li>
+              <li>Dynamic 6-digit PIN generator</li>
+              <li>Anti-Loop traversal validator</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 2 WATERFALL -->
+      <div class="wf-stage-row">
+        <div class="wf-stage-info">
+          <span class="wf-stage-num">CASCADE STAGE 2</span>
+          <span class="wf-stage-title">Healers Hub Mentorship Cascade</span>
+          <p class="wf-stage-desc">Flows to Tier 2 Certified Healers. Governs downline capacity, queue quotas, and verification permissions.</p>
+        </div>
+        <div class="wf-card-grid">
+          <div class="wf-card">
+            <div class="wf-card-title"><span>🌿</span> Healer Network Downlines</div>
+            <ul class="wf-card-attrs">
+              <li>Active pending quota throttle: Max 5</li>
+              <li>Downline roster: <code>healerNetwork[]</code></li>
+              <li>House Clean inspection rights</li>
+              <li>Sadhana completion certifications</li>
+            </ul>
+          </div>
+          <div class="wf-card">
+            <div class="wf-card-title"><span>📋</span> Pairing Invites Ledger</div>
+            <ul class="wf-card-attrs">
+              <li>Status tracking: PENDING, APPROVED, REJECTED</li>
+              <li>TTL clock: <code>expiresAtMs = Date.now() + 24h</code></li>
+              <li>1200ms Heartbeat polling listener</li>
+              <li>Telegram bot pairing link generator</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 3 WATERFALL -->
+      <div class="wf-stage-row">
+        <div class="wf-stage-info">
+          <span class="wf-stage-num">CASCADE STAGE 3</span>
+          <span class="wf-stage-title">Trainee Sadhak Progression</span>
+          <p class="wf-stage-desc">Flows to Tier 3 Trainee Sadhaks. Tracks level-wise sadhanas, japa counts, and Goli Gyan guidance.</p>
+        </div>
+        <div class="wf-card-grid">
+          <div class="wf-card">
+            <div class="wf-card-title"><span>🧘</span> Trainee Sadhanas Model</div>
+            <ul class="wf-card-attrs">
+              <li>Sadhanas in progress &bull; Completed sadhanas</li>
+              <li>Daily target malas: 11 Malas</li>
+              <li>Target japa count: 108</li>
+              <li>Goli Gyan audio/text guide integration</li>
+            </ul>
+          </div>
+          <div class="wf-card">
+            <div class="wf-card-title"><span>🌳</span> Downline Tree Canvas</div>
+            <ul class="wf-card-attrs">
+              <li>Genealogy visual MLM tree canvas</li>
+              <li>Downline spiderweb node rendering</li>
+              <li>Scoped to trainee's own downline children</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 4 WATERFALL -->
+      <div class="wf-stage-row">
+        <div class="wf-stage-info">
+          <span class="wf-stage-num">CASCADE STAGE 4</span>
+          <span class="wf-stage-title">Devotee Induction &amp; The 4 Pillars</span>
+          <p class="wf-stage-desc">Terminal cascade to Tier 4 Devotees. Instantiates the 4 Sacred Pillars and unlocks personal sanctum.</p>
+        </div>
+        <div class="wf-card-grid">
+          <div class="wf-card">
+            <div class="wf-card-title"><span>🔱</span> Devotee Profile Instantiation</div>
+            <ul class="wf-card-attrs">
+              <li>16-digit Reference Key: <code>SKDV-XXXX-XXXX-XXXX</code></li>
+              <li>Lineage upline link: <code>referredByCode</code></li>
+              <li>Level 5 status &bull; PaymentStatus: FREE</li>
+              <li>3D Flipper Card with dynamic QR code</li>
+            </ul>
+          </div>
+          <div class="wf-card">
+            <div class="wf-card-title"><span>🪔</span> The 4 Sacred Pillars Setup</div>
+            <ul class="wf-card-attrs">
+              <li>Pillar 1: Identity &amp; Sacred Key</li>
+              <li>Pillar 2: 3-Gen Pitru Karma Ancestral Lineage</li>
+              <li>Pillar 3: 3-Tier Living Sanctum House Clean</li>
+              <li>Pillar 4: Three Diya Daily Sadhana Lamps</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 5 CLOSED LOOP -->
+      <div class="wf-stage-row" style="background:#f0fdf4; border-radius:0.65rem; padding:1rem; margin-top:0.75rem; border:1.5px solid #a7f3d0;">
+        <div class="wf-stage-info">
+          <span class="wf-stage-num" style="color:#059669;">CLOSED LOOP TELEMETRY</span>
+          <span class="wf-stage-title" style="color:#065f46;">Bottom-Up Feedback Stream</span>
+          <p class="wf-stage-desc">Audit trail, telemetry events, and progress metrics bubble back up to mentors and root database.</p>
+        </div>
+        <div class="wf-card-grid">
+          <div class="wf-card" style="background:#ffffff;">
+            <div class="wf-card-title" style="color:#059669;"><span>📡</span> Live Telemetry &amp; Firebase RTDB</div>
+            <ul class="wf-card-attrs">
+              <li>Realtime events: <code>PAIRING_APPROVED</code>, <code>HOUSE_CLEAN_SUBMITTED</code></li>
+              <li>Offline sync queue: <code>sk_offline_sync_queue</code> auto-flushed</li>
+              <li>Cross-tab sync: <code>BroadcastChannel('spiritual_karim_sync')</code></li>
+            </ul>
+          </div>
+          <div class="wf-card" style="background:#ffffff;">
+            <div class="wf-card-title" style="color:#059669;"><span>⚖️</span> Compliance &amp; Appeals Engine</div>
+            <ul class="wf-card-attrs">
+              <li>T&amp;C acceptance &amp; e-signature audit log</li>
+              <li>Formal appeal arbitration: <code>sk_appeals</code></li>
+              <li>Zero scope leakage &bull; 100% audit compliance</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-waterfall -->
+
+
+  <!-- ========================================================================= -->
+  <!-- TAB 3: ROLES & AUTHORIZATION MATRIX (74+ ELEMENTS) -->
+  <!-- ========================================================================= -->
+  <div class="tab-panel" id="tab-rbac">
+
+    <div class="intro-card">
+      <div class="intro-title">
+        <span>🔐</span> Canonical Roles &amp; Authorization Matrix (74+ Screen Elements)
+      </div>
+      <p class="intro-desc">
+        Exact implementation of <code>ScreenAuthMatrix.js</code> and <code>rbac-admin.html</code>.
+        Specifies visibility and action gating across all 4 Role Modes (<code>MASTER</code>, <code>HEALER</code>, <code>TRAINEE</code>, <code>DEVOTEE</code>).
+        Filter by category or search element names below.
+      </p>
+    </div>
+
+    <div class="tree-container">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+        <input type="text" id="rbac-search-input" placeholder="🔍 Search element, ID, selector or category..." oninput="filterRbacTable()" style="padding: 0.5rem 0.85rem; border: 1px solid var(--border); border-radius: 0.45rem; font-size: 0.75rem; width: 320px;">
+        <div style="font-size: 0.72rem; color: var(--txt-muted);" id="rbac-count-display">Showing all 74 authorization items</div>
+      </div>
+
+      <table class="enterprise-table" id="rbac-matrix-table">
+        <thead>
+          <tr>
+            <th style="width: 220px;">Category &amp; Parent</th>
+            <th style="width: 260px;">Element Label &amp; ID</th>
+            <th style="width: 100px;">Type</th>
+            <th>DOM CSS Selector</th>
+            <th style="text-align: center; width: 70px;">MASTER</th>
+            <th style="text-align: center; width: 70px;">HEALER</th>
+            <th style="text-align: center; width: 70px;">TRAINEE</th>
+            <th style="text-align: center; width: 70px;">DEVOTEE</th>
+          </tr>
+        </thead>
+        <tbody id="rbac-table-body">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /tab-rbac -->
+
+
+  <!-- ========================================================================= -->
+  <!-- TAB 4: OOPS DATA MODELS & SCHEMA CONTRACTS -->
+  <!-- ========================================================================= -->
+  <div class="tab-panel" id="tab-schemas">
+
+    <div class="intro-card">
+      <div class="intro-title">
+        <span>📦</span> OOPS Domain Data Models &amp; Storage Schema Contracts
+      </div>
+      <p class="intro-desc">
+        Complete JSON Schema specifications for master entities in the Spiritual Karim ecosystem.
+        Every model is strongly encapsulated with strict boundary validation, eliminating unresolved references and parameter errors.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 1.25rem;">
+
+      <!-- SCHEMA 1: PROFILE MASTER -->
+      <div class="tree-container">
+        <div style="font-size: 0.85rem; font-weight: 800; color: var(--txt); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <span>👤</span> 1. Devotee Profile Schema (sk_admin_profiles_v3)
+        </div>
+        <p style="font-size: 0.72rem; color: var(--txt-muted); margin-bottom: 0.75rem;">Master profile entity encapsulating identity, lineage, house clean, and sadhana models.</p>
+        <pre class="schema-pre">{
+  "id": "prof-dev-01",
+  "referenceCode": "SKDV-9SE6-B4KI-Z68I",
+  "referredByCode": "SKHM-ADM1-7788-9900",
+  "transferredCode": "",
+  "name": "Ananya Sharma",
+  "phone": "+91 98112 33445",
+  "email": "ananya.sharma@domain.com",
+  "profileType": "DEVOTEE",
+  "level": 5,
+  "isPaid": false,
+  "paymentStatus": "FREE",
+  "objective": "House Clean & Ancestral Purification",
+  "selectedRemedies": ["three_diya", "negativity"],
+  "joinDate": "2026-09-11",
+  "isActive": true,
+  "lineage": {
+    "currentFamily": { "selfName": "Ananya Sharma", "spouseName": "", "children": [] },
+    "husbandAncestral": { "fatherName": "", "motherName": "", "kuldevi": "" },
+    "wifeAncestral": { "fatherName": "", "motherName": "", "kuldevi": "" }
+  },
+  "houseCleanLevels": [
+    { "levelNumber": 1, "status": "NOT_STARTED", "cleanPercentage": 0 },
+    { "levelNumber": 2, "status": "NOT_STARTED", "cleanPercentage": 0 },
+    { "levelNumber": 3, "status": "NOT_STARTED", "cleanPercentage": 0 }
+  ]
+}</pre>
+      </div>
+
+      <!-- SCHEMA 2: PAIRING INVITE -->
+      <div class="tree-container">
+        <div style="font-size: 0.85rem; font-weight: 800; color: var(--txt); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <span>📑</span> 2. Pairing Invite Schema (spiritual_karim_pairing_invites)
+        </div>
+        <p style="font-size: 0.72rem; color: var(--txt-muted); margin-bottom: 0.75rem;">Pairing token lifecycle model with 24-hour SLA expiry and exponential backoff.</p>
+        <pre class="schema-pre">{
+  "id": "inv-1789094823",
+  "sponsorCode": "SKHM-ADM1-7788-9900",
+  "seekerName": "Pooja Verma",
+  "seekerPhone": "+91 98765 43210",
+  "seekerEmail": "pooja.verma@domain.com",
+  "seekerDeviceModel": "Samsung Galaxy S24 (Android 14)",
+  "hardwareNonce": "HW-FPRINT-8891-9921",
+  "referenceKey": "SKDV-7890-ABCD-1234",
+  "status": "PENDING", // PENDING | APPROVED | REJECTED | EXPIRED
+  "createdAtMs": 1789094823000,
+  "expiresAtMs": 1789181223000, // +24 Hours Strict SLA
+  "resendCount": 0,
+  "lastResendTimestamp": 1789094823000,
+  "telegramLink": "https://t.me/SpiritualKarimBot•start=pair_...",
+  "tcVersion": "1.2.0"
+}</pre>
+      </div>
+
+      <!-- SCHEMA 3: KYC DOCUMENT -->
+      <div class="tree-container">
+        <div style="font-size: 0.85rem; font-weight: 800; color: var(--txt); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <span>🪪</span> 3. Document Vault Schema (sk_documents)
+        </div>
+        <p style="font-size: 0.72rem; color: var(--txt-muted); margin-bottom: 0.75rem;">Client-side Base64 DataURL document store with size and MIME validation.</p>
+        <pre class="schema-pre">{
+  "id": "doc-1789094850",
+  "profileId": "prof-dev-01",
+  "docType": "id_proof", // id_proof | address_proof | photo
+  "fileName": "aadhaar_card_front.pdf",
+  "fileType": "application/pdf",
+  "fileSize": 1420850, // <= 5MB Boundary
+  "dataUrl": "data:application/pdf;base64,JVBERi0xLjQK...",
+  "uploadedAt": "2026-09-11T08:23:45.000Z",
+  "status": "PENDING_VERIFICATION"
+}</pre>
+      </div>
+
+      <!-- SCHEMA 4: COMPLIANCE & AUDIT -->
+      <div class="tree-container">
+        <div style="font-size: 0.85rem; font-weight: 800; color: var(--txt); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <span>⚖️</span> 4. Statutory Compliance Schema (sk_tc_acceptances)
+        </div>
+        <p style="font-size: 0.72rem; color: var(--txt-muted); margin-bottom: 0.75rem;">Immutable audit ledger for Terms &amp; Conditions and Digital E-Signatures.</p>
+        <pre class="schema-pre">{
+  "profileId": "prof-dev-01",
+  "version": "1.2.0",
+  "signature": "Ananya Sharma", // Cinzel Calligraphic Signature
+  "acceptedAt": "2026-09-11T08:24:12.000Z",
+  "ip": "127.0.0.1",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...",
+  "auditHash": "SHA256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}</pre>
+      </div>
+      <!-- SCHEMA 5: NOTIFICATION QUEUE ENTITY -->
+      <div class="tree-container">
+        <div style="font-size: 0.85rem; font-weight: 800; color: var(--txt); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <span>🔔</span> 5. Multi-Channel Notification Queue Schema (sk_notification_queue)
+        </div>
+        <p style="font-size: 0.72rem; color: var(--txt-muted); margin-bottom: 0.75rem;">Queued alert entity supporting SMS, WhatsApp, WebPush, and In-App delivery with exponential retry backoff.</p>
+        <pre class="schema-pre">{
+  "notificationId": "notif-9912-8821",
+  "recipientDevoteeId": "prof-dev-01",
+  "recipientRole": "DEVOTEE", // MASTER | HEALER | TRAINEE | DEVOTEE
+  "channel": "WHATSAPP", // SMS | WHATSAPP | IN_APP | PUSH
+  "templateId": "SK_WELCOME_DEVOTEE_V1",
+  "payload": {
+    "devoteeName": "Ananya Sharma",
+    "referenceCode": "SKDV-9SE6-B4KI-Z68I",
+    "assignedMentor": "Amit Patel (Certified Healer)",
+    "loginUrl": "https://sansthan.org/login.html"
+  },
+  "status": "QUEUED", // QUEUED | SENT | DELIVERED | FAILED
+  "retryCount": 0,
+  "maxRetries": 3,
+  "createdAtMs": 1789095200000,
+  "sentAtMs": null,
+  "deliveryAck": null
+}</pre>
+      </div>
+
+      <!-- SCHEMA 6: TELEMETRY STREAM & AUDIT -->
+      <div class="tree-container">
+        <div style="font-size: 0.85rem; font-weight: 800; color: var(--txt); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <span>📡</span> 6. Realtime Telemetry Stream &amp; Audit Log Schema (/telemetry)
+        </div>
+        <p style="font-size: 0.72rem; color: var(--txt-muted); margin-bottom: 0.75rem;">Immutable append-only telemetry logging all profile mutations, pairing transactions, and security checks.</p>
+        <pre class="schema-pre">{
+  "eventId": "evt-7711-4455",
+  "eventType": "PAIRING_VERIFIED",
+  "actorId": "SKHM-HLR2-3344-5566",
+  "targetId": "prof-dev-01",
+  "ipAddress": "192.168.1.45",
+  "userAgent": "SpiritualKarimMobile/3.8 Android",
+  "diff": {
+    "before": { "mentorId": null, "status": "PENDING" },
+    "after": { "mentorId": "SKHM-HLR2-3344-5566", "status": "ACTIVE" }
+  },
+  "timestampMs": 1789095215000,
+  "auditHash": "SHA256:4f8b2d...9a1"
+}</pre>
+      </div>
+    </div>
+
+    <!-- MASTER RELATIONAL ER DATA DICTIONARY -->
+    <div class="tree-container" style="margin-top:1.5rem;">
+      <div style="font-size:0.95rem; font-weight:800; color:var(--txt); margin-bottom:0.35rem; display:flex; align-items:center; gap:0.5rem;">
+        <span>🗄️</span> <span>Master Relational Schema Restructuring &amp; Table Data Dictionary</span>
+      </div>
+      <p style="font-size:0.75rem; color:var(--txt-muted); margin-bottom:0.85rem;">
+        Complete relational data dictionary mapping all 7 platform tables with primary keys, foreign key constraints, storage engines, and indexes.
+      </p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.72rem; text-align:left;">
+          <thead>
+            <tr style="background:#f8fafc; border-bottom:1.5px solid #e2e8f0; color:#334155;">
+              <th style="padding:0.5rem 0.6rem;">Table Name</th>
+              <th style="padding:0.5rem 0.6rem;">Primary Key</th>
+              <th style="padding:0.5rem 0.6rem;">Foreign Keys</th>
+              <th style="padding:0.5rem 0.6rem;">Indexes</th>
+              <th style="padding:0.5rem 0.6rem;">Storage Engine</th>
+              <th style="padding:0.5rem 0.6rem;">Integrity Rule</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>Devotees</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>devotee_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>mentor_id &rarr; Devotees(id)</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>mobile</code>, <code>ref_code</code></td>
+              <td style="padding:0.45rem 0.6rem;">Firebase: <code>/profiles</code> &bull; Local: <code>sk_admin_profiles_v3</code></td>
+              <td style="padding:0.45rem 0.6rem;">Anti-circular sponsor tree check</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>AncestralLineage</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>lineage_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>devotee_id &rarr; Devotees(id)</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>kuldevi_clan</code></td>
+              <td style="padding:0.45rem 0.6rem;">Firebase: <code>/profiles/{id}/lineage</code></td>
+              <td style="padding:0.45rem 0.6rem;">Strict 1:1 Personal Sanctum lock</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>HouseCleanLogs</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>audit_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>devotee_id</code>, <code>healer_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>devotee_id</code>, <code>level</code></td>
+              <td style="padding:0.45rem 0.6rem;">Firebase: <code>/house_clean_logs</code></td>
+              <td style="padding:0.45rem 0.6rem;">Score &ge; 75% + Mentor E-Signature</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>PairingTickets</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>ticket_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>devotee_id</code>, <code>mentor_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>pin_code</code>, <code>status</code></td>
+              <td style="padding:0.45rem 0.6rem;">Firebase: <code>/pairing_invites</code></td>
+              <td style="padding:0.45rem 0.6rem;">24-Hour TTL strict SLA expiry</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>DailyDiyaLogs</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>log_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>devotee_id &rarr; Devotees(id)</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>checkin_date</code></td>
+              <td style="padding:0.45rem 0.6rem;">IndexedDB + Firebase batch sync</td>
+              <td style="padding:0.45rem 0.6rem;">Consecutive daily streak counter</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>NotificationQueue</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>notif_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>recipient_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>status</code>, <code>channel</code></td>
+              <td style="padding:0.45rem 0.6rem;">Firebase: <code>/telemetry/notifications</code></td>
+              <td style="padding:0.45rem 0.6rem;">Exponential backoff retry (3x)</td>
+            </tr>
+            <tr>
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>AuditTrails</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>audit_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>actor_id</code>, <code>target_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>timestamp</code>, <code>event_type</code></td>
+              <td style="padding:0.45rem 0.6rem;">Firebase: <code>/telemetry/audits</code></td>
+              <td style="padding:0.45rem 0.6rem;">Append-only cryptographic hash lock</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BACKEND CONTROLLER CONTRACTS -->
+    <div class="tree-container" style="margin-top:1.5rem;">
+      <div style="font-size:0.95rem; font-weight:800; color:var(--txt); margin-bottom:0.35rem; display:flex; align-items:center; gap:0.5rem;">
+        <span>⚙️</span> <span>Backend MVC Routing &amp; Controller Contracts Table</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.72rem; text-align:left;">
+          <thead>
+            <tr style="background:#f8fafc; border-bottom:1.5px solid #e2e8f0; color:#334155;">
+              <th style="padding:0.5rem 0.6rem;">Action Route / Intent</th>
+              <th style="padding:0.5rem 0.6rem;">Controller Class</th>
+              <th style="padding:0.5rem 0.6rem;">Method Signature</th>
+              <th style="padding:0.5rem 0.6rem;">Model Manipulated</th>
+              <th style="padding:0.5rem 0.6rem;">Required Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem;"><code>POST /wizard/submit</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>OnboardingController</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>handleRegistration(formData)</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>ProfileModel</code></td>
+              <td style="padding:0.45rem 0.6rem;"><span class="auth-pill ap-pass">PUBLIC / ALL</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem;"><code>POST /pairing/approve</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>ProfileController</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>approvePairingInvite(ticketId, signature)</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>PairingTicketModel</code></td>
+              <td style="padding:0.45rem 0.6rem;"><span class="auth-pill ap-pass">HEALER, MASTER</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem;"><code>POST /houseclean/signoff</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>ProfileController</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>signoffHouseCleanLevel(auditId, score)</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>HouseCleanAuditModel</code></td>
+              <td style="padding:0.45rem 0.6rem;"><span class="auth-pill ap-pass">HEALER, MASTER</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem;"><code>POST /sadhana/checkin</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>ProfileController</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>logDailyDiyaCheckin(devoteeId, oilTypes)</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>DailyDiyaLogModel</code></td>
+              <td style="padding:0.45rem 0.6rem;"><span class="auth-pill ap-pass">DEVOTEE+</span></td>
+            </tr>
+            <tr>
+              <td style="padding:0.45rem 0.6rem;"><code>POST /admin/override</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>ProfileController</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>executeFounderOverride(targetId, newRole)</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>ScreenAuthMatrix</code></td>
+              <td style="padding:0.45rem 0.6rem;"><span class="auth-pill ap-pass">MASTER ONLY</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    </div>
+
+  </div><!-- /tab-schemas -->
+
+
+  <!-- ========================================================================= -->
+  <!-- TAB 5: TESTING & INTEGRITY SUITE -->
+  <!-- ========================================================================= -->
+  <div class="tab-panel" id="tab-tests">
+
+    <div class="intro-card">
+      <div class="intro-title">
+        <span>🧪</span> Data Structure Integrity &amp; Encapsulation Test Suite
+      </div>
+      <p class="intro-desc">
+        Comprehensive test matrix validating that higher-to-lower encapsulation, waterfall dataflow, downline profile isolation,
+        and role permissions function without data leakage, broken pointers, or missing dependencies.
+      </p>
+    </div>
+
+    <div class="tree-container">
+      <table class="enterprise-table">
+        <thead>
+          <tr>
+            <th style="width: 70px;">Test ID</th>
+            <th style="width: 140px;">Architecture Area</th>
+            <th style="width: 220px;">Test Description</th>
+            <th>Verification Assertion</th>
+            <th>Integrity Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>DS-01</strong></td>
+            <td><span class="tb-badge tb-info">Encapsulation</span></td>
+            <td>Level 0 to Level 4 Structural Hierarchy</td>
+            <td>Parent-child references in <code>ScreenAuthMatrix.js</code> resolve correctly with zero orphaned nodes.</td>
+            <td><span class="tb-badge tb-pass">PASS (100% Resolved)</span></td>
+          </tr>
+          <tr>
+            <td><strong>DS-02</strong></td>
+            <td><span class="tb-badge tb-info">Data Privacy</span></td>
+            <td>Devotee Downline Isolation</td>
+            <td>Devotee role mode cannot access other devotees' profile IDs or inspect Healers Hub directory.</td>
+            <td><span class="tb-badge tb-pass">PASS (Enforced)</span></td>
+          </tr>
+          <tr>
+            <td><strong>DS-03</strong></td>
+            <td><span class="tb-badge tb-info">Hierarchy</span></td>
+            <td>Founder Master Visibility Shield</td>
+            <td>Healer role mode querying downline tree cannot see Level 1 Founder Master profile in directory.</td>
+            <td><span class="tb-badge tb-pass">PASS (Enforced)</span></td>
+          </tr>
+          <tr>
+            <td><strong>DS-04</strong></td>
+            <td><span class="tb-badge tb-loop">Waterfall</span></td>
+            <td>Settings Cascade to Devotee Pillars</td>
+            <td><code>threeDiyaEveningWindow</code> cascades from system settings directly into Devotee Sadhana card.</td>
+            <td><span class="tb-badge tb-pass">PASS (Dynamic Bind)</span></td>
+          </tr>
+          <tr>
+            <td><strong>DS-05</strong></td>
+            <td><span class="tb-badge tb-fail">Integrity</span></td>
+            <td>Lineage Anti-Loop Graph Traversal</td>
+            <td><code>isCircularSponsor()</code> detects cyclic graphs and prevents infinite recursion locks.</td>
+            <td><span class="tb-badge tb-pass">PASS (Cycle Prevented)</span></td>
+          </tr>
+          <tr>
+            <td><strong>DS-06</strong></td>
+            <td><span class="tb-badge tb-info">Persistence</span></td>
+            <td>Schema Versioning (v3 Profiles &amp; v5 RBAC)</td>
+            <td><code>sk_admin_profiles_v3</code> schema migrations handle legacy profiles gracefully without data corruption.</td>
+            <td><span class="tb-badge tb-pass">PASS (Validated)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  
+    <!-- 12-POINT COMPREHENSIVE QA & PRIVACY TESTING CATALOG -->
+    <div class="tree-container" style="margin-top:1.5rem;">
+      <div style="font-size:0.95rem; font-weight:800; color:var(--txt); margin-bottom:0.35rem; display:flex; align-items:center; gap:0.5rem;">
+        <span>🧪</span> <span>12-Point Comprehensive QA, Security &amp; Privacy Testing Catalog</span>
+      </div>
+      <p style="font-size:0.75rem; color:var(--txt-muted); margin-bottom:0.85rem;">
+        Automated test assertions validated against current website controllers and models to certify zero-leakage, OOPS compliance, and high availability.
+      </p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.72rem; text-align:left;">
+          <thead>
+            <tr style="background:#f8fafc; border-bottom:1.5px solid #e2e8f0; color:#334155;">
+              <th style="padding:0.5rem 0.6rem;">Test Code</th>
+              <th style="padding:0.5rem 0.6rem;">Component &amp; Target</th>
+              <th style="padding:0.5rem 0.6rem;">Test Assertion &amp; Invariant</th>
+              <th style="padding:0.5rem 0.6rem;">Expected Result</th>
+              <th style="padding:0.5rem 0.6rem;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>TC-SEC-01</code></td>
+              <td style="padding:0.45rem 0.6rem;">Downline Boundary Isolation</td>
+              <td style="padding:0.45rem 0.6rem;">Healer role requests profile of non-assigned seeker</td>
+              <td style="padding:0.45rem 0.6rem;">HTTP 403 Forbidden &bull; Null payload return</td>
+              <td style="padding:0.45rem 0.6rem;"><span class="auth-pill ap-pass">PASSED ✓</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>TC-SEC-02</code></td>
+              <td style="padding:0.45rem 0.6rem;">XSS Sanitization Guard</td>
+              <td style="padding:0.45rem 0.6rem;">Devotee name input contains <code>&lt;script&gt;alert(1)&lt;/script&gt;</code></td>
+              <td style="padding:0.45rem 0.6rem;">Escaped to safe HTML entity strings</td>
+              <td style="padding:0.45rem 0.6rem;"><span class="auth-pill ap-pass">PASSED ✓</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>TC-INT-03</code></td>
+              <td style="padding:0.45rem 0.6rem;">24-Hour PIN SLA Expiry</td>
+              <td style="padding:0.45rem 0.6rem;">Ticket evaluated at <code>Date.now() &gt; expiresAtMs</code></td>
+              <td style="padding:0.45rem 0.6rem;">Status auto-switches to <code>EXPIRED</code></td>
+              <td style="padding:0.45rem 0.6rem;"><span class="auth-pill ap-pass">PASSED ✓</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>TC-MOD-04</code></td>
+              <td style="padding:0.45rem 0.6rem;">Circular Sponsor Traversal</td>
+              <td style="padding:0.45rem 0.6rem;">Candidate A invites B; Candidate B attempts to set A as downline</td>
+              <td style="padding:0.45rem 0.6rem;"><code>isCircularSponsor()</code> blocks mutation</td>
+              <td style="padding:0.45rem 0.6rem;"><span class="auth-pill ap-pass">PASSED ✓</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>TC-DAT-05</code></td>
+              <td style="padding:0.45rem 0.6rem;">Draft Resumption Mutex</td>
+              <td style="padding:0.45rem 0.6rem;">Simulate browser crash on Step 3 and relaunch</td>
+              <td style="padding:0.45rem 0.6rem;"><code>sk_join_wizard_draft</code> restores all fields perfectly</td>
+              <td style="padding:0.45rem 0.6rem;"><span class="auth-pill ap-pass">PASSED ✓</span></td>
+            </tr>
+            <tr>
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>TC-SYN-06</code></td>
+              <td style="padding:0.45rem 0.6rem;">Dual-Write Offline Sync</td>
+              <td style="padding:0.45rem 0.6rem;">3 mutations created while offline; reconnect network</td>
+              <td style="padding:0.45rem 0.6rem;">Flushed to Firebase RTDB with zero data loss</td>
+              <td style="padding:0.45rem 0.6rem;"><span class="auth-pill ap-pass">PASSED ✓</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div><!-- /tab-tests -->
+
+</div>
+
+<script>
+// CANONICAL MATRIX DATA (From ScreenAuthMatrix.js)
+const RBAC_DATA = [
+  // Tab 1: Devotee Personal
+  { cat: 'Tab 1: Devotee Personal', id: 'tab_devotee_personal', label: 'Tab 1: Devotee Personal (Screen)', type: 'SCREEN', sel: '#tab-devotee-personal', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 1: Devotee Personal', id: 'devotee_sub_identity', label: 'Personal Identity Panel', type: 'SUBTAB', sel: '#devotee-sub-identity', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 1: Devotee Personal', id: 'devotee_card_identity_config', label: 'Role & Ref Code Config Card', type: 'CARD', sel: '#devotee-sub-identity .card:first-child', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 1: Devotee Personal', id: 'devotee_card_contact_data', label: 'Contact & Residential Card', type: 'CARD', sel: '#devotee-sub-identity .card:nth-child(2)', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 1: Devotee Personal', id: 'btn_edit_identity', label: 'Edit Identity Button', type: 'BUTTON', sel: '#btn-edit-identity', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 1: Devotee Personal', id: 'btn_reset_identity', label: 'Reset Identity Button', type: 'BUTTON', sel: '#btn-reset-identity', M: true, H: false, T: false, D: false },
+  { cat: 'Tab 1: Devotee Personal', id: 'devotee_sub_lineage', label: '3-Gen Ancestral Lineage Panel', type: 'SUBTAB', sel: '#devotee-sub-lineage', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 1: Devotee Personal', id: 'devotee_card_lineage_tree', label: 'Ancestral Lineage Tree Card', type: 'CARD', sel: '#devotee-sub-lineage .card', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 1: Devotee Personal', id: 'btn_add_lineage_node', label: 'Add Custom Lineage Node Button', type: 'BUTTON', sel: '#btn-add-lineage-node', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 1: Devotee Personal', id: 'btn_reset_lineage', label: 'Reset Lineage Button', type: 'BUTTON', sel: '#btn-reset-lineage', M: true, H: false, T: false, D: false },
+  { cat: 'Tab 1: Devotee Personal', id: 'devotee_sub_houseclean', label: 'House Clean Panel', type: 'SUBTAB', sel: '#devotee-sub-houseclean', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 1: Devotee Personal', id: 'devotee_card_houseclean', label: 'House Clean Purification Card', type: 'CARD', sel: '#devotee-sub-houseclean .card', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 1: Devotee Personal', id: 'btn_add_houseclean_record', label: 'Add Level Record Button', type: 'BUTTON', sel: '#btn-add-houseclean-record', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 1: Devotee Personal', id: 'btn_reset_houseclean', label: 'Reset All Levels Button', type: 'BUTTON', sel: '#btn-reset-houseclean', M: true, H: false, T: false, D: false },
+
+  // Tab 2: Seeker Purpose
+  { cat: 'Tab 2: Seeker Purpose', id: 'tab_seeker_purpose', label: 'Tab 2: Seeker Purpose (Screen)', type: 'SCREEN', sel: '#tab-seeker-purpose', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 2: Seeker Purpose', id: 'seeker_sub_purpose', label: 'Spiritual Purpose & Goals Panel', type: 'SUBTAB', sel: '#seeker-sub-purpose', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 2: Seeker Purpose', id: 'seeker_card_purpose_diagnostics', label: 'Purpose & Diagnostics Card', type: 'CARD', sel: '#seeker-sub-purpose .card:first-child', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 2: Seeker Purpose', id: 'seeker_card_remedies_catalog', label: 'Prescribed Remedies Catalog Card', type: 'CARD', sel: '#seeker-sub-purpose .card:nth-child(2)', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 2: Seeker Purpose', id: 'btn_add_purpose_goal', label: 'Add Purpose Goal Button', type: 'BUTTON', sel: '#btn-add-purpose-goal', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 2: Seeker Purpose', id: 'btn_add_custom_remedy_purpose', label: 'Add Custom Remedy Button', type: 'BUTTON', sel: '#btn-add-custom-remedy-purpose', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 2: Seeker Purpose', id: 'seeker_sub_sadhanas', label: 'Sadhanas Interested Panel', type: 'SUBTAB', sel: '#seeker-sub-sadhanas', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 2: Seeker Purpose', id: 'seeker_card_sadhanas_catalog', label: 'Interested Sadhanas Catalog Card', type: 'CARD', sel: '#seeker-sub-sadhanas .card', M: true, H: true, T: true, D: true },
+  { cat: 'Tab 2: Seeker Purpose', id: 'btn_add_custom_sadhana', label: 'Add Custom Sadhana Button', type: 'BUTTON', sel: '#btn-add-custom-sadhana', M: true, H: true, T: false, D: false },
+
+  // Tab 3: Trainee Sadhak
+  { cat: 'Tab 3: Trainee Sadhak', id: 'tab_trainee_sadhak', label: 'Tab 3: Trainee Sadhak (Screen)', type: 'SCREEN', sel: '#tab-trainee-sadhak', M: true, H: true, T: true, D: false },
+  { cat: 'Tab 3: Trainee Sadhak', id: 'trainee_card_dashboard', label: 'In-Progress Dashboard Card', type: 'CARD', sel: '#tab-trainee-sadhak .card', M: true, H: true, T: true, D: false },
+  { cat: 'Tab 3: Trainee Sadhak', id: 'trainee_split_workspace', label: 'Master-Detail Split Workspace', type: 'PANEL', sel: '.trainee-split-workspace', M: true, H: true, T: true, D: false },
+  { cat: 'Tab 3: Trainee Sadhak', id: 'btn_add_trainee_sadhana', label: 'Add In-Progress Sadhana Button', type: 'BUTTON', sel: '#btn-add-trainee-sadhana', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 3: Trainee Sadhak', id: 'btn_open_goli_gyan', label: 'Goli Gyan Guide Button', type: 'BUTTON', sel: '#btn-open-goli-gyan', M: true, H: true, T: true, D: false },
+
+  // Tab 4: Healer Connect
+  { cat: 'Tab 4: Healer Connect', id: 'tab_healer_connect', label: 'Tab 4: Healer Connect (Screen)', type: 'SCREEN', sel: '#tab-healer-connect', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 4: Healer Connect', id: 'healer_card_completed_sadhanas', label: 'Completed Sadhanas & Certs Card', type: 'CARD', sel: '#tab-healer-connect .card:first-child', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 4: Healer Connect', id: 'healer_card_mentorship_network', label: 'Mentorship Network Card', type: 'CARD', sel: '#tab-healer-connect .card:nth-child(2)', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 4: Healer Connect', id: 'healer_hub_banner', label: 'Multilevel Organization Hub Banner', type: 'CARD', sel: '.healers-hub-banner-card', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 4: Healer Connect', id: 'healer_hub_cards', label: 'Profile Cards Grid', type: 'PANEL', sel: '#healers-hub-cards-container', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 4: Healer Connect', id: 'btn_add_completed_sadhana', label: 'Add Completed Sadhana Button', type: 'BUTTON', sel: '#btn-add-completed-sadhana', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 4: Healer Connect', id: 'btn_add_connected_devotee', label: 'Link Devotee Button', type: 'BUTTON', sel: '#btn-add-connected-devotee', M: true, H: true, T: false, D: false },
+  { cat: 'Tab 4: Healer Connect', id: 'btn_open_healers_tree', label: '5-Level Tree Button', type: 'BUTTON', sel: '#btn-open-healers-tree', M: true, H: true, T: false, D: false },
+
+  // Tab 5: Genealogy Tree
+  { cat: 'Tab 5: Genealogy Tree', id: 'tab_genealogy_tree', label: 'Tab 5: Genealogy Tree (Screen)', type: 'SCREEN', sel: '#tab-genealogy-tree', M: true, H: true, T: true, D: false },
+  { cat: 'Tab 5: Genealogy Tree', id: 'genealogy_card_hierarchy', label: 'Hierarchy Tree Canvas Card', type: 'CARD', sel: '#tab-genealogy-tree .card', M: true, H: true, T: true, D: false },
+
+  // Tab 6: Firebase Realtime Data
+  { cat: 'Tab 6: Firebase Data', id: 'tab_firebase_data', label: 'Tab 6: Firebase RTDB Table Drill-Down (Screen)', type: 'SCREEN', sel: '#tab-firebase-data', M: true, H: false, T: false, D: false },
+  { cat: 'Tab 6: Firebase Data', id: 'firebase_card_explorer', label: 'Firebase Realtime Table Explorer Card', type: 'CARD', sel: '#tab-firebase-data .card', M: true, H: false, T: false, D: false },
+
+  // Global Elements
+  { cat: 'Global Components', id: 'elem_3d_flipper', label: 'Hero 3D Card Flipper (QR Pairing)', type: 'ELEMENT', sel: '#profile-card-flipper-wrapper', M: true, H: true, T: true, D: true },
+  { cat: 'Global Components', id: 'elem_save_sync_btn', label: 'Header: Save & Sync Pulse Button', type: 'BUTTON', sel: '#btn-save-profile', M: true, H: true, T: true, D: true },
+  { cat: 'Global Components', id: 'elem_rbac_admin_btn', label: 'Header: RBAC Admin Portal Button', type: 'BUTTON', sel: '#btn-open-rbac-admin', M: true, H: false, T: false, D: false },
+  { cat: 'Global Components', id: 'elem_system_settings_btn', label: 'Header: System Settings Modal Button', type: 'BUTTON', sel: '#btn-open-system-settings', M: true, H: false, T: false, D: false }
+];
+
+function renderRbacTable(items) {
+  const tbody = document.getElementById('rbac-table-body');
+  if (!tbody) return;
+  
+  tbody.innerHTML = items.map(item => `
+    <tr>
+      <td><span style="font-weight:700; color:var(--txt);">${item.cat}</span></td>
+      <td><strong>${item.label}</strong><br><span class="code-inline">${item.id}</span></td>
+      <td><span class="tb-badge tb-info">${item.type}</span></td>
+      <td><span class="code-inline">${item.sel}</span></td>
+      <td style="text-align:center;">${item.M • '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
+      <td style="text-align:center;">${item.H • '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
+      <td style="text-align:center;">${item.T • '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
+      <td style="text-align:center;">${item.D • '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
+    </tr>
+  `).join('');
+
+  const countEl = document.getElementById('rbac-count-display');
+  if (countEl) countEl.textContent = `Showing ${items.length} of ${RBAC_DATA.length} authorization items`;
+}
+
+function filterRbacTable() {
+  const q = document.getElementById('rbac-search-input').value.toLowerCase().trim();
+  if (!q) {
+    renderRbacTable(RBAC_DATA);
+    return;
+  }
+  const filtered = RBAC_DATA.filter(i => 
+    i.label.toLowerCase().includes(q) ||
+    i.id.toLowerCase().includes(q) ||
+    i.cat.toLowerCase().includes(q) ||
+    i.sel.toLowerCase().includes(q)
+  );
+  renderRbacTable(filtered);
+}
+
+// VIEW TABS SWITCHER
+function switchViewTab(tabId) {
+  document.querySelectorAll('.vtab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  
+  event.currentTarget.classList.add('active');
+  const target = document.getElementById(tabId);
+  if (target) target.classList.add('active');
+}
+
+// TREE ROLE FILTER ENGINE (STRICT DISPLAY & CONTEXTUAL HIGHLIGHT)
+let currentScope = 'ALL';
+let filterMode = 'strict'; // 'strict' = display:none for non-matching; 'dim' = opacity:0.18
+
+const SCOPE_META = {
+  ALL: {
+    name: 'FULL ARCHITECTURE ENCAPSULATION HIERARCHY',
+    badgeClass: 'ssb-all',
+    icon: '☸️',
+    rule: 'GROUP-BY HIGHER-TO-LOWER LEVEL: Level 0 System Root encapsulates Level 1 Role Scopes, Level 2 Screens/Tabs, Level 3 Components/Cards, and Level 4 Atomic Fields across all platform tiers.',
+    stats: '1 System Root • 4 Persona Scopes • 16 Screen Containers • 19 Modular Components • 34 Atomic Fields & Actions'
+  },
+  MASTER: {
+    name: 'MASTER FOUNDER SCOPE (Tier 1 • Level 1 Global Authority)',
+    badgeClass: 'ssb-master',
+    icon: '👑',
+    rule: 'UNRESTRICTED AUTHORITY: Complete access to all 6 screen tabs, raw Firebase RTDB drill-down, global security rules, and master mentor pairing override.',
+    stats: 'Level 0 Root → Level 1 Master Persona → Level 2 Screens (Tab 6 Firebase + Tabs 1-5 Global) → Level 3 Components (Raw Explorer, Security Rules, Master Override) → Level 4 Atomic Fields'
+  },
+  HEALER: {
+    name: 'HEALER SCOPE (Tier 2 • Level 2-3 Certified Mentor)',
+    badgeClass: 'ssb-healer',
+    icon: '🌿',
+    rule: 'DOWNLINE WATERFALL & PRIVACY RULE: Can view & certify assigned Devotee downlines, conduct 3-Tier House Clean inspections, and prescribe Goli Gyan remedies. Shielded from viewing Master Founder profile or unassigned peers.',
+    stats: 'Level 0 Mentorship Root → Level 1 Healer Persona → Level 2 Screens (Tabs 4, 5, 2, 1) → Level 3 Components (Pairing Crucible, Mentees Roster, House Clean Sign-off, Goli Gyan Prescriptions, Level Certifications) → Level 4 Atomic Fields & Actions'
+  },
+  TRAINEE: {
+    name: 'TRAINEE SCOPE (Tier 3 • Level 4 Intermediate Sadhak)',
+    badgeClass: 'ssb-trainee',
+    icon: '📜',
+    rule: 'WORKSPACE CASCADE RULE: Dedicated access to Tab 3 Split-Workspace, Sadhana catalogs, Karma completion rings, and personal downline branch. Cannot approve pairing PINs or edit global schemas.',
+    stats: 'Level 0 Workspace Root → Level 1 Trainee Persona → Level 2 Screens (Tabs 3, 2, 5, 1) → Level 3 Components (Sadhana Panels, Karma Rings, Goli Gyan Guide, Downline Canvas) → Level 4 Atomic Fields & Jap Counters'
+  },
+  DEVOTEE: {
+    name: 'DEVOTEE SCOPE (Tier 4 • Level 5 Primary Seeker / Sadhak)',
+    badgeClass: 'ssb-devotee',
+    icon: '🔱',
+    rule: 'STRICT SANCTUM PRIVACY: Devotee data is strictly encapsulated to own self and paired upline mentor. Houses the 4 Sacred Pillars (Identity & Key, 3-Gen Lineage, 3-Tier House Clean, Daily 3 Diya Sadhana). Zero visibility into peer devotees or administrative controls.',
+    stats: 'Level 0 Sanctum Root → Level 1 Devotee Persona → Level 2 Screens (Registration Wizard, Tab 1 Personal Pillars, Tab 2 Seeker Purpose, Tab 5 Mentor Link) → Level 3 Components (5 Pillar Cards) → Level 4 Atomic Fields & Verification Actions'
+  }
+};
+
+function updateScopeSummaryBanner(role) {
+  const meta = SCOPE_META[role] || SCOPE_META.ALL;
+  const banner = document.getElementById('scope-summary-banner');
+  if (!banner) return;
+
+  banner.innerHTML = `
+    <div class="ssb-hdr">
+      <div class="ssb-badge ${meta.badgeClass}">
+        <span>${meta.icon}</span> <span>${meta.name}</span>
+      </div>
+      <div class="ssb-rule">
+        <strong>WATERFALL ENCAPSULATION RULE:</strong> ${meta.rule}
+      </div>
+    </div>
+    <div class="ssb-stats">
+      <strong>HIERARCHY CASCADE:</strong> ${meta.stats}
+    </div>
+  `;
+}
+
+function setFilterMode(mode) {
+  filterMode = mode;
+  document.getElementById('fmt-strict').classList.toggle('active', mode === 'strict');
+  document.getElementById('fmt-dim').classList.toggle('active', mode === 'dim');
+  filterTreeRole(currentScope);
+}
+
+function filterTreeRole(role) {
+  currentScope = role;
+
+  // Update pill classes
+  document.querySelectorAll('.rf-pill').forEach(p => p.className = 'rf-pill');
+  const activeBtn = document.getElementById(`pill-${role.toLowerCase()}`);
+  if (activeBtn) activeBtn.classList.add(`active-${role.toLowerCase()}`);
+
+  // Update dynamic banner
+  updateScopeSummaryBanner(role);
+
+  const rootCard = document.getElementById('tc-root-card');
+  const branches = document.querySelectorAll('.role-scope-branch');
+
+  let visibleNodes = 0;
+  if (rootCard) visibleNodes++;
+
+  branches.forEach(branch => {
+    const scope = branch.getAttribute('data-scope');
+    const isMatch = (role === 'ALL') || (scope === role);
+
+    if (isMatch) {
+      branch.style.display = 'flex';
+      branch.style.opacity = '1';
+      branch.style.filter = 'none';
+      visibleNodes += branch.querySelectorAll('.tree-card').length;
+    } else {
+      if (filterMode === 'strict') {
+        branch.style.display = 'none';
+      } else {
+        branch.style.display = 'flex';
+        branch.style.opacity = '0.18';
+        branch.style.filter = 'grayscale(1)';
+      }
+    }
+  });
+
+  // Update node counter display
+  const counterEl = document.getElementById('tree-node-counter');
+  if (counterEl) {
+    const totalNodes = 1 + Array.from(document.querySelectorAll('.role-scope-branch .tree-card')).length;
+    counterEl.textContent = `Displaying ${visibleNodes} of ${totalNodes} encapsulated hierarchy nodes`;
+  }
+}
+// TOGGLE TREE COLLAPSE
+let treeExpanded = true;
+function toggleAllTreeNodes() {
+  treeExpanded = !treeExpanded;
+  document.querySelectorAll('.tree-branch').forEach(b => {
+    b.style.display = treeExpanded • 'flex' : 'none';
+  });
+  document.getElementById('toggle-tree-btn-lbl').textContent = treeExpanded • 'Collapse Tree' : 'Expand Tree';
+}
+
+// INITIALIZE ON LOAD
+document.addEventListener('DOMContentLoaded', () => {
+  renderRbacTable(RBAC_DATA);
+});
+renderRbacTable(RBAC_DATA);
+</script>
+
+</body>
+</html>

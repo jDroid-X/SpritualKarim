@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login • Shree Spritual Karim Sansthan (Demo)</title>
+    <link rel="stylesheet" href="css/profile-admin.css" />
+    <style>
+      .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+          135deg,
+          #1a0a2e 0%,
+          #16213e 50%,
+          #0f3460 100%
+        );
+        padding: 1rem;
+      }
+      .login-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 1rem;
+        padding: 2rem;
+        width: 100%;
+        max-width: 400px;
+        backdrop-filter: blur(10px);
+      }
+      .login-logo {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+      .login-logo .icon {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      .login-logo h1 {
+        font-family: var(--font-heading);
+        color: var(--gold-400);
+        font-size: 1.3rem;
+        margin: 0;
+      }
+      .login-logo p {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        margin: 0.25rem 0 0 0;
+      }
+      .login-form .form-group {
+        margin-bottom: 1rem;
+      }
+      .login-form label {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+      }
+      .login-form input,
+      .login-form select {
+        width: 100%;
+        padding: 0.65rem 0.85rem;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+      }
+      .login-form input:focus,
+      .login-form select:focus {
+        outline: none;
+        border-color: var(--gold-400);
+        box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+      }
+      .login-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: linear-gradient(135deg, var(--gold-500), var(--gold-600));
+        color: #000;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        margin-top: 0.5rem;
+      }
+      .login-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+      }
+      .login-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .login-links {
+        text-align: center;
+        margin-top: 1rem;
+      }
+      .login-links a {
+        color: var(--gold-400);
+        font-size: 0.8rem;
+        text-decoration: none;
+      }
+      .login-links a:hover {
+        text-decoration: underline;
+      }
+      .demo-badge {
+        display: inline-block;
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        font-size: 0.6rem;
+        padding: 0.15rem 0.4rem;
+        border-radius: 999px;
+        font-weight: 700;
+        text-transform: uppercase;
+        vertical-align: middle;
+        margin-left: 0.3rem;
+      }
+      .login-error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+        padding: 0.6rem;
+        border-radius: 0.4rem;
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+        display: none;
+      }
+      .login-error.show {
+        display: block;
+      }
+      .session-timer {
+        position: fixed;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.4rem;
+        color: var(--text-secondary);
+        font-size: 0.7rem;
+        font-family: monospace;
+      }
+      .session-timer.warning {
+        color: #ef4444;
+        border-color: #ef4444;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-logo">
+          <span class="icon">🕉️</span>
+          <h1>Shree Spritual Karim <span class="demo-badge">Demo</span></h1>
+          <p>Sansthan Member Portal</p>
+        </div>
+
+        <div class="login-error" id="loginError"></div>
+
+        <form class="login-form" id="loginForm">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              placeholder="Enter username"
+              required
+              autocomplete="username"
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter password"
+              required
+              autocomplete="current-password"
+            />
+          </div>
+          <div class="form-group">
+            <label for="role">Login As</label>
+            <select id="role">
+              <option value="devotee">Devotee / Seeker</option>
+              <option value="healer">Healer</option>
+              <option value="master">Admin Master</option>
+            </select>
+          </div>
+          <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+        </form>
+
+        <div class="login-links">
+          <a href="#" id="showRegister">Create demo account</a> •
+          <a href="index.html">Back to Home</a>
+        </div>
+
+        <div
+          id="registerSection"
+          style="
+            display: none;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+          "
+        >
+          <div class="login-error" id="regError"></div>
+          <form class="login-form" id="registerForm">
+            <div class="form-group">
+              <label for="regUsername">Choose Username</label>
+              <input
+                type="text"
+                id="regUsername"
+                placeholder="Min 3 characters"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="regPassword">Choose Password</label>
+              <input
+                type="password"
+                id="regPassword"
+                placeholder="Min 6 characters"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="regRole">Register As</label>
+              <select id="regRole">
+                <option value="devotee">Devotee / Seeker</option>
+                <option value="healer">Healer</option>
+                <option value="master">Admin Master</option>
+              </select>
+            </div>
+            <button type="submit" class="login-btn" id="regBtn">
+              Create Account
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="session-timer" id="sessionTimer" style="display: none">
+      ⏱️ <span id="timerDisplay">30:00</span>
+    </div>
+
+    <script src="js/onboarding.js"></script>
+    <script>
+      // ===== LOGIN HANDLER =====
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const username = document.getElementById("username").value.trim();
+          const password = document.getElementById("password").value;
+          const role = document.getElementById("role").value;
+          const errorEl = document.getElementById("loginError");
+          const btn = document.getElementById("loginBtn");
+
+          errorEl.classList.remove("show");
+          btn.disabled = true;
+          btn.textContent = "Signing in...";
+
+          setTimeout(() => {
+            const result = DemoAuth.login(username, password);
+            if (result.success) {
+              // Demo: allow role override
+              if (role && result.session.role !== role) {
+                result.session.role = role;
+                sessionStorage.setItem(
+                  "sk_auth_sessions",
+                  JSON.stringify(result.session),
+                );
+              }
+              DemoAudit.log(
+                "LOGIN",
+                { username, role: result.session.role },
+                username,
+              );
+              DemoSession.start((status) => {
+                if (status === "expired") {
+                  alert("Session expired. Please login again.");
+                  DemoAuth.logout();
+                  location.reload();
+                }
+              });
+              // Redirect based on role (uses hash routing for sub-portals)
+              const redirects = {
+                master: "index.html",
+                healer: "index.html#healer",
+                devotee: "index.html#devotee",
+              };
+              window.location.href =
+                redirects[result.session.role] || "index.html";
+            } else {
+              errorEl.textContent = result.reason;
+              errorEl.classList.add("show");
+              btn.disabled = false;
+              btn.textContent = "Sign In";
+            }
+          }, 800);
+        });
+
+      // ===== REGISTER HANDLER =====
+      document
+        .getElementById("showRegister")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          const regSection = document.getElementById("registerSection");
+          regSection.style.display =
+            regSection.style.display === "none" ? "block" : "none";
+        });
+
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const username = document.getElementById("regUsername").value.trim();
+          const password = document.getElementById("regPassword").value;
+          const role = document.getElementById("regRole").value;
+          const errorEl = document.getElementById("regError");
+          const btn = document.getElementById("regBtn");
+
+          errorEl.classList.remove("show");
+          btn.disabled = true;
+          btn.textContent = "Creating...";
+
+          setTimeout(() => {
+            const result = DemoAuth.register(username, password, role);
+            if (result.success) {
+              DemoAudit.log("REGISTER", { username, role }, username);
+              alert("Demo account created! You can now login.");
+              document.getElementById("registerSection").style.display = "none";
+              document.getElementById("username").value = username;
+            } else {
+              errorEl.textContent = result.reason;
+              errorEl.classList.add("show");
+            }
+            btn.disabled = false;
+            btn.textContent = "Create Account";
+          }, 800);
+        });
+
+      // ===== SESSION TIMER DISPLAY =====
+      const timerEl = document.getElementById("sessionTimer");
+      const displayEl = document.getElementById("timerDisplay");
+      let timerInterval = null;
+
+      function updateTimer() {
+        // Sync with DemoSession's actual remaining time
+        const remainingMs = DemoSession.getRemainingTime();
+        const remainingSec = Math.ceil(remainingMs / 1000);
+        const m = Math.floor(remainingSec / 60);
+        const s = remainingSec % 60;
+        displayEl.textContent = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+        if (remainingSec <= 300) timerEl.classList.add("warning"); // Last 5 min
+        if (remainingSec <= 0) {
+          DemoAuth.logout();
+          alert("Session expired.");
+          location.reload();
+          return;
+        }
+      }
+
+      // Start timer if already logged in
+      if (DemoAuth.getSession()) {
+        timerEl.style.display = "block";
+        // Update display immediately
+        updateTimer();
+        // Update display every second
+        timerInterval = setInterval(updateTimer, 1000);
+        // Reset on activity — ping DemoSession to reset its internal timers
+        document.addEventListener("click", () => {
+          DemoSession.ping();
+          timerEl.classList.remove("warning");
+          updateTimer();
+        });
+      }
+    </script>
+  </body>
+</html>

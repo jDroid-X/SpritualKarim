@@ -1,0 +1,2336 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Sacred Devotee Induction &amp; Pairing • Shree Spritual Karim Sansthan
+    </title>
+    <meta
+      name="description"
+      content="Official Seeker Onboarding, Sacred Lineage Pairing & Devotee Induction Protocol"
+    />
+    <link rel="icon" type="image/png" href="Logo.png" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/profile-admin.css" />
+
+    <style>
+      :root {
+        --gold-glow: 0 0 25px rgba(212, 175, 55, 0.25);
+        --teal-glow: 0 0 25px rgba(20, 184, 166, 0.25);
+      }
+
+      body {
+        background: radial-gradient(
+          circle at top center,
+          #1b0e2f 0%,
+          #0c0714 65%,
+          #050308 100%
+        );
+        color: #f1ecdf;
+        font-family: "Outfit", sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+
+      .join-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem;
+      }
+
+      .join-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        position: relative;
+      }
+
+      .join-brand-logo {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 2px solid var(--gold-400);
+        box-shadow: var(--gold-glow);
+        margin-bottom: 0.75rem;
+      }
+
+      .join-title {
+        font-family: "Cinzel", serif;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--gold-400);
+        letter-spacing: 1px;
+        margin: 0 0 0.4rem 0;
+      }
+
+      .join-subtitle {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* 2-Column Split Layout */
+      .join-split-layout {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 1.75rem;
+        align-items: start;
+      }
+
+      @media (max-width: 960px) {
+        .join-split-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Left Panel: Instruction Manual */
+      .manual-card {
+        background: rgba(22, 14, 38, 0.75);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 1rem;
+        padding: 1.75rem;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+      }
+
+      .manual-step {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      }
+
+      .manual-step:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+
+      .step-badge {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        background: linear-gradient(135deg, var(--gold-500), #9a781b);
+        color: #0b0714;
+        font-weight: 800;
+        font-family: "Cinzel", serif;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+        box-shadow: var(--gold-glow);
+      }
+
+      .step-content h4 {
+        margin: 0 0 0.35rem 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--gold-300);
+        font-family: "Cinzel", serif;
+      }
+
+      .step-content p {
+        margin: 0 0 0.5rem 0;
+        font-size: 0.85rem;
+        color: #d8d0c5;
+        line-height: 1.5;
+      }
+
+      .step-bullets {
+        margin: 0;
+        padding-left: 1.2rem;
+        font-size: 0.82rem;
+        color: var(--text-muted);
+      }
+
+      .step-bullets li {
+        margin-bottom: 0.25rem;
+      }
+
+      /* Right Panel: Mentor Metadata & Intake Form */
+      .intake-card {
+        background: rgba(26, 17, 44, 0.85);
+        border: 1px solid rgba(20, 184, 166, 0.35);
+        border-radius: 1rem;
+        padding: 1.75rem;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+        position: sticky;
+        top: 1.5rem;
+      }
+
+      .mentor-profile-box {
+        background: rgba(20, 184, 166, 0.08);
+        border: 1px solid rgba(20, 184, 166, 0.3);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .mentor-meta-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .mentor-name {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #14b8a6;
+        font-family: "Cinzel", serif;
+      }
+
+      .mentor-code-pill {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.82rem;
+        background: rgba(0, 0, 0, 0.4);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.35rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--gold-400);
+        letter-spacing: 1px;
+      }
+
+      .form-group-custom {
+        margin-bottom: 1.1rem;
+      }
+
+      .form-group-custom label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #e5dfd2;
+        margin-bottom: 0.35rem;
+      }
+
+      .input-custom {
+        width: 100%;
+        background: rgba(8, 4, 15, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 0.5rem;
+        color: #f1ecdf;
+        font-family: inherit;
+        font-size: 0.9rem;
+        padding: 0.65rem 0.85rem;
+        box-sizing: border-box;
+        transition: all 0.2s;
+      }
+
+      .input-custom:focus {
+        outline: none;
+        border-color: var(--gold-400);
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+      }
+
+      .btn-submit-induction {
+        width: 100%;
+        padding: 0.85rem;
+        background: linear-gradient(135deg, var(--gold-500), #9a781b);
+        color: #0b0714;
+        font-size: 0.95rem;
+        font-weight: 800;
+        font-family: "Cinzel", serif;
+        border: none;
+        border-radius: 0.6rem;
+        cursor: pointer;
+        box-shadow: var(--gold-glow);
+        transition: all 0.2s;
+        margin-top: 0.5rem;
+      }
+
+      .btn-submit-induction:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+      }
+
+      /* Live Waiting Screen */
+      .status-panel-waiting {
+        display: none;
+        text-align: center;
+        padding: 1.5rem 1rem;
+      }
+
+      .pulse-avatar {
+        width: 75px;
+        height: 75px;
+        margin: 0 auto 1.25rem auto;
+        border-radius: 50%;
+        background: rgba(212, 175, 55, 0.15);
+        border: 2px solid var(--gold-400);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        animation: waitingPulse 2s infinite;
+      }
+
+      @keyframes waitingPulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 18px rgba(212, 175, 55, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+        }
+      }
+
+      .approved-box {
+        display: none;
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid #10b981;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="join-container">
+      <!-- Top Header -->
+      <header class="join-header">
+        <img
+          src="Logo.png"
+          alt="Shree Spritual Karim Sansthan"
+          class="join-brand-logo"
+          onerror="
+            this.src =
+              'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'70\' height=\'70\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23d4af37\'/><text x=\'50\' y=\'65\' font-size=\'40\' text-anchor=\'middle\' fill=\'%230b0714\'>à¥</text></svg>'
+          "
+        />
+        <h1 class="join-title">SHREE SPRITUAL KARIM SANSTHAN</h1>
+        <p class="join-subtitle">
+          Official Sacred Devotee Induction &amp; Device Pairing Verification
+          Portal
+        </p>
+      </header>
+
+      <!-- 2-Column Layout -->
+      <div class="join-split-layout">
+        <!-- LEFT PANEL: INSTRUCTION MANUAL -->
+        <div class="manual-card">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 1.25rem;
+            "
+          >
+            <h3
+              style="
+                margin: 0;
+                font-family: &quot;Cinzel&quot;, serif;
+                font-size: 1.25rem;
+                color: var(--gold-400);
+              "
+            >
+              📖 Devotee Induction Manual
+            </h3>
+            <span
+              style="
+                background: rgba(212, 175, 55, 0.15);
+                color: var(--gold-400);
+                font-size: 0.75rem;
+                font-weight: 700;
+                padding: 0.2rem 0.6rem;
+                border-radius: 1rem;
+                border: 1px solid rgba(212, 175, 55, 0.3);
+              "
+            >
+              4 Sacred Pillars
+            </span>
+          </div>
+
+          <!-- Step 1 -->
+          <div class="manual-step">
+            <div class="step-badge">1</div>
+            <div class="step-content">
+              <h4>Pillar 1: Sacred Identity &amp; Devotee Onboarding</h4>
+              <p>
+                Every seeker enters the sacred order under the stewardship of a
+                Certified Mentor. Your profile is assigned a unique 16-digit
+                Sansthan Reference Key ensuring direct lineage connection.
+              </p>
+              <ul class="step-bullets">
+                <li>
+                  Verified mentor linkage protects personal spiritual energy.
+                </li>
+                <li>
+                  Encrypted 24-hour verification window guarantees authentic
+                  mentor approval.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="manual-step">
+            <div class="step-badge">2</div>
+            <div class="step-content">
+              <h4>Pillar 2: 3-Generation Ancestral Lineage (Pitru Karma)</h4>
+              <p>
+                Spiritual healing requires harmonic alignment of ancestral
+                karmic threads. After enrollment, you will record your
+                3-generation maternal and paternal lineage.
+              </p>
+              <ul class="step-bullets">
+                <li>Current Family: Self, Spouse, and Children.</li>
+                <li>
+                  Father's and Mother's ancestral lineages (Grandparents on both
+                  sides).
+                </li>
+                <li>
+                  Kuldevi / Kuldevta family roots to identify generational
+                  blockages.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="manual-step">
+            <div class="step-badge">3</div>
+            <div class="step-content">
+              <h4>Pillar 3: Three Sanctum House Clean Levels</h4>
+              <p>
+                Physical sanctification of living spaces removes negative entity
+                blockages across 3 systematic tiers:
+              </p>
+              <ul class="step-bullets">
+                <li>
+                  <strong>Level 1 — Self House Clean:</strong> Sanctification
+                  of your personal residence.
+                </li>
+                <li>
+                  <strong>Level 2 — Parents House Clean:</strong> Cleansing of
+                  ancestral and maternal parental homes.
+                </li>
+                <li>
+                  <strong>Level 3 — Relative House Clean:</strong> Extended
+                  family sanctum purification under mentor guidance.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="manual-step">
+            <div class="step-badge">4</div>
+            <div class="step-content">
+              <h4>Pillar 4: The Sacred Three Diya Sadhana</h4>
+              <p>
+                Daily morning and evening sacred practice using mustard oil,
+                pure ghee, and sesame oil lamps to anchor divine protection and
+                dissolve negative karmic debts.
+              </p>
+              <ul class="step-bullets">
+                <li>Morning Divine Light &bull; Evening Protection Sanctum.</li>
+                <li>
+                  Daily Sadhana logging and guidance in the Devotee Portal.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT PANEL: SENDER METADATA & INTAKE FORM -->
+        <div class="intake-card">
+          <!-- Verified Mentor Metadata Card -->
+          <div class="mentor-profile-box">
+            <div class="mentor-meta-row">
+              <span
+                style="
+                  font-size: 0.72rem;
+                  font-weight: 700;
+                  color: var(--text-muted);
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                "
+                >VERIFIED SPONSOR MENTOR</span
+              >
+              <span
+                class="badge-status-pill"
+                style="
+                  background: rgba(20, 184, 166, 0.2);
+                  color: #14b8a6;
+                  font-size: 0.7rem;
+                  padding: 0.15rem 0.5rem;
+                  border-radius: 0.4rem;
+                "
+                >🛡️ AUTHENTIC LINK</span
+              >
+            </div>
+            <div class="mentor-meta-row">
+              <span class="mentor-name" id="display-mentor-name"
+                >Karim Ji (Founder)</span
+              >
+              <span
+                id="display-mentor-tier"
+                style="
+                  font-size: 0.75rem;
+                  font-weight: 700;
+                  color: var(--gold-400);
+                "
+                >Tier 1 &bull; Master</span
+              >
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.78rem;
+                margin-top: 0.5rem;
+              "
+            >
+              <span style="color: var(--text-muted)">Sponsor Code:</span>
+              <span class="mentor-code-pill" id="display-mentor-code"
+                >SKHM-ADM1-7788-9900</span
+              >
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.78rem;
+                margin-top: 0.35rem;
+              "
+            >
+              <span style="color: var(--text-muted)"
+                >Pairing Security PIN:</span
+              >
+              <span class="mentor-code-pill" id="display-pairing-pin"
+                >------</span
+              >
+            </div>
+          </div>
+
+          <!-- Application Form — Multi-Step Wizard -->
+          <div id="section-intake-form">
+            <h3
+              style="
+                margin: 0 0 0.4rem 0;
+                font-family: &quot;Cinzel&quot;, serif;
+                font-size: 1.15rem;
+                color: var(--gold-400);
+              "
+            >
+              Devotee Induction Form
+            </h3>
+            <p
+              style="
+                font-size: 0.8rem;
+                color: var(--text-muted);
+                margin: 0 0 1.25rem 0;
+              "
+            >
+              Complete all steps. Your mentor will review and approve your
+              membership.
+            </p>
+
+            <!-- Wizard Progress Bar -->
+            <div
+              id="wizard-progress"
+              style="display: flex; gap: 0.3rem; margin-bottom: 1.5rem"
+            >
+              <div
+                class="wizard-step-bar active"
+                data-step="1"
+                style="
+                  flex: 1;
+                  height: 4px;
+                  background: var(--gold-400);
+                  border-radius: 2px;
+                  transition: background 0.3s;
+                "
+              ></div>
+              <div
+                class="wizard-step-bar"
+                data-step="2"
+                style="
+                  flex: 1;
+                  height: 4px;
+                  background: rgba(255, 255, 255, 0.15);
+                  border-radius: 2px;
+                  transition: background 0.3s;
+                "
+              ></div>
+              <div
+                class="wizard-step-bar"
+                data-step="3"
+                style="
+                  flex: 1;
+                  height: 4px;
+                  background: rgba(255, 255, 255, 0.15);
+                  border-radius: 2px;
+                  transition: background 0.3s;
+                "
+              ></div>
+              <div
+                class="wizard-step-bar"
+                data-step="4"
+                style="
+                  flex: 1;
+                  height: 4px;
+                  background: rgba(255, 255, 255, 0.15);
+                  border-radius: 2px;
+                  transition: background 0.3s;
+                "
+              ></div>
+              <div
+                class="wizard-step-bar"
+                data-step="5"
+                style="
+                  flex: 1;
+                  height: 4px;
+                  background: rgba(255, 255, 255, 0.15);
+                  border-radius: 2px;
+                  transition: background 0.3s;
+                "
+              ></div>
+            </div>
+            <div
+              id="wizard-step-labels"
+              style="
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.65rem;
+                color: var(--text-muted);
+                margin-bottom: 1rem;
+              "
+            >
+              <span style="color: var(--gold-400)">Identity</span>
+              <span>Verify</span>
+              <span>Documents</span>
+              <span>T&C</span>
+              <span>Review</span>
+            </div>
+
+            <form
+              id="form-devotee-join"
+              onsubmit="
+                event.preventDefault();
+                Wizard.submit();
+              "
+            >
+              <!-- STEP 1: Identity -->
+              <div class="wizard-step-content" data-step="1">
+                <div class="form-group-custom">
+                  <label for="join-name"
+                    >Full Name <span style="color: #ef4444">*</span></label
+                  >
+                  <input
+                    type="text"
+                    id="join-name"
+                    class="input-custom"
+                    placeholder="e.g. Sunita Sharma"
+                    required
+                  />
+                </div>
+                <div class="form-group-custom">
+                  <label for="join-dob"
+                    >Date of Birth (Must be 18+)
+                    <span style="color: #ef4444">*</span></label
+                  >
+                  <input
+                    type="date"
+                    id="join-dob"
+                    class="input-custom"
+                    required
+                  />
+                  <div
+                    id="dob-validation-msg"
+                    style="
+                      font-size: 0.72rem;
+                      margin-top: 0.25rem;
+                      color: #ef4444;
+                      display: none;
+                    "
+                  ></div>
+                </div>
+                <div class="form-group-custom">
+                  <label for="join-mobile"
+                    >Mobile Number (WhatsApp Enabled)
+                    <span style="color: #ef4444">*</span></label
+                  >
+                  <input
+                    type="tel"
+                    id="join-mobile"
+                    class="input-custom"
+                    placeholder="+91 9876543210"
+                    required
+                  />
+                </div>
+                <div class="form-group-custom">
+                  <label for="join-email"
+                    >Email Address <span style="color: #ef4444">*</span></label
+                  >
+                  <input
+                    type="email"
+                    id="join-email"
+                    class="input-custom"
+                    placeholder="name@domain.com"
+                    required
+                  />
+                </div>
+                <div class="form-group-custom">
+                  <label for="join-objective"
+                    >Primary Spiritual Objective</label
+                  >
+                  <select id="join-objective" class="input-custom">
+                    <option value="House Clean & Ancestral Purification">
+                      House Clean &amp; Ancestral Purification
+                    </option>
+                    <option value="Removal of Negative Energy & Afflictions">
+                      Removal of Negative Energy &amp; Afflictions
+                    </option>
+                    <option value="Three Diya Sadhana Practice">
+                      Three Diya Sadhana Practice
+                    </option>
+                    <option value="Health, Healing & Family Well-being">
+                      Health, Healing &amp; Family Well-being
+                    </option>
+                  </select>
+                </div>
+                <button
+                  type="button"
+                  class="btn-submit-induction"
+                  onclick="Wizard.next()"
+                >
+                  Next â†’
+                </button>
+              </div>
+
+              <!-- STEP 2: OTP Verification -->
+              <div
+                class="wizard-step-content"
+                data-step="2"
+                style="display: none"
+              >
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 0.75rem;
+                  "
+                >
+                  <h4
+                    style="
+                      color: var(--gold-400);
+                      font-family: &quot;Cinzel&quot;, serif;
+                      margin: 0;
+                    "
+                  >
+                    🔍 Verify Your Identity
+                  </h4>
+                  <button
+                    type="button"
+                    onclick="Wizard.goToStep(1)"
+                    style="
+                      background: rgba(212, 175, 55, 0.15);
+                      border: 1px solid var(--gold-400);
+                      color: var(--gold-400);
+                      font-size: 0.72rem;
+                      padding: 0.2rem 0.6rem;
+                      border-radius: 0.35rem;
+                      cursor: pointer;
+                    "
+                  >
+                    â† Edit Mobile/Email
+                  </button>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted)">
+                  Demo: OTP will be shown in a popup (no real SMS/email sent).
+                </p>
+
+                <!-- Phone OTP -->
+                <div class="form-group-custom">
+                  <label>Phone Verification</label>
+                  <div style="display: flex; gap: 0.5rem">
+                    <input
+                      type="text"
+                      id="otp-phone-display"
+                      class="input-custom"
+                      readonly
+                      style="flex: 1; opacity: 0.7"
+                    />
+                    <button
+                      type="button"
+                      class="btn-otp-send"
+                      id="btn-send-phone-otp"
+                      onclick="Wizard.sendPhoneOTP()"
+                      style="
+                        white-space: nowrap;
+                        padding: 0.5rem 0.75rem;
+                        background: rgba(212, 175, 55, 0.2);
+                        border: 1px solid var(--gold-400);
+                        color: var(--gold-400);
+                        border-radius: 0.4rem;
+                        font-size: 0.75rem;
+                        cursor: pointer;
+                      "
+                    >
+                      Send OTP
+                    </button>
+                  </div>
+                  <div
+                    id="phone-otp-input-area"
+                    style="display: none; margin-top: 0.5rem"
+                  >
+                    <div style="display: flex; gap: 0.5rem">
+                      <input
+                        type="text"
+                        id="phone-otp-input"
+                        class="input-custom"
+                        placeholder="Enter 6-digit OTP"
+                        maxlength="6"
+                        style="flex: 1"
+                      />
+                      <button
+                        type="button"
+                        onclick="Wizard.verifyPhoneOTP()"
+                        style="
+                          padding: 0.5rem 0.75rem;
+                          background: #10b981;
+                          border: none;
+                          color: #fff;
+                          border-radius: 0.4rem;
+                          font-size: 0.75rem;
+                          cursor: pointer;
+                        "
+                      >
+                        Verify
+                      </button>
+                    </div>
+                    <div
+                      id="phone-otp-msg"
+                      style="font-size: 0.72rem; margin-top: 0.25rem"
+                    ></div>
+                    <div
+                      id="demo-phone-otp-display"
+                      style="
+                        font-size: 0.7rem;
+                        color: #10b981;
+                        margin-top: 0.25rem;
+                        display: none;
+                      "
+                    >
+                      Demo OTP: <strong></strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Email OTP -->
+                <div class="form-group-custom">
+                  <label>Email Verification</label>
+                  <div style="display: flex; gap: 0.5rem">
+                    <input
+                      type="text"
+                      id="otp-email-display"
+                      class="input-custom"
+                      readonly
+                      style="flex: 1; opacity: 0.7"
+                    />
+                    <button
+                      type="button"
+                      class="btn-otp-send"
+                      id="btn-send-email-otp"
+                      onclick="Wizard.sendEmailOTP()"
+                      style="
+                        white-space: nowrap;
+                        padding: 0.5rem 0.75rem;
+                        background: rgba(212, 175, 55, 0.2);
+                        border: 1px solid var(--gold-400);
+                        color: var(--gold-400);
+                        border-radius: 0.4rem;
+                        font-size: 0.75rem;
+                        cursor: pointer;
+                      "
+                    >
+                      Send OTP
+                    </button>
+                  </div>
+                  <div
+                    id="email-otp-input-area"
+                    style="display: none; margin-top: 0.5rem"
+                  >
+                    <div style="display: flex; gap: 0.5rem">
+                      <input
+                        type="text"
+                        id="email-otp-input"
+                        class="input-custom"
+                        placeholder="Enter 6-digit OTP"
+                        maxlength="6"
+                        style="flex: 1"
+                      />
+                      <button
+                        type="button"
+                        onclick="Wizard.verifyEmailOTP()"
+                        style="
+                          padding: 0.5rem 0.75rem;
+                          background: #10b981;
+                          border: none;
+                          color: #fff;
+                          border-radius: 0.4rem;
+                          font-size: 0.75rem;
+                          cursor: pointer;
+                        "
+                      >
+                        Verify
+                      </button>
+                    </div>
+                    <div
+                      id="email-otp-msg"
+                      style="font-size: 0.72rem; margin-top: 0.25rem"
+                    ></div>
+                    <div
+                      id="demo-email-otp-display"
+                      style="
+                        font-size: 0.7rem;
+                        color: #10b981;
+                        margin-top: 0.25rem;
+                        display: none;
+                      "
+                    >
+                      Demo OTP: <strong></strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CAPTCHA -->
+                <div class="form-group-custom">
+                  <label
+                    >Security Check <span style="color: #ef4444">*</span></label
+                  >
+                  <div style="display: flex; gap: 0.5rem; align-items: center">
+                    <div
+                      id="captcha-question"
+                      style="
+                        background: rgba(0, 0, 0, 0.4);
+                        padding: 0.5rem 0.75rem;
+                        border-radius: 0.4rem;
+                        font-weight: 700;
+                        color: var(--gold-400);
+                        font-size: 0.9rem;
+                      "
+                    >
+                      Loading...
+                    </div>
+                    <input
+                      type="text"
+                      id="captcha-answer"
+                      class="input-custom"
+                      placeholder="Answer"
+                      style="width: 80px"
+                      maxlength="3"
+                    />
+                    <button
+                      type="button"
+                      onclick="Wizard.refreshCaptcha()"
+                      style="
+                        background: transparent;
+                        border: 1px solid rgba(255, 255, 255, 0.2);
+                        color: var(--text-muted);
+                        padding: 0.4rem;
+                        border-radius: 0.3rem;
+                        cursor: pointer;
+                      "
+                    >
+                      🔄
+                    </button>
+                  </div>
+                  <div
+                    id="captcha-msg"
+                    style="
+                      font-size: 0.72rem;
+                      margin-top: 0.25rem;
+                      color: #ef4444;
+                      display: none;
+                    "
+                  ></div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem">
+                  <button
+                    type="button"
+                    onclick="Wizard.prev()"
+                    style="
+                      flex: 1;
+                      padding: 0.65rem;
+                      background: transparent;
+                      border: 1px solid rgba(255, 255, 255, 0.2);
+                      color: var(--text-secondary);
+                      border-radius: 0.5rem;
+                      cursor: pointer;
+                    "
+                  >
+                    â† Back
+                  </button>
+                  <button
+                    type="button"
+                    onclick="Wizard.next()"
+                    style="
+                      flex: 1;
+                      padding: 0.65rem;
+                      background: linear-gradient(
+                        135deg,
+                        var(--gold-500),
+                        var(--gold-600)
+                      );
+                      color: #000;
+                      font-weight: 700;
+                      border: none;
+                      border-radius: 0.5rem;
+                      cursor: pointer;
+                    "
+                  >
+                    Next â†’
+                  </button>
+                </div>
+              </div>
+
+              <!-- STEP 3: Document Upload -->
+              <div
+                class="wizard-step-content"
+                data-step="3"
+                style="display: none"
+              >
+                <h4
+                  style="
+                    color: var(--gold-400);
+                    font-family: &quot;Cinzel&quot;, serif;
+                    margin: 0 0 1rem 0;
+                  "
+                >
+                  📄 Upload Documents
+                </h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted)">
+                  Demo: Files stored locally (no cloud upload).
+                </p>
+
+                <div class="form-group-custom">
+                  <label>Profile Photo (JPG/PNG, max 2MB)</label>
+                  <input
+                    type="file"
+                    id="doc-photo"
+                    accept="image/jpeg,image/png,image/webp"
+                    class="input-custom"
+                    onchange="Wizard.handleFile(this, 'photo')"
+                  />
+                  <div
+                    id="doc-photo-status"
+                    style="font-size: 0.72rem; margin-top: 0.25rem"
+                  ></div>
+                </div>
+
+                <div class="form-group-custom">
+                  <label
+                    >ID Proof (Aadhaar/PAN/Passport)
+                    <span style="color: #ef4444">*</span></label
+                  >
+                  <input
+                    type="file"
+                    id="doc-id"
+                    accept="image/jpeg,image/png,application/pdf"
+                    class="input-custom"
+                    onchange="Wizard.handleFile(this, 'id_proof')"
+                  />
+                  <div
+                    id="doc-id-status"
+                    style="font-size: 0.72rem; margin-top: 0.25rem"
+                  ></div>
+                </div>
+
+                <div class="form-group-custom">
+                  <label>Address Proof (Utility Bill/Bank Statement)</label>
+                  <input
+                    type="file"
+                    id="doc-address"
+                    accept="image/jpeg,image/png,application/pdf"
+                    class="input-custom"
+                    onchange="Wizard.handleFile(this, 'address_proof')"
+                  />
+                  <div
+                    id="doc-address-status"
+                    style="font-size: 0.72rem; margin-top: 0.25rem"
+                  ></div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem">
+                  <button
+                    type="button"
+                    onclick="Wizard.prev()"
+                    style="
+                      flex: 1;
+                      padding: 0.65rem;
+                      background: transparent;
+                      border: 1px solid rgba(255, 255, 255, 0.2);
+                      color: var(--text-secondary);
+                      border-radius: 0.5rem;
+                      cursor: pointer;
+                    "
+                  >
+                    â† Back
+                  </button>
+                  <button
+                    type="button"
+                    onclick="Wizard.next()"
+                    style="
+                      flex: 1;
+                      padding: 0.65rem;
+                      background: linear-gradient(
+                        135deg,
+                        var(--gold-500),
+                        var(--gold-600)
+                      );
+                      color: #000;
+                      font-weight: 700;
+                      border: none;
+                      border-radius: 0.5rem;
+                      cursor: pointer;
+                    "
+                  >
+                    Next â†’
+                  </button>
+                </div>
+              </div>
+
+              <!-- STEP 4: Terms & Conditions + Legal Agreement -->
+              <div
+                class="wizard-step-content"
+                data-step="4"
+                style="display: none"
+              >
+                <h4
+                  style="
+                    color: var(--gold-400);
+                    font-family: &quot;Cinzel&quot;, serif;
+                    margin: 0 0 1rem 0;
+                  "
+                >
+                  📜 Terms & Legal Agreement
+                </h4>
+
+                <div
+                  style="
+                    background: rgba(0, 0, 0, 0.3);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 0.5rem;
+                    padding: 1rem;
+                    max-height: 200px;
+                    overflow-y: auto;
+                    font-size: 0.72rem;
+                    color: var(--text-secondary);
+                    white-space: pre-wrap;
+                    line-height: 1.5;
+                  "
+                  id="tc-content"
+                >
+                  Loading...
+                </div>
+
+                <div
+                  style="
+                    margin-top: 0.75rem;
+                    display: flex;
+                    gap: 0.5rem;
+                    align-items: flex-start;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    id="join-consent"
+                    required
+                    style="margin-top: 0.2rem"
+                  />
+                  <label
+                    for="join-consent"
+                    style="
+                      font-size: 0.76rem;
+                      color: var(--text-muted);
+                      cursor: pointer;
+                    "
+                  >
+                    I have read and agree to the Terms & Conditions (v1.2.0) and
+                    Privacy Policy.
+                  </label>
+                </div>
+
+                <!-- E-Signature -->
+                <div class="form-group-custom" style="margin-top: 1rem">
+                  <label
+                    >Digital Signature (Type your full name)
+                    <span style="color: #ef4444">*</span></label
+                  >
+                  <input
+                    type="text"
+                    id="join-signature"
+                    class="input-custom"
+                    placeholder="Type your full name as signature"
+                    style="
+                      font-family: &quot;Cinzel&quot;, serif;
+                      font-size: 1.1rem;
+                    "
+                  />
+                  <div
+                    id="signature-preview"
+                    style="
+                      font-size: 0.72rem;
+                      margin-top: 0.25rem;
+                      color: #10b981;
+                      display: none;
+                    "
+                  >
+                    ✓ Signature captured
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem">
+                  <button
+                    type="button"
+                    onclick="Wizard.prev()"
+                    style="
+                      flex: 1;
+                      padding: 0.65rem;
+                      background: transparent;
+                      border: 1px solid rgba(255, 255, 255, 0.2);
+                      color: var(--text-secondary);
+                      border-radius: 0.5rem;
+                      cursor: pointer;
+                    "
+                  >
+                    â† Back
+                  </button>
+                  <button
+                    type="button"
+                    onclick="Wizard.next()"
+                    style="
+                      flex: 1;
+                      padding: 0.65rem;
+                      background: linear-gradient(
+                        135deg,
+                        var(--gold-500),
+                        var(--gold-600)
+                      );
+                      color: #000;
+                      font-weight: 700;
+                      border: none;
+                      border-radius: 0.5rem;
+                      cursor: pointer;
+                    "
+                  >
+                    Next â†’
+                  </button>
+                </div>
+              </div>
+
+              <!-- STEP 5: Review & Submit -->
+              <div
+                class="wizard-step-content"
+                data-step="5"
+                style="display: none"
+              >
+                <h4
+                  style="
+                    color: var(--gold-400);
+                    font-family: &quot;Cinzel&quot;, serif;
+                    margin: 0 0 1rem 0;
+                  "
+                >
+                  ✅ Review & Submit
+                </h4>
+
+                <div
+                  id="review-summary"
+                  style="
+                    background: rgba(0, 0, 0, 0.3);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 0.5rem;
+                    padding: 1rem;
+                    font-size: 0.78rem;
+                    line-height: 1.8;
+                  "
+                >
+                  <!-- Populated by JS -->
+                </div>
+
+                <div
+                  id="wizard-submit-error"
+                  style="
+                    background: rgba(239, 68, 68, 0.1);
+                    border: 1px solid #ef4444;
+                    color: #ef4444;
+                    padding: 0.6rem;
+                    border-radius: 0.4rem;
+                    font-size: 0.75rem;
+                    margin-top: 0.75rem;
+                    display: none;
+                  "
+                ></div>
+
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem">
+                  <button
+                    type="button"
+                    onclick="Wizard.prev()"
+                    style="
+                      flex: 1;
+                      padding: 0.65rem;
+                      background: transparent;
+                      border: 1px solid rgba(255, 255, 255, 0.2);
+                      color: var(--text-secondary);
+                      border-radius: 0.5rem;
+                      cursor: pointer;
+                    "
+                  >
+                    â† Back
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn-submit-induction"
+                    id="btn-submit-join"
+                    style="flex: 2"
+                  >
+                    🕉️Submit Application for Approval
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Waiting Screen (Visible after submit) -->
+          <div id="section-waiting-approval" class="status-panel-waiting">
+            <div class="pulse-avatar">⏳</div>
+            <h3
+              style="
+                font-family: &quot;Cinzel&quot;, serif;
+                font-size: 1.2rem;
+                color: var(--gold-400);
+                margin: 0 0 0.5rem 0;
+              "
+            >
+              Application Submitted!
+            </h3>
+            <p style="font-size: 0.85rem; color: #d8d0c5; margin: 0 0 1rem 0">
+              Your induction request has been sent to Mentor
+              <strong id="waiting-mentor-name" style="color: #14b8a6"
+                >Karim Ji</strong
+              >.
+            </p>
+            <div
+              style="
+                background: rgba(0, 0, 0, 0.35);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 0.6rem;
+                padding: 0.85rem;
+                font-size: 0.78rem;
+                text-align: left;
+                margin-bottom: 1.25rem;
+              "
+            >
+              <div style="color: var(--text-muted); margin-bottom: 0.25rem">
+                Applicant:
+                <strong id="waiting-seeker-name" style="color: #fff"></strong>
+              </div>
+              <div style="color: var(--text-muted); margin-bottom: 0.25rem">
+                Reference Key:
+                <strong
+                  id="waiting-ref-code"
+                  class="font-mono"
+                  style="color: var(--gold-400)"
+                ></strong>
+              </div>
+              <div style="color: var(--text-muted)">
+                Status:
+                <span style="color: #f59e0b; font-weight: 700"
+                  >PENDING MENTOR APPROVAL</span
+                >
+              </div>
+            </div>
+
+            <p style="font-size: 0.78rem; color: var(--text-muted)">
+              🔔 This page checks for approval automatically. Once your mentor
+              approves, you can enter the Devotee Portal immediately.
+            </p>
+          </div>
+
+          <!-- Approved Screen (Visible upon approval) -->
+          <div
+            id="section-approved"
+            class="approved-box"
+            style="
+              display: none;
+              background: rgba(16, 185, 129, 0.09);
+              border: 1.5px solid #10b981;
+              border-radius: 0.85rem;
+              padding: 1.5rem;
+              text-align: center;
+            "
+          >
+            <!-- Sacred Application Approved Emblem Image -->
+            <div
+              class="approved-emblem-wrap"
+              style="text-align: center; margin-bottom: 1rem"
+            >
+              <div
+                class="approved-seal-circle"
+                style="
+                  width: 80px;
+                  height: 80px;
+                  margin: 0 auto 0.65rem auto;
+                  border-radius: 50%;
+                  background: radial-gradient(
+                    circle,
+                    rgba(16, 185, 129, 0.3) 0%,
+                    rgba(212, 175, 55, 0.15) 100%
+                  );
+                  border: 2.5px solid #10b981;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 2.4rem;
+                  box-shadow: 0 0 25px rgba(16, 185, 129, 0.45);
+                  animation: approvedGlow 2s infinite alternate;
+                "
+              >
+                👑
+              </div>
+              <div
+                style="
+                  font-size: 0.72rem;
+                  font-weight: 800;
+                  color: #10b981;
+                  letter-spacing: 2px;
+                  text-transform: uppercase;
+                "
+              >
+                SANSTHAN VERIFIED LINEAGE
+              </div>
+            </div>
+
+            <h3
+              style="
+                font-family: &quot;Cinzel&quot;, serif;
+                color: #10b981;
+                font-size: 1.3rem;
+                margin: 0 0 0.35rem 0;
+                letter-spacing: 0.5px;
+              "
+            >
+              Application Approved!
+            </h3>
+            <p style="font-size: 0.85rem; color: #f1ecdf; margin: 0 0 1rem 0">
+              Devotee induction verified and connected to Mentor
+              <strong id="approved-mentor-name" style="color: #14b8a6"
+                >Karim Ji</strong
+              >.
+            </p>
+
+            <!-- Verified Applicant & Reference Key Card -->
+            <div
+              style="
+                background: rgba(0, 0, 0, 0.45);
+                border: 1px solid rgba(16, 185, 129, 0.35);
+                border-radius: 0.6rem;
+                padding: 0.9rem;
+                font-size: 0.82rem;
+                text-align: left;
+                margin-bottom: 1.25rem;
+              "
+            >
+              <div style="color: var(--text-muted); margin-bottom: 0.35rem">
+                Applicant:
+                <strong
+                  id="approved-seeker-name"
+                  style="color: #fff; font-size: 0.92rem"
+                ></strong>
+              </div>
+              <div style="color: var(--text-muted); margin-bottom: 0.35rem">
+                Reference Key:
+                <strong
+                  id="approved-ref-code"
+                  class="font-mono"
+                  style="color: var(--gold-400); letter-spacing: 1px"
+                ></strong>
+              </div>
+              <div style="color: var(--text-muted)">
+                Status:
+                <span style="color: #10b981; font-weight: 800"
+                  >APPLICATION APPROVED (Approval Done)</span
+                >
+              </div>
+            </div>
+
+            <!-- Prominent Next Button -->
+            <a
+              href="#"
+              id="btn-next-devotee-portal"
+              class="btn-submit-induction"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.6rem;
+                text-decoration: none;
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: #fff;
+                font-size: 1.05rem;
+                font-weight: 800;
+                border-radius: 0.6rem;
+                box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+                padding: 0.85rem 1.5rem;
+                transition: transform 0.2s;
+              "
+            >
+              <span>Next</span>
+              <span style="font-size: 1.25rem; line-height: 1">âž”</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/onboarding.js"></script>
+    <script>
+      /**
+       * DEMO WIZARD — Multi-Step Registration Controller
+       * Simulates OTP, CAPTCHA, Document Upload, T&C, E-Signature
+       * No real backend — all demo/simulated for testing
+       */
+      const Wizard = {
+        currentStep: 1,
+        totalSteps: 5,
+        data: {
+          name: "",
+          dob: "",
+          mobile: "",
+          email: "",
+          phoneOTPVerified: false,
+          emailOTPVerified: false,
+          captchaVerified: false,
+          documents: { photo: false, idProof: false, addressProof: false },
+          tcAccepted: false,
+          signature: "",
+        },
+        otpTimers: { phone: null, email: null },
+
+        init() {
+          this.refreshCaptcha();
+          // Prefill phone/email when available
+          const mobileEl = document.getElementById("join-mobile");
+          const emailEl = document.getElementById("join-email");
+          if (mobileEl) {
+            mobileEl.addEventListener("blur", () => {
+              document.getElementById("otp-phone-display").value =
+                mobileEl.value || "Enter mobile first";
+            });
+          }
+          if (emailEl) {
+            emailEl.addEventListener("blur", () => {
+              document.getElementById("otp-email-display").value =
+                emailEl.value || "Enter email first";
+            });
+          }
+          // Load T&C content
+          const tcEl = document.getElementById("tc-content");
+          if (tcEl && typeof DemoTandC !== "undefined")
+            tcEl.textContent = DemoTandC.getFullText();
+          // Signature listener
+          const sigEl = document.getElementById("join-signature");
+          if (sigEl) {
+            sigEl.addEventListener("input", () => {
+              this.data.signature = sigEl.value.trim();
+              document.getElementById("signature-preview").style.display = this
+                .data.signature ? "block"
+                : "none";
+            });
+          }
+          // Form auto-save draft listeners
+          this.restoreDraft();
+          [
+            "join-name",
+            "join-dob",
+            "join-mobile",
+            "join-email",
+            "join-objective",
+          ].forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener("input", () => this.saveDraft());
+          });
+        },
+
+        saveDraft() {
+          try {
+            const draft = {
+              name: document.getElementById("join-name")?.value || "",
+              dob: document.getElementById("join-dob")?.value || "",
+              mobile: document.getElementById("join-mobile")?.value || "",
+              email: document.getElementById("join-email")?.value || "",
+              objective: document.getElementById("join-objective")?.value || "",
+              savedAt: Date.now(),
+            };
+            localStorage.setItem("sk_join_wizard_draft", JSON.stringify(draft));
+          } catch (e) {}
+        },
+
+        restoreDraft() {
+          try {
+            const draft = JSON.parse(
+              localStorage.getItem("sk_join_wizard_draft") || "null",
+            );
+            if (draft && Date.now() - (draft.savedAt || 0) < 86400000) {
+              if (draft.name && document.getElementById("join-name"))
+                document.getElementById("join-name").value = draft.name;
+              if (draft.dob && document.getElementById("join-dob"))
+                document.getElementById("join-dob").value = draft.dob;
+              if (draft.mobile && document.getElementById("join-mobile")) {
+                document.getElementById("join-mobile").value = draft.mobile;
+                const opEl = document.getElementById("otp-phone-display");
+                if (opEl) opEl.value = draft.mobile;
+              }
+              if (draft.email && document.getElementById("join-email")) {
+                document.getElementById("join-email").value = draft.email;
+                const oeEl = document.getElementById("otp-email-display");
+                if (oeEl) oeEl.value = draft.email;
+              }
+              if (draft.objective && document.getElementById("join-objective"))
+                document.getElementById("join-objective").value =
+                  draft.objective;
+            }
+          } catch (e) {}
+        },
+
+        goToStep(step) {
+          document
+            .querySelectorAll(".wizard-step-content")
+            .forEach((el) => (el.style.display = "none"));
+          const target = document.querySelector(
+            `.wizard-step-content[data-step="${step}"]`,
+          );
+          if (target) target.style.display = "block";
+          this.currentStep = step;
+          // Update progress bars
+          document.querySelectorAll(".wizard-step-bar").forEach((bar) => {
+            const s = parseInt(bar.getAttribute("data-step"));
+            bar.style.background =
+              s <= step ? "var(--gold-400)" : "rgba(255,255,255,0.15)";
+          });
+          // Update labels
+          const labels = document.querySelectorAll("#wizard-step-labels span");
+          labels.forEach((lbl, i) => {
+            lbl.style.color =
+              i + 1 === step ? "var(--gold-400)" : "var(--text-muted)";
+          });
+          // Populate review if step 5
+          if (step === 5) this.populateReview();
+        },
+
+        next() {
+          if (!this.validateStep(this.currentStep)) return;
+          if (this.currentStep < this.totalSteps)
+            this.goToStep(this.currentStep + 1);
+        },
+
+        prev() {
+          if (this.currentStep > 1) this.goToStep(this.currentStep - 1);
+        },
+
+        validateStep(step) {
+          const errors = [];
+          switch (step) {
+            case 1:
+              this.data.name = document
+                .getElementById("join-name")
+                .value.trim();
+              this.data.dob = document.getElementById("join-dob").value;
+              this.data.mobile = document
+                .getElementById("join-mobile")
+                .value.trim();
+              this.data.email = document
+                .getElementById("join-email")
+                .value.trim();
+              if (!this.data.name || this.data.name.length < 3)
+                errors.push("Name must be at least 3 characters.");
+              if (!this.data.mobile || this.data.mobile.length < 10)
+                errors.push("Enter a valid mobile number.");
+              if (!this.data.email || !this.data.email.includes("@"))
+                errors.push("Enter a valid email address.");
+              if (this.data.dob) {
+                const ageCheck = DemoAgeVerification.verify(this.data.dob);
+                const msgEl = document.getElementById("dob-validation-msg");
+                if (!ageCheck.valid) {
+                  msgEl.textContent = ageCheck.reason;
+                  msgEl.style.display = "block";
+                  errors.push(ageCheck.reason);
+                } else {
+                  msgEl.style.display = "none";
+                }
+              } else {
+                errors.push("Date of birth is required.");
+              }
+              break;
+            case 2:
+              if (!this.data.phoneOTPVerified)
+                errors.push("Please verify phone OTP.");
+              if (!this.data.emailOTPVerified)
+                errors.push("Please verify email OTP.");
+              if (!this.data.captchaVerified)
+                errors.push("Please solve the security check.");
+              break;
+            case 3:
+              if (!this.data.documents.idProof)
+                errors.push("ID Proof is required.");
+              break;
+            case 4:
+              this.data.tcAccepted =
+                document.getElementById("join-consent").checked;
+              if (!this.data.tcAccepted)
+                errors.push("You must accept Terms & Conditions.");
+              this.data.signature = document
+                .getElementById("join-signature")
+                .value.trim();
+              if (!this.data.signature || this.data.signature.length < 3)
+                errors.push("Digital signature is required.");
+              break;
+          }
+          if (errors.length > 0) {
+            const errEl = document.getElementById("wizard-submit-error");
+            errEl.innerHTML = errors.map((e) => "⚠️ " + e).join("<br>");
+            errEl.style.display = "block";
+            return false;
+          }
+          return true;
+        },
+
+        sendPhoneOTP() {
+          const phone = document.getElementById("join-mobile").value.trim();
+          if (!phone || phone.length < 10) {
+            alert("Enter a valid mobile number first.");
+            return;
+          }
+          const btn = document.getElementById("btn-send-phone-otp");
+          btn.disabled = true;
+          btn.textContent = "Sending...";
+          DemoOTPService.sendOTP(phone, "phone").then((res) => {
+            document.getElementById("phone-otp-input-area").style.display =
+              "block";
+            const demoEl = document.getElementById("demo-phone-otp-display");
+            demoEl.style.display = "block";
+            demoEl.querySelector("strong").textContent = res.demoOTP;
+            // Countdown
+            let secs = 60;
+            this.otpTimers.phone = setInterval(() => {
+              secs--;
+              btn.textContent = `Resend (${secs}s)`;
+              if (secs <= 0) {
+                clearInterval(this.otpTimers.phone);
+                btn.disabled = false;
+                btn.textContent = "Send OTP";
+              }
+            }, 1000);
+          });
+        },
+
+        verifyPhoneOTP() {
+          const phone = document.getElementById("join-mobile").value.trim();
+          const entered = document
+            .getElementById("phone-otp-input")
+            .value.trim();
+          const msgEl = document.getElementById("phone-otp-msg");
+          const result = DemoOTPService.verifyOTP(phone, entered);
+          if (result.valid) {
+            this.data.phoneOTPVerified = true;
+            this.phoneAttempts = 0;
+            msgEl.style.color = "#10b981";
+            msgEl.textContent = "✓ Phone verified!";
+          } else {
+            // TC-03: OTP 3-Attempt Lockout & 60s Cooldown
+            const maxAttempts = window.appConfig?.otpMaxAttempts || 3;
+            this.phoneAttempts = (this.phoneAttempts || 0) + 1;
+            if (this.phoneAttempts >= maxAttempts) {
+              const vBtn = document.getElementById("btn-verify-phone-otp");
+              if (vBtn) vBtn.disabled = true;
+              let cd = window.appConfig?.otpCooldownSeconds || 60;
+              msgEl.style.color = "#ef4444";
+              msgEl.textContent = `⚠️ 3 Failed OTP attempts. Cooldown locked: ${cd}s`;
+              const cdTimer = setInterval(() => {
+                cd--;
+                msgEl.textContent = `⚠️ 3 Failed OTP attempts. Cooldown locked: ${cd}s`;
+                if (cd <= 0) {
+                  clearInterval(cdTimer);
+                  this.phoneAttempts = 0;
+                  if (vBtn) vBtn.disabled = false;
+                  msgEl.textContent = "Cooldown expired. You may try again.";
+                }
+              }, 1000);
+              return;
+            }
+            msgEl.style.color = "#ef4444";
+            msgEl.textContent = `⚠️ ${result.reason} (Attempt ${this.phoneAttempts}/${maxAttempts})`;
+          }
+        },
+
+        sendEmailOTP() {
+          const email = document.getElementById("join-email").value.trim();
+          if (!email || !email.includes("@")) {
+            alert("Enter a valid email first.");
+            return;
+          }
+          const btn = document.getElementById("btn-send-email-otp");
+          btn.disabled = true;
+          btn.textContent = "Sending...";
+          DemoOTPService.sendOTP(email, "email").then((res) => {
+            document.getElementById("email-otp-input-area").style.display =
+              "block";
+            const demoEl = document.getElementById("demo-email-otp-display");
+            demoEl.style.display = "block";
+            demoEl.querySelector("strong").textContent = res.demoOTP;
+            let secs = 60;
+            this.otpTimers.email = setInterval(() => {
+              secs--;
+              btn.textContent = `Resend (${secs}s)`;
+              if (secs <= 0) {
+                clearInterval(this.otpTimers.email);
+                btn.disabled = false;
+                btn.textContent = "Send OTP";
+              }
+            }, 1000);
+          });
+        },
+
+        verifyEmailOTP() {
+          const email = document.getElementById("join-email").value.trim();
+          const entered = document
+            .getElementById("email-otp-input")
+            .value.trim();
+          const msgEl = document.getElementById("email-otp-msg");
+          const result = DemoOTPService.verifyOTP(email, entered);
+          if (result.valid) {
+            this.data.emailOTPVerified = true;
+            msgEl.style.color = "#10b981";
+            msgEl.textContent = "✓ Email verified!";
+          } else {
+            msgEl.style.color = "#ef4444";
+            msgEl.textContent = "⚠️ " + result.reason;
+          }
+        },
+
+        refreshCaptcha() {
+          const qEl = document.getElementById("captcha-question");
+          const aEl = document.getElementById("captcha-answer");
+          const msgEl = document.getElementById("captcha-msg");
+          if (qEl) qEl.textContent = DemoCaptcha.generate();
+          if (aEl) {
+            aEl.value = "";
+          }
+          if (msgEl) msgEl.style.display = "none";
+          this.data.captchaVerified = false;
+          // Auto-verify on input (demo)
+          if (aEl) {
+            aEl.oninput = () => {
+              if (DemoCaptcha.verify(aEl.value)) {
+                this.data.captchaVerified = true;
+                msgEl.style.display = "block";
+                msgEl.style.color = "#10b981";
+                msgEl.textContent = "✓ Verified";
+              } else {
+                this.data.captchaVerified = false;
+                msgEl.style.display = "none";
+              }
+            };
+          }
+        },
+
+        handleFile(input, docType) {
+          const statusEl = document.getElementById(
+            `doc-${docType === "id_proof" ? "id" : docType === "address_proof" ? "address" : "photo"}-status`,
+          );
+          if (!input.files || !input.files[0]) {
+            statusEl.textContent = "";
+            return;
+          }
+          const file = input.files[0];
+          // TC-04 Document Size Ceiling: 5.0MB (5,242,880 bytes)
+          const maxBytes = window.appConfig?.maxUploadSizeBytes || 5242880;
+          if (file.size > maxBytes) {
+            input.value = "";
+            statusEl.style.color = "#ef4444";
+            statusEl.textContent = `⚠️ File exceeds 5.0MB ceiling (${(file.size / (1024 * 1024)).toFixed(2)}MB). Rejected.`;
+            return;
+          }
+          const validation = DemoDocUpload.validate(file);
+          if (!validation.valid) {
+            statusEl.style.color = "#ef4444";
+            statusEl.textContent = "⚠️ " + validation.reason;
+            return;
+          }
+          statusEl.style.color = "#f59e0b";
+          statusEl.textContent = "⏳ Uploading...";
+          DemoDocUpload.upload(file, "join-" + Date.now(), docType)
+            .then((res) => {
+              if (res.success) {
+                this.data.documents[docType] = true;
+                statusEl.style.color = "#10b981";
+                statusEl.textContent = "✓ Uploaded: " + res.document.fileName;
+              } else {
+                statusEl.style.color = "#ef4444";
+                statusEl.textContent = "⚠️ " + res.reason;
+              }
+            })
+            .catch((err) => {
+              statusEl.style.color = "#ef4444";
+              statusEl.textContent =
+                "⚠️ " + (err.reason || "Upload failed.");
+            });
+        },
+
+        populateReview() {
+          const html = `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+            <div>👤 <strong>Name:</strong> ${this.data.name || "—"}</div>
+            <div>📅 <strong>DOB:</strong> ${this.data.dob || "—"}</div>
+            <div>📱 <strong>Phone:</strong> ${this.data.mobile || "—"} ${this.data.phoneOTPVerified ? "✓" : "✗"}</div>
+            <div>📧 <strong>Email:</strong> ${this.data.email || "—"} ${this.data.emailOTPVerified ? "✓" : "✗"}</div>
+            <div>🔒 <strong>CAPTCHA:</strong> ${this.data.captchaVerified ? "✓ Passed" : "✗ Failed"}</div>
+            <div>📄 <strong>ID Proof:</strong> ${this.data.documents.idProof ? "✓ Uploaded" : "✗ Missing"}</div>
+            <div>📄 <strong>Address Proof:</strong> ${this.data.documents.addressProof ? "✓ Uploaded" : "○ Optional"}</div>
+            <div>📸 <strong>Photo:</strong> ${this.data.documents.photo ? "✓ Uploaded" : "○ Optional"}</div>
+            <div>📜 <strong>T&C:</strong> ${this.data.tcAccepted ? "✓ Accepted" : "✗ Not accepted"}</div>
+            <div>✍️ <strong>Signature:</strong> ${this.data.signature ? "✓ " + this.data.signature : "✗ Missing"}</div>
+          </div>
+          ${typeof DemoAudit !== "undefined" ? '<div style="margin-top:0.75rem; font-size:0.65rem; color:var(--text-muted);">📋 Audit trail will be logged on submission.</div>' : ""}
+        `;
+          document.getElementById("review-summary").innerHTML = html;
+        },
+
+        submit() {
+          // Final validation
+          if (!this.validateStep(4)) {
+            this.goToStep(4);
+            return;
+          }
+
+          // TC-12: Duplicate Registration Interception
+          const existingProfiles = JSON.parse(
+            localStorage.getItem("sk_admin_profiles_v3") ||
+              localStorage.getItem("sk_profiles_data") ||
+              "[]",
+          );
+          const dup = existingProfiles.find(
+            (p) => (p.phone && p.phone === this.data.mobile) || (p.email && p.email === this.data.email),
+          );
+          if (dup) {
+            const errEl = document.getElementById("wizard-submit-error");
+            if (errEl) {
+              errEl.style.display = "block";
+              errEl.innerHTML = `⚠️ <strong>Duplicate Registration Intercepted:</strong> An account with this phone or email is already registered.<br><a href="index.html#profile=${dup.id}" style="color:var(--gold-400); text-decoration:underline; font-weight:bold;">Direct Login / Profile Recovery →</a>`;
+            }
+            return;
+          }
+
+          // Record T&C acceptance
+          if (typeof DemoTandC !== "undefined") {
+            DemoTandC.recordAcceptance("join-" + Date.now());
+          }
+          // Record e-signature
+          if (typeof DemoLegalAgreement !== "undefined") {
+            DemoLegalAgreement.recordSignature(
+              "join-" + Date.now(),
+              this.data.signature,
+            );
+          }
+          // Audit log
+          if (typeof DemoAudit !== "undefined") {
+            DemoAudit.log(
+              "JOIN_SUBMITTED",
+              {
+                name: this.data.name,
+                email: this.data.email,
+                mobile: this.data.mobile,
+              },
+              this.data.name || "seeker",
+            );
+          }
+          // Create invite payload
+          const inviteId = "inv-" + Date.now();
+          const newRefCode =
+            "SKDV-" +
+            Math.random().toString(36).substr(2, 4).toUpperCase() +
+            "-" +
+            Math.random().toString(36).substr(2, 4).toUpperCase() +
+            "-" +
+            Math.random().toString(36).substr(2, 4).toUpperCase();
+          const invitePayload = {
+            id: inviteId,
+            seekerName: this.data.name,
+            seekerPhone: this.data.mobile,
+            seekerEmail: this.data.email,
+            sponsorCode:
+              new URLSearchParams(window.location.search).get("ref") ||
+              "SKHM-ADM1-7788-9900",
+            activationPin:
+              new URLSearchParams(window.location.search).get("pin") ||
+              "140610",
+            hardwareNonce: newRefCode,
+            referenceKey: newRefCode,
+            seekerDeviceModel: "Web Browser (" + navigator.platform + ")",
+            status: "PENDING",
+            objective: document.getElementById("join-objective").value,
+            dob: this.data.dob,
+            signature: this.data.signature,
+            documentsUploaded: this.data.documents,
+            tcVersion: typeof DemoTandC !== "undefined" ? DemoTandC.version : "1.0.0",
+            createdAtMs: Date.now(),
+            expiresAtMs: Date.now() + 24 * 60 * 60 * 1000,
+            formattedCreatedTime: "Just Now",
+            resendCount: 0,
+          };
+          try {
+            // Use unified key with legacy fallback for migration
+            const invites = JSON.parse(
+              localStorage.getItem("sk_pairing_invites") ||
+                localStorage.getItem("spiritual_karim_pairing_invites") ||
+                "[]",
+            );
+            invites.unshift(invitePayload);
+            localStorage.setItem("sk_pairing_invites", JSON.stringify(invites));
+            // Also write to legacy key for backward compatibility
+            localStorage.setItem(
+              "spiritual_karim_pairing_invites",
+              JSON.stringify(invites),
+            );
+            localStorage.setItem(
+              "sk_devotee_induction_session",
+              JSON.stringify({
+                inviteId,
+                seekerName: this.data.name,
+                referenceKey: newRefCode,
+                submittedAt: Date.now(),
+                phoneVerified: this.data.phoneOTPVerified,
+                emailVerified: this.data.emailOTPVerified,
+                tcAccepted: this.data.tcAccepted,
+              }),
+            );
+
+            // TC-14: T&C Version & E-Signature Audit Hash Table
+            const tcAcceptance = {
+              acceptanceId: "tc-" + Date.now(),
+              refKey: newRefCode,
+              seekerName: this.data.name,
+              mobile: this.data.mobile,
+              signature: this.data.signature,
+              tcVersion: typeof DemoTandC !== "undefined" ? DemoTandC.version : "1.0.0",
+              timestamp: Date.now(),
+              isoTime: new Date().toISOString(),
+              userAgent: navigator.userAgent,
+            };
+            const tcList = JSON.parse(
+              localStorage.getItem("sk_tc_acceptances") || "[]",
+            );
+            tcList.push(tcAcceptance);
+            localStorage.setItem("sk_tc_acceptances", JSON.stringify(tcList));
+          } catch (err) {
+            console.error("Error saving:", err);
+          }
+          // Switch to waiting screen
+          document.getElementById("section-intake-form").style.display = "none";
+          document.getElementById("section-waiting-approval").style.display =
+            "block";
+          document.getElementById("waiting-seeker-name").textContent =
+            this.data.name;
+          document.getElementById("waiting-ref-code").textContent = newRefCode;
+          startApprovalListener(inviteId, newRefCode, this.data.name);
+        },
+      };
+
+      // Initialize Wizard on page load
+      if (typeof DemoOTPService !== "undefined") Wizard.init();
+    </script>
+    <script>
+      (function () {
+        // Parse URL parameters for sponsorCode and pairingPin
+        const urlParams = new URLSearchParams(window.location.search);
+        let sponsorCode =
+          urlParams.get("ref") ||
+          urlParams.get("sponsor") ||
+          "SKHM-ADM1-7788-9900";
+        let pairingPin =
+          urlParams.get("pin") || urlParams.get("activationPin") || "140610";
+        let mentorName = "Karim Ji (Founder)";
+        let mentorTier = "Tier 1 • Master";
+
+        try {
+          const savedProfiles = JSON.parse(
+            localStorage.getItem("sk_admin_profiles_v3") ||
+              localStorage.getItem("sk_profiles_data") ||
+              "[]",
+          );
+          const matched = savedProfiles.find(
+            (p) =>
+              (p.referenceCode &&
+                p.referenceCode.replace(/[^a-zA-Z0-9]/g, "") ===
+                  sponsorCode.replace(/[^a-zA-Z0-9]/g, "")) ||
+              p.referenceCode === sponsorCode,
+          );
+          if (matched) {
+            mentorName = matched.name || mentorName;
+            mentorTier =
+              matched.profileType === "HEALER"
+                ? "Tier 2 • Certified Healer"
+                : "Tier 1 • Master Founder";
+          }
+        } catch (e) {}
+
+        document.getElementById("display-mentor-name").textContent = mentorName;
+        document.getElementById("display-mentor-tier").textContent = mentorTier;
+        document.getElementById("display-mentor-code").textContent =
+          sponsorCode;
+        document.getElementById("display-pairing-pin").textContent = pairingPin;
+        document.getElementById("waiting-mentor-name").textContent = mentorName;
+        const appMentorEl = document.getElementById("approved-mentor-name");
+        if (appMentorEl) appMentorEl.textContent = mentorName;
+
+        let currentInviteId = null;
+        let checkInterval = null;
+
+        // Closed-loop Session Check on Page Load
+        function checkExistingInductionSession() {
+          try {
+            const session = JSON.parse(
+              localStorage.getItem("sk_devotee_induction_session") || "null",
+            );
+            // Use unified key with legacy fallback
+            const invites = JSON.parse(
+              localStorage.getItem("sk_pairing_invites") ||
+                localStorage.getItem("spiritual_karim_pairing_invites") ||
+                "[]",
+            );
+
+            let targetInvite = null;
+            if (session && session.inviteId) {
+              targetInvite = invites.find((i) => i.id === session.inviteId);
+            }
+            if (!targetInvite && session && session.referenceKey) {
+              targetInvite = invites.find(
+                (i) => i.hardwareNonce === session.referenceKey,
+              );
+            }
+            // Also check by sponsorCode matching if latest is recent
+            if (!targetInvite) {
+              const cleanSponsor = sponsorCode.replace(/[^a-zA-Z0-9]/g, "");
+              const matchedInvite = invites.find(
+                (i) =>
+                  i.sponsorCode &&
+                  i.sponsorCode.replace(/[^a-zA-Z0-9]/g, "") === cleanSponsor,
+              );
+              if (
+                matchedInvite &&
+                Date.now() - (matchedInvite.createdAtMs || 0) < 86400000
+              ) {
+                targetInvite = matchedInvite;
+              }
+            }
+
+            if (targetInvite) {
+              currentInviteId = targetInvite.id;
+              const refCode =
+                targetInvite.hardwareNonce ||
+                targetInvite.referenceKey ||
+                "SKDV-9SE6-B4KI-Z68I";
+              const name = targetInvite.seekerName || "Pooja Verma";
+
+              if (targetInvite.status === "APPROVED") {
+                showApprovalSuccess(targetInvite, refCode, name);
+                return;
+              } else if (targetInvite.status === "INFO_REQUESTED") {
+                // TC-06: Mentor Revision Request (Branch C)
+                document.getElementById("section-intake-form").style.display = "block";
+                document.getElementById("section-waiting-approval").style.display = "none";
+                const errEl = document.getElementById("wizard-submit-error");
+                if (errEl) {
+                  errEl.style.display = "block";
+                  errEl.style.background = "rgba(245, 158, 11, 0.2)";
+                  errEl.style.borderColor = "#f59e0b";
+                  errEl.innerHTML = "📝 <strong>Mentor Revision Request:</strong> " + (targetInvite.mentorFeedback || "Clarification required. Please review Step 3 proofs and resubmit.");
+                }
+                if (typeof Wizard !== "undefined" && typeof Wizard.goToStep === "function") {
+                  Wizard.goToStep(3);
+                }
+                return;
+              } else if (targetInvite.status === "REJECTED") {
+                // TC-07: Rejection Appeal Arbitration (Branch B)
+                document.getElementById("section-intake-form").style.display = "none";
+                document.getElementById("section-waiting-approval").style.display = "block";
+                document.getElementById("waiting-seeker-name").textContent = name;
+                document.getElementById("waiting-ref-code").textContent = refCode;
+                const waitTitle = document.querySelector("#section-waiting-approval h3");
+                if (waitTitle) waitTitle.innerHTML = "❌ Induction Application Not Approved";
+                const waitDesc = document.querySelector("#section-waiting-approval p");
+                if (waitDesc) {
+                  waitDesc.innerHTML = `Your application was not approved by the mentor.<br><br>
+                    <button type="button" id="btn-file-appeal" class="btn btn-gold" style="font-size:0.85rem; padding:0.6rem 1rem;">
+                      ⚖️ File Formal Appeal to Master Admin
+                    </button>
+                    <div id="appeal-status-msg" style="margin-top:0.75rem; font-size:0.85rem; color:#10b981; display:none;"></div>`;
+                  setTimeout(() => {
+                    const appealBtn = document.getElementById("btn-file-appeal");
+                    if (appealBtn) {
+                      appealBtn.onclick = () => {
+                        const appealRecord = {
+                          appealId: "appeal-" + Date.now(),
+                          inviteId: targetInvite.id,
+                          seekerName: name,
+                          refCode: refCode,
+                          submittedAt: Date.now(),
+                          status: "PENDING_ARBITRATION"
+                        };
+                        const appeals = JSON.parse(localStorage.getItem("sk_appeals") || "[]");
+                        appeals.push(appealRecord);
+                        localStorage.setItem("sk_appeals", JSON.stringify(appeals));
+                        appealBtn.disabled = true;
+                        const msg = document.getElementById("appeal-status-msg");
+                        if (msg) {
+                          msg.style.display = "block";
+                          msg.textContent = "✓ Formal Appeal logged to sk_appeals. Master Admin arbitration queued.";
+                        }
+                      };
+                    }
+                  }, 100);
+                }
+                return;
+              } else {
+                // Show waiting screen with accurate details
+                document.getElementById("section-intake-form").style.display =
+                  "none";
+                document.getElementById(
+                  "section-waiting-approval",
+                ).style.display = "block";
+                document.getElementById("waiting-seeker-name").textContent =
+                  name;
+                document.getElementById("waiting-ref-code").textContent =
+                  refCode;
+                startApprovalListener(targetInvite.id, refCode, name);
+                return;
+              }
+            }
+          } catch (e) {
+            console.warn("Session check error:", e);
+          }
+        }
+
+        // Check on load
+        checkExistingInductionSession();
+
+        // Note: Form submission is handled by Wizard.submit() via the form's onsubmit attribute.
+        // This prevents duplicate invite creation from multiple submit handlers.
+
+        function startApprovalListener(inviteId, refCode, seekerName) {
+          if (checkInterval) clearInterval(checkInterval);
+
+          checkInterval = setInterval(() => {
+            try {
+              const invites = JSON.parse(
+                localStorage.getItem("sk_pairing_invites") ||
+                  localStorage.getItem("spiritual_karim_pairing_invites") ||
+                  "[]",
+              );
+              const found = invites.find(
+                (i) =>
+                  i.id === inviteId || (refCode && i.hardwareNonce === refCode),
+              );
+
+              if (found && found.status === "APPROVED") {
+                clearInterval(checkInterval);
+                showApprovalSuccess(found, refCode, seekerName);
+              }
+            } catch (e) {}
+          }, 1200);
+        }
+
+        function showApprovalSuccess(invite, refCode, seekerName) {
+          document.getElementById("section-intake-form").style.display = "none";
+          document.getElementById("section-waiting-approval").style.display =
+            "none";
+
+          const approvedSec = document.getElementById("section-approved");
+          if (approvedSec) {
+            approvedSec.style.display = "block";
+          }
+
+          const nameEl = document.getElementById("approved-seeker-name");
+          if (nameEl)
+            nameEl.textContent =
+              seekerName || invite.seekerName || "Devotee Applicant";
+
+          const refEl = document.getElementById("approved-ref-code");
+          if (refEl)
+            refEl.textContent =
+              refCode ||
+              invite.hardwareNonce ||
+              invite.referenceKey ||
+              "SKDV-VERIFIED";
+
+          let profileId = "";
+          try {
+            const profiles = JSON.parse(
+              localStorage.getItem("sk_profiles_data") ||
+                localStorage.getItem("sk_admin_profiles_v3") ||
+                "[]",
+            );
+            const p = profiles.find(
+              (item) =>
+                item.name === seekerName || item.referenceCode === refCode,
+            );
+            if (p) profileId = p.id;
+          } catch (e) {}
+
+          const targetUrl =
+            "index.html#devotee&profileId=" +
+            encodeURIComponent(profileId || refCode);
+          const nextBtn =
+            document.getElementById("btn-next-devotee-portal") ||
+            document.getElementById("btn-enter-devotee-portal");
+          if (nextBtn) {
+            nextBtn.href = targetUrl;
+          }
+        }
+      })();
+    </script>
+
+    <script>
+      // Cross-Tab Communication Channel
+      window.__skBroadcast = new BroadcastChannel('spiritual_karim_sync');
+      // Listen for status updates
+      window.__skBroadcast.addEventListener('message', (event) => {
+        const { type, data } = event.data;
+        if (type === 'INVITE_APPROVED' && typeof Wizard !== 'undefined' && typeof Wizard.showApprovalSuccess === 'function') {
+          Wizard.showApprovalSuccess(data.seekerName, data.referenceCode);
+        }
+        if (type === 'INVITE_REJECTED' && typeof Wizard !== 'undefined' && typeof Wizard.showRejectionNotice === 'function') {
+          Wizard.showRejectionNotice();
+        }
+      });
+      // Function to notify other tabs
+      function __skNotify(type, payload) {
+        window.__skBroadcast.postMessage({ type, data: payload });
+      }
+    </script>
+  </body>
+</html>
