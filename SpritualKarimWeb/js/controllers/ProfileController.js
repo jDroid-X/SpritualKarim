@@ -855,10 +855,10 @@ class ProfileController {
       if (btnVerifyApprove) {
         const itemId = btnVerifyApprove.getAttribute("data-item-id");
         if (itemId) {
-          const activeProf = this.model.getActiveProfile();
+          const defaultFounder = this.model.getSetting("defaultMentorName", "Spiritual Karim Khan (Founder)");
           const mentorName =
             this.model.getRoleMode() === "MASTER"
-              ? "Karim Ji (Founder)"
+              ? defaultFounder
               : activeProf.name || "Healer Mentor";
           const mentorCode =
             this.model.getRoleMode() === "MASTER"
@@ -895,9 +895,10 @@ class ProfileController {
           );
           if (reason !== null) {
             const activeProf = this.model.getActiveProfile();
+            const defaultFounder = this.model.getSetting("defaultMentorName", "Spiritual Karim Khan (Founder)");
             const mentorName =
               this.model.getRoleMode() === "MASTER"
-                ? "Karim Ji (Founder)"
+                ? defaultFounder
                 : activeProf.name || "Healer Mentor";
             const updatedItem = this.model.rejectTraineeVerification(
               itemId,

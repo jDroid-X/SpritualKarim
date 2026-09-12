@@ -2072,7 +2072,7 @@ Installation & Activation Steps:
 
   populateSettings(settings) {
     const s = {
-      defaultMentorName: "Karim Ji (Founder)",
+      defaultMentorName: "Spiritual Karim Khan (Founder)",
       defaultMentorCode: "SKHM-ADM1-7788-9900",
       speechLang: "en-US",
       defaultTargetMalas: "11 Malas Daily",
@@ -2165,7 +2165,7 @@ Installation & Activation Steps:
       autoCloudSync: getChecked("setting-auto-cloud-sync", true),
       defaultMentorName: getVal(
         "setting-default-mentor-name",
-        "Karim Ji (Founder)",
+        "Spiritual Karim Khan (Founder)",
       ),
       defaultMentorCode: getVal(
         "setting-default-mentor-code",

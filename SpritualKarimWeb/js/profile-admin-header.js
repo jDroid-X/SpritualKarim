@@ -16,7 +16,7 @@ window.appConfig = Object.assign(window.appConfig || {}, {
   appName: "Spiritual Karim Admin",
   orgName: "Shree Spritual Karim Sansthan",
   firebaseUrl: "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/",
-  defaultMentorName: "Karim Ji (Founder)",
+  defaultMentorName: "Spiritual Karim Khan (Founder)",
   defaultMentorCode: "SKHM-ADM1-7788-9900",
   defaultTargetMalas: "11 Malas Daily",
   defaultSadhanaStreak: "1 Day",

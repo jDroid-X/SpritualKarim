@@ -20,7 +20,7 @@ window.appConfig = Object.assign(window.appConfig || {}, {
   firebase: FIREBASE_CONFIG, // ⚠️ Move to env vars before production
 
   // Organization Defaults
-  defaultMentorName: 'Karim Ji (Founder)',
+  defaultMentorName: 'Spiritual Karim Khan (Founder)',
   defaultMentorCode: 'SKHM-ADM1-7788-9900',
   rootSponsorCode: 'ROOT-0000-0000-0000',
 

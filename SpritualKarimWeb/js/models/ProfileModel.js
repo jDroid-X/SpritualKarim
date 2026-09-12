@@ -53,7 +53,7 @@ class ProfileModel {
 
   _getDefaultSettings() {
     return {
-      defaultMentorName: "Karim Ji (Founder)",
+      defaultMentorName: "Spiritual Karim Khan (Founder)",
       defaultMentorCode: "SKHM-ADM1-7788-9900",
       telegramBotHandle: "SpiritualKarimBot",
       notebookLmPortalUrl: "https://notebooklm.google.com",
@@ -439,7 +439,7 @@ class ProfileModel {
         referenceCode: "SKHM-ADM1-7788-9900",
         referredByCode: "ROOT-0000-0000-0000",
         transferredCode: "",
-        name: "Karim Ji (Founder)",
+        name: "Spiritual Karim Khan",
         phone: "+91 98765 43210",
         email: "karim.master@spiritualkarim.org",
         profileType: "ADMIN",
@@ -461,7 +461,7 @@ class ProfileModel {
         city: "Mumbai, Maharashtra",
         joinDate: "2024-01-01",
         isActive: true,
-        notes: "Founder and Supreme Spiritual Guide of the Sanctuary.",
+        notes: "Master Head of Organization. Direct lineage origin. Supreme Spiritual Guide of the Sanctuary.",
         categoryTag: "Master Guide & Supreme Cleansing",
         seekerDiagnostics: {
           afflictionDuration: "N/A (Master Guide)",
@@ -501,7 +501,7 @@ class ProfileModel {
             cleanPercentage: 100,
             cleanedDetails: "Sanctum Sanctorum daily purification.",
             mentorCode: "SKHM-ADM1-7788-9900",
-            mentorName: "Karim Ji (Founder)",
+            mentorName: "Spiritual Karim Khan",
             mentorRemarks: "Direct master lineage purity verified 100%.",
             approvalDate: "Today ? Dawn",
           },
@@ -514,7 +514,7 @@ class ProfileModel {
             cleanedDetails:
               "Ancestral Haveli purified with traditional copper havan kund.",
             mentorCode: "SKHM-ADM1-7788-9900",
-            mentorName: "Karim Ji (Founder)",
+            mentorName: "Spiritual Karim Khan",
             mentorRemarks: "Ancestral peace established.",
             approvalDate: "Yesterday",
           },
@@ -527,7 +527,7 @@ class ProfileModel {
             cleanedDetails:
               "Extended family residences blessed and purified with 3-diya process.",
             mentorCode: "SKHM-ADM1-7788-9900",
-            mentorName: "Karim Ji (Founder)",
+            mentorName: "Spiritual Karim Khan",
             mentorRemarks: "Complete 3-level clan purification certified.",
             approvalDate: "2 days ago",
           },
@@ -595,26 +595,41 @@ class ProfileModel {
         ],
         lineage: {
           currentFamily: {
-            selfName: "Karim Ji",
+            selfName: "Spiritual Karim Khan",
             selfTitle: "Founder & Master Guide",
-            spouseName: "Devi Ji",
+            spouseName: "Fatima Karim Khan",
             children: [
               {
                 id: "c1",
-                name: "Aarav Karim",
+                name: "Zaid Karim Khan",
                 gender: "Son",
-                ageOrNote: "Age 14",
+                ageOrNote: "Elder Son",
+              },
+              {
+                id: "c2",
+                name: "Ayesha Karim Khan",
+                gender: "Daughter",
+                ageOrNote: "Daughter",
               },
             ],
             siblings: [
               {
                 id: "s1",
-                name: "Tariq Khan",
+                name: "Tariq Karim Khan",
                 relation: "Brother",
-                spouseName: "Zainab",
-                childrenSummary: "1 Son",
+                spouseName: "Shabnam Khan",
+                childrenSummary: "2 Sons",
                 isMarried: true,
-                notes: "Spiritual support",
+                notes: "Senior Ashram Coordinator",
+              },
+              {
+                id: "s2",
+                name: "Zubaida Begum",
+                relation: "Sister",
+                spouseName: "Rashid Ahmed",
+                childrenSummary: "1 Son, 1 Daughter",
+                isMarried: true,
+                notes: "Lucknow Branch Trustee",
               },
             ],
           },
@@ -1852,6 +1867,16 @@ class ProfileModel {
               p.profileType === "TRAINEE" || p.level === 3 || p.level === 4,
           )
         ) {
+          // Automatic migration: restore original Spiritual Karim Khan profile name
+          const rootP = parsed.find((p) => p.id === "prof-admin-01");
+          if (rootP && rootP.name !== "Spiritual Karim Khan") {
+            rootP.name = "Spiritual Karim Khan";
+            if (rootP.lineage && rootP.lineage.currentFamily) {
+              rootP.lineage.currentFamily.selfName = "Spiritual Karim Khan";
+              rootP.lineage.currentFamily.spouseName = "Fatima Karim Khan";
+            }
+            this.saveProfiles(parsed);
+          }
           return parsed;
         }
       }

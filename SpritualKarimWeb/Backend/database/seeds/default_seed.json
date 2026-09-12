@@ -3,7 +3,7 @@
     "prof_master_karim": {
       "id": "prof_master_karim",
       "referenceCode": "SKHM-ADM1-7788-9900",
-      "name": "Karim Ji (Founder)",
+      "name": "Spiritual Karim Khan",
       "profileType": "ADMIN",
       "level": 1,
       "categoryTag": "Spiritual Cleansing & Guidance",
@@ -18,9 +18,9 @@
       "joinDate": "2024-01-01",
       "lineage": {
         "currentFamily": {
-          "selfName": "Karim Ji",
+          "selfName": "Spiritual Karim Khan",
           "selfTitle": "Founder & Master Guide",
-          "spouseName": "Sadhvi Ji",
+          "spouseName": "Fatima Karim Khan",
           "children": []
         }
       },
@@ -186,7 +186,7 @@
     "orgName": "Shree Spritual Karim Sansthan",
     "firebaseUrl": "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/",
     "defaultMentorCode": "SKHM-ADM1-7788-9900",
-    "defaultMentorName": "Karim Ji (Founder)",
+    "defaultMentorName": "Spiritual Karim Khan (Founder)",
     "rootSponsorCode": "ROOT-0000-0000-0000",
     "cleanMinApprovalPercent": 75,
     "pairingInviteTimeoutHours": 24,
@@ -200,7 +200,7 @@
   "lineage_graph": {
     "SKHM-ADM1-7788-9900": {
       "code": "SKHM-ADM1-7788-9900",
-      "name": "Karim Ji (Founder)",
+      "name": "Spiritual Karim Khan (Founder)",
       "parentCode": "ROOT",
       "depth": 1,
       "downline": ["SKHM-HLR2-1122-3344"]
