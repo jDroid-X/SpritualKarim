@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/profile-admin.css?v=sk_v5_1789126563974">
+  <link rel="stylesheet" href="css/profile-admin.css?v=sk_v5_1789189956805">
 </head>
 <body data-portal-role="ADMIN" class="portal-admin">
   <!-- Top Admin Control Header (2-Row Smart Fit Layout) -->
@@ -2230,6 +2230,14 @@
                       <option value="HEALER">Healer (Level 2)</option>
                     </select>
                   </div>
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Min Devotee Age (Years)</label>
+                    <input type="number" id="setting-min-devotee-age" class="form-control" value="18" min="1" max="100" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                  </div>
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Approval Threshold (%)</label>
+                    <input type="number" id="setting-clean-min-approval-percent" class="form-control" value="75" min="1" max="100" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                  </div>
                 </div>
               </div>
               
@@ -2342,6 +2350,56 @@
         <div class="modal-footer" style="padding: 0.75rem 1rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
           <button id="btn-cancel-settings-modal" class="btn btn-outline btn-sm">Cancel</button>
           <button id="btn-save-settings-modal" class="btn btn-gold btn-sm">💾 Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-Option Mentor Applicant Decision Dialog (HITL Approval / Revision / Appeal) -->
+  <div id="modal-mentor-decision-dialog" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10500;">
+    <div class="admin-modal-dialog modal-md" style="max-width: 520px; background: var(--bg-surface, #1e293b); border: 1px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">⚖️</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">Mentor Intake Decision</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Review Sadhak Application &amp; Select Action</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" id="btn-close-mentor-decision-dialog" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <div id="mentor-decision-applicant-summary" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); border-radius: 8px; padding: 0.85rem; margin-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong id="mentor-decision-applicant-name" style="font-size: 0.95rem; color: #fff;">Applicant Name</strong>
+            <span id="mentor-decision-applicant-role" class="badge badge-gold" style="font-size: 0.7rem;">DEVOTEE</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted, #94a3b8); margin-top: 0.35rem;" id="mentor-decision-applicant-meta">
+            Phone: - | Token: -
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem; display: block;">Decision Review Notes (Optional / Feedback to Applicant):</label>
+          <textarea id="mentor-decision-review-notes" class="form-control" rows="2" placeholder="Enter instructions or reasons if requesting revision or rejection..." style="width: 100%; font-size: 0.8rem; padding: 0.5rem; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 6px; color: #fff;"></textarea>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+          <button type="button" id="btn-decision-approve-induct" class="btn btn-gold w-100" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem; font-weight: 600; font-size: 0.85rem;">
+            <span>✅</span>
+            <span>Approve &amp; Induct Devotee</span>
+          </button>
+          <button type="button" id="btn-decision-request-revision" class="btn btn-outline w-100" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem; font-weight: 600; font-size: 0.85rem; border-color: #f59e0b; color: #f59e0b;">
+            <span>✏️</span>
+            <span>Request Clarification / Revision</span>
+          </button>
+          <button type="button" id="btn-decision-reject-appeal" class="btn btn-danger w-100" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem; font-weight: 600; font-size: 0.85rem; background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444;">
+            <span>❌</span>
+            <span>Reject with Right to Appeal</span>
+          </button>
+          <button type="button" id="btn-decision-cancel" class="btn btn-secondary w-100" style="padding: 0.5rem; font-size: 0.8rem; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted);">
+            Dismiss
+          </button>
         </div>
       </div>
     </div>
@@ -2677,17 +2735,17 @@
   </div>
 
   <!-- External Vendor & Core Logic Scripts -->
-  <script src="js/profile-admin-header.js?v=sk_v5_remediated_2026"></script>
-  <script src="js/models/ScreenAuthMatrix.js?v=sk_v5_remediated_2026"></script>
-  <script src="js/models/ProfileModel.js?v=sk_v5_remediated_2026"></script>
+  <script src="js/profile-admin-header.js?v=sk_v5_1789189956805"></script>
+  <script src="js/models/ScreenAuthMatrix.js?v=sk_v5_1789189956805"></script>
+  <script src="js/models/ProfileModel.js?v=sk_v5_1789189956805"></script>
   <script src="js/config/appConfig.js?v=sk_v5_remediated_2026"></script>
-  <script src="js/models/FirebaseSyncEngine.js?v=sk_v5_remediated_2026"></script>
-  <script src="js/views/ProfileView.js?v=sk_v5_remediated_2026"></script>
-  <script src="js/views/ProfileView2.js?v=sk_v5_remediated_2026"></script>
-  <script src="js/controllers/ProfileController.js?v=sk_v5_remediated_2026"></script>
-  <script src="js/controllers/ProfileController2.js?v=sk_v5_remediated_2026"></script>
-  <script src="js/controllers/SettingsModalController.js?v=sk_v5_remediated_2026"></script>
-  <script src="js/profile-admin-bootstrap.js?v=sk_v5_remediated_2026"></script>
+  <script src="js/models/FirebaseSyncEngine.js?v=sk_v5_1789189956805"></script>
+  <script src="js/views/ProfileView.js?v=sk_v5_1789189956805"></script>
+  <script src="js/views/ProfileView2.js?v=sk_v5_1789189956805"></script>
+  <script src="js/controllers/ProfileController.js?v=sk_v5_1789189956805"></script>
+  <script src="js/controllers/ProfileController2.js?v=sk_v5_1789189956805"></script>
+  <script src="js/controllers/SettingsModalController.js?v=sk_v5_1789189956805"></script>
+  <script src="js/profile-admin-bootstrap.js?v=sk_v5_1789189956805"></script>
 
   <!-- ==============================================================
        SLIDE-IN NOTIFICATIONS STACK & CUSTOM DIALOG BACKDROP

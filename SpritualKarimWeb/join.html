@@ -1516,10 +1516,18 @@
     <script src="js/onboarding.js"></script>
     <script>
       /**
-       * DEMO WIZARD — Multi-Step Registration Controller
-       * Simulates OTP, CAPTCHA, Document Upload, T&C, E-Signature
-       * No real backend — all demo/simulated for testing
+       * Dynamic pairing invite validity window TTL from settings
        */
+      function getInviteTtlMs() {
+        try {
+          const v5 = JSON.parse(localStorage.getItem("sk_system_settings_v5") || "{}");
+          if (v5.inviteExpiryHours) return Number(v5.inviteExpiryHours) * 3600 * 1000;
+          const v1 = JSON.parse(localStorage.getItem("sk_admin_system_settings_v1") || "{}");
+          if (v1.inviteExpiryHours) return Number(v1.inviteExpiryHours) * 3600 * 1000;
+        } catch (e) {}
+        return 86400000; // 24 hours fallback
+      }
+
       const Wizard = {
         currentStep: 1,
         totalSteps: 5,
@@ -1670,7 +1678,7 @@
             const draft = JSON.parse(
               localStorage.getItem("sk_join_wizard_draft") || "null",
             );
-            if (draft && Date.now() - (draft.savedAt || 0) < 86400000) {
+            if (draft && Date.now() - (draft.savedAt || 0) < getInviteTtlMs()) {
               if (draft.name && document.getElementById("join-name"))
                 document.getElementById("join-name").value = draft.name;
               if (draft.dob && document.getElementById("join-dob"))
@@ -2260,7 +2268,7 @@
               );
               if (
                 matchedInvite &&
-                Date.now() - (matchedInvite.createdAtMs || 0) < 86400000
+                Date.now() - (matchedInvite.createdAtMs || 0) < getInviteTtlMs()
               ) {
                 targetInvite = matchedInvite;
               }
@@ -2337,36 +2345,38 @@
                 return;
               }
 
-              // Check 24-Hour Expiry Condition
-              const remainingMs = (targetInvite.expiresAtMs || targetInvite.createdAtMs + 86400000) - Date.now();
+              // Check Dynamic Expiry Condition
+              const inviteTtl = getInviteTtlMs();
+              const remainingMs = (targetInvite.expiresAtMs || targetInvite.createdAtMs + inviteTtl) - Date.now();
               if (targetInvite.status === "PENDING" && remainingMs <= 0) {
-                // Case B: Expired after 24 Hours
+                // Case B: Expired after Window
                 document.getElementById("section-intake-form").style.display = "none";
                 document.getElementById("section-waiting-approval").style.display = "block";
                 document.getElementById("waiting-seeker-name").textContent = name;
                 document.getElementById("waiting-ref-code").textContent = refCode;
                 const waitTitle = document.querySelector("#section-waiting-approval h3");
-                if (waitTitle) waitTitle.innerHTML = "⌛ Application Expired (24h Window Ended)";
+                if (waitTitle) waitTitle.innerHTML = "⌛ Application Expired (Window Ended)";
                 const waitDesc = document.querySelector("#section-waiting-approval p");
                 const expCount = targetInvite.resubmitCount || 1;
                 if (waitDesc) {
-                  waitDesc.innerHTML = `This induction link expired after 24 hours.<br>
+                  waitDesc.innerHTML = `This induction link has expired.<br>
                     <span class="badge" style="display:inline-block; margin:0.5rem 0; padding:0.25rem 0.6rem; background:rgba(245,158,11,0.2); color:#f59e0b; border:1px solid rgba(245,158,11,0.4); border-radius:4px; font-weight:700; font-size:0.78rem;">
                       ⌛ History: Expired &amp; Renewed ${expCount} time(s)
                     </span><br><br>
                     <button type="button" id="btn-re-submit-request" class="btn btn-gold" style="font-size:0.85rem; padding:0.6rem 1.2rem; font-weight:800; cursor:pointer;">
-                      🔄 Re-Submit Application (Renew 24h)
+                      🔄 Re-Submit Application (Renew Window)
                     </button>`;
                   setTimeout(() => {
                     const reBtn = document.getElementById("btn-re-submit-request");
                     if (reBtn) {
                       reBtn.onclick = () => {
+                        const renewalTtl = getInviteTtlMs();
                         targetInvite.createdAtMs = Date.now();
-                        targetInvite.expiresAtMs = Date.now() + 24 * 60 * 60 * 1000;
+                        targetInvite.expiresAtMs = Date.now() + renewalTtl;
                         targetInvite.status = "PENDING";
                         targetInvite.resubmitCount = (targetInvite.resubmitCount || 0) + 1;
                         localStorage.setItem("sk_pairing_invites", JSON.stringify(invites));
-                        alert("✓ Application renewed for 24 hours and submitted for mentor review!");
+                        alert("✓ Application renewed and submitted for mentor review!");
                         window.location.reload();
                       };
                     }
@@ -2375,7 +2385,7 @@
                 return;
               }
 
-              // Case C: Waiting for Approval (Active 24h Window)
+              // Case C: Waiting for Approval (Active Window)
               document.getElementById("section-intake-form").style.display = "none";
               document.getElementById("section-waiting-approval").style.display = "block";
               document.getElementById("waiting-seeker-name").textContent = name;
@@ -2390,7 +2400,7 @@
                   <div id="live-waiting-countdown" style="margin-top:0.65rem; font-size:0.88rem; color:#f59e0b; font-weight:700; font-family:var(--font-mono, monospace);">⏳ Calculating remaining validity...</div>`;
               }
               startApprovalListener(targetInvite.id, refCode, name);
-              startLiveCountdown(targetInvite.expiresAtMs || (targetInvite.createdAtMs + 86400000));
+              startLiveCountdown(targetInvite.expiresAtMs || (targetInvite.createdAtMs + getInviteTtlMs()));
               return;
             }
           } catch (e) {

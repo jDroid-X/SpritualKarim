@@ -70,4 +70,24 @@ portals.forEach(p => {
   console.log(`✅ Synchronized portal: ${p.dir}/index.html (${p.role})`);
 });
 
+// Also update Seeker and Public if they exist
+['Seeker', 'Public'].forEach(portalDir => {
+  const pFile = path.join(webRoot, portalDir, 'index.html');
+  if (fs.existsSync(pFile)) {
+    let pHtml = fs.readFileSync(pFile, 'utf8');
+    pHtml = pHtml.replace(/href="\.\.\/css\/profile-admin\.css[•?][^"]*"/g, `href="../css/profile-admin.css?v=sk_v5_${timestamp}"`);
+    pHtml = pHtml.replace(/src="\.\.\/js\/models\/ScreenAuthMatrix\.js[•?][^"]*"/g, `src="../js/models/ScreenAuthMatrix.js?v=sk_v5_${timestamp}"`);
+    pHtml = pHtml.replace(/src="\.\.\/js\/models\/ProfileModel\.js[•?][^"]*"/g, `src="../js/models/ProfileModel.js?v=sk_v5_${timestamp}"`);
+    pHtml = pHtml.replace(/src="\.\.\/js\/views\/ProfileView\.js[•?][^"]*"/g, `src="../js/views/ProfileView.js?v=sk_v5_${timestamp}"`);
+    pHtml = pHtml.replace(/src="\.\.\/js\/views\/ProfileView2\.js[•?][^"]*"/g, `src="../js/views/ProfileView2.js?v=sk_v5_${timestamp}"`);
+    pHtml = pHtml.replace(/src="\.\.\/js\/controllers\/ProfileController\.js[•?][^"]*"/g, `src="../js/controllers/ProfileController.js?v=sk_v5_${timestamp}"`);
+    pHtml = pHtml.replace(/src="\.\.\/js\/controllers\/ProfileController2\.js[•?][^"]*"/g, `src="../js/controllers/ProfileController2.js?v=sk_v5_${timestamp}"`);
+    pHtml = pHtml.replace(/src="\.\.\/js\/profile-admin-bootstrap\.js[•?][^"]*"/g, `src="../js/profile-admin-bootstrap.js?v=sk_v5_${timestamp}"`);
+    pHtml = pHtml.replace(/•family=/g, '?family=');
+    fs.writeFileSync(pFile, pHtml, 'utf8');
+    console.log(`✅ Synchronized portal: ${portalDir}/index.html`);
+  }
+});
+
 console.log('🎉 All portals built and synchronized successfully!');
+

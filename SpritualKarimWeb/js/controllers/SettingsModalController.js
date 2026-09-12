@@ -271,6 +271,10 @@ class SettingsModalController {
       defaultRoleMode: document.getElementById("setting-default-role-mode")
         ?.value,
       autoSaveMode: document.getElementById("setting-auto-save")?.value,
+      minDevoteeAge:
+        parseInt(document.getElementById("setting-min-devotee-age")?.value) || 18,
+      cleanMinApprovalPercent:
+        parseInt(document.getElementById("setting-clean-min-approval-percent")?.value) || 75,
       maxPendingInvitesPerMentor:
         parseInt(document.getElementById("setting-max-pending-invites")?.value) || 5,
       inviteExpiryHours:
@@ -406,6 +410,8 @@ class SettingsModalController {
       "setting-data-minimization": "dataMinimizationEnabled",
       "setting-default-role-mode": "defaultRoleMode",
       "setting-auto-save": "autoSaveMode",
+      "setting-min-devotee-age": "minDevoteeAge",
+      "setting-clean-min-approval-percent": "cleanMinApprovalPercent",
       "setting-max-pending-invites": "maxPendingInvitesPerMentor",
       "setting-invite-expiry-hours": "inviteExpiryHours",
       "setting-max-invite-resubmits": "maxInviteResubmits",

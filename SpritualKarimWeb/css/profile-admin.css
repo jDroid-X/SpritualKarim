@@ -9080,3 +9080,113 @@ html[data-theme="light"] .hc-media-play-icon {
     flex-wrap: wrap;
   }
 }
+
+/* ==============================================================
+   ENTERPRISE UI/UX CONTROLS & HITL DECISION MODALS
+   ============================================================== */
+.admin-modal[style*="display: flex"],
+.admin-modal[style*="display: block"],
+.admin-modal-overlay[style*="display: flex"],
+.admin-modal-overlay[style*="display: block"] {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+#modal-mentor-decision-dialog .modal-header {
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(15, 23, 42, 0.8));
+}
+
+#modal-mentor-decision-dialog .btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#modal-mentor-decision-dialog .btn:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Form switch controls */
+.form-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.form-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.form-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 24px;
+  border: 1px solid var(--border-subtle);
+}
+
+.form-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.form-switch input:checked + .form-switch-slider {
+  background-color: var(--gold-400, #d4af37);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+}
+
+.form-switch input:checked + .form-switch-slider:before {
+  transform: translateX(20px);
+}
+
+/* Clearable Input Helper */
+.input-clear-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-clear-btn {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 2px 6px;
+  border-radius: 50%;
+  transition: all 0.15s;
+}
+
+.input-clear-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Status Badges */
+.badge-info-requested {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+}
+
+.badge-rejected-appeal {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+}
+

@@ -70,6 +70,7 @@ class ProfileModel {
       maxPendingInvitesPerMentor: 5,
       inviteExpiryHours: 24,
       maxInviteResubmits: 3,
+      minDevoteeAge: 18,
       requirePhoneOTP: false,
       requireEmailOTP: false,
       requireCaptcha: false,

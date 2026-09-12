@@ -206,6 +206,16 @@ const DemoDocUpload = {
 const DemoAgeVerification = {
   MIN_AGE: 18,
 
+  getMinAge() {
+    try {
+      const v5 = JSON.parse(localStorage.getItem('sk_system_settings_v5') || '{}');
+      if (v5.minDevoteeAge) return Number(v5.minDevoteeAge);
+      const v1 = JSON.parse(localStorage.getItem('sk_admin_system_settings_v1') || '{}');
+      if (v1.minDevoteeAge) return Number(v1.minDevoteeAge);
+    } catch(e) {}
+    return this.MIN_AGE || 18;
+  },
+
   calculateAge(dobString) {
     const dob = new Date(dobString);
     const today = new Date();
@@ -216,9 +226,10 @@ const DemoAgeVerification = {
   },
 
   verify(dobString) {
+    const minAge = this.getMinAge();
     const age = this.calculateAge(dobString);
     if (isNaN(age)) return { valid: false, reason: 'Invalid date of birth.', age: 0 };
-    if (age < this.MIN_AGE) return { valid: false, reason: `You must be at least ${this.MIN_AGE} years old. Current age: ${age}.`, age };
+    if (age < minAge) return { valid: false, reason: `You must be at least ${minAge} years old. Current age: ${age}.`, age };
     return { valid: true, reason: `Age verified: ${age} years.`, age };
   }
 };

@@ -2061,6 +2061,16 @@ class ProfileController {
         return;
       }
 
+      // Review Pairing (Multi-Option Decision Dialog)
+      const btnReview = e.target.closest(".btn-review-pairing");
+      if (btnReview) {
+        const id = btnReview.getAttribute("data-invite-id");
+        if (id) {
+          this._openMentorDecisionDialog(id);
+        }
+        return;
+      }
+
       // Reject Pairing
       const btnReject = e.target.closest(".btn-reject-pairing");
       if (btnReject) {
@@ -2356,4 +2366,91 @@ ProfileController.prototype._loadSettingsToModal = function() {
     this.settingsModalController._loadCurrentSettings();
   }
 };
+
+ProfileController.prototype._openMentorDecisionDialog = function(inviteId) {
+  const invites = this.model.getPairingInvites();
+  const inv = invites.find(i => i.id === inviteId);
+  if (!inv) return;
+
+  const modal = document.getElementById("modal-mentor-decision-dialog");
+  if (!modal) return;
+
+  const nameEl = document.getElementById("mentor-decision-applicant-name");
+  const roleEl = document.getElementById("mentor-decision-applicant-role");
+  const metaEl = document.getElementById("mentor-decision-applicant-meta");
+  const notesEl = document.getElementById("mentor-decision-review-notes");
+
+  if (nameEl) nameEl.textContent = inv.seekerName || "Devotee Applicant";
+  if (roleEl) roleEl.textContent = inv.assignedRole || "DEVOTEE";
+  if (metaEl) metaEl.textContent = `Phone: ${inv.seekerPhone || "N/A"} | Code: ${inv.devoteeCode || inv.sponsorCode || "N/A"}`;
+  if (notesEl) notesEl.value = inv.mentorFeedback || "";
+
+  modal.style.display = "flex";
+  modal.setAttribute("aria-hidden", "false");
+
+  const closeModal = () => {
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+  };
+
+  const btnClose = document.getElementById("btn-close-mentor-decision-dialog");
+  if (btnClose) btnClose.onclick = closeModal;
+  const btnCancel = document.getElementById("btn-decision-cancel");
+  if (btnCancel) btnCancel.onclick = closeModal;
+
+  const btnApprove = document.getElementById("btn-decision-approve-induct");
+  if (btnApprove) {
+    btnApprove.onclick = () => {
+      closeModal();
+      const targetRole = inv.assignedRole || "DEVOTEE";
+      const approved = this.model.approvePairingInvite(inv.id, targetRole);
+      if (approved) {
+        this.view.renderPendingApprovalsRows(this.model.getPairingInvites());
+        this._renderCurrentState();
+        if (typeof this.view.showSlideToast === "function") {
+          this.view.showSlideToast("Induction Approved", `Seeker "${approved.seekerName}" officially verified as ${targetRole} & linked!`, "success");
+        } else {
+          this.view.showToast(`✅ Seeker "${approved.seekerName}" officially verified!`);
+        }
+      }
+    };
+  }
+
+  const btnRevision = document.getElementById("btn-decision-request-revision");
+  if (btnRevision) {
+    btnRevision.onclick = () => {
+      const feedback = (notesEl?.value || "Clarification required on Step 3 verification proofs.").trim();
+      closeModal();
+      inv.status = "INFO_REQUESTED";
+      inv.mentorFeedback = feedback;
+      inv.updatedAt = Date.now();
+      localStorage.setItem("sk_pairing_invites", JSON.stringify(invites));
+      this.view.renderPendingApprovalsRows(this.model.getPairingInvites());
+      if (typeof this.view.showSlideToast === "function") {
+        this.view.showSlideToast("Revision Requested", `Requested revision from "${inv.seekerName}": ${feedback}`, "warning");
+      } else {
+        this.view.showToast(`📝 Revision requested: ${feedback}`);
+      }
+    };
+  }
+
+  const btnReject = document.getElementById("btn-decision-reject-appeal");
+  if (btnReject) {
+    btnReject.onclick = () => {
+      const feedback = (notesEl?.value || "Application does not meet current induction criteria.").trim();
+      closeModal();
+      inv.status = "REJECTED";
+      inv.rejectionReason = feedback;
+      inv.updatedAt = Date.now();
+      localStorage.setItem("sk_pairing_invites", JSON.stringify(invites));
+      this.view.renderPendingApprovalsRows(this.model.getPairingInvites());
+      if (typeof this.view.showSlideToast === "function") {
+        this.view.showSlideToast("Application Rejected", `Rejected with right to appeal: ${feedback}`, "error");
+      } else {
+        this.view.showToast(`❌ Application rejected with right to appeal.`);
+      }
+    };
+  }
+};
+
 

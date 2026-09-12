@@ -3,21 +3,2952 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Healers Hub • Shree Spritual Karim Sansthan</title>
+  <title>Healers Portal • Shree Spritual Karim Sansthan</title>
+  <meta name="description" content="Admin Control Panel for Spiritual Karim Mobile App - Devotee Personal, Seeker Purpose, Trainee Sadhak, and Healer Connect Management">
+  
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="../Logo.png">
-  <script>
-    // Lightweight OOPS Portal Gateway
-    // Sets portal role context and routes to Master Application Engine
-    sessionStorage.setItem('portalRole', 'HEALER');
-    localStorage.setItem('sk_active_portal_role', 'HEALER');
-    window.location.replace('../index.html?portalRole=HEALER');
-  </script>
+
+  <!-- Google Fonts: Cinzel, Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1789189956805">
 </head>
-<body style="background: #08040f; color: #d4af37; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
-  <div style="text-align: center;">
-    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🕉️</div>
-    <div style="font-size: 1.1rem; font-weight: bold; letter-spacing: 1px;">Opening Healers Hub • Shree Spritual Karim Sansthan...</div>
-    <div style="font-size: 0.85rem; color: #8a7a9a; margin-top: 0.5rem;">Authenticating portal role permissions</div>
+<body data-portal-role="HEALER" class="portal-healer">
+  <!-- Top Admin Control Header (2-Row Smart Fit Layout) -->
+  <header class="admin-topbar multi-row-header">
+    <!-- Row 1: Brand, Status, Global Tools & Theme Switcher -->
+    <div class="topbar-row-primary">
+      <div class="topbar-brand-group">
+        <button type="button" id="btn-mobile-sidebar-toggle" class="mobile-sidebar-toggle" aria-label="Toggle Directory Sidebar">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+        <div class="admin-brand">
+          <img src="../Logo.png" alt="Logo" class="admin-logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'36\' height=\'36\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23d4af37\'/><text x=\'50\' y=\'65\' font-size=\'40\' text-anchor=\'middle\' fill=\'%230b0714\'>ॐ</text></svg>'">
+          <div class="brand-text-block">
+            <div class="brand-title-wrap">
+              <span class="admin-title">SPIRITUAL KARIM ADMIN</span>
+              <span class="header-portal-badge badge-healer">🛡️ CERTIFIED HEALER</span>
+            </div>
+            <span class="admin-subtitle">Mobile App Control &bull; 4-Tier User Management</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-global-actions">
+        <!-- Live Sync Status Indicator -->
+        <div class="header-status-pill" id="header-cloud-status" title="Real-time Synchronization Active">
+          <span class="status-indicator-dot"></span>
+          <span class="status-pill-text">Live Sync</span>
+        </div>
+
+        <!-- Active Profile Stamp Indicator -->
+        <div class="header-payment-stamp" id="header-payment-stamp" title="Selected Profile Membership Status">
+          <span class="stamp-badge stamp-paid" id="header-stamp-badge">🟢 PAID</span>
+        </div>
+
+        <!-- Light / Dark / Auto Theme Toggle Switcher -->
+        <div class="theme-switch-container">
+          <button type="button" id="btn-theme-toggle" class="theme-toggle-btn" title="Theme Mode: Auto (Device OS) | Click to Toggle Dark/Light/Auto" aria-label="Toggle Theme Mode">
+            <span class="theme-icon" id="theme-icon">💻</span>
+            <span class="theme-label" id="theme-label">Auto</span>
+          </button>
+        </div>
+
+        <!-- Goli Gyan Quick Modal Trigger -->
+        <button type="button" id="btn-quick-goli-gyan" class="btn btn-sm btn-outline header-quick-btn" title="Open Goli Gyan Wisdom Guide">
+          <span>📜</span> <span class="btn-text-desktop">Goli Gyan</span>
+        </button>
+
+        <!-- Mobile App Download Quick Button -->
+        <a href="https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk" id="btn-header-download-app" class="btn btn-sm btn-gold header-quick-btn" title="Download Spiritual Karim Android Mobile App (APK)" download="SpiritualKarim.apk" target="_blank">
+          <span>📱</span> <span class="btn-text-desktop">Download App</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Row 2: Operational & Role Navigation Bar -->
+    <div class="topbar-row-secondary">
+      <div class="topbar-selector-group">
+        <div class="role-selector-pill">
+          <span class="selector-icon">🛡️</span>
+          <label for="select-role-mode" class="switch-label">Role:</label>
+          <select id="select-role-mode" class="role-mode-dropdown" title="Switch Access View & Permissions">
+            <option value="MASTER" selected>👑 Master (Full Control)</option>
+            <option value="HEALER" >🛡️ Healer (Self &amp; Team)</option>
+            <option value="TRAINEE" >📿 Trainee (Self &amp; Devotees)</option>
+            <option value="DEVOTEE" >🌟 Devotee (Personal Only)</option>
+          </select>
+        </div>
+
+        <div class="profile-selector-pill">
+          <span class="selector-icon">👤</span>
+          <label for="select-active-profile" class="switch-label">Profile:</label>
+          <select id="select-active-profile" class="profile-dropdown" title="Select Active Profile"></select>
+        </div>
+      </div>
+
+      <div class="topbar-action-group">
+        <button type="button" id="btn-create-profile" class="btn btn-sm btn-outline" title="Create New End User Profile">
+          <span>➕</span> <span class="btn-text-responsive">New Profile</span>
+        </button>
+        <button type="button" id="btn-import-json" class="btn btn-sm btn-outline" title="Import JSON payload from Android App">
+          <span>📥</span> <span class="btn-text-responsive">Import</span>
+        </button>
+        <button type="button" id="btn-export-json" class="btn btn-sm btn-outline" title="Export Profile JSON for Mobile App">
+          <span>📤</span> <span class="btn-text-responsive">Export</span>
+        </button>
+        <button type="button" id="btn-save-profile" class="btn btn-sm btn-gold btn-save-pulse" title="Save & Sync to App State">
+          <span>💾</span> <span class="btn-text-responsive">Save &amp; Sync</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar Backdrop for Mobile -->
+  <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+  <!-- Admin Main Layout -->
+  <div class="admin-layout">
+    <!-- Left Navigation & Directory Sidebar -->
+    <!-- Left Navigation & Enterprise Drawer (User Rule 7 Standard Compliant) -->
+    <aside class="admin-sidebar" id="admin-enterprise-drawer">
+
+      <!-- Enterprise Drawer Section 2: Hierarchy Tiers -->
+      <div class="sidebar-section">
+        <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>App Hierarchy Tiers</span>
+          <button type="button" id="btn-open-tree-view" class="btn btn-xs btn-gold" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;" title="Open Visual MLM Hierarchy Tree">🌳 Tree</button>
+        </div>
+        <div class="hierarchy-legend" id="hierarchy-legend-container">
+          <div class="legend-item" data-tier="1" style="border-left-color: #8b5cf6;" title="Click to view Tier 1 Admin Master Profiles">
+            <div class="legend-item-left">
+              <span class="legend-title">👑 Admin Master</span>
+              <span class="legend-level">Tier 1 &bull; Founder</span>
+            </div>
+            <div class="legend-item-right">
+              <span class="legend-count-badge" id="legend-count-tier-1">1</span>
+              <span class="legend-arrow">&rsaquo;</span>
+            </div>
+          </div>
+
+          <div class="legend-item" data-tier="2" style="border-left-color: #10b981;" title="Click to view Tier 2 Certified Healer Profiles">
+            <div class="legend-item-left">
+              <span class="legend-title">🛡️ Healer Connect</span>
+              <span class="legend-level">Tier 2 &bull; Level Completed</span>
+            </div>
+            <div class="legend-item-right">
+              <span class="legend-count-badge" id="legend-count-tier-2">3</span>
+              <span class="legend-arrow">&rsaquo;</span>
+            </div>
+          </div>
+
+          <div class="legend-item" data-tier="3" style="border-left-color: #f59e0b;" title="Click to view Tier 3 Trainee Sadhak Profiles">
+            <div class="legend-item-left">
+              <span class="legend-title">📿 Trainee Sadhak</span>
+              <span class="legend-level">Tier 3 &bull; In-Progress</span>
+            </div>
+            <div class="legend-item-right">
+              <span class="legend-count-badge" id="legend-count-tier-3">2</span>
+              <span class="legend-arrow">&rsaquo;</span>
+            </div>
+          </div>
+
+          <div class="legend-item" data-tier="4" style="border-left-color: #3b82f6;" title="Click to view Tier 4 Devotee / Seeker Profiles">
+            <div class="legend-item-left">
+              <span class="legend-title">🌟 Devotee / Seeker</span>
+              <span class="legend-level">Tier 4 &bull; Personal &amp; House Clean</span>
+            </div>
+            <div class="legend-item-right">
+              <span class="legend-count-badge" id="legend-count-tier-4">3</span>
+              <span class="legend-arrow">&rsaquo;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enterprise Drawer Section 3: Dedicated Sub-Portals -->
+      <div class="sidebar-section">
+        <div class="sidebar-heading">Dedicated Portals</div>
+        <div class="sub-portal-links" id="sidebar-dedicated-portals">
+          <a href="../Masters/index.html" class="sub-portal-link" data-portal-tier="1" title="Open Master Portal">
+            <span>👑</span> Masters Portal
+          </a>
+          <a href="../Healers/index.html" class="sub-portal-link " data-portal-tier="2" title="Open Healer Portal">
+            <span>🛡️</span> Healers Portal
+          </a>
+          <a href="../Trainee/index.html" class="sub-portal-link " data-portal-tier="3" title="Open Trainee Sadhak Portal">
+            <span>📿</span> Trainee Sadhak Portal
+          </a>
+          <a href="../Devotee/index.html" class="sub-portal-link " data-portal-tier="4" title="Open Devotee Portal">
+            <span>🌟</span> Devotee Portal
+          </a>
+        </div>
+      </div>
+
+      <!-- Enterprise Drawer Section 4: System Tools & Actions -->
+      <div class="sidebar-section" id="sidebar-tools-section">
+        <div class="sidebar-heading">System Tools &amp; Actions</div>
+        <button type="button" id="sidebar-btn-share-pairing" class="btn btn-sm btn-gold w-100 mb-2" title="Share &amp; Invite Seeker (24h Device Pairing Protocol)">
+          <span>📲</span> Share &amp; Pair Invite
+        </button>
+        <button type="button" id="sidebar-btn-rbac-matrix" class="btn btn-sm btn-outline w-100 mb-2" title="4-Tier Authorization Access Matrix &amp; Master Governance Rules">
+          <span>🛡️</span> Access Matrix
+          <span class="role-hint" style="font-size:0.6rem;color:var(--text-muted);">(view-only for non-Master)</span>
+        </button>
+        <button type="button" id="sidebar-btn-modify-auth-matrix" class="btn btn-sm btn-gold w-100 mb-2" title="Open Auth Matrix Editor (Save/Apply changes — requires Master role)">
+          <span>✏️</span> Modify Auth Matrix
+          <span class="role-hint" style="font-size:0.6rem;color:var(--text-muted);">(opens editor)</span>
+        </button>
+        <button type="button" id="sidebar-btn-admin-settings" class="btn btn-sm btn-outline w-100 mb-2" title="Admin System &amp; Permission Settings">
+          <span>⚙️</span> System Settings
+        </button>
+        <button type="button" id="btn-copy-ref-code" class="btn btn-sm btn-outline w-100 mb-2" title="Copy 16-Digit Code">
+          <span>📋</span> Copy 16-Digit Code
+        </button>
+        <button type="button" id="btn-gen-ref-code" class="btn btn-sm btn-outline w-100 mb-2" title="Generate New Reference Code">
+          <span>🎲</span> Generate New Code
+        </button>
+        <button type="button" id="btn-toggle-json-drawer" class="btn btn-sm btn-outline w-100" title="View Mobile App JSON Payload">
+          <span>📄</span> View App JSON
+        </button>
+      </div>
+
+      <!-- Enterprise Drawer Section 5: Firebase RTDB Quick Drill-Down -->
+      <div class="sidebar-section">
+        <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>🔥 Firebase Realtime DB</span>
+          <span class="badge-live-pulse" title="Connected to spritualkarim-7b5fd">🟢 Live</span>
+        </div>
+        <div class="sidebar-rtdb-card">
+          <div class="sidebar-rtdb-meta">
+            <span class="rtdb-chip">⚡ Sync Active</span>
+            <span class="rtdb-chip-nodes" id="sidebar-rtdb-root-count">8 Collections</span>
+          </div>
+          <button type="button" id="btn-sidebar-open-rtdb" class="btn btn-sm btn-gold w-100 mb-2" title="Open Realtime Database in Table Format with Structured Drill-down">
+            <span>📊</span> Firebase Data Table
+          </button>
+          <div class="sidebar-rtdb-shortcuts" id="sidebar-rtdb-shortcuts">
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="profiles" title="Drill into /profiles">
+              <span>📁</span> /profiles
+            </button>
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="authorisedNodes" title="Drill into /authorisedNodes">
+              <span>🔑</span> /nodes
+            </button>
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="sadhana_catalog" title="Drill into /sadhana_catalog">
+              <span>🔯</span> /sadhanas
+            </button>
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="device_telemetry" title="Drill into /device_telemetry">
+              <span>📡</span> /telemetry
+            </button>
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="system_config" title="Drill into /system_config">
+              <span>⚙️</span> /config
+            </button>
+            <button type="button" class="rtdb-shortcut-btn" data-rtdb-drill="pairing_invites" title="Drill into /pairing_invites">
+              <span>📲</span> /pairing
+            </button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Left In-Body Tier Profiles Panel -->
+    <div id="tier-profiles-panel" class="tier-profiles-flyout-panel" role="region" aria-label="Hierarchy Tier Profiles">
+      <div class="tier-panel-header">
+        <div class="tier-panel-title-wrap">
+          <span class="tier-panel-icon" id="tier-panel-icon">👑</span>
+          <div>
+            <h3 class="tier-panel-title" id="tier-panel-title">Admin Master Profiles</h3>
+            <span class="tier-panel-count-badge" id="tier-panel-count">1 Member</span>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.35rem;">
+          <button type="button" class="tier-panel-close-btn" id="btn-collapse-tier-panel" title="Collapse Left Panel" style="font-size: 1.1rem;">◂</button>
+          <button type="button" class="tier-panel-close-btn" id="btn-close-tier-panel" title="Close Left Panel">&times;</button>
+        </div>
+      </div>
+
+      <div class="tier-panel-search-wrap">
+        <input type="search" id="input-tier-panel-search" class="form-control form-control-sm" placeholder="🔍 Search profiles in tier...">
+        <button type="button" id="btn-clear-tier-search" class="tier-panel-search-clear-btn" title="Clear Search" style="display: none;">✕</button>
+      </div>
+
+      <div class="tier-panel-filters-wrap" id="tier-panel-filter-chips">
+        <button type="button" class="tier-filter-chip active" data-filter="ALL">All</button>
+        <button type="button" class="tier-filter-chip" data-filter="ACTIVE">Active</button>
+        <button type="button" class="tier-filter-chip" data-filter="PAID">Paid</button>
+        <button type="button" class="tier-filter-chip" data-filter="FREE">Free</button>
+      </div>
+
+      <div id="tier-panel-profiles-list" class="tier-panel-profiles-list">
+        <!-- Rendered dynamically with image / avatar profiles -->
+      </div>
+    </div>
+
+    <!-- Main Canvas Area -->
+    <main class="admin-canvas">
+      <div class="profile-form-container">
+        
+        <!-- 1st Box: Master Profile Identity Card (Slim, Compact 1-Row Architecture) -->
+        <div class="card profile-header-card header-card-slim" id="main-profile-box-1">
+          <div class="card-flipper-3d-wrapper" id="profile-card-flipper-wrapper">
+            <div class="card-flipper-inner" id="profile-card-flipper-inner">
+              <!-- FRONT FACE -->
+              <div class="card-flipper-front header-card-front-slim" style="padding: 0.85rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-lg);">
+                <div class="card-header-flex header-row-slim" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.85rem;">
+                  <!-- 1st Column: Avatar & Profile Title -->
+                  <div class="user-avatar-block" style="display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0;">
+                    <div class="avatar-circle" id="profile-avatar-initials">SK</div>
+                    <div>
+                      <h2 class="profile-name-title" id="display-profile-name" style="margin: 0 0 0.25rem 0; font-size: 1.22rem;">Spiritual Karim Khan</h2>
+                      <div class="profile-role-badge-row" style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
+                        <span class="role-badge" id="display-role-badge">ADMIN MASTER &bull; LEVEL 1</span>
+                        <span class="status-pill active" id="display-status-pill">Active Member</span>
+                        <span class="stamp-indicator stamp-paid" id="display-payment-stamp" title="Click to toggle Paid (Green) / Free (Red)">PAID</span>
+                      </div>
+                      <div id="pending-approval-notification-banner" class="approval-notification-pill" style="display:none;" title="Click to review and approve pending Devotee applicants">
+                        <span class="notification-bell">🔔</span>
+                        <span id="approval-notification-text">New Devotee Application Pending</span>
+                        <span class="badge-count" id="approval-notification-count">0</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 2nd Column (Center Meta): Date of Joining & Current Role -->
+                  <div class="header-card-center-meta" id="header-card-center-meta" title="Master Founder Membership Information">
+                    <span class="meta-item-joined" id="display-master-join-date">📅 Joined: 2024-01-01</span>
+                    <span class="meta-item-current-role" id="display-master-current-role">👑 Role: Admin Master (Founder)</span>
+                  </div>
+
+                  <!-- 3rd Column: Reference Meta & Flip Trigger (Optional) -->
+                  <div class="header-card-actions-row" style="display: none;">
+                    <button type="button" class="btn btn-xs btn-outline" id="btn-copy-header-ref-code" title="Copy 16-Digit Code" style="font-family: monospace; font-size: 0.78rem;">
+                      📋 <span id="header-ref-code-text"><span id="display-ref-code">SKHM-ADM1-7788-9900</span></span><span id="display-sponsor-code" style="display:none;">ROOT-0000-0000-0000</span>
+                    </button>
+                    <button type="button" class="btn-flip-card-trigger" id="btn-flip-to-back" title="Flip to 24h Pairing &amp; Node Telemetry">
+                      🔄 QR &amp; Telemetry
+                    </button>
+                  </div>
+
+                  <!-- Right Column: Genealogy Tab Button & Pending Approval Tab Button in Smart 1-Row Fit -->
+                  <div class="header-right-tabs-stack" style="display: flex; flex-direction: row; gap: 0.5rem; align-items: center; margin-left: auto; flex-shrink: 0;">
+                    <!-- Genealogy Tree Tab Button -->
+                    <button type="button" class="main-tab-btn header-genealogy-tab-btn" data-main-tab="tab-genealogy-tree" id="main-tab-tree-btn" title="Open Organization Hierarchy &amp; Genealogy Spiderweb Tree" style="min-width: 175px; padding: 0.45rem 0.85rem; justify-content: flex-start;">
+                      <span class="tab-icon">🌳</span>
+                      <div class="tab-label-wrap">
+                        <span class="tab-main-title" style="font-size: 0.85rem;">Genealogy Tree</span>
+                        <span class="tab-sub-title" style="font-size: 0.68rem;">Visual MLM Canvas</span>
+                      </div>
+                    </button>
+
+                    <!-- Pending Approval Tab Button with Dynamic Count -->
+                    <button type="button" class="main-tab-btn header-approval-tab-btn" data-main-tab="tab-pending-approvals" id="main-tab-approval-btn" title="Review &amp; Approve Pending Devotee Applicants" style="min-width: 175px; padding: 0.45rem 0.85rem; justify-content: flex-start;">
+                      <span class="tab-icon">⏳</span>
+                      <div class="tab-label-wrap" style="width: 100%;">
+                        <div class="tab-main-title" style="display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 0.85rem;">
+                          <span>Pending Approval</span>
+                          <span class="badge-count" id="header-pending-approval-count" style="display: inline-block; background: #eab308; color: #000; font-weight: 800; border-radius: 999px; padding: 0.1rem 0.45rem; font-size: 0.72rem; margin-left: 0.35rem;">0</span>
+                        </div>
+                        <span class="tab-sub-title" style="font-size: 0.68rem;">Seeker Queue &bull; 24h</span>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BACK FACE -->
+              <div class="card-flipper-back flipper-back-content">
+                <div class="flipper-back-header">
+                  <div class="flipper-back-title">
+                    <span>📡</span> Node Telemetry &amp; 24h Device Pairing
+                  </div>
+                  <button type="button" class="btn-flip-card-trigger" id="btn-flip-to-front" title="Flip back to Profile Card">
+                    🔄 View Profile
+                  </button>
+                </div>
+                <div class="telemetry-grid">
+                  <div class="telemetry-item">
+                    <div class="telemetry-item-label">Node Reference</div>
+                    <div class="telemetry-item-val" id="telemetry-ref-code">SKHM-ADM1-7788-9900</div>
+                  </div>
+                  <div class="telemetry-item">
+                    <div class="telemetry-item-label">Upline Sponsor</div>
+                    <div class="telemetry-item-val" id="telemetry-sponsor-code">ROOT-0000-0000-0000</div>
+                  </div>
+                  <div class="telemetry-item">
+                    <div class="telemetry-item-label">Daily Diya Check-ins</div>
+                    <div class="telemetry-item-val" id="telemetry-diya-count" style="color: #10b981;">0 Days</div>
+                  </div>
+                  <div class="telemetry-item">
+                    <div class="telemetry-item-label">House Clean Logs</div>
+                    <div class="telemetry-item-val" id="telemetry-clean-count" style="color: var(--gold-400);">0 Records</div>
+                  </div>
+                  <div class="telemetry-item">
+                    <div class="telemetry-item-label">Active Sadhanas</div>
+                    <div class="telemetry-item-val" id="telemetry-sadhanas-count" style="color: #60a5fa;">0 Active</div>
+                  </div>
+                  <div class="telemetry-item">
+                    <div class="telemetry-item-label">Cloud Telemetry</div>
+                    <div class="telemetry-item-val" style="color: #10b981;">🟢 RTDB CONNECTED</div>
+                  </div>
+                </div>
+                <div class="telemetry-qr-section">
+                  <div class="telemetry-qr-box">
+                    <svg viewBox="0 0 100 100" width="60" height="60">
+                      <rect width="100" height="100" fill="white"/>
+                      <path d="M10 10h30v30h-30z M60 10h30v30h-30z M10 60h30v30h-30z M20 20h10v10h-10z M70 20h10v10h-10z M20 70h10v10h-10z M50 20h5v15h-5z M50 50h30v5h-30z M60 65h10v10h-10z M80 75h10v15h-10z" fill="#1e1b4b"/>
+                    </svg>
+                  </div>
+                  <div class="telemetry-qr-text">
+                    <strong>24-Hour QR Device Pairing Protocol</strong><br/>
+                    Scan from Spiritual Karim Android App to link this node securely to your hierarchy downline.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2nd Box: Selected Member Profile Card (Active upon Left Panel / Directory Selection) -->
+        <div class="card selected-member-profile-card" id="selected-member-profile-card" style="display: none;" role="region" aria-label="Selected Member Profile">
+          <div class="selected-member-card-inner">
+            <!-- Left Column: Selected Member Avatar & Identity -->
+            <div class="user-avatar-block" style="display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0;">
+              <div class="avatar-circle selected-member-avatar" id="selected-member-avatar">AS</div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <h2 class="profile-name-title" id="selected-member-name" style="margin: 0; font-size: 1.2rem;">Ananya Sharma</h2>
+                  <span class="role-badge" id="selected-member-role-badge">DEVOTEE &bull; LEVEL 4</span>
+                </div>
+                <div class="profile-role-badge-row" style="display: flex; align-items: center; gap: 0.45rem; margin-top: 0.25rem; flex-wrap: wrap;">
+                  <span class="status-pill active" id="selected-member-status-pill">Active Member</span>
+                  <span class="stamp-indicator stamp-paid" id="selected-member-payment-stamp">PAID</span>
+                  <span class="ref-code-chip" id="selected-member-ref-code" style="font-family: monospace; font-size: 0.75rem; padding: 0.15rem 0.45rem; background: rgba(255,255,255,0.06); border-radius: 4px; border: 1px solid var(--border-card);">SKHM-DEV4-1234-5678</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Center Column (Center Meta): Joining Date & Current Role -->
+            <div class="header-card-center-meta selected-member-center-meta" id="selected-member-center-meta" title="Selected Member Downline Status">
+              <span class="meta-item-joined" id="selected-member-join-date">📅 Joined: 2024-06-15</span>
+              <span class="meta-item-current-role" id="selected-member-current-role">Current Role: Devotee</span>
+            </div>
+
+            <!-- Right Column: Member Actions (Copy Ref Code, Flip to QR, Close/Clear Member View - NO APPROVAL BUTTON) -->
+            <div class="selected-member-actions" style="display: flex; align-items: center; gap: 0.5rem; margin-left: auto; flex-shrink: 0;">
+              <button type="button" class="btn btn-sm btn-outline" id="btn-selected-member-copy-code" title="Copy Member Reference Code" style="font-family: monospace; font-size: 0.75rem;">
+                📋 Copy Code
+              </button>
+              <button type="button" class="btn btn-sm btn-outline" id="btn-selected-member-qr" title="View 24h QR Device Pairing">
+                📱 QR Pairing
+              </button>
+              <button type="button" class="btn btn-sm btn-outline" id="btn-close-selected-member-card" title="Close Member View &amp; Return to Master" style="color: var(--text-muted); border-color: rgba(255,255,255,0.2);">
+                ✕ Return to Master
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             6 MAIN NAVIGATION TABS BELOW 1st BOX
+             ============================================================== -->
+        <div class="main-tabs-nav-bar">
+          <button type="button" class="main-tab-btn active" data-main-tab="tab-devotee-personal">
+            <span class="tab-icon">🌟</span>
+            <div class="tab-label-wrap">
+              <span class="tab-main-title">1. Devotee Personal</span>
+              <span class="tab-sub-title">Identity &bull; Lineage &bull; House Clean</span>
+            </div>
+          </button>
+
+          <button type="button" class="main-tab-btn" data-main-tab="tab-seeker-purpose">
+            <span class="tab-icon">🎯</span>
+            <div class="tab-label-wrap">
+              <span class="tab-main-title">2. Seeker Purpose</span>
+              <span class="tab-sub-title">Goals &bull; Clean Logs &bull; Sadhanas</span>
+            </div>
+          </button>
+
+          <button type="button" class="main-tab-btn" data-main-tab="tab-trainee-sadhak">
+            <span class="tab-icon">📿</span>
+            <div class="tab-label-wrap">
+              <span class="tab-main-title">3. Trainee Sadhak</span>
+              <span class="tab-sub-title">In-Progress Level Wise &bull; Goli Gyan</span>
+            </div>
+          </button>
+
+          <button type="button" class="main-tab-btn" data-main-tab="tab-healer-connect">
+            <span class="tab-icon">🛡️</span>
+            <div class="tab-label-wrap">
+              <span class="tab-main-title">4. Healer Connect</span>
+              <span class="tab-sub-title">Siddhi Completed &bull; Seekers Guided</span>
+            </div>
+          </button>
+
+          <button type="button" class="main-tab-btn" data-main-tab="tab-genealogy-tree">
+            <span class="tab-icon">🌳</span>
+            <div class="tab-label-wrap">
+              <span class="tab-main-title">5. Genealogy Tree</span>
+              <span class="tab-sub-title">Visual MLM &bull; Spiderweb Canvas</span>
+            </div>
+          </button>
+
+          <button type="button" class="main-tab-btn" data-main-tab="tab-firebase-data" id="main-tab-firebase-btn" title="Open Firebase Realtime Database Structured Table Drill-down">
+            <span class="tab-icon">🔥</span>
+            <div class="tab-label-wrap">
+              <span class="tab-main-title">6. Firebase Data</span>
+              <span class="tab-sub-title">Realtime DB &bull; Table Drill-down</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- ==============================================================
+             ACTIVE TAB CONTENT PANELS & EDITABLE FORMS
+             ============================================================== -->
+        <form id="profile-admin-form">
+
+<div class="main-tab-content-panel active" id="tab-devotee-personal">
+            <!-- Sub-Navigation for Devotee Personal -->
+            <div class="sub-tabs-nav-bar">
+              <button type="button" class="sub-tab-btn active" data-sub-tab="devotee-sub-identity">
+                <span>👤</span> Personal Identity
+              </button>
+              <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-lineage">
+                <span>🌳</span> 3-Gen Ancestral Lineage
+              </button>
+              <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-houseclean">
+                <span>🧹</span> House Clean (All Levels)
+              </button>
+            </div>
+
+            <!-- 1A: Personal Identity -->
+            <div class="sub-tab-panel active" id="devotee-sub-identity">
+              <!-- Identity Details Card (MOVED UP) -->
+              <div class="card">
+                <div class="card-title"><span class="card-title-icon">👤</span> Personal Contact &amp; Residential Data</div>
+                
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label class="form-label" for="input-name">Full Name *</label>
+                    <input type="text" id="input-name" class="form-control" placeholder="e.g. Spiritual Karim Khan" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-self-title">Designation Title</label>
+                    <input type="text" id="input-self-title" class="form-control" placeholder="e.g. Founder &amp; Master Guide">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-phone">Contact Phone / WhatsApp *</label>
+                    <input type="tel" id="input-phone" class="form-control" placeholder="+91 XXXXX-XXXXX" required>
+                  </div>
+                </div>
+
+                <div class="form-grid-3 mt-3">
+                  <div class="form-group">
+                    <label class="form-label" for="input-email">Email Address</label>
+                    <input type="email" id="input-email" class="form-control" placeholder="user@spiritualkarim.org">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-city">City / State</label>
+                    <input type="text" id="input-city" class="form-control" placeholder="e.g. Mumbai, Maharashtra">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-address">Address / Ashram Location</label>
+                    <input type="text" id="input-address" class="form-control" placeholder="Full residential address">
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="form-label" for="input-notes">Internal Admin Notes</label>
+                  <textarea id="input-notes" class="form-control" rows="2" placeholder="Private internal observations and remarks"></textarea>
+                </div>
+              </div>
+
+              <!-- Role & Reference Code Config (MOVED DOWN) -->
+              <div class="card mt-3">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🏷️</span> Role &amp; Reference Code Config</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-edit-identity" class="btn btn-sm btn-outline">✏️ Edit</button>
+                    <button type="button" id="btn-reset-identity" class="btn btn-sm btn-danger">🗑️ Reset</button>
+                  </div>
+                </div>
+
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label class="form-label" for="input-profile-type">Role Tier *</label>
+                    <select id="input-profile-type" class="form-control" required>
+                      <option value="ADMIN">Admin Master (Level 1)</option>
+                      <option value="HEALER">Spiritual Healer (Level 2)</option>
+                      <option value="TRAINEE">Mentorship Trainee (Level 4)</option>
+                      <option value="DEVOTEE">Devotee Seeker (Level 5)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-level">Organization Level *</label>
+                    <input type="number" id="input-level" class="form-control" min="1" max="10" value="1" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-category-tag">Functional Category Tag</label>
+                    <input type="text" id="input-category-tag" class="form-control" placeholder="e.g. Cleansing &amp; Guidance">
+                  </div>
+                </div>
+
+                <div class="form-grid-3 mt-3">
+                  <div class="form-group">
+                    <label class="form-label" for="input-ref-code">16-Digit Reference Code *</label>
+                    <input type="text" id="input-ref-code" class="form-control font-mono" placeholder="SKHM-XXXX-XXXX-XXXX" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-sponsor-code">Sponsor / Upline Code *</label>
+                    <input type="text" id="input-sponsor-code" class="form-control font-mono" placeholder="ROOT-0000-0000-0000" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-transfer-code">Transfer / Reassignment History Code</label>
+                    <input type="text" id="input-transfer-code" class="form-control font-mono" placeholder="Optional Transfer Code">
+                  </div>
+                </div>
+
+                <div class="form-grid-3 mt-3">
+                  <div class="form-group-checkbox">
+                    <label class="custom-toggle">
+                      <input type="checkbox" id="input-is-active" checked>
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <label for="input-is-active" class="toggle-label">Active Member in Mobile App</label>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-payment-status">Payment / Membership Stamp *</label>
+                    <select id="input-payment-status" class="form-control">
+                      <option value="PAID">🟢 Paid Member (Green Stamp)</option>
+                      <option value="FREE">🔴 Free Member (Red Stamp)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-join-date">Member Join Date</label>
+                    <input type="date" id="input-join-date" class="form-control">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 1B: Ancestral Lineage -->
+            <div class="sub-tab-panel" id="devotee-sub-lineage">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🌳</span> 3-Generation Ancestral Lineage Hierarchy</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-lineage-node" class="btn btn-sm btn-gold">+ Add Custom Lineage Node</button>
+                    <button type="button" id="btn-reset-lineage" class="btn btn-sm btn-danger">🗑️ Reset Lineage</button>
+                  </div>
+                </div>
+                <p class="card-desc">Hierarchical family tree data for diagnosing Pitru Dosha and ancestral pacification rituals.</p>
+
+                <!-- Current Family Unit -->
+                <div class="lineage-branch-card">
+                  <div class="branch-header">
+                    <span class="branch-badge current">Generation 1</span>
+                    <h3 class="branch-title">Current Family Unit (Self, Spouse, Children &amp; Siblings)</h3>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label" for="lineage-self-name">Self Name</label>
+                      <input type="text" id="lineage-self-name" class="form-control" placeholder="Self Full Name">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="lineage-spouse-name">Spouse Name</label>
+                      <input type="text" id="lineage-spouse-name" class="form-control" placeholder="Spouse Full Name">
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Children -->
+                  <div class="dynamic-sub-unit mt-3">
+                    <div class="sub-unit-header">
+                      <span class="sub-unit-title">Children</span>
+                      <button type="button" id="btn-add-child" class="btn btn-sm btn-outline">+ Add Child</button>
+                    </div>
+                    <div id="children-list-container" class="dynamic-items-container"></div>
+                  </div>
+
+                  <!-- Dynamic Siblings -->
+                  <div class="dynamic-sub-unit mt-3">
+                    <div class="sub-unit-header">
+                      <span class="sub-unit-title">Brothers &amp; Sisters (Siblings)</span>
+                      <button type="button" id="btn-add-sibling-current" class="btn btn-sm btn-outline">+ Add Sibling</button>
+                    </div>
+                    <div id="siblings-current-container" class="dynamic-items-container"></div>
+                  </div>
+                </div>
+
+                <!-- Husband's Ancestral Branch -->
+                <div class="lineage-branch-card mt-4">
+                  <div class="branch-header">
+                    <span class="branch-badge ancestral">Husband's Side</span>
+                    <h3 class="branch-title">Husband's Ancestral Lineage (Parents &amp; Grandparents)</h3>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label" for="h-father-name">Father's Name</label>
+                      <input type="text" id="h-father-name" class="form-control" placeholder="Father's Full Name">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="h-mother-name">Mother's Name</label>
+                      <input type="text" id="h-mother-name" class="form-control" placeholder="Mother's Full Name">
+                    </div>
+                  </div>
+
+                  <div class="form-grid-2 mt-3">
+                    <div class="grandparent-box">
+                      <div class="grandparent-box-title">Paternal Grandparents (Father's Side)</div>
+                      <div class="form-group mb-2">
+                        <label class="form-label" for="h-paternal-gf">Grandfather (Dada Ji)</label>
+                        <input type="text" id="h-paternal-gf" class="form-control" placeholder="Dada Ji Name">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="h-paternal-gm">Grandmother (Dadi Ji)</label>
+                        <input type="text" id="h-paternal-gm" class="form-control" placeholder="Dadi Ji Name">
+                      </div>
+                    </div>
+
+                    <div class="grandparent-box">
+                      <div class="grandparent-box-title">Maternal Grandparents (Mother's Side)</div>
+                      <div class="form-group mb-2">
+                        <label class="form-label" for="h-maternal-gf">Grandfather (Nana Ji)</label>
+                        <input type="text" id="h-maternal-gf" class="form-control" placeholder="Nana Ji Name">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="h-maternal-gm">Grandmother (Nani Ji)</label>
+                        <input type="text" id="h-maternal-gm" class="form-control" placeholder="Nani Ji Name">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-3">
+                    <label class="form-label" for="h-address">Husband's Family Native Address / Village</label>
+                    <input type="text" id="h-address" class="form-control" placeholder="Ancestral village or residence">
+                  </div>
+
+                  <div class="dynamic-sub-unit mt-3">
+                    <div class="sub-unit-header">
+                      <span class="sub-unit-title">Husband's Branch Siblings (Uncles/Aunts)</span>
+                      <button type="button" id="btn-add-sibling-husband" class="btn btn-sm btn-outline">+ Add Branch Sibling</button>
+                    </div>
+                    <div id="siblings-husband-container" class="dynamic-items-container"></div>
+                  </div>
+                </div>
+
+                <!-- Wife's Ancestral Branch -->
+                <div class="lineage-branch-card mt-4">
+                  <div class="branch-header">
+                    <span class="branch-badge ancestral">Wife's Side</span>
+                    <h3 class="branch-title">Wife's Ancestral Lineage (Parents &amp; Grandparents)</h3>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label" for="w-father-name">Father's Name</label>
+                      <input type="text" id="w-father-name" class="form-control" placeholder="Father's Full Name">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="w-mother-name">Mother's Name</label>
+                      <input type="text" id="w-mother-name" class="form-control" placeholder="Mother's Full Name">
+                    </div>
+                  </div>
+
+                  <div class="form-grid-2 mt-3">
+                    <div class="grandparent-box">
+                      <div class="grandparent-box-title">Paternal Grandparents (Father's Side)</div>
+                      <div class="form-group mb-2">
+                        <label class="form-label" for="w-paternal-gf">Grandfather (Dada Ji)</label>
+                        <input type="text" id="w-paternal-gf" class="form-control" placeholder="Dada Ji Name">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="w-paternal-gm">Grandmother (Dadi Ji)</label>
+                        <input type="text" id="w-paternal-gm" class="form-control" placeholder="Dadi Ji Name">
+                      </div>
+                    </div>
+
+                    <div class="grandparent-box">
+                      <div class="grandparent-box-title">Maternal Grandparents (Mother's Side)</div>
+                      <div class="form-group mb-2">
+                        <label class="form-label" for="w-maternal-gf">Grandfather (Nana Ji)</label>
+                        <input type="text" id="w-maternal-gf" class="form-control" placeholder="Nana Ji Name">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="w-maternal-gm">Grandmother (Nani Ji)</label>
+                        <input type="text" id="w-maternal-gm" class="form-control" placeholder="Nani Ji Name">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-3">
+                    <label class="form-label" for="w-address">Wife's Family Native Address / Village</label>
+                    <input type="text" id="w-address" class="form-control" placeholder="Ancestral village or residence">
+                  </div>
+
+                  <div class="dynamic-sub-unit mt-3">
+                    <div class="sub-unit-header">
+                      <span class="sub-unit-title">Wife's Branch Siblings (Uncles/Aunts)</span>
+                      <button type="button" id="btn-add-sibling-wife" class="btn btn-sm btn-outline">+ Add Branch Sibling</button>
+                    </div>
+                    <div id="siblings-wife-container" class="dynamic-items-container"></div>
+                  </div>
+                </div>
+
+                <!-- Husband's Side House Clean Button -->
+                <div class="houseclean-ancestor-btn mt-4">
+                  <button type="button" class="btn btn-gold w-100" id="btn-houseclean-husband-side" title="Add House Clean Record for Husband's Ancestral Side">
+                    <span>🧹</span> Add House Clean - Husband's Side
+                  </button>
+                </div>
+              </div>
+
+              <!-- Wife's Ancestral Branch -->
+              <div class="lineage-branch-card mt-4">
+                <div class="branch-header">
+                  <span class="branch-badge ancestral">Wife's Side</span>
+                  <h3 class="branch-title">Wife's Ancestral Lineage (Parents &amp; Grandparents)</h3>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="form-label" for="w-father-name">Father's Name</label>
+                    <input type="text" id="w-father-name" class="form-control" placeholder="Father's Full Name">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="w-mother-name">Mother's Name</label>
+                    <input type="text" id="w-mother-name" class="form-control" placeholder="Mother's Full Name">
+                  </div>
+                </div>
+
+                <div class="form-grid-2 mt-3">
+                  <div class="grandparent-box">
+                    <div class="grandparent-box-title">Paternal Grandparents (Father's Side)</div>
+                    <div class="form-group mb-2">
+                      <label class="form-label" for="w-paternal-gf">Grandfather (Dada Ji)</label>
+                      <input type="text" id="w-paternal-gf" class="form-control" placeholder="Dada Ji Name">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="w-paternal-gm">Grandmother (Dadi Ji)</label>
+                      <input type="text" id="w-paternal-gm" class="form-control" placeholder="Dadi Ji Name">
+                    </div>
+                  </div>
+
+                  <div class="grandparent-box">
+                    <div class="grandparent-box-title">Maternal Grandparents (Mother's Side)</div>
+                    <div class="form-group mb-2">
+                      <label class="form-label" for="w-maternal-gf">Grandfather (Nana Ji)</label>
+                      <input type="text" id="w-maternal-gf" class="form-control" placeholder="Nana Ji Name">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="w-maternal-gm">Grandmother (Nani Ji)</label>
+                      <input type="text" id="w-maternal-gm" class="form-control" placeholder="Nani Ji Name">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="form-label" for="w-address">Wife's Family Native Address / Village</label>
+                  <input type="text" id="w-address" class="form-control" placeholder="Ancestral village or residence">
+                </div>
+
+                <div class="dynamic-sub-unit mt-3">
+                  <div class="sub-unit-header">
+                    <span class="sub-unit-title">Wife's Branch Siblings (Uncles/Aunts)</span>
+                    <button type="button" id="btn-add-sibling-wife" class="btn btn-sm btn-outline">+ Add Branch Sibling</button>
+                  </div>
+                  <div id="siblings-wife-container" class="dynamic-items-container"></div>
+                </div>
+                <!-- Wife's Side House Clean Button -->
+                <div class="houseclean-ancestor-btn mt-4">
+                  <button type="button" class="btn btn-gold w-100" id="btn-houseclean-wife-side" title="Add House Clean Record for Wife's Ancestral Side">
+                    <span>🧹</span> Add House Clean - Wife's Side
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 1C: House Clean (All Level Data) -->
+            <div class="sub-tab-panel" id="devotee-sub-houseclean">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🧹</span> House Clean Purification (Levels 1, 2 &amp; 3)</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-houseclean-record" class="btn btn-sm btn-gold">+ Add Level Record</button>
+                    <button type="button" id="btn-reset-houseclean" class="btn btn-sm btn-danger">🗑️ Reset All Levels</button>
+                  </div>
+                </div>
+                <p class="card-desc">Progressive 3-Level cleansing verified by Mentor Level-Up Connection (% Clean rating).</p>
+
+                <div id="devotee-houseclean-container" class="houseclean-cards-grid">
+                  <!-- Level 1: Self House Clean with Upload Button -->
+                  <div class="houseclean-level-section" data-level="1">
+                    <div class="houseclean-level-header">
+                      <span class="level-badge">Level 1</span>
+                      <span class="level-title">Self House Clean</span>
+                      <button type="button" class="btn btn-sm btn-outline btn-upload-level" data-level="1" title="Upload House Clean Document">
+                        <span>📤</span> Upload Document
+                      </button>
+                    </div>
+                    <div class="houseclean-level-content" id="houseclean-level-1-content"></div>
+                  </div>
+
+                  <!-- Level 2: Parents House Clean with Upload Button -->
+                  <div class="houseclean-level-section" data-level="2">
+                    <div class="houseclean-level-header">
+                      <span class="level-badge">Level 2</span>
+                      <span class="level-title">Parents House Clean</span>
+                      <button type="button" class="btn btn-sm btn-outline btn-upload-level" data-level="2" title="Upload House Clean Document">
+                        <span>📤</span> Upload Document
+                      </button>
+                    </div>
+                    <div class="houseclean-level-content" id="houseclean-level-2-content"></div>
+                  </div>
+
+                  <!-- Level 3: Relatives House Clean with Upload Button -->
+                  <div class="houseclean-level-section" data-level="3">
+                    <div class="houseclean-level-header">
+                      <span class="level-badge">Level 3</span>
+                      <span class="level-title">Relatives House Clean</span>
+                      <button type="button" class="btn btn-sm btn-outline btn-upload-level" data-level="3" title="Upload House Clean Document">
+                        <span>📤</span> Upload Document
+                      </button>
+                    </div>
+                    <div class="houseclean-level-content" id="houseclean-level-3-content"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ############################################################
+               TAB 2: SEEKER PURPOSE
+               ############################################################ -->
+          <div class="main-tab-content-panel" id="tab-seeker-purpose">
+            <!-- Sub-Navigation for Seeker Purpose -->
+            <div class="sub-tabs-nav-bar">
+              <button type="button" class="sub-tab-btn active" data-sub-tab="seeker-sub-purpose">
+                <span>🎯</span> Spiritual Purpose &amp; Goals
+              </button>
+              <button type="button" class="sub-tab-btn" data-sub-tab="seeker-sub-houseclean">
+                <span>🧹</span> House Clean Status
+              </button>
+              <button type="button" class="sub-tab-btn" data-sub-tab="seeker-sub-sadhanas">
+                <span>🕉️</span> Sadhanas Interested
+              </button>
+            </div>
+
+            <!-- 2A: Purpose & Inquiries -->
+            <div class="sub-tab-panel active" id="seeker-sub-purpose">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🎯</span> Seeker Purpose &amp; Spiritual Affliction Diagnostics</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-purpose-goal" class="btn btn-sm btn-gold">+ Add Purpose Goal</button>
+                    <button type="button" id="btn-reset-purpose" class="btn btn-sm btn-danger">🗑️ Clear Purpose</button>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="input-objective">Primary Spiritual Objective &amp; Purpose *</label>
+                  <textarea id="input-objective" class="form-control" rows="3" placeholder="e.g. Freedom from ancestral blockages, Third Eye awakening, Kundalini balance"></textarea>
+                </div>
+
+                <div class="form-grid-2 mt-3">
+                  <div class="form-group">
+                    <label class="form-label" for="seeker-affliction-duration">Duration of Energy Affliction / Symptoms</label>
+                    <input type="text" id="seeker-affliction-duration" class="form-control" placeholder="e.g. 18 months, since 2023">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="seeker-kuldevi-issues">Known Ancestral / Kuldevi / Pitru Ritual Pending</label>
+                    <input type="text" id="seeker-kuldevi-issues" class="form-control" placeholder="e.g. Unfulfilled vow at ancestral temple">
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="form-label" for="seeker-target-outcome">Target Spiritual Elevation &amp; Healing Outcome</label>
+                  <textarea id="seeker-target-outcome" class="form-control" rows="2" placeholder="e.g. Total peace in household, financial unblocking, initiation into Sri Yantra"></textarea>
+                </div>
+              </div>
+
+              <!-- Prescribed Remedies & Divine Upayas Catalog Card -->
+              <div class="card mt-3">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🪔</span> Prescribed Remedies &amp; Divine Upayas Catalog</div>
+                  <div class="card-actions">
+                    <button type="button" class="btn btn-sm btn-gold" id="btn-add-custom-remedy-purpose">+ Add Custom Remedy</button>
+                  </div>
+                </div>
+                <p class="card-desc">
+                  💡 <strong>Interactive Upaya &amp; Remedy Catalog:</strong> Click any Remedy card or 👁️ to slide out complete ritual procedures, samagri, and mantras. Tick the checkbox to add it to the Enrolled Queue. Click <strong>"🚀 Send to Trainee"</strong> to immediately transfer the remedy or upaya to the respective section in Trainee Sadhak In-Progress!
+                </p>
+
+                <!-- Live Search Bar & Segmented Toggle Filters -->
+                <div class="remedy-filter-toolbar" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin: 1rem 0;">
+                  <div style="flex: 1; min-width: 220px; position: relative;">
+                    <input type="text" id="input-search-remedies" class="form-control" placeholder="Search remedies, mantras, or deities..." style="padding-left: 2.25rem;">
+                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; color: var(--text-gold);">🔍</span>
+                  </div>
+
+                  <div class="segmented-control" data-target-section="remedies">
+                    <button type="button" class="segmented-item active" data-filter="ALL">All Solutions</button>
+                    <button type="button" class="segmented-item" data-filter="PAID">🟢 Paid Upayas</button>
+                    <button type="button" class="segmented-item" data-filter="FREE">🔴 100% Free</button>
+                  </div>
+                </div>
+
+                <!-- Category 1: Divine Remedies & Havans -->
+                <div class="remedy-category-group">
+                  <div class="remedy-group-title">🪔 Divine Remedies &amp; Fire Havans Catalog</div>
+                  <div class="remedy-checkbox-grid">
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="three_diya">
+                      <div class="option-content" data-sadhana-trigger="three_diya">
+                        <span class="option-title">Three Diya Process</span>
+                        <span class="option-tag">Remedy &bull; 21-Day Fire Cleansing</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="three_diya" id="cb-purp-three_diya" checked>
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="three_diya" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="three_diya" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="court_cases">
+                      <div class="option-content" data-sadhana-trigger="court_cases">
+                        <span class="option-title">Court Cases Remedy</span>
+                        <span class="option-tag">Remedy &bull; Clove &amp; Cardamom Havan</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="court_cases" id="cb-purp-court_cases">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="court_cases" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="court_cases" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="business_money">
+                      <div class="option-content" data-sadhana-trigger="business_money">
+                        <span class="option-title">Business &amp; Wealth Upaya</span>
+                        <span class="option-tag">Remedy &bull; Silver Diya Lakshmi</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="business_money" id="cb-purp-business_money">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="business_money" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="business_money" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="maha_mrityunjaya_havan">
+                      <div class="option-content" data-sadhana-trigger="maha_mrityunjaya_havan">
+                        <span class="option-title">Maha Mrityunjaya Havan</span>
+                        <span class="option-tag">Remedy &bull; Health &amp; Longevity Shield</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="maha_mrityunjaya_havan" id="cb-purp-maha_mrityunjaya_havan">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="maha_mrityunjaya_havan" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="maha_mrityunjaya_havan" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="trilok_nagri">
+                      <div class="option-content" data-sadhana-trigger="trilok_nagri">
+                        <span class="option-title">Trilok Nagri Access</span>
+                        <span class="option-tag">Remedy &bull; Higher Realm Link</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="trilok_nagri" id="cb-purp-trilok_nagri">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="trilok_nagri" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="trilok_nagri" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="vastu_dosh_nivaran">
+                      <div class="option-content" data-sadhana-trigger="vastu_dosh_nivaran">
+                        <span class="option-title">Vastu Dosh Nivaran</span>
+                        <span class="option-tag">Remedy &bull; North-East Pranic Flow</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="vastu_dosh_nivaran" id="cb-purp-vastu_dosh_nivaran">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="vastu_dosh_nivaran" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="vastu_dosh_nivaran" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="santana_gopal">
+                      <div class="option-content" data-sadhana-trigger="santana_gopal">
+                        <span class="option-title">Santana Gopal Havan</span>
+                        <span class="option-tag">Remedy &bull; Lineage &amp; Progeny Peace</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="santana_gopal" id="cb-purp-santana_gopal">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="santana_gopal" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="santana_gopal" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="karmic_debts">
+                      <div class="option-content" data-sadhana-trigger="karmic_debts">
+                        <span class="option-title">Karmic Debts (Rin Mukti)</span>
+                        <span class="option-tag">Remedy &bull; Debt Alleviation Fire</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="karmic_debts" id="cb-purp-karmic_debts">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="karmic_debts" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="karmic_debts" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Category 2: Energy Cleansing & Karmic Healing Upayas -->
+                <div class="remedy-category-group mt-3">
+                  <div class="remedy-group-title">🌿 Energy Cleansing &amp; Karmic Healing Upayas</div>
+                  <div class="remedy-checkbox-grid">
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="negativity">
+                      <div class="option-content" data-sadhana-trigger="negativity">
+                        <span class="option-title">Negativity Cleansing</span>
+                        <span class="option-tag">Cleansing &bull; Bakhoor &amp; Loban</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="negativity" id="cb-purp-negativity">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="negativity" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="negativity" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="nazar_suraksha">
+                      <div class="option-content" data-sadhana-trigger="nazar_suraksha">
+                        <span class="option-title">Nazar Suraksha Shield</span>
+                        <span class="option-tag">Cleansing &bull; Evil Eye Mustard &amp; Salt</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="nazar_suraksha" id="cb-purp-nazar_suraksha">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="nazar_suraksha" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="nazar_suraksha" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="kundalini">
+                      <div class="option-content" data-sadhana-trigger="kundalini">
+                        <span class="option-title">Kundalini &amp; Chakra Balancing</span>
+                        <span class="option-tag">Cleansing &bull; Prana Awakening</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="kundalini" id="cb-purp-kundalini">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="kundalini" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="kundalini" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="material_benefits">
+                      <div class="option-content" data-sadhana-trigger="material_benefits">
+                        <span class="option-title">Material &amp; Karmic Benefits</span>
+                        <span class="option-tag">Cleansing &bull; Pitru Dosha Peace</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="material_benefits" id="cb-purp-material_benefits">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="material_benefits" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="material_benefits" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="healing">
+                      <div class="option-content" data-sadhana-trigger="healing">
+                        <span class="option-title">Spiritual Healing from Illness</span>
+                        <span class="option-tag">Cleansing &bull; Pranic Water Energize</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="healing" id="cb-purp-healing">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="healing" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="healing" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="aura_strengthening">
+                      <div class="option-content" data-sadhana-trigger="aura_strengthening">
+                        <span class="option-title">Aura Strengthening Shield</span>
+                        <span class="option-tag">Cleansing &bull; Sphatik &amp; Herb Bath</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="aura_strengthening" id="cb-purp-aura_strengthening">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="aura_strengthening" title="View Full Ritual Guide">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="aura_strengthening" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Enrolled Upayas / Remedies Action Banner -->
+                <div class="dynamic-sub-unit mt-4">
+                  <div class="sub-unit-header">
+                    <span class="sub-unit-title">📋 Prescribed Remedies &amp; Upayas Action Queue</span>
+                  </div>
+                  <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                    Ticked remedies automatically synchronize with the Seeker Queue and Trainee In-Progress workspace with green/red border indicators.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2B: Seeker House Clean -->
+            <div class="sub-tab-panel" id="seeker-sub-houseclean">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🧹</span> Seeker House Clean Verification Logs</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-seeker-clean-log" class="btn btn-sm btn-gold">+ Add Clean Log</button>
+                  </div>
+                </div>
+                <div id="seeker-houseclean-summary-container" class="houseclean-cards-grid"></div>
+              </div>
+            </div>
+
+            <!-- 2C: Sadhanas Interested List -->
+            <div class="sub-tab-panel" id="seeker-sub-sadhanas">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🕉️</span> Interested Sadhanas &amp; Remedy Upayas</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-custom-sadhana" class="btn btn-sm btn-gold">+ Add Custom Sadhana</button>
+                  </div>
+                </div>
+                <p class="card-desc">
+                  💡 <strong>Interactive Catalog:</strong> Click any Sadhana card or 👁️ to slide out its complete rituals &amp; mantras. Ticking any tile automatically synchronizes it to the Trainee In-Progress workspace!
+                </p>
+
+                <!-- Interactive Sacred Sadhana Listbox with Dynamic Detail Preview Card -->
+                <div class="detail-listbox-wrap" id="sadhana-listbox-wrap">
+                  <label class="form-label" for="select-sacred-sadhana" style="font-size: 0.88rem; font-weight: 700; color: var(--gold-400); display: flex; align-items: center; gap: 0.4rem;">
+                    <span>🕉️</span> Select Sacred Sadhana to Inspect Details &amp; Prescriptions
+                  </label>
+                  <select id="select-sacred-sadhana" class="detail-listbox-select">
+                    <!-- Populated dynamically from SADHANA_CATALOG -->
+                  </select>
+                  <div id="sadhana-detail-preview-container"></div>
+                </div>
+
+                <!-- Checkbox Catalog with Slide-Out Detail Triggers -->
+                <div class="remedy-category-group">
+                  <div class="remedy-group-title">🕉️ Sacred Sadhanas Catalog</div>
+                  <div class="remedy-checkbox-grid">
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="sri_yantra">
+                      <div class="option-content" data-sadhana-trigger="sri_yantra">
+                        <span class="option-title">Sri Yantra Sadhana</span>
+                        <span class="option-tag">Sadhana &bull; Trataka &amp; Wealth</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="sri_yantra" id="cb-sri_yantra" checked>
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="sri_yantra" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="sri_yantra" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="kalashtami">
+                      <div class="option-content" data-sadhana-trigger="kalashtami">
+                        <span class="option-title">Kalashtami Sadhana</span>
+                        <span class="option-tag">Sadhana &bull; Kaal Bhairav</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="kalashtami" id="cb-kalashtami">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="kalashtami" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="kalashtami" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="navratri">
+                      <div class="option-content" data-sadhana-trigger="navratri">
+                        <span class="option-title">Navratri Chamunda Sadhana</span>
+                        <span class="option-tag">Sadhana &bull; 9-Day Anushthan</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="navratri" id="cb-navratri">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="navratri" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="navratri" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="diwali">
+                      <div class="option-content" data-sadhana-trigger="diwali">
+                        <span class="option-title">Diwali Sadhana Week</span>
+                        <span class="option-tag">Sadhana &bull; Maha Lakshmi</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="diwali" id="cb-diwali">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="diwali" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="diwali" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="remedy-category-group mt-3">
+                  <div class="remedy-group-title">🪔 Divine Remedies &amp; Havans Catalog</div>
+                  <div class="remedy-checkbox-grid">
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="three_diya">
+                      <div class="option-content" data-sadhana-trigger="three_diya">
+                        <span class="option-title">Three Diya Process</span>
+                        <span class="option-tag">Remedy &bull; 21-Day Fire Cleansing</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="three_diya" id="cb-three_diya" checked>
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="three_diya" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="three_diya" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="trilok_nagri">
+                      <div class="option-content" data-sadhana-trigger="trilok_nagri">
+                        <span class="option-title">Trilok Nagri Access</span>
+                        <span class="option-tag">Remedy &bull; Higher Realm Link</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="trilok_nagri" id="cb-trilok_nagri">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="trilok_nagri" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="trilok_nagri" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="court_cases">
+                      <div class="option-content" data-sadhana-trigger="court_cases">
+                        <span class="option-title">Court Cases Remedy</span>
+                        <span class="option-tag">Remedy &bull; Clove &amp; Cardamom Havan</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="court_cases" id="cb-court_cases">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="court_cases" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="court_cases" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="business_money">
+                      <div class="option-content" data-sadhana-trigger="business_money">
+                        <span class="option-title">Business &amp; Wealth Upaya</span>
+                        <span class="option-tag">Remedy &bull; Silver Diya Lakshmi</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="business_money" id="cb-business_money">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="business_money" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="business_money" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="remedy-category-group mt-3">
+                  <div class="remedy-group-title">🌿 Energy Cleansing &amp; Karmic Healing Catalog</div>
+                  <div class="remedy-checkbox-grid">
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="negativity">
+                      <div class="option-content" data-sadhana-trigger="negativity">
+                        <span class="option-title">Negativity Cleansing</span>
+                        <span class="option-tag">Cleansing &bull; Bakhoor &amp; Loban</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="negativity" id="cb-negativity">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="negativity" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="negativity" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="kundalini">
+                      <div class="option-content" data-sadhana-trigger="kundalini">
+                        <span class="option-title">Kundalini &amp; Spiritual Progress</span>
+                        <span class="option-tag">Cleansing &bull; Chakra Awakening</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="kundalini" id="cb-kundalini">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="kundalini" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="kundalini" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-free" data-sadhana-id="material_benefits">
+                      <div class="option-content" data-sadhana-trigger="material_benefits">
+                        <span class="option-title">Material &amp; Karmic Benefits</span>
+                        <span class="option-tag">Cleansing &bull; Pitru Dosha Peace</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="material_benefits" id="cb-material_benefits">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="material_benefits" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-free btn-tile-stamp-toggle" data-sadhana-id="material_benefits" title="Toggle Paid/Free">FREE</button>
+                      </div>
+                    </div>
+
+                    <div class="remedy-card-option tile-paid" data-sadhana-id="healing">
+                      <div class="option-content" data-sadhana-trigger="healing">
+                        <span class="option-title">Spiritual Healing from Illness</span>
+                        <span class="option-tag">Cleansing &bull; Pranic Restoration</span>
+                      </div>
+                      <div class="tile-actions-vertical">
+                        <input type="checkbox" class="tile-checkbox" name="remedy-checkbox" value="healing" id="cb-healing">
+                        <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="healing" title="View Full Details">👁️</button>
+                        <button type="button" class="stamp-indicator stamp-paid btn-tile-stamp-toggle" data-sadhana-id="healing" title="Toggle Paid/Free">PAID</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Enrolled / Specific Interest Queue (Ticked Items) -->
+                <div class="dynamic-sub-unit mt-4">
+                  <div class="sub-unit-header">
+                    <span class="sub-unit-title">📋 Enrolled / Specific Interest Queue (Ticked Items)</span>
+                  </div>
+                  <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                    All ticked items are synchronized into the Trainee In-Progress Master-Detail workspace below.
+                  </p>
+                  <div id="interested-sadhanas-container" class="remedy-checkbox-grid"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ############################################################
+               TAB 3: TRAINEE SADHAK (Master-Detail Split Workspace)
+               ############################################################ -->
+          <div class="main-tab-content-panel" id="tab-trainee-sadhak">
+            <div class="card">
+              <div class="card-title-bar">
+                <div class="card-title"><span class="card-title-icon">📿</span> Trainee Sadhak &bull; In-Progress Dashboard (Level-Wise)</div>
+                <div class="card-actions">
+                  <button type="button" id="btn-add-trainee-sadhana" class="btn btn-sm btn-gold">➕ Add In-Progress Sadhana</button>
+                  <button type="button" id="btn-open-goli-gyan" class="btn btn-sm btn-goli-gyan">📜 Goli Gyan Guide</button>
+                </div>
+              </div>
+              <p class="card-desc">Ticked sadhanas and remedies display on the left panel. Select any tile to view real-time graphical progress (%), level stats, and add date-time stamped progress memos on the right.</p>
+
+              <!-- Master-Detail Split Workspace -->
+              <div class="trainee-split-workspace">
+                <!-- Left Panel: Categorized In-Progress Tiles -->
+                <div class="trainee-left-panel">
+                  <!-- Section 3A: Sacred Sadhanas In Progress -->
+                  <div class="trainee-category-block">
+                    <div class="trainee-category-title">
+                      <span>🕉️</span> 1. Sacred Sadhanas In-Progress
+                    </div>
+                    <div id="trainee-sadhanas-group-sadhanas" class="remedy-checkbox-grid"></div>
+                  </div>
+
+                  <!-- Section 3B: Divine Remedies & Havans In Progress -->
+                  <div class="trainee-category-block">
+                    <div class="trainee-category-title">
+                      <span>🪔</span> 2. Divine Remedies &amp; Havans In-Progress
+                    </div>
+                    <div id="trainee-sadhanas-group-remedies" class="remedy-checkbox-grid"></div>
+                  </div>
+
+                  <!-- Section 3C: Energy Cleansing & Healing In Progress -->
+                  <div class="trainee-category-block">
+                    <div class="trainee-category-title">
+                      <span>🌿</span> 3. Energy Cleansing &amp; Healing In-Progress
+                    </div>
+                    <div id="trainee-sadhanas-group-cleansing" class="remedy-checkbox-grid"></div>
+                  </div>
+                </div>
+
+                <!-- Right Panel: Active Sadhana Progress Graphics & Memo Box -->
+                <div class="trainee-right-panel" id="trainee-active-sadhana-detail">
+                  <!-- Rendered dynamically by ProfileView._renderTraineeActiveDetail -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ############################################################
+               TAB 4: HEALER CONNECT (Android Healers Hub Design)
+               ############################################################ -->
+          <div class="main-tab-content-panel" id="tab-healer-connect">
+            <div class="healers-portal-container">
+              <!-- Top Sub-sections: Completed Sadhanas & Mentorship Network -->
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">🛡️</span> Levels of Sadhana Completed &amp; Master Certifications</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-completed-sadhana" class="btn btn-sm btn-gold">➕ Add Completed Sadhana</button>
+                  </div>
+                </div>
+                <div id="healer-completed-sadhanas-container" class="healer-cards-grid"></div>
+
+                <div class="card-title-bar mt-4">
+                  <div class="card-title"><span class="card-title-icon">👥</span> Mentorship Network (Devotees &amp; Trainees Connected)</div>
+                  <div class="card-actions">
+                    <button type="button" id="btn-add-connected-devotee" class="btn btn-sm btn-outline">➕ Link Devotee</button>
+                  </div>
+                </div>
+                <div id="healer-network-container" class="dynamic-items-container mt-2"></div>
+              </div>
+
+              <!-- Multilevel Organization Hub (Moved Below - All changes saved locally) -->
+              <div class="healers-hub-banner-card mt-4">
+                <div class="healers-banner-header">
+                  <div>
+                    <h3 class="healers-banner-title">Multilevel Organization Hub</h3>
+                    <p class="healers-banner-sub">5-Level Parallel &amp; Sequential Lineage Engine</p>
+                  </div>
+                  <button type="button" class="btn-tree-toggle-banner" id="btn-open-healers-tree">
+                    <span>🌳</span> <span>5-Level Tree</span>
+                  </button>
+                </div>
+
+                <div class="healers-metrics-strip" id="healers-hub-metrics-strip">
+                  <div class="metric-pill-item metric-total">
+                    <span class="metric-pill-count" id="hub-metric-total">0</span>
+                    <span class="metric-pill-label">Total</span>
+                  </div>
+                  <div class="metric-pill-item metric-admin">
+                    <span class="metric-pill-count" id="hub-metric-admin">0</span>
+                    <span class="metric-pill-label">Admin</span>
+                  </div>
+                  <div class="metric-pill-item metric-healers">
+                    <span class="metric-pill-count" id="hub-metric-healers">0</span>
+                    <span class="metric-pill-label">Healers</span>
+                  </div>
+                  <div class="metric-pill-item metric-trainees">
+                    <span class="metric-pill-count" id="hub-metric-trainees">0</span>
+                    <span class="metric-pill-label">Trainees</span>
+                  </div>
+                  <div class="metric-pill-item metric-devotees">
+                    <span class="metric-pill-count" id="hub-metric-devotees">0</span>
+                    <span class="metric-pill-label">Devotees</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Search & Category Filter Chips -->
+              <div class="healers-hub-controls">
+                <div class="healers-search-input-wrap">
+                  <span class="search-icon">🔍</span>
+                  <input type="search" id="input-healers-search" class="healers-search-input" placeholder="Search by name, 16-digit code, phone, level, city...">
+                </div>
+
+                <div class="healers-filter-chips-row" id="healers-filter-chips-container">
+                  <button type="button" class="healer-filter-chip active" data-type="ALL">All (<span id="chip-cnt-all">0</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="ADMIN">Admin (<span id="chip-cnt-admin">0</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="HEALER">Healers (<span id="chip-cnt-healers">0</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="TRAINEE">Trainees (<span id="chip-cnt-trainees">0</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="DEVOTEE">Devotees (<span id="chip-cnt-devotees">0</span>)</button>
+                </div>
+                <!-- Directory View Segmented Toggle (Grid Cards vs Table List) -->
+                <div class="segmented-toggle-bar" id="healers-layout-toggle-bar" title="Switch Directory Layout: Grid Cards vs Table List">
+                  <button type="button" class="segmented-toggle-option active" id="btn-layout-grid" data-layout="GRID">
+                    <span>📇</span> Grid Cards
+                  </button>
+                  <button type="button" class="segmented-toggle-option" id="btn-layout-table" data-layout="TABLE">
+                    <span>📋</span> Table List
+                  </button>
+                </div>
+              </div>
+
+              <!-- Filtered Profile Cards Grid / Table Container -->
+              <div id="healers-hub-cards-container" class="healers-cards-grid"></div>
+              <div id="healers-hub-table-container" class="healers-hub-table-wrapper" style="display: none;"></div>
+            </div>
+          </div>
+
+          <!-- ############################################################
+               TAB 5: GENEALOGY TREE (Android HierarchyTreeScreen Design)
+               ############################################################ -->
+          <div class="main-tab-content-panel" id="tab-genealogy-tree">
+            <div class="hierarchy-tree-view-wrapper">
+              <!-- Top Hierarchy Header Card -->
+              <div class="card">
+                <div class="card-title-bar">
+                  <div>
+                    <div class="card-title"><span class="card-title-icon">🌳</span> Organization Hierarchy Tree</div>
+                    <p class="card-desc" style="margin-bottom: 0;">Visual representation of 5-level parallel and sequential networks</p>
+                  </div>
+                  <div class="card-actions">
+                    <div class="segmented-toggle-group" title="Switch Tree Layout Presentation">
+                      <button type="button" class="segmented-btn active" data-tree-view="recursive" id="btn-view-recursive">🌳 5-Level List</button>
+                      <button type="button" class="segmented-btn" data-tree-view="canvas" id="btn-view-canvas">🕸️ Canvas</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Level Generation Filter Chips -->
+                <div style="margin-top: 0.75rem;">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Filter by Level Generation:</span>
+                  <div class="hierarchy-level-filter-bar" id="hierarchy-level-filter-chips">
+                    <button type="button" class="hierarchy-level-filter-chip active" data-level="ALL">All Levels (<span id="tree-cnt-all">0</span>)</button>
+                    <button type="button" class="hierarchy-level-filter-chip" data-level="1">Level 1 (<span id="tree-cnt-1">0</span>)</button>
+                    <button type="button" class="hierarchy-level-filter-chip" data-level="2">Level 2 (<span id="tree-cnt-2">0</span>)</button>
+                    <button type="button" class="hierarchy-level-filter-chip" data-level="3">Level 3 (<span id="tree-cnt-3">0</span>)</button>
+                    <button type="button" class="hierarchy-level-filter-chip" data-level="4">Level 4 (<span id="tree-cnt-4">0</span>)</button>
+                    <button type="button" class="hierarchy-level-filter-chip" data-level="5">Level 5 (<span id="tree-cnt-5">0</span>)</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5-Level Recursive Tree View Container -->
+              <div id="hierarchy-recursive-tree-view" class="hierarchy-tree-nodes-list"></div>
+
+              <!-- Spiderweb Canvas Container (Secondary view) -->
+              <div id="hierarchy-canvas-tree-view" class="card body-tree-card" style="display: none;">
+                <div class="body-tree-toolbar">
+                  <div class="body-tree-toolbar-left">
+                    <button type="button" class="btn btn-sm btn-gold btn-smart-fit" id="btn-body-smart-fit" title="Smart Fit to Viewport">
+                      <span>🎯</span> <span>Smart Fit</span>
+                    </button>
+                    <button type="button" class="tree-tool-btn" id="btn-body-zoom-in" title="Zoom In">
+                      <span>➕</span> <span>Zoom In</span>
+                    </button>
+                    <button type="button" class="tree-tool-btn" id="btn-body-zoom-out" title="Zoom Out">
+                      <span>➖</span> <span>Zoom Out</span>
+                    </button>
+                    <button type="button" class="tree-tool-btn" id="btn-body-zoom-reset" title="Reset View">
+                      <span>🔄</span> <span>100%</span>
+                    </button>
+                    <span class="tree-drag-badge">
+                      <span>✋</span> <span>Pan Active</span>
+                    </span>
+                  </div>
+
+                  <div class="body-tree-toolbar-right">
+                    <div class="tree-search-wrap">
+                      <span class="search-icon">🔍</span>
+                      <input type="text" id="body-tree-search-input" class="form-control form-control-sm tree-search-input" placeholder="Find member by name...">
+                      <button type="button" id="btn-clear-tree-search" class="clear-search-btn" title="Clear Search">✕</button>
+                    </div>
+                    <button type="button" class="tree-tool-btn" id="btn-body-fullscreen" title="Fullscreen">
+                      <span>⛶</span> <span>Fullscreen</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="body-tree-canvas-viewport" id="body-tree-canvas-viewport">
+                  <div class="body-tree-surface" id="body-tree-surface">
+                    <svg class="body-spiderweb-svg-layer" id="body-spiderweb-svg-layer">
+                      <defs>
+                        <marker id="body-spiderweb-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                          <path d="M 0 1.5 L 10 5 L 0 8.5 z" class="body-spiderweb-arrow-marker" />
+                        </marker>
+                      </defs>
+                    </svg>
+                    <div class="body-spiderweb-nodes-layer" id="body-spiderweb-nodes-layer"></div>
+                  </div>
+                </div>
+
+                <div class="body-tree-footer-bar">
+                  <div class="tree-legend-mini">
+                    <span class="legend-chip chip-tier-1"><span class="chip-dot dot-tier-1"></span> Level 1 Admin</span>
+                    <span class="legend-chip chip-tier-2"><span class="chip-dot dot-tier-2"></span> Level 2 Healer</span>
+                    <span class="legend-chip chip-tier-3"><span class="chip-dot dot-tier-3"></span> Level 4 Trainee</span>
+                    <span class="legend-chip chip-tier-4"><span class="chip-dot dot-tier-4"></span> Level 5 Devotee</span>
+                  </div>
+                  <div class="tree-footer-hint">
+                    💡 <strong>Pro Tip:</strong> Click any node to slide out details or jump to profile.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ############################################################
+               TAB 6: FIREBASE REALTIME DATABASE STRUCTURED DRILL-DOWN
+               ############################################################ -->
+          <div class="main-tab-content-panel" id="tab-firebase-data">
+            
+            <!-- Firebase Header & Telemetry Hero Card -->
+            <div class="card rtdb-hero-card">
+              <div class="rtdb-hero-header">
+                <div class="rtdb-title-group">
+                  <div class="rtdb-hero-icon">🔥</div>
+                  <div>
+                    <h3 class="rtdb-main-title">Firebase Realtime Database Explorer</h3>
+                    <div class="rtdb-subtitle-row">
+                      <span class="rtdb-status-badge status-live">🟢 Realtime Sync Active</span>
+                      <span class="rtdb-project-pill">Project: <strong>spritualkarim-7b5fd</strong></span>
+                      <span class="rtdb-region-pill">Region: us-central1 (default-rtdb)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="rtdb-endpoint-box">
+                  <div class="rtdb-url-label">Database URL Endpoint</div>
+                  <div class="rtdb-url-value-group">
+                    <code id="rtdb-url-display" class="rtdb-url-code">https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/</code>
+                    <button type="button" class="btn btn-xs btn-outline" id="btn-copy-rtdb-url" title="Copy Firebase URL">📋 Copy</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Database Stat Metrics Grid -->
+              <div class="rtdb-metrics-grid mt-3">
+                <div class="rtdb-metric-box">
+                  <span class="rtdb-metric-label">Root Collections</span>
+                  <span class="rtdb-metric-val" id="rtdb-stat-roots">8 Nodes</span>
+                </div>
+                <div class="rtdb-metric-box">
+                  <span class="rtdb-metric-label">Total Indexed Keys</span>
+                  <span class="rtdb-metric-val" id="rtdb-stat-keys">~54 Keys</span>
+                </div>
+                <div class="rtdb-metric-box">
+                  <span class="rtdb-metric-label">Online Authorized Nodes</span>
+                  <span class="rtdb-metric-val" id="rtdb-stat-nodes">10 Devices</span>
+                </div>
+                <div class="rtdb-metric-box">
+                  <span class="rtdb-metric-label">Security Rules Mode</span>
+                  <span class="rtdb-metric-val" style="color: var(--role-trainee, #f59e0b);">🔒 RBAC Validated</span>
+                </div>
+                <div class="rtdb-metric-box">
+                  <span class="rtdb-metric-label">Last Database Sync</span>
+                  <span class="rtdb-metric-val" id="rtdb-stat-last-sync">Just now</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Toolbar & Root Filter Chips -->
+            <div class="card mt-3">
+              <div class="rtdb-toolbar-row">
+                <div class="rtdb-search-wrap">
+                  <input type="search" id="input-rtdb-search" class="form-control form-control-sm" placeholder="🔍 Search database path, key, value or data type (e.g. 'SKHM', 'mantra', 'ADMIN')...">
+                </div>
+
+                <div class="rtdb-action-btn-group">
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-rtdb-refresh" title="Reload live data from Firebase &amp; Local Store">
+                    <span>🔄</span> Refresh
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-rtdb-expand-all" title="Expand all nested table rows">
+                    <span>🔽</span> Expand All
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-rtdb-collapse-all" title="Collapse all nested table rows">
+                    <span>🔼</span> Collapse All
+                  </button>
+                  <button type="button" class="btn btn-sm btn-gold" id="btn-rtdb-add-node" title="Add new child key or node">
+                    <span>➕</span> Add Node
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-rtdb-export-json" title="Export complete database as JSON">
+                    <span>📥</span> Export JSON
+                  </button>
+                </div>
+              </div>
+
+              <!-- Root Collection Filter Chips -->
+              <div class="rtdb-filter-chips-bar mt-2" id="rtdb-filter-chips">
+                <button type="button" class="rtdb-chip-btn active" data-rtdb-root="ALL">🌐 All Collections (Root)</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="profiles">📁 /profiles</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="authorisedNodes">🔑 /authorisedNodes</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="sadhana_catalog">🔯 /sadhana_catalog</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="device_telemetry">📡 /device_telemetry</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="pairing_invites">📲 /pairing_invites</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="system_config">⚙️ /system_config</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="lineage_graph">🌳 /lineage_graph</button>
+                <button type="button" class="rtdb-chip-btn" data-rtdb-root="logs">📜 /logs</button>
+              </div>
+
+              <!-- Interactive Breadcrumb Navigation -->
+              <div class="rtdb-breadcrumbs-bar mt-2" id="rtdb-breadcrumbs">
+                <span class="rtdb-bc-item rtdb-bc-root" data-rtdb-bc="/">🔥 root</span>
+              </div>
+            </div>
+
+            <!-- Structured Drill-Down Table Container -->
+            <div class="card mt-3" style="padding: 0; overflow: hidden;">
+              <div class="rtdb-table-responsive-wrapper">
+                <table class="rtdb-drilldown-table" id="rtdb-drilldown-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 38%;">Key / Path Hierarchy</th>
+                      <th style="width: 14%;">Type &amp; Items</th>
+                      <th style="width: 28%;">Value / Data Preview</th>
+                      <th style="width: 10%;">Security</th>
+                      <th style="width: 10%; text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rtdb-table-tbody">
+                    <!-- Dynamically populated with expandable tree rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Sticky Form Footer Actions -->
+          <div class="form-footer-actions">
+            <div class="footer-left">
+              <span id="save-status-indicator" class="save-status">All changes saved locally</span>
+            </div>
+            <div class="footer-right">
+              <button type="button" id="btn-delete-profile" class="btn btn-danger">Delete Profile</button>
+              <button type="submit" class="btn btn-gold">Save &amp; Sync to Mobile App</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
   </div>
+
+
+  <!-- ==============================================================
+       SLIDE-OUT RIGHT DRAWER: SADHANA COMPLETE DETAILS
+       ============================================================== -->
+  <div id="sadhana-drawer" class="sadhana-drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="drawer-title-wrap">
+        <span class="drawer-icon" id="sadhana-drawer-icon">🕉️</span>
+        <div>
+          <h3 class="drawer-title" id="sadhana-drawer-title">Sadhana Knowledge Base</h3>
+          <span class="drawer-category-badge" id="sadhana-drawer-category">Sacred Protocol</span>
+        </div>
+      </div>
+      <button type="button" class="drawer-close" id="btn-close-sadhana-drawer" aria-label="Close Drawer">&times;</button>
+    </div>
+    <div class="drawer-body" id="sadhana-drawer-body">
+      <!-- Injected dynamically by openSadhanaDrawer -->
+    </div>
+  </div>
+  <div id="drawer-backdrop" class="drawer-backdrop"></div>
+
+  <!-- Quick Goli Gyan Modal -->
+  <div id="goli-gyan-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">📜</span>
+          <h3 class="modal-title">Goli Gyan • Quick Wisdom Directory</h3>
+        </div>
+        <button id="btn-close-goli-gyan-modal" data-alias="btn-close-goli-gyan-modal" class="icon-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <iframe src="../GOLI_GYAN_FOR_SEEKERS.html" style="width: 100%; height: 60vh; border: none; border-radius: var(--radius-md);"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Mobile App JSON Inspector Drawer -->
+  <div id="json-drawer" class="json-drawer" aria-hidden="true">
+    <div class="json-drawer-header">
+      <div class="json-drawer-title">
+        <span>⚙️</span> Mobile App JSON Payload (`HealerProfile.kt` schema)
+      </div>
+      <button id="btn-close-json-drawer" class="icon-btn">✕</button>
+    </div>
+    <div class="json-drawer-body">
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        Full 4-tier profile data mapped directly to Android Kotlin models.
+      </p>
+      <pre id="json-preview-code" class="json-code-block"></pre>
+    </div>
+    <div class="json-drawer-footer">
+      <button id="btn-copy-json-code" class="btn btn-gold">Copy JSON</button>
+      <button id="btn-download-json-file" class="btn btn-outline">Download JSON File</button>
+    </div>
+  </div>
+  <div id="json-drawer-backdrop" class="drawer-backdrop"></div>
+
+  <!-- Import Modal -->
+  <div id="import-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Import Mobile App Profile JSON</h3>
+        <button id="btn-close-import-modal" class="icon-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <textarea id="import-json-textarea" class="form-control font-mono" rows="10" placeholder="Paste HealerProfile JSON payload here..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-execute-import" class="btn btn-gold">Import Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       ADMIN SETTINGS MODAL — LEFT PANEL NAVIGATION LAYOUT
+       ============================================================== -->
+  <div id="admin-settings-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card modal-xl" style="max-width: 95vw; width: 100%; max-height: 95vh; display: flex; flex-direction: row; overflow: hidden;">
+      
+      <!-- LEFT PANEL NAVIGATION -->
+      <div class="settings-left-panel" style="width: 220px; flex-shrink: 0; background: var(--bg-card); border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column;">
+        <div class="settings-left-header" style="padding: 1rem; border-bottom: 1px solid var(--border-subtle);">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.2rem;">⚙️</span>
+            <h3 class="modal-title" style="font-size: 0.85rem; margin: 0; color: var(--text-primary);">Settings</h3>
+          </div>
+        </div>
+        
+        <nav class="settings-left-nav" style="flex: 1; overflow-y: auto; padding: 0.5rem;">
+          <button class="settings-nav-item active" data-section="general" style="width: 100%; padding: 0.6rem 0.75rem; margin-bottom: 0.25rem; border: none; background: transparent; border-radius: 6px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); transition: all 0.2s;">
+            <span>🏛️</span>
+            <span>General</span>
+          </button>
+          <button class="settings-nav-item" data-section="permissions" style="width: 100%; padding: 0.6rem 0.75rem; margin-bottom: 0.25rem; border: none; background: transparent; border-radius: 6px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); transition: all 0.2s;">
+            <span>🔐</span>
+            <span>Permissions</span>
+          </button>
+          <button class="settings-nav-item" data-section="auth-matrix" style="width: 100%; padding: 0.6rem 0.75rem; margin-bottom: 0.25rem; border: none; background: transparent; border-radius: 6px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); transition: all 0.2s;">
+            <span>🛡️</span>
+            <span>Auth Matrix</span>
+          </button>
+          <button class="settings-nav-item" data-section="rbac" style="width: 100%; padding: 0.6rem 0.75rem; margin-bottom: 0.25rem; border: none; background: transparent; border-radius: 6px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); transition: all 0.2s;">
+            <span>👥</span>
+            <span>RBAC Roles</span>
+          </button>
+          <button class="settings-nav-item" data-section="register-devotee" style="width: 100%; padding: 0.6rem 0.75rem; margin-bottom: 0.25rem; border: none; background: transparent; border-radius: 6px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); transition: all 0.2s;">
+            <span>📝</span>
+            <span>Register Devotee</span>
+          </button>
+        </nav>
+        
+        <div class="settings-left-footer" style="padding: 0.75rem; border-top: 1px solid var(--border-subtle);">
+          <button id="btn-reset-settings-modal" class="btn btn-danger btn-sm w-100" style="font-size: 0.75rem; padding: 0.4rem;">🔄 Factory Reset</button>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL CONTENT -->
+      <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+        <!-- Modal Header -->
+        <div class="modal-header" style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+          <h3 class="modal-title" id="settings-modal-title" style="font-size: 0.95rem; margin: 0;">General Settings</h3>
+          <button id="btn-close-settings-modal" class="icon-btn" style="font-size: 1.1rem; padding: 0.25rem;">✕</button>
+        </div>
+
+        <!-- Scrollable Content Area -->
+        <div class="modal-body settings-content-area" style="padding: 1rem; overflow-y: auto; flex: 1;">
+          
+          <!-- GENERAL SETTINGS -->
+          <div class="settings-section" id="section-general" style="display: block;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.75rem;">🏛️ Organization</div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label">App Name</label>
+                  <input type="text" id="setting-app-name" class="form-control" value="Spiritual Karim Admin">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Organization Title</label>
+                  <input type="text" id="setting-org-name" class="form-control" value="Shree Spritual Karim Sansthan">
+                </div>
+              </div>
+              
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.75rem;">☁️ Firebase RTDB</div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label">Database URL</label>
+                  <input type="url" id="setting-firebase-url" class="form-control font-mono" value="https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="custom-toggle">
+                    <input type="checkbox" id="setting-auto-cloud-sync" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <span style="font-size: 0.75rem; margin-left: 0.5rem;">Auto Cloud Sync</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;">
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.75rem;">👑 Mentor Sponsor</div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label">Default Mentor</label>
+                  <input type="text" id="setting-default-mentor-name" class="form-control" value="Spiritual Karim Khan (Founder)">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Sponsor Code</label>
+                  <input type="text" id="setting-default-mentor-code" class="form-control font-mono" value="SKHM-ADM1-7788-9900">
+                </div>
+              </div>
+
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.75rem;">🎙️ Voice Engine</div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label">Dictation Language</label>
+                  <select id="setting-speech-lang" class="form-control">
+                    <option value="en-US">English (US)</option>
+                    <option value="en-IN">English (IN)</option>
+                    <option value="hi-IN">Hindi</option>
+                    <option value="gu-IN">Gujarati</option>
+                    <option value="mr-IN">Marathi</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Daily Target</label>
+                  <input type="text" id="setting-default-target-malas" class="form-control" value="11 Malas Daily">
+                </div>
+              </div>
+
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.75rem;">⏱️ Time Windows</div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label">3-Diya Window</label>
+                  <input type="text" id="setting-three-diya-window" class="form-control" value="06:15 PM – 07:00 PM">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Japa Malas Count</label>
+                  <input type="number" id="setting-default-japa-target-count" class="form-control" value="108">
+                </div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;">
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.75rem;">📡 Telegram</div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Bot Handle</label>
+                  <input type="text" id="setting-telegram-bot-handle" class="form-control font-mono" value="SpiritualKarimBot">
+                </div>
+              </div>
+
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.75rem;">🤖 AI / Links</div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">NotebookLM URL</label>
+                  <input type="text" id="setting-notebooklm-portal-url" class="form-control font-mono" value="https://notebooklm.google.com">
+                </div>
+              </div>
+
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.75rem;">📦 Distribution</div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">GitHub APK URL</label>
+                  <input type="text" id="setting-github-apk-url" class="form-control font-mono" value="https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PERMISSIONS SETTINGS -->
+          <div class="settings-section" id="section-permissions" style="display: none;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: #3b82f6; margin-bottom: 0.75rem;">🌟 Devotee Permissions</div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                  <label style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; cursor: pointer;">
+                    <span>Allow Delete Records</span>
+                    <input type="checkbox" id="setting-devotee-can-delete">
+                  </label>
+                  <label style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; cursor: pointer;">
+                    <span>Allow Edit Lineage</span>
+                    <input type="checkbox" id="setting-devotee-can-edit-lineage" checked>
+                  </label>
+                  <label style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; cursor: pointer;">
+                    <span>Allow Self-Enroll Sadhana</span>
+                    <input type="checkbox" id="setting-devotee-can-enroll" checked>
+                  </label>
+                </div>
+              </div>
+
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: #10b981; margin-bottom: 0.75rem;">🌿 Healer Permissions</div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                  <label style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; cursor: pointer;">
+                    <span>Strict Team Scoping</span>
+                    <input type="checkbox" id="setting-healer-strict-team" checked>
+                  </label>
+                  <label style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; cursor: pointer;">
+                    <span>Issue Completion Seals</span>
+                    <input type="checkbox" id="setting-healer-can-certify" checked>
+                  </label>
+                  <label style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; cursor: pointer;">
+                    <span>Delete Scoped Team Items</span>
+                    <input type="checkbox" id="setting-healer-can-delete-team" checked>
+                  </label>
+                  <label style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; cursor: pointer;">
+                    <span>View Entire Team</span>
+                    <input type="checkbox" id="setting-healer-can-view-team" checked>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;">
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.75rem;">🔒 Privacy</div>
+                <label style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; cursor: pointer;">
+                  <span>Data Minimization</span>
+                  <input type="checkbox" id="setting-data-minimization" checked>
+                </label>
+              </div>
+
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.75rem;">👁️ Default View</div>
+                <select id="setting-default-role-mode" class="form-control">
+                  <option value="MASTER">👑 Master</option>
+                  <option value="HEALER">🛡️ Healer</option>
+                  <option value="TRAINEE">📿 Trainee</option>
+                  <option value="DEVOTEE">🌟 Devotee</option>
+                </select>
+              </div>
+
+              <div class="settings-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.75rem;">💾 Auto-Save</div>
+                <select id="setting-auto-save" class="form-control">
+                  <option value="INSTANT">Instant Real-Time</option>
+                  <option value="MANUAL">Manual Only</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- AUTH MATRIX SETTINGS -->
+          <div class="settings-section" id="section-auth-matrix" style="display: none;">
+            <div class="auth-matrix-container" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                  <h4 style="margin: 0; font-size: 0.9rem; color: var(--text-primary);">Dynamic Role Authorization Matrix</h4>
+                  <p style="margin: 0.25rem 0 0; font-size: 0.75rem; color: var(--text-muted);">Tick = Display | Untick = Hide | Changes auto-save</p>
+                  <span class="badge badge-info" style="font-size: 0.65rem; margin-top: 0.25rem;">📋 Grouped by Screen / Element</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-reset-auth-matrix-modal">🔄 Reset</button>
+                  <button type="button" class="btn btn-sm btn-gold" id="btn-save-auth-matrix-modal">💾 Save</button>
+                </div>
+              </div>
+              <div style="overflow-x: auto;">
+                <table class="auth-matrix-table" id="auth-matrix-modal-table" style="width: 100%; font-size: 0.75rem; border-collapse: collapse;">
+                  <thead>
+                    <tr style="background: var(--bg-hover);">
+                      <th style="padding: 0.5rem; text-align: left; min-width: 200px;">Screen / Element</th>
+                      <th style="padding: 0.5rem; text-align: center;">👑 Master</th>
+                      <th style="padding: 0.5rem; text-align: center;">🛡️ Healer</th>
+                      <th style="padding: 0.5rem; text-align: center;">📿 Trainee</th>
+                      <th style="padding: 0.5rem; text-align: center;">🌟 Devotee</th>
+                    </tr>
+                  </thead>
+                  <tbody id="auth-matrix-modal-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- RBAC ROLES SETTINGS -->
+          <div class="settings-section" id="section-rbac" style="display: none;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+              <h4 style="margin: 0 0 1rem; font-size: 0.9rem; color: var(--text-primary);">Role-Based Access Control (RBAC) Configuration</h4>
+              
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div class="settings-card" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.3);">
+                  <div style="font-size: 0.8rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.75rem;">👑 Master (Tier 1)</div>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
+                    <p>• Full system control & admin access</p>
+                    <p>• Can manage all roles & permissions</p>
+                    <p>• Access to Firebase RTDB console</p>
+                    <p>• Genealogy tree full view</p>
+                  </div>
+                </div>
+
+                <div class="settings-card" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
+                  <div style="font-size: 0.8rem; font-weight: 700; color: #10b981; margin-bottom: 0.75rem;">🌿 Healer (Tier 2)</div>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
+                    <p>• View & manage team members</p>
+                    <p>• Issue completion seals</p>
+                    <p>• Access to trainees & devotees</p>
+                    <p>• Healers Hub dashboard</p>
+                  </div>
+                </div>
+
+                <div class="settings-card" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3);">
+                  <div style="font-size: 0.8rem; font-weight: 700; color: #f59e0b; margin-bottom: 0.75rem;">📿 Trainee (Tier 3)</div>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
+                    <p>• Track own sadhana progress</p>
+                    <p>• View assigned remedies</p>
+                    <p>• Goli Gyan access</p>
+                    <p>• Self-profile management</p>
+                  </div>
+                </div>
+
+                <div class="settings-card" style="background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);">
+                  <div style="font-size: 0.8rem; font-weight: 700; color: #3b82f6; margin-bottom: 0.75rem;">🌟 Devotee (Tier 4)</div>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
+                    <p>• Personal profile only</p>
+                    <p>• House clean tracking</p>
+                    <p>• 24h QR pairing protocol</p>
+                    <p>• Limited sadhana access</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- REGISTER DEVOTEE SETTINGS -->
+          <div class="settings-section" id="section-register-devotee" style="display: none;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+              <h4 style="margin: 0 0 0.5rem; font-size: 0.9rem; color: var(--text-primary);">Registration Field Requirements &amp; Intake Gateways</h4>
+              <p style="margin: 0 0 1rem; font-size: 0.75rem; color: var(--text-muted);">Toggle mandatory fields, security verification gates, and pairing invitation quotas</p>
+              
+              <!-- Verification Gateways (Intake Wizard Security) -->
+              <div style="margin-bottom: 1rem; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; padding: 0.85rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: #10b981; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                  <span>🛡️ Intake Wizard Security &amp; Gateways</span>
+                  <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: normal;">Unticked = Non-mandatory (Auto dummy verified)</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.6rem;">
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-phone-otp">
+                    <span>Phone OTP Required</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-email-otp">
+                    <span>Email OTP Required</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-captcha">
+                    <span>Security Captcha Required</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-kyc">
+                    <span>KYC ID Proof Required</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-signature">
+                    <span>E-Signature Required</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-tandc" checked>
+                    <span>T&amp;C Acceptance Required</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Pairing Quota & Dynamic Thresholds -->
+              <div style="margin-bottom: 1rem; background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 6px; padding: 0.85rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.5rem;">
+                  ⚙️ Dynamic Pairing Invites &amp; Role Quota Configuration
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem;">
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Max Pending per Mentor</label>
+                    <input type="number" id="setting-max-pending-invites" class="form-control" value="5" min="1" max="100" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                  </div>
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Invite Validity (Hours)</label>
+                    <input type="number" id="setting-invite-expiry-hours" class="form-control" value="24" min="1" max="168" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                  </div>
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Max Resubmit Renewals</label>
+                    <input type="number" id="setting-max-invite-resubmits" class="form-control" value="3" min="1" max="10" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                  </div>
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Default Induction Role</label>
+                    <select id="setting-default-induction-role" class="form-control" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                      <option value="DEVOTEE" selected>Devotee (Level 5)</option>
+                      <option value="TRAINEE">Trainee Sadhak (Level 3)</option>
+                      <option value="HEALER">Healer (Level 2)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Min Devotee Age (Years)</label>
+                    <input type="number" id="setting-min-devotee-age" class="form-control" value="18" min="1" max="100" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                  </div>
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Approval Threshold (%)</label>
+                    <input type="number" id="setting-clean-min-approval-percent" class="form-control" value="75" min="1" max="100" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                  </div>
+                </div>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <!-- Identity Section -->
+                <div class="settings-card" style="background: var(--bg-surface); border-radius: 6px; padding: 0.75rem;">
+                  <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.5rem;">👤 Identity Fields</div>
+                  <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-full-name" checked>
+                      <span>Full Name *</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-phone" checked>
+                      <span>Phone Number *</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-email">
+                      <span>Email Address</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-dob">
+                      <span>Date of Birth</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Location Section -->
+                <div class="settings-card" style="background: var(--bg-surface); border-radius: 6px; padding: 0.75rem;">
+                  <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.5rem;">📍 Location Fields</div>
+                  <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-city" checked>
+                      <span>City/State *</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-address">
+                      <span>Address</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-pincode">
+                      <span>PIN Code</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-country" checked>
+                      <span>Country *</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Spiritual Fields -->
+                <div class="settings-card" style="background: var(--bg-surface); border-radius: 6px; padding: 0.75rem;">
+                  <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.5rem;">🕉️ Spiritual Fields</div>
+                  <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-sponsor" checked>
+                      <span>Sponsor Code *</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-objective" checked>
+                      <span>Spiritual Objective *</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-affliction">
+                      <span>Affliction Duration</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-kuldevi">
+                      <span>Kuldevi Issues</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Family Lineage Fields -->
+                <div class="settings-card" style="background: var(--bg-surface); border-radius: 6px; padding: 0.75rem;">
+                  <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.5rem;">🌳 Lineage Fields</div>
+                  <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-self-name">
+                      <span>Self Name</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-spouse">
+                      <span>Spouse Name</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-father">
+                      <span>Father's Name</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                      <input type="checkbox" id="reg-field-mother">
+                      <span>Mother's Name</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(212, 175, 55, 0.1); border-radius: 6px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                <div style="font-size: 0.75rem; color: var(--gold-400); font-weight: 600; margin-bottom: 0.5rem;">ℹ️ Registration &amp; Quota Policy</div>
+                <p style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">
+                  Checked fields are <strong>mandatory</strong> during registration. Unchecked verification items (Phone OTP, Email OTP, KYC, Signature) will automatically accept verified dummy inputs for rapid testing and zero-friction devotee intake.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer" style="padding: 0.75rem 1rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+          <button id="btn-cancel-settings-modal" class="btn btn-outline btn-sm">Cancel</button>
+          <button id="btn-save-settings-modal" class="btn btn-gold btn-sm">💾 Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-Option Mentor Applicant Decision Dialog (HITL Approval / Revision / Appeal) -->
+  <div id="modal-mentor-decision-dialog" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10500;">
+    <div class="admin-modal-dialog modal-md" style="max-width: 520px; background: var(--bg-surface, #1e293b); border: 1px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">⚖️</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">Mentor Intake Decision</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Review Sadhak Application &amp; Select Action</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" id="btn-close-mentor-decision-dialog" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <div id="mentor-decision-applicant-summary" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); border-radius: 8px; padding: 0.85rem; margin-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong id="mentor-decision-applicant-name" style="font-size: 0.95rem; color: #fff;">Applicant Name</strong>
+            <span id="mentor-decision-applicant-role" class="badge badge-gold" style="font-size: 0.7rem;">DEVOTEE</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted, #94a3b8); margin-top: 0.35rem;" id="mentor-decision-applicant-meta">
+            Phone: - | Token: -
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem; display: block;">Decision Review Notes (Optional / Feedback to Applicant):</label>
+          <textarea id="mentor-decision-review-notes" class="form-control" rows="2" placeholder="Enter instructions or reasons if requesting revision or rejection..." style="width: 100%; font-size: 0.8rem; padding: 0.5rem; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 6px; color: #fff;"></textarea>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+          <button type="button" id="btn-decision-approve-induct" class="btn btn-gold w-100" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem; font-weight: 600; font-size: 0.85rem;">
+            <span>✅</span>
+            <span>Approve &amp; Induct Devotee</span>
+          </button>
+          <button type="button" id="btn-decision-request-revision" class="btn btn-outline w-100" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem; font-weight: 600; font-size: 0.85rem; border-color: #f59e0b; color: #f59e0b;">
+            <span>✏️</span>
+            <span>Request Clarification / Revision</span>
+          </button>
+          <button type="button" id="btn-decision-reject-appeal" class="btn btn-danger w-100" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem; font-weight: 600; font-size: 0.85rem; background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444;">
+            <span>❌</span>
+            <span>Reject with Right to Appeal</span>
+          </button>
+          <button type="button" id="btn-decision-cancel" class="btn btn-secondary w-100" style="padding: 0.5rem; font-size: 0.8rem; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted);">
+            Dismiss
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share & Invite Seeker Modal (24-Hour Protocol & Multi-Channel) -->
+  <div id="share-pairing-modal" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none;">
+    <div class="admin-modal-dialog modal-lg">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="modal-icon">📲</span>
+          <div>
+            <h3>Share &amp; Invite Seeker • 24-Hour Device Pairing</h3>
+            <p class="modal-subtitle">Generate dynamic invite payload with direct APK download, 16-digit sponsor code, Telegram link &amp; 24h countdown.</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" id="btn-close-share-pairing-modal" data-alias="btn-close-share-pairing-modal" aria-label="Close Modal">&times;</button>
+      </div>
+      <div class="modal-body" id="share-pairing-modal-body">
+        <!-- Injected dynamically by ProfileView.renderSharePairingModal -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       MODAL: VISUAL MLM APP HIERARCHY TREE
+       ============================================================== -->
+  <div id="hierarchy-tree-modal" class="admin-modal-overlay">
+    <div class="admin-modal-dialog tree-modal-dialog" id="tree-modal-dialog">
+      <div class="modal-header">
+        <div class="modal-header-title">
+          <span class="modal-icon">🌳</span>
+          <div>
+            <h3>App Hierarchy Genealogy Tree • Spiderweb Lineage Matrix</h3>
+            <p class="modal-subtitle">Interactive map-like pan &amp; zoom canvas. Click any member icon to slide out profile details and jump to profile.</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" id="btn-close-tree-modal" aria-label="Close Modal">&times;</button>
+      </div>
+
+      <!-- Canvas Toolbar: Zoom & Pan Controls -->
+      <div class="tree-canvas-toolbar">
+        <div class="tree-toolbar-left">
+          <button type="button" class="tree-tool-btn" id="btn-tree-zoom-in" title="Zoom In (or use Mouse Wheel)">
+            <span>➕</span> <span>Zoom In</span>
+          </button>
+          <button type="button" class="tree-tool-btn" id="btn-tree-zoom-out" title="Zoom Out (or use Mouse Wheel)">
+            <span>➖</span> <span>Zoom Out</span>
+          </button>
+          <button type="button" class="tree-tool-btn" id="btn-tree-zoom-reset" title="Reset View &amp; Center">
+            <span>🔄</span> <span>Reset 100%</span>
+          </button>
+          <span class="tree-drag-badge" title="Click and drag anywhere on the canvas to move the screen like in Maps">
+            <span>✋</span> <span>Hand Drag Active (Pan Anywhere)</span>
+          </span>
+        </div>
+        <div class="tree-toolbar-right">
+          <button type="button" class="tree-tool-btn" id="btn-tree-fullscreen" title="Toggle Fullscreen View">
+            <span>⛶</span> <span>Fullscreen</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding: 0; position: relative; overflow: hidden;">
+        <div class="tree-canvas-viewport" id="tree-canvas-viewport">
+          <div class="tree-interactive-surface" id="tree-interactive-surface">
+            <svg class="spiderweb-svg-layer" id="spiderweb-svg-layer">
+              <defs>
+                <marker id="spiderweb-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1.5 L 10 5 L 0 8.5 z" class="spiderweb-arrow-marker" />
+                </marker>
+              </defs>
+            </svg>
+            <div class="spiderweb-nodes-layer" id="spiderweb-nodes-layer">
+              <!-- Injected dynamically by ProfileView.renderHierarchyTree -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       RIGHT SLIDE-OUT DRAWER: TREE PROFILE METADATA DETAILS
+       ============================================================== -->
+  <div id="tree-profile-drawer" class="tree-profile-drawer" aria-hidden="true">
+    <div class="tree-drawer-header">
+      <div class="tree-drawer-title-wrap">
+        <span style="font-size: 1.4rem;">👤</span>
+        <div>
+          <h4 style="margin: 0; color: var(--text-primary); font-size: 1.05rem;" id="tree-drawer-profile-name">Profile Details</h4>
+          <span style="font-size: 0.75rem; color: var(--text-gold);" id="tree-drawer-profile-role">Devotee Tier</span>
+        </div>
+      </div>
+      <button type="button" class="icon-btn" id="btn-close-tree-drawer">&times;</button>
+    </div>
+    <div class="tree-drawer-body" id="tree-drawer-body">
+      <!-- Injected dynamically by ProfileView.renderTreeProfileDrawer -->
+    </div>
+    <div class="tree-drawer-footer">
+      <button type="button" class="btn-tree-load-profile" id="btn-tree-load-profile">
+        <span>🚀</span> Go to Actual Profile Page
+      </button>
+    </div>
+  </div>
+  <div id="tree-drawer-backdrop" class="drawer-backdrop"></div>
+
+  <!-- BOTTOM-RIGHT SLIDE-IN TOAST NOTIFICATION STACK -->
+  <div id="toast-notifications-container" class="toast-notifications-container" aria-live="polite"></div>
+
+  <!-- DIALOG: NODE QUICK ACTION & LINEAGE OPTIONS -->
+  <div id="node-action-dialog" class="admin-modal" aria-hidden="true">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">⚡</span>
+          <h3 class="modal-title" id="node-dialog-title">Member Quick Actions</h3>
+        </div>
+        <button id="btn-close-node-dialog" class="icon-btn">✕</button>
+      </div>
+      <div class="modal-body" id="node-dialog-body"></div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button id="btn-close-node-dialog-footer" class="btn btn-outline">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit RTDB Node Modal -->
+  <div id="edit-rtdb-node-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">✏️</span>
+          <h3 class="modal-title">Edit Database Value</h3>
+        </div>
+        <button id="btn-close-edit-rtdb-modal" class="icon-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group mb-2">
+          <label class="form-label">Database Path</label>
+          <input type="text" id="edit-rtdb-path" class="form-control font-mono" readonly style="background: var(--bg-surface); opacity: 0.8;">
+        </div>
+        <div class="form-group mb-2">
+          <label class="form-label">Key Name</label>
+          <input type="text" id="edit-rtdb-key" class="form-control font-mono" readonly style="background: var(--bg-surface); opacity: 0.8;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Value</label>
+          <textarea id="edit-rtdb-value" class="form-control font-mono" rows="4" placeholder="Enter updated value or JSON..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button type="button" class="btn btn-outline" id="btn-cancel-edit-rtdb">Cancel</button>
+        <button type="button" class="btn btn-gold" id="btn-save-edit-rtdb">💾 Update Value</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add RTDB Node Modal -->
+  <div id="add-rtdb-node-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">➕</span>
+          <h3 class="modal-title">Add Database Child Node</h3>
+        </div>
+        <button id="btn-close-add-rtdb-modal" class="icon-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group mb-2">
+          <label class="form-label">Target Parent Path</label>
+          <input type="text" id="add-rtdb-parent-path" class="form-control font-mono" value="/" placeholder="e.g. /profiles/prof-devotee-01">
+        </div>
+        <div class="form-group mb-2">
+          <label class="form-label">New Key Name</label>
+          <input type="text" id="add-rtdb-key" class="form-control font-mono" placeholder="e.g. customNotes, targetDailyMalas">
+        </div>
+        <div class="form-group mb-2">
+          <label class="form-label">Data Type</label>
+          <select id="add-rtdb-type" class="form-control">
+            <option value="string">String (Text)</option>
+            <option value="number">Number</option>
+            <option value="boolean">Boolean (true / false)</option>
+            <option value="object">Object / JSON Block</option>
+            <option value="array">Array List</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Value</label>
+          <textarea id="add-rtdb-value" class="form-control font-mono" rows="3" placeholder="Enter initial value..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button type="button" class="btn btn-outline" id="btn-cancel-add-rtdb">Cancel</button>
+        <button type="button" class="btn btn-gold" id="btn-save-add-rtdb">➕ Add Node to DB</button>
+      </div>
+    </div>
+  </div>
+
+
+  
+  <!-- ==============================================================
+       MODAL: 4-TIER AUTHORIZATION ACCESS MATRIX & GOVERNANCE
+       ============================================================== -->
+  <div id="rbac-access-matrix-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card modal-lg" style="max-width: 920px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.4rem;">🛡️</span>
+          <div>
+            <h3 class="modal-title">4-Tier Authorization Access Matrix</h3>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Master Role-Based Governance &amp; Closed-Loop Permissions Table</p>
+          </div>
+        </div>
+        <button id="btn-close-rbac-modal" class="icon-btn" aria-label="Close Modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <div class="table-responsive-wrapper" style="overflow-x: auto; border: 1px solid var(--border-card); border-radius: var(--radius-md);">
+          <table class="rtdb-drilldown-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
+            <thead>
+              <tr style="background: var(--bg-hover);">
+                <th style="padding: 0.75rem 0.6rem; text-align: left;">Role Tier</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Visible Tabs</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Portals</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Multilevel Org Hub</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Genealogy Tree</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Firebase RTDB</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Permissions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 0.75rem 0.6rem; font-weight: 700; color: var(--role-admin, #8b5cf6);">👑 Master (Tier 1)</td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">All 6 Tabs</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">All 4 Portals</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">Full System (All Tiers)</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">5-Level Spiderweb</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">Table Drill-down</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill badge-live">Full CRUD &amp; Settings</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 0.75rem 0.6rem; font-weight: 700; color: var(--role-healer, #10b981);">🌿 Healer (Tier 2)</td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(16,185,129,0.15); color: #10b981;">Tabs 1, 2, 3, 4, 5</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(16,185,129,0.15); color: #10b981;">Healer, Trainee, Devotee</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(16,185,129,0.15); color: #10b981;">Self &amp; Team Downlines</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(16,185,129,0.15); color: #10b981;">Healer Downlines</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(239,68,68,0.15); color: #ef4444;">Restricted (Hidden)</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(16,185,129,0.15); color: #10b981;">Team Mentorship</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 0.75rem 0.6rem; font-weight: 700; color: var(--role-trainee, #f59e0b);">📿 Trainee (Tier 3)</td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(245,158,11,0.15); color: #f59e0b;">Tabs 1, 2, 3, 5</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(245,158,11,0.15); color: #f59e0b;">Trainee, Devotee</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(245,158,11,0.15); color: #f59e0b;">Devotee Downlines</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(245,158,11,0.15); color: #f59e0b;">Assigned Sadhaks</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(239,68,68,0.15); color: #ef4444;">Restricted (Hidden)</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(245,158,11,0.15); color: #f59e0b;">Sadhak Memo &amp; Tracking</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 0.75rem 0.6rem; font-weight: 700; color: var(--role-devotee, #3b82f6);">🌟 Devotee (Tier 4)</td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(59,130,246,0.15); color: #3b82f6;">Tabs 1, 2 Only</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(59,130,246,0.15); color: #3b82f6;">Devotee Portal</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(148,163,184,0.15); color: var(--text-muted);">Self + Connected Upline Only</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(148,163,184,0.15); color: var(--text-muted);">Restricted (Hidden)</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(239,68,68,0.15); color: #ef4444;">Restricted (Hidden)</span></td>
+                <td style="padding: 0.75rem 0.5rem; text-align: center;"><span class="badge-status-pill" style="background: rgba(59,130,246,0.15); color: #3b82f6;">Self Profile &amp; 24h QR</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-gold" id="btn-close-rbac-footer">Close Matrix</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- ==============================================================
+       MODAL: CREATE NEW MEMBER PROFILE & LINEAGE ONBOARDING
+       ============================================================== -->
+  <div id="create-profile-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card" style="max-width: 620px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">👤</span>
+          <div>
+            <h3 class="modal-title">Create New Member Profile</h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Onboard Devotee, Trainee, or Healer into Lineage Tree</p>
+          </div>
+        </div>
+        <button id="btn-close-create-profile-modal" class="icon-btn" aria-label="Close Modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-role">Target Role Tier</label>
+          <select id="new-profile-role" class="form-control">
+            <option value="DEVOTEE" selected>🌟 Devotee / Seeker (Tier 4)</option>
+            <option value="TRAINEE">📿 Trainee Sadhak (Tier 3)</option>
+            <option value="HEALER">🛡️ Spiritual Healer (Tier 2)</option>
+            <option value="ADMIN">👑 Admin Master (Tier 1)</option>
+          </select>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-name">Full Name *</label>
+          <input type="text" id="new-profile-name" class="form-control" placeholder="e.g. Akil Khan, Imran Sheikh" required>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-phone">Mobile / WhatsApp Number *</label>
+          <input type="tel" id="new-profile-phone" class="form-control" placeholder="e.g. +91 98234 56789" required>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-city">City &amp; State</label>
+          <input type="text" id="new-profile-city" class="form-control" placeholder="e.g. Lucknow, Uttar Pradesh">
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-sponsor">Sponsor / Mentor Reference Code *</label>
+          <input type="text" id="new-profile-sponsor" class="form-control font-mono" placeholder="e.g. SKHM-ADM1-7788-9900" style="font-weight: 700; color: var(--gold-400);">
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="new-profile-membership">Membership Status</label>
+          <select id="new-profile-membership" class="form-control">
+            <option value="PAID" selected>🟢 Paid Member (Full Access)</option>
+            <option value="FREE">🔴 Free / Trial Member</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button type="button" class="btn btn-outline" id="btn-cancel-create-profile">Cancel</button>
+        <button type="button" class="btn btn-gold" id="btn-submit-create-profile">➕ Create &amp; Place in Lineage</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- External Vendor & Core Logic Scripts -->
+  <script src="../js/profile-admin-header.js?v=sk_v5_1789189956805"></script>
+  <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789189956805"></script>
+  <script src="../js/models/ProfileModel.js?v=sk_v5_1789189956805"></script>
+  <script src="../js/config/appConfig.js?v=sk_v5_remediated_2026"></script>
+  <script src="../js/models/FirebaseSyncEngine.js?v=sk_v5_1789189956805"></script>
+  <script src="../js/views/ProfileView.js?v=sk_v5_1789189956805"></script>
+  <script src="../js/views/ProfileView2.js?v=sk_v5_1789189956805"></script>
+  <script src="../js/controllers/ProfileController.js?v=sk_v5_1789189956805"></script>
+  <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789189956805"></script>
+  <script src="../js/controllers/SettingsModalController.js?v=sk_v5_1789189956805"></script>
+  <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789189956805"></script>
+
+  <!-- ==============================================================
+       SLIDE-IN NOTIFICATIONS STACK & CUSTOM DIALOG BACKDROP
+       ============================================================== -->
+  <div id="slide-in-toast-stack" class="slide-in-toast-stack"></div>
+  <div id="spiritual-custom-dialog-backdrop" class="spiritual-custom-dialog-backdrop" style="display:none;"></div>
+  <div id="admin-toast" class="admin-toast" style="display:none;"></div>
+
+  <!-- Hidden Alias Bridge for ID Compatibility -->
+  <div style="display:none;" aria-hidden="true">
+    <button type="button" id="btn-admin-settings"></button>
+    <button type="button" id="btn-open-rbac-matrix"></button>
+    <button type="button" id="btn-quick-share-pairing"></button>
+  </div>
+
+
+  <!-- ==============================================================
+       SACRED SADHANA SLIDE-OUT DETAIL DRAWER
+       ============================================================== -->
+  <div id="sadhana-drawer-backdrop" class="sadhana-drawer-backdrop" style="display: none;"></div>
+  <aside id="sadhana-detail-drawer" class="sadhana-detail-drawer" aria-hidden="true">
+    <div class="sadhana-drawer-header">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span id="sadhana-drawer-icon" style="font-size: 1.8rem;">🔯</span>
+        <div>
+          <h3 id="sadhana-drawer-title" style="margin: 0; font-family: var(--font-heading); color: var(--gold-400); font-size: 1.25rem;">Sri Yantra Sadhana</h3>
+          <span id="sadhana-drawer-category" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Sacred Sadhana • Level 1–4</span>
+        </div>
+      </div>
+      <button type="button" id="btn-close-sadhana-drawer" class="icon-btn" aria-label="Close Sadhana Drawer" style="font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+    </div>
+    <div id="sadhana-drawer-body" class="sadhana-drawer-body" style="padding: 1.25rem; overflow-y: auto; flex-grow: 1;">
+      <!-- Content populated dynamically by ProfileView.openSadhanaDrawer -->
+    </div>
+    <div class="sadhana-drawer-footer" style="padding: 1rem 1.25rem; border-top: 1px solid var(--border-glass-gold); display: flex; justify-content: flex-end; gap: 0.75rem; background: rgba(14, 10, 22, 0.95);">
+      <button type="button" class="btn btn-outline btn-sm" id="btn-drawer-send-trainee">📤 Send to Trainee</button>
+      <button type="button" class="btn btn-gold btn-sm" id="btn-drawer-enroll">🌟 Enroll in Sadhana</button>
+    </div>
+  </aside>
+
+
+  <!-- ==============================================================
+       MODAL: FIREBASE RTDB NODE INSPECTOR & JSON EDITOR
+       ============================================================== -->
+  <div id="rtdb-inspector-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card modal-lg" style="max-width: 800px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">🔥</span>
+          <div>
+            <h3 class="modal-title">Firebase Node Inspector</h3>
+            <p style="margin: 0; font-size: 0.75rem; color: var(--text-muted);">Inspect, Edit &amp; Real-time Patch Node Payload</p>
+          </div>
+        </div>
+        <button type="button" id="btn-close-rtdb-inspector" class="icon-btn" aria-label="Close Inspector">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <div style="display: flex; gap: 1rem; margin-bottom: 0.85rem; font-size: 0.82rem; flex-wrap: wrap;">
+          <div><strong>Target Path:</strong> <code id="rtdb-inspector-path" style="color: var(--gold-400);">/profiles</code></div>
+          <div><strong>Node Type:</strong> <span id="rtdb-inspector-type" class="badge-status-pill badge-live">object</span></div>
+          <div><strong>Payload Size:</strong> <span id="rtdb-inspector-size">-- KB</span></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rtdb-inspector-json-editor">JSON Payload Value:</label>
+          <textarea id="rtdb-inspector-json-editor" class="form-control font-mono" rows="12" style="font-size: 0.82rem; line-height: 1.4; resize: vertical;"></textarea>
+        </div>
+        <div id="rtdb-inspector-status" style="font-size: 0.78rem; margin-top: 0.5rem; color: var(--text-muted);">Ready to modify.</div>
+      
+        <!-- Setting Group: Dynamic Role Authorization Matrix (Screen & Element Panels) -->
+        <div class="auth-matrix-container" id="auth-matrix-settings-section">
+          <div class="auth-matrix-header-bar">
+            <div class="auth-matrix-title-group">
+              <span style="font-size: 1.4rem;">🛡️</span>
+              <div>
+                <h4 class="auth-matrix-title">Dynamic Role Authorization Matrix</h4>
+                <p class="auth-matrix-subtitle">Master Role Portal Configuration: Tick to display, Untick to hide for each role.</p>
+              </div>
+            </div>
+            <div class="auth-matrix-actions-row" style="margin-top: 0;">
+              <button type="button" class="btn btn-xs btn-outline" id="btn-reset-auth-matrix" title="Reset to Default Permissions">🔄 Reset Default</button>
+              <button type="button" class="btn btn-xs btn-gold" id="btn-save-auth-matrix" title="Save &amp; Apply Matrix Across All Portals">💾 Save &amp; Apply</button>
+            </div>
+          </div>
+
+          <div class="auth-matrix-table-wrap">
+            <table class="auth-matrix-table" id="auth-matrix-table">
+              <thead>
+                <tr>
+                  <th style="min-width: 220px;">🖥️ Screen / Element Item</th>
+                  <th class="col-role" style="color: var(--role-admin, #8b5cf6);">👑 Master</th>
+                  <th class="col-role" style="color: var(--role-healer, #10b981);">🛡️ Healer</th>
+                  <th class="col-role" style="color: var(--role-trainee, #f59e0b);">📿 Trainee</th>
+                  <th class="col-role" style="color: var(--role-devotee, #3b82f6);">🌟 Devotee</th>
+                </tr>
+              </thead>
+              <tbody id="auth-matrix-tbody">
+                <!-- Dynamically populated by renderAuthMatrixInSettings -->
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top: 0.65rem; font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+            <span>ℹ️</span> <em><strong>Auto-save:</strong> Changes apply within 1.5s of editing. <strong>Role gate:</strong> Only MASTER can save/reset. <strong>Portal gate:</strong> Tick/untick per-portal visibility (tick = show on that portal). Non-master roles see view-only matrix.</em>
+          </div>
+        </div>
+
+</div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn btn-outline btn-sm" id="btn-rtdb-copy-inspect-json">📋 Copy JSON</button>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-outline btn-sm" id="btn-close-rtdb-inspector-footer">Cancel</button>
+          <button type="button" class="btn btn-gold btn-sm" id="btn-rtdb-save-node-json">💾 Save Changes to DB</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==============================================================
+       MODAL: FIREBASE RTDB ADD NEW CHILD NODE
+       ============================================================== -->
+  <div id="rtdb-add-node-modal" class="admin-modal" aria-hidden="true">
+    <div class="modal-card" style="max-width: 550px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">➕</span>
+          <h3 class="modal-title">Add Firebase Node</h3>
+        </div>
+        <button type="button" id="btn-close-rtdb-add-node" class="icon-btn" aria-label="Close Add Node">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem;">
+        <div class="form-group mb-3">
+          <label class="form-label" for="rtdb-add-target-path">Parent Node Path</label>
+          <input type="text" id="rtdb-add-target-path" class="form-control font-mono" value="/profiles">
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="rtdb-add-key-name">Child Key Name</label>
+          <input type="text" id="rtdb-add-key-name" class="form-control" placeholder="e.g. custom_sadhana_node">
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="rtdb-add-key-type">Data Value Type</label>
+          <select id="rtdb-add-key-type" class="form-control">
+            <option value="string" selected>String Text</option>
+            <option value="number">Number</option>
+            <option value="boolean">Boolean (true/false)</option>
+            <option value="json">JSON Object / Array</option>
+          </select>
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label" for="rtdb-add-value">Payload Value</label>
+          <textarea id="rtdb-add-value" class="form-control font-mono" rows="4" placeholder="Enter node initial value..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-add-node">Cancel</button>
+        <button type="button" class="btn btn-gold btn-sm" id="btn-rtdb-submit-add-node">➕ Add to Realtime DB</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Hidden Bridge for Dual-ID & Backward Compatibility -->
+  <div style="display:none;" aria-hidden="true">
+    <button type="button" id="btn-close-admin-settings"></button>
+    <input type="hidden" id="input-directory-search">
+    <div id="profile-directory-list" style="display:none;"></div>
+    <button type="button" id="btn-cancel-settings"></button>
+    <span id="nav-item-healer-page"></span>
+    <span id="nav-item-trainee-page"></span>
+    <span id="nav-item-devotee-page"></span>
+    <button type="button" id="setting-allow-devotee-delete"></button>
+    <button type="button" id="setting-healer-team-view"></button>
+    <button type="button" id="setting-live-sync"></button>
+    <div id="tbody-pending-approvals"></div>
+    <div id="tree-hierarchy-wrapper"></div>
+    <textarea id="trainee-new-memo-text"></textarea>
+    <button type="button" id="btn-add-trainee-memo"></button>
+    <button type="button" id="btn-copy-pairing-payload"></button>
+    <button type="button" id="btn-copy-sponsor-only"></button>
+    <button type="button" id="btn-copy-pin-only"></button>
+  </div>
+
+
+  <!-- Healer Selection Modal (Name only with tick box) -->
+  <div id="healer-selection-modal" class="custom-modal" aria-hidden="true" style="display:none; position: fixed; inset: 0; z-index: 99999; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
+    <div class="custom-modal-dialog" style="background: #150d24; border: 1.5px solid var(--gold-400); border-radius: 1rem; width: 95%; max-width: 480px; padding: 1.5rem; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 style="font-family: 'Cinzel', serif; font-size: 1.25rem; color: var(--gold-400); margin: 0;">
+          🛡️ Select Guiding Healer
+        </h3>
+        <button type="button" id="btn-close-healer-modal" style="background: transparent; border: none; font-size: 1.25rem; color: #fff; cursor: pointer;">✕</button>
+      </div>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.2rem;">
+        Select an authorized Spiritual Healer from the list below to guide your spiritual journey:
+      </p>
+      <div id="healer-selection-list-body" style="max-height: 280px; overflow-y: auto; margin-bottom: 1.25rem;">
+        <!-- Populated dynamically with name only and a tick box -->
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button type="button" class="btn btn-outline" id="btn-cancel-healer-select">Cancel</button>
+        <button type="button" class="btn btn-gold" id="btn-confirm-healer-select" style="font-weight: 800;">✓ Connect with Healer</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

@@ -2027,10 +2027,11 @@ Installation & Activation Steps:
     }
 
     const now = Date.now();
+    const inviteTtl = (window.ProfileModel && window.ProfileModel.settings && window.ProfileModel.settings.inviteExpiryHours) ? window.ProfileModel.settings.inviteExpiryHours * 3600 * 1000 : 86400000;
     tbody.innerHTML = invites
       .map((inv) => {
         const remainingMs =
-          (inv.expiresAtMs || inv.createdAtMs + 86400000) - now;
+          (inv.expiresAtMs || inv.createdAtMs + inviteTtl) - now;
         const isExpired = inv.status === "PENDING" && remainingMs <= 0;
         const isApproved = inv.status === "APPROVED";
 
@@ -2043,7 +2044,7 @@ Installation & Activation Steps:
         if (isApproved) {
           timerBadgeHtml = `<span class="countdown-timer-badge countdown-approved">🟢 Approved &amp; Linked</span>`;
         } else if (isExpired) {
-          timerBadgeHtml = `<span class="countdown-timer-badge countdown-expired">⌛ Expired (24h Ended)</span>`;
+          timerBadgeHtml = `<span class="countdown-timer-badge countdown-expired">⌛ Expired (Window Ended)</span>`;
         } else {
           const hours = Math.floor(remainingMs / (1000 * 60 * 60));
           const mins = Math.floor(
@@ -2051,14 +2052,14 @@ Installation & Activation Steps:
           );
           const secs = Math.floor((remainingMs % (1000 * 60)) / 1000);
           const pad = (n) => String(n).padStart(2, "0");
-          timerBadgeHtml = `<span class="countdown-timer-badge countdown-live" data-expires="${inv.expiresAtMs || inv.createdAtMs + 86400000}">⏳ ${pad(hours)}h ${pad(mins)}m ${pad(secs)}s</span>`;
+          timerBadgeHtml = `<span class="countdown-timer-badge countdown-live" data-expires="${inv.expiresAtMs || inv.createdAtMs + inviteTtl}">⏳ ${pad(hours)}h ${pad(mins)}m ${pad(secs)}s</span>`;
         }
 
         let actionsHtml = "";
         if (isApproved) {
           actionsHtml = `<span style="color: #10b981; font-weight: 700; font-size: 0.8rem;">✓ Linked as ${inv.assignedRole || "Devotee"}</span>`;
         } else if (isExpired) {
-          actionsHtml = `<button type="button" class="btn btn-sm btn-outline btn-resend-pairing" data-invite-id="${inv.id}" style="font-size: 0.75rem;">🔄 Resend (24h)</button>`;
+          actionsHtml = `<button type="button" class="btn btn-sm btn-outline btn-resend-pairing" data-invite-id="${inv.id}" style="font-size: 0.75rem;">🔄 Resend Window</button>`;
         } else {
           actionsHtml = `
           <div style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
@@ -2068,6 +2069,7 @@ Installation & Activation Steps:
               <option value="HEALER" ${inv.assignedRole === "HEALER" ? "selected" : ""}>Healer (L2)</option>
             </select>
             <button type="button" class="btn btn-sm btn-gold btn-approve-pairing" data-invite-id="${inv.id}" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; font-weight: 700;">✓ Approve</button>
+            <button type="button" class="btn btn-sm btn-outline btn-review-pairing" data-invite-id="${inv.id}" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; color: var(--gold-400);" title="Review with Multi-Option Decision Dialog">⚖️ Review</button>
             <button type="button" class="btn btn-sm btn-outline btn-reject-pairing" data-invite-id="${inv.id}" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; color: #ef4444;">✕</button>
           </div>
         `;
