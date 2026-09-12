@@ -293,19 +293,19 @@
     <main class="admin-canvas">
       <div class="profile-form-container">
         
-        <!-- 1st Box: Master Profile Identity Card (With Genealogy Tab in 3rd Column) -->
-        <div class="card profile-header-card" id="main-profile-box-1">
+        <!-- 1st Box: Master Profile Identity Card (Slim, Compact 1-Row Architecture) -->
+        <div class="card profile-header-card header-card-slim" id="main-profile-box-1">
           <div class="card-flipper-3d-wrapper" id="profile-card-flipper-wrapper">
             <div class="card-flipper-inner" id="profile-card-flipper-inner">
               <!-- FRONT FACE -->
-              <div class="card-flipper-front" style="padding: 1.25rem; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-lg);">
-                <div class="card-header-flex" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div class="card-flipper-front header-card-front-slim" style="padding: 0.85rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-lg);">
+                <div class="card-header-flex header-row-slim" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.85rem;">
                   <!-- 1st Column: Avatar & Profile Title -->
-                  <div class="user-avatar-block" style="display: flex; align-items: center; gap: 1rem;">
+                  <div class="user-avatar-block" style="display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0;">
                     <div class="avatar-circle" id="profile-avatar-initials">SK</div>
                     <div>
-                      <h2 class="profile-name-title" id="display-profile-name" style="margin: 0 0 0.35rem 0;">Spiritual Karim Khan</h2>
-                      <div class="profile-role-badge-row" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                      <h2 class="profile-name-title" id="display-profile-name" style="margin: 0 0 0.25rem 0; font-size: 1.22rem;">Spiritual Karim Khan</h2>
+                      <div class="profile-role-badge-row" style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
                         <span class="role-badge" id="display-role-badge">ADMIN MASTER &bull; LEVEL 1</span>
                         <span class="status-pill active" id="display-status-pill">Active Member</span>
                         <span class="stamp-indicator stamp-paid" id="display-payment-stamp" title="Click to toggle Paid (Green) / Free (Red)">PAID</span>
@@ -318,7 +318,13 @@
                     </div>
                   </div>
 
-                  <!-- 2nd Column: Reference Meta & Flip Trigger (Hidden per layout update) -->
+                  <!-- 2nd Column (Center Meta): Date of Joining & Current Role -->
+                  <div class="header-card-center-meta" id="header-card-center-meta" title="Master Founder Membership Information">
+                    <span class="meta-item-joined" id="display-master-join-date">📅 Joined: 2024-01-01</span>
+                    <span class="meta-item-current-role" id="display-master-current-role">👑 Role: Admin Master (Founder)</span>
+                  </div>
+
+                  <!-- 3rd Column: Reference Meta & Flip Trigger (Optional) -->
                   <div class="header-card-actions-row" style="display: none;">
                     <button type="button" class="btn btn-xs btn-outline" id="btn-copy-header-ref-code" title="Copy 16-Digit Code" style="font-family: monospace; font-size: 0.78rem;">
                       📋 <span id="header-ref-code-text"><span id="display-ref-code">SKHM-ADM1-7788-9900</span></span><span id="display-sponsor-code" style="display:none;">ROOT-0000-0000-0000</span>
@@ -328,26 +334,26 @@
                     </button>
                   </div>
 
-                  <!-- Right Column: Genealogy Tab on Top, Pending Approval Tab Below -->
-                  <div class="header-right-tabs-stack" style="display: flex; flex-direction: column; gap: 0.45rem; align-items: flex-end; margin-left: auto;">
+                  <!-- Right Column: Genealogy Tab Button & Pending Approval Tab Button in Smart 1-Row Fit -->
+                  <div class="header-right-tabs-stack" style="display: flex; flex-direction: row; gap: 0.5rem; align-items: center; margin-left: auto; flex-shrink: 0;">
                     <!-- Genealogy Tree Tab Button -->
-                    <button type="button" class="main-tab-btn header-genealogy-tab-btn" data-main-tab="tab-genealogy-tree" id="main-tab-tree-btn" title="Open Organization Hierarchy &amp; Genealogy Spiderweb Tree" style="min-width: 220px; justify-content: flex-start;">
+                    <button type="button" class="main-tab-btn header-genealogy-tab-btn" data-main-tab="tab-genealogy-tree" id="main-tab-tree-btn" title="Open Organization Hierarchy &amp; Genealogy Spiderweb Tree" style="min-width: 175px; padding: 0.45rem 0.85rem; justify-content: flex-start;">
                       <span class="tab-icon">🌳</span>
                       <div class="tab-label-wrap">
-                        <span class="tab-main-title">Genealogy Tree</span>
-                        <span class="tab-sub-title">Visual MLM &bull; Spiderweb Canvas</span>
+                        <span class="tab-main-title" style="font-size: 0.85rem;">Genealogy Tree</span>
+                        <span class="tab-sub-title" style="font-size: 0.68rem;">Visual MLM Canvas</span>
                       </div>
                     </button>
 
                     <!-- Pending Approval Tab Button with Dynamic Count -->
-                    <button type="button" class="main-tab-btn header-approval-tab-btn" data-main-tab="tab-pending-approvals" id="main-tab-approval-btn" title="Review &amp; Approve Pending Devotee Applicants" style="min-width: 220px; justify-content: flex-start;">
+                    <button type="button" class="main-tab-btn header-approval-tab-btn" data-main-tab="tab-pending-approvals" id="main-tab-approval-btn" title="Review &amp; Approve Pending Devotee Applicants" style="min-width: 175px; padding: 0.45rem 0.85rem; justify-content: flex-start;">
                       <span class="tab-icon">⏳</span>
                       <div class="tab-label-wrap" style="width: 100%;">
-                        <div class="tab-main-title" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <div class="tab-main-title" style="display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 0.85rem;">
                           <span>Pending Approval</span>
-                          <span class="badge-count" id="header-pending-approval-count" style="display: inline-block; background: #eab308; color: #000; font-weight: 800; border-radius: 999px; padding: 0.1rem 0.55rem; font-size: 0.75rem; margin-left: 0.4rem;">0</span>
+                          <span class="badge-count" id="header-pending-approval-count" style="display: inline-block; background: #eab308; color: #000; font-weight: 800; border-radius: 999px; padding: 0.1rem 0.45rem; font-size: 0.72rem; margin-left: 0.35rem;">0</span>
                         </div>
-                        <span class="tab-sub-title">Seeker Queue &bull; 24h Verification</span>
+                        <span class="tab-sub-title" style="font-size: 0.68rem;">Seeker Queue &bull; 24h</span>
                       </div>
                     </button>
                   </div>
@@ -403,6 +409,46 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2nd Box: Selected Member Profile Card (Active upon Left Panel / Directory Selection) -->
+        <div class="card selected-member-profile-card" id="selected-member-profile-card" style="display: none;" role="region" aria-label="Selected Member Profile">
+          <div class="selected-member-card-inner">
+            <!-- Left Column: Selected Member Avatar & Identity -->
+            <div class="user-avatar-block" style="display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0;">
+              <div class="avatar-circle selected-member-avatar" id="selected-member-avatar">AS</div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <h2 class="profile-name-title" id="selected-member-name" style="margin: 0; font-size: 1.2rem;">Ananya Sharma</h2>
+                  <span class="role-badge" id="selected-member-role-badge">DEVOTEE &bull; LEVEL 4</span>
+                </div>
+                <div class="profile-role-badge-row" style="display: flex; align-items: center; gap: 0.45rem; margin-top: 0.25rem; flex-wrap: wrap;">
+                  <span class="status-pill active" id="selected-member-status-pill">Active Member</span>
+                  <span class="stamp-indicator stamp-paid" id="selected-member-payment-stamp">PAID</span>
+                  <span class="ref-code-chip" id="selected-member-ref-code" style="font-family: monospace; font-size: 0.75rem; padding: 0.15rem 0.45rem; background: rgba(255,255,255,0.06); border-radius: 4px; border: 1px solid var(--border-card);">SKHM-DEV4-1234-5678</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Center Column (Center Meta): Joining Date & Current Role -->
+            <div class="header-card-center-meta selected-member-center-meta" id="selected-member-center-meta" title="Selected Member Downline Status">
+              <span class="meta-item-joined" id="selected-member-join-date">📅 Joined: 2024-06-15</span>
+              <span class="meta-item-current-role" id="selected-member-current-role">Current Role: Devotee</span>
+            </div>
+
+            <!-- Right Column: Member Actions (Copy Ref Code, Flip to QR, Close/Clear Member View - NO APPROVAL BUTTON) -->
+            <div class="selected-member-actions" style="display: flex; align-items: center; gap: 0.5rem; margin-left: auto; flex-shrink: 0;">
+              <button type="button" class="btn btn-sm btn-outline" id="btn-selected-member-copy-code" title="Copy Member Reference Code" style="font-family: monospace; font-size: 0.75rem;">
+                📋 Copy Code
+              </button>
+              <button type="button" class="btn btn-sm btn-outline" id="btn-selected-member-qr" title="View 24h QR Device Pairing">
+                📱 QR Pairing
+              </button>
+              <button type="button" class="btn btn-sm btn-outline" id="btn-close-selected-member-card" title="Close Member View &amp; Return to Master" style="color: var(--text-muted); border-color: rgba(255,255,255,0.2);">
+                ✕ Return to Master
+              </button>
             </div>
           </div>
         </div>

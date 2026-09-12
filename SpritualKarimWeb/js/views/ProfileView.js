@@ -44,6 +44,7 @@ class ProfileView {
     );
 
     // Header Display Elements
+    this.mainProfileBox1 = document.getElementById("main-profile-box-1");
     this.displayProfileName = document.getElementById("display-profile-name");
     this.displayRoleBadge = document.getElementById("display-role-badge");
     this.displayStatusPill = document.getElementById("display-status-pill");
@@ -51,6 +52,22 @@ class ProfileView {
     this.displayRefCode = document.getElementById("display-ref-code");
     this.displaySponsorCode = document.getElementById("display-sponsor-code");
     this.avatarInitials = document.getElementById("profile-avatar-initials");
+    this.displayMasterJoinDate = document.getElementById("display-master-join-date");
+    this.displayMasterCurrentRole = document.getElementById("display-master-current-role");
+
+    // Card 2: Selected Member Card Elements
+    this.selectedMemberCard = document.getElementById("selected-member-profile-card");
+    this.selectedMemberAvatar = document.getElementById("selected-member-avatar");
+    this.selectedMemberName = document.getElementById("selected-member-name");
+    this.selectedMemberRoleBadge = document.getElementById("selected-member-role-badge");
+    this.selectedMemberStatusPill = document.getElementById("selected-member-status-pill");
+    this.selectedMemberPaymentStamp = document.getElementById("selected-member-payment-stamp");
+    this.selectedMemberRefCode = document.getElementById("selected-member-ref-code");
+    this.selectedMemberJoinDate = document.getElementById("selected-member-join-date");
+    this.selectedMemberCurrentRole = document.getElementById("selected-member-current-role");
+    this.btnSelectedMemberCopyCode = document.getElementById("btn-selected-member-copy-code");
+    this.btnSelectedMemberQr = document.getElementById("btn-selected-member-qr");
+    this.btnCloseSelectedMemberCard = document.getElementById("btn-close-selected-member-card");
 
     // Form Inputs - Identity
     this.inputProfileType = document.getElementById("input-profile-type");
@@ -559,15 +576,105 @@ class ProfileView {
   }
 
   _renderHeaderCard(profile, roleMode = "MASTER") {
+    // Master Founder context is Spiritual Karim Khan
+    const masterProfile =
+      (this.allProfiles || []).find(
+        (p) =>
+          p.id === "prof-admin-01" ||
+          p.level === 0 ||
+          p.profileType === "ADMIN",
+      ) || profile;
+
     const mainBox = document.getElementById("main-profile-box-1");
-    const isPaid = profile.isPaid !== false && profile.paymentStatus !== "FREE";
-    const initials = (profile.name || "SK")
+    const isMasterPaid =
+      masterProfile.isPaid !== false && masterProfile.paymentStatus !== "FREE";
+    const initials = (masterProfile.name || "SK")
       .split(" ")
       .map((w) => w[0])
       .slice(0, 2)
       .join("")
       .toUpperCase();
 
+    if (mainBox) {
+      const pName = mainBox.querySelector("#display-profile-name");
+      if (pName) pName.textContent = masterProfile.name || "Spiritual Karim Khan";
+      const pBadge = mainBox.querySelector("#display-role-badge");
+      if (pBadge) {
+        pBadge.textContent = `${masterProfile.profileType || "ADMIN MASTER"} • LEVEL ${masterProfile.level || 1}`;
+        pBadge.style.backgroundColor = "var(--role-admin, #8b5cf6)";
+      }
+      const pStatus = mainBox.querySelector("#display-status-pill");
+      if (pStatus) {
+        pStatus.textContent = masterProfile.isActive !== false ? "Active Member" : "Inactive";
+        pStatus.className = `status-pill ${masterProfile.isActive !== false ? "active" : ""}`;
+      }
+      const pStamp = mainBox.querySelector("#display-payment-stamp");
+      if (pStamp) {
+        pStamp.className = `stamp-indicator ${isMasterPaid ? "stamp-paid" : "stamp-free"}`;
+        pStamp.textContent = isMasterPaid ? "PAID" : "FREE";
+      }
+      const pInitials = mainBox.querySelector("#profile-avatar-initials");
+      if (pInitials) pInitials.textContent = initials;
+      const pRef = mainBox.querySelector("#header-ref-code-text");
+      if (pRef)
+        pRef.textContent = masterProfile.referenceCode || "SKHM-ADM1-7788-9900";
+      const tRef = mainBox.querySelector("#telemetry-ref-code");
+      if (tRef)
+        tRef.textContent = masterProfile.referenceCode || "SKHM-ADM1-7788-9900";
+
+      // Center Meta for Master Card 1
+      const masterJoinDate =
+        masterProfile.joinDate || masterProfile.joiningDate || "2024-01-01";
+      const pMasterJoin = mainBox.querySelector("#display-master-join-date");
+      if (pMasterJoin) pMasterJoin.textContent = `📅 Joined: ${masterJoinDate}`;
+      const pMasterRole = mainBox.querySelector("#display-master-current-role");
+      if (pMasterRole) pMasterRole.textContent = `👑 Role: Admin Master (Founder)`;
+    }
+
+    if (this.headerStampBadge) {
+      this.headerStampBadge.className = `stamp-badge ${isMasterPaid ? "stamp-paid" : "stamp-free"}`;
+      this.headerStampBadge.textContent = isMasterPaid ? "🟢 PAID" : "🔴 FREE";
+      this.headerStampBadge.title = `Active Membership: ${isMasterPaid ? "PAID" : "FREE"}`;
+    }
+
+    // Render Card 2: Selected Member Profile Card
+    this.renderSelectedMemberCard(profile);
+  }
+
+  /**
+   * Renders the 2nd profile card for downline member inspection
+   * Center of card displays Date of Joining and Current Role.
+   * EXPLICITLY NO Approval Pending button!
+   */
+  renderSelectedMemberCard(selectedProfile) {
+    if (!this.selectedMemberCard) {
+      this.selectedMemberCard = document.getElementById("selected-member-profile-card");
+    }
+    if (!this.selectedMemberCard) return;
+
+    // If no profile or if selected profile is Master itself, hide Card 2
+    if (
+      !selectedProfile ||
+      selectedProfile.id === "prof-admin-01" ||
+      selectedProfile.level === 0 ||
+      (selectedProfile.profileType === "ADMIN" && selectedProfile.name === "Spiritual Karim Khan")
+    ) {
+      this.selectedMemberCard.style.display = "none";
+      return;
+    }
+
+    // Show Card 2 for downline members
+    this.selectedMemberCard.style.display = "block";
+
+    const initials = (selectedProfile.name || "M")
+      .split(" ")
+      .map((w) => w[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+
+    const isPaid =
+      selectedProfile.isPaid !== false && selectedProfile.paymentStatus !== "FREE";
     const roleColors = {
       ADMIN: "var(--role-admin, #8b5cf6)",
       HEALER: "var(--role-healer, #10b981)",
@@ -575,138 +682,57 @@ class ProfileView {
       DEVOTEE: "var(--role-devotee, #3b82f6)",
     };
     const roleBg =
-      roleColors[profile.profileType] || "var(--role-admin, #8b5cf6)";
+      roleColors[selectedProfile.profileType] || "var(--role-devotee, #3b82f6)";
 
-    if (mainBox) {
-      let flipperWrapper = mainBox.querySelector(".card-flipper-3d-wrapper");
-      if (!flipperWrapper) {
-        mainBox.innerHTML = `
-          <div class="card-flipper-3d-wrapper" id="profile-card-flipper-wrapper">
-            <div class="card-flipper-inner" id="profile-card-flipper-inner">
-              <!-- FRONT FACE -->
-              <div class="card-flipper-front" style="padding: 1.25rem; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-lg);">
-                <div class="card-header-flex" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                  <div class="user-avatar-block" style="display: flex; align-items: center; gap: 1rem;">
-                    <div class="avatar-circle" id="profile-avatar-initials">${initials}</div>
-                    <div>
-                      <h2 class="profile-name-title" id="display-profile-name" style="margin: 0 0 0.35rem 0;">${profile.name || "Untitled Profile"}</h2>
-                      <div class="profile-role-badge-row" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                        <span class="role-badge" id="display-role-badge" style="background-color: ${roleBg};">${profile.profileType} ? LEVEL ${profile.level || 1}</span>
-                        <span class="status-pill ${profile.isActive ? "active" : ""}" id="display-status-pill">${profile.isActive ? "Active Member" : "Inactive"}</span>
-                        <span class="stamp-indicator ${isPaid ? "stamp-paid" : "stamp-free"}" id="display-payment-stamp" title="Click to toggle Paid (Green) / Free (Red)">${isPaid ? "PAID" : "FREE"}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="header-card-actions-row" style="display: none;">
-                    <button type="button" class="btn btn-xs btn-outline" id="btn-copy-header-ref-code" title="Copy 16-Digit Code" style="font-family: monospace; font-size: 0.78rem;">
-                      📋 <span id="header-ref-code-text">${profile.referenceCode || "SKHM-XXXX-XXXX-XXXX"}</span>
-                    </button>
-                    <button type="button" class="btn-flip-card-trigger" id="btn-flip-to-back" title="Flip to 24h Pairing &amp; Node Telemetry">
-                      🔄 QR &amp; Telemetry
-                    </button>
-                  </div>
-
-                  <!-- Right Column: Genealogy Tab on Top, Pending Approval Tab Below -->
-                  <div class="header-right-tabs-stack" style="display: flex; flex-direction: column; gap: 0.45rem; align-items: flex-end; margin-left: auto;">
-                    <button type="button" class="main-tab-btn header-genealogy-tab-btn" data-main-tab="tab-genealogy-tree" id="main-tab-tree-btn" title="Open Organization Hierarchy &amp; Genealogy Spiderweb Tree" style="min-width: 220px; justify-content: flex-start;">
-                      <span class="tab-icon">🌳</span>
-                      <div class="tab-label-wrap">
-                        <span class="tab-main-title">Genealogy Tree</span>
-                        <span class="tab-sub-title">Visual MLM &bull; Spiderweb Canvas</span>
-                      </div>
-                    </button>
-
-                    <button type="button" class="main-tab-btn header-approval-tab-btn" data-main-tab="tab-pending-approvals" id="main-tab-approval-btn" title="Review &amp; Approve Pending Devotee Applicants" style="min-width: 220px; justify-content: flex-start;">
-                      <span class="tab-icon">⏳</span>
-                      <div class="tab-label-wrap" style="width: 100%;">
-                        <div class="tab-main-title" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                          <span>Pending Approval</span>
-                          <span class="badge-count" id="header-pending-approval-count" style="display: inline-block; background: #eab308; color: #000; font-weight: 800; border-radius: 999px; padding: 0.1rem 0.55rem; font-size: 0.75rem; margin-left: 0.4rem;">0</span>
-                        </div>
-                        <span class="tab-sub-title">Seeker Queue &bull; 24h Verification</span>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- BACK FACE -->
-              <div class="card-flipper-back flipper-back-content">
-                <div class="flipper-back-header">
-                  <div class="flipper-back-title">
-                    <span>📡</span> Node Telemetry &amp; 24h Device Pairing
-                  </div>
-                  <button type="button" class="btn-flip-card-trigger" id="btn-flip-to-front" title="Flip back to Profile Card">
-                    🔄 View Profile
-                  </button>
-                </div>
-                <div class="telemetry-grid">
-                  <div class="telemetry-item">
-                    <div class="telemetry-item-label">Node Reference</div>
-                    <div class="telemetry-item-val" id="telemetry-ref-code">${profile.referenceCode || "SKHM-XXXX-XXXX-XXXX"}</div>
-                  </div>
-                  <div class="telemetry-item">
-                    <div class="telemetry-item-label">Upline Sponsor</div>
-                    <div class="telemetry-item-val">${profile.referredByCode || "ROOT"}</div>
-                  </div>
-                  <div class="telemetry-item">
-                    <div class="telemetry-item-label">Cloud Telemetry</div>
-                    <div class="telemetry-item-val" style="color: #10b981;">🟢 RTDB CONNECTED</div>
-                  </div>
-                  <div class="telemetry-item">
-                    <div class="telemetry-item-label">Device Protocol</div>
-                    <div class="telemetry-item-val">v3.8 (REST+WSS)</div>
-                  </div>
-                </div>
-                <div class="telemetry-qr-section">
-                  <div class="telemetry-qr-box">
-                    <svg viewBox="0 0 100 100" width="60" height="60">
-                      <rect width="100" height="100" fill="white"/>
-                      <path d="M10 10h30v30h-30z M60 10h30v30h-30z M10 60h30v30h-30z M20 20h10v10h-10z M70 20h10v10h-10z M20 70h10v10h-10z M50 20h5v15h-5z M50 50h30v5h-30z M60 65h10v10h-10z M80 75h10v15h-10z" fill="#1e1b4b"/>
-                    </svg>
-                  </div>
-                  <div class="telemetry-qr-text">
-                    <strong>24-Hour QR Device Pairing Protocol</strong><br/>
-                    Scan from Spiritual Karim Android App to link this node securely to your hierarchy downline.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      } else {
-        const pName = mainBox.querySelector("#display-profile-name");
-        if (pName) pName.textContent = profile.name || "Untitled Profile";
-        const pBadge = mainBox.querySelector("#display-role-badge");
-        if (pBadge) {
-          pBadge.textContent = `${profile.profileType} • LEVEL ${profile.level || 1}`;
-          pBadge.style.backgroundColor = roleBg;
-        }
-        const pStatus = mainBox.querySelector("#display-status-pill");
-        if (pStatus) {
-          pStatus.textContent = profile.isActive ? "Active Member" : "Inactive";
-          pStatus.className = `status-pill ${profile.isActive ? "active" : ""}`;
-        }
-        const pStamp = mainBox.querySelector("#display-payment-stamp");
-        if (pStamp) {
-          pStamp.className = `stamp-indicator ${isPaid ? "stamp-paid" : "stamp-free"}`;
-          pStamp.textContent = isPaid ? "PAID" : "FREE";
-        }
-        const pInitials = mainBox.querySelector("#profile-avatar-initials");
-        if (pInitials) pInitials.textContent = initials;
-        const pRef = mainBox.querySelector("#header-ref-code-text");
-        if (pRef)
-          pRef.textContent = profile.referenceCode || "SKHM-XXXX-XXXX-XXXX";
-        const tRef = mainBox.querySelector("#telemetry-ref-code");
-        if (tRef)
-          tRef.textContent = profile.referenceCode || "SKHM-XXXX-XXXX-XXXX";
-      }
+    const pAvatar = this.selectedMemberCard.querySelector("#selected-member-avatar");
+    if (pAvatar) {
+      pAvatar.textContent = initials;
+      pAvatar.style.background = roleBg;
     }
 
-    if (this.headerStampBadge) {
-      this.headerStampBadge.className = `stamp-badge ${isPaid ? "stamp-paid" : "stamp-free"}`;
-      this.headerStampBadge.textContent = isPaid ? "🟢 PAID" : "🔴 FREE";
-      this.headerStampBadge.title = `Active Membership: ${isPaid ? "PAID" : "FREE"}`;
+    const pName = this.selectedMemberCard.querySelector("#selected-member-name");
+    if (pName) pName.textContent = selectedProfile.name || "Selected Member";
+
+    const pRoleBadge = this.selectedMemberCard.querySelector("#selected-member-role-badge");
+    if (pRoleBadge) {
+      pRoleBadge.textContent = `${selectedProfile.profileType || "DEVOTEE"} • LEVEL ${selectedProfile.level || 1}`;
+      pRoleBadge.style.backgroundColor = roleBg;
+    }
+
+    const pStatus = this.selectedMemberCard.querySelector("#selected-member-status-pill");
+    if (pStatus) {
+      pStatus.textContent = selectedProfile.isActive !== false ? "Active Member" : "Inactive";
+      pStatus.className = `status-pill ${selectedProfile.isActive !== false ? "active" : ""}`;
+    }
+
+    const pStamp = this.selectedMemberCard.querySelector("#selected-member-payment-stamp");
+    if (pStamp) {
+      pStamp.textContent = isPaid ? "PAID" : "FREE";
+      pStamp.className = `stamp-indicator ${isPaid ? "stamp-paid" : "stamp-free"}`;
+    }
+
+    const pRef = this.selectedMemberCard.querySelector("#selected-member-ref-code");
+    if (pRef) pRef.textContent = selectedProfile.referenceCode || "SKHM-XXXX-XXXX-XXXX";
+
+    // Center Meta: Joining Date and Current Role
+    const joinDate =
+      selectedProfile.joinDate ||
+      selectedProfile.joiningDate ||
+      selectedProfile.createdAt ||
+      "2024-01-01";
+    const pJoin = this.selectedMemberCard.querySelector("#selected-member-join-date");
+    if (pJoin) pJoin.textContent = `📅 Joined: ${joinDate}`;
+
+    const roleNames = {
+      DEVOTEE: "Devotee / Seeker",
+      TRAINEE: "Trainee Sadhak",
+      HEALER: "Healer Guide",
+      ADMIN: "Admin Master",
+      MASTER: "Admin Master",
+    };
+    const pCurrentRole = this.selectedMemberCard.querySelector("#selected-member-current-role");
+    if (pCurrentRole) {
+      pCurrentRole.textContent = `Current Role: ${roleNames[selectedProfile.profileType] || selectedProfile.profileType || "Devotee"}`;
     }
   }
 
@@ -2329,16 +2355,25 @@ Installation & Activation Steps:
   applyDynamicAuthMatrix(matrix, roleMode = "MASTER") {
     if (!matrix || !Array.isArray(matrix)) return;
 
+    const resolvedRole =
+      (roleMode || "MASTER").toUpperCase() === "ADMIN"
+        ? "MASTER"
+        : (roleMode || "MASTER").toUpperCase();
     let firstVisibleTab = null;
 
     matrix.forEach((item) => {
-      const isAllowed = item[roleMode] !== false;
+      const isAllowed = item[resolvedRole] !== false;
 
       if (item.type === "SCREEN") {
+        const tabTarget =
+          item.tabBtnTarget ||
+          item.targetId ||
+          (item.selector ? item.selector.replace("#", "") : null) ||
+          item.id;
         const tabBtn = document.querySelector(
-          `button[data-main-tab="${item.tabBtnTarget}"]`,
+          `button[data-main-tab="${tabTarget}"]`,
         );
-        const tabContent = document.getElementById(item.targetId);
+        const tabContent = document.getElementById(item.targetId || tabTarget);
 
         if (tabBtn) {
           tabBtn.style.display = isAllowed ? "flex" : "none";
@@ -2351,9 +2386,9 @@ Installation & Activation Steps:
         }
 
         if (isAllowed && !firstVisibleTab) {
-          firstVisibleTab = item.tabBtnTarget;
+          firstVisibleTab = tabTarget;
         }
-      } else if (item.type === "ELEMENT" && item.selector) {
+      } else if (item.selector) {
         try {
           const elements = document.querySelectorAll(item.selector);
           elements.forEach((el) => {
@@ -2364,6 +2399,22 @@ Installation & Activation Steps:
         }
       }
     });
+
+    // Enforce Approval Pending button gating: Master and Healer only
+    const approvalBtn = document.getElementById("main-tab-approval-btn");
+    const isMasterOrHealer = resolvedRole === "MASTER" || resolvedRole === "HEALER";
+    if (approvalBtn) {
+      approvalBtn.style.display = isMasterOrHealer ? "flex" : "none";
+    }
+
+    // Selected member card must NEVER contain an approval button
+    const card2 = document.getElementById("selected-member-profile-card");
+    if (card2) {
+      const unwantedApprovalBtns = card2.querySelectorAll(
+        ".header-approval-tab-btn, #main-tab-approval-btn, .approval-notification-pill",
+      );
+      unwantedApprovalBtns.forEach((btn) => btn.remove());
+    }
 
     // If currently active tab is hidden, switch to first visible tab
     const activeTabBtn = document.querySelector(".main-tab-btn.active");

@@ -1413,11 +1413,127 @@ body {
   opacity: 0.9;
 }
 
-.header-right-tabs-stack {
+.header-card-slim {
+  padding: 0 !important;
+}
+
+.header-card-front-slim {
+  padding: 0.85rem 1.25rem !important;
+}
+
+.header-row-slim {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.header-card-center-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 1rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px dashed rgba(212, 175, 55, 0.4);
+  border-radius: var(--radius-md, 8px);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  gap: 0.2rem;
+  transition: all 0.25s ease;
+}
+
+.header-card-center-meta .meta-item-joined {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.header-card-center-meta .meta-item-current-role {
+  color: var(--gold-400, #d4af37);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.3px;
+}
+
+.selected-member-center-meta {
+  background: rgba(59, 130, 246, 0.08) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+}
+
+.selected-member-center-meta .meta-item-current-role {
+  color: #60a5fa !important;
+}
+
+.selected-member-profile-card {
+  margin-top: 0.75rem;
+  margin-bottom: 0.85rem;
+  border: 1.5px solid rgba(59, 130, 246, 0.45);
+  background: var(--bg-card, #130f26);
+  border-radius: var(--radius-lg, 12px);
+  padding: 0.85rem 1.25rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3), 0 0 14px rgba(59, 130, 246, 0.12);
+  animation: cardFadeIn 0.25s ease-out;
+}
+
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.selected-member-card-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.selected-member-avatar {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.selected-member-actions button {
+  white-space: nowrap;
+}
+
+html[data-theme="light"] .header-card-center-meta {
+  background: rgba(180, 130, 20, 0.08) !important;
+  border-color: rgba(180, 130, 20, 0.35) !important;
+}
+
+html[data-theme="light"] .header-card-center-meta .meta-item-joined {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .header-card-center-meta .meta-item-current-role {
+  color: #9e6400 !important;
+}
+
+html[data-theme="light"] .selected-member-center-meta {
+  background: rgba(37, 99, 235, 0.07) !important;
+  border-color: rgba(37, 99, 235, 0.35) !important;
+}
+
+html[data-theme="light"] .selected-member-center-meta .meta-item-current-role {
+  color: #2563eb !important;
+}
+
+html[data-theme="light"] .selected-member-profile-card {
+  background: #ffffff !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
+}
+
+.header-right-tabs-stack {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
   margin-left: auto;
 }
 

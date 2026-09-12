@@ -131,7 +131,13 @@ class ProfileController {
     const settings = this.model.settings;
     this.view.allProfiles = this.model.profiles;
     this.view.render(active, visibleProfiles, roleMode, settings);
-    this.view.applyDynamicAuthMatrix(this.model.getAuthMatrix(), roleMode);
+
+    // Dynamic authorization matrix applies relative to inspected profile role
+    const targetRole =
+      active && active.id !== "prof-admin-01" && active.profileType
+        ? active.profileType
+        : roleMode;
+    this.view.applyDynamicAuthMatrix(this.model.getAuthMatrix(), targetRole);
 
     // Render dynamic approval notification under mentor name
     const invites = this.model.getPairingInvites();
@@ -1432,6 +1438,56 @@ class ProfileController {
         this.view.showSlideToast(
           isFlipped ? "3D Telemetry Flipped" : "3D Profile Flipped",
           isFlipped ? "📡 24h Device Pairing QR & RTDB Telemetry Active" : "👤 Viewing Member Profile Identity Card",
+          "info",
+          2500,
+        );
+      });
+    }
+
+    // Card 2: Selected Member Card Action Handlers
+    const btnCloseMemberCard = document.getElementById("btn-close-selected-member-card");
+    if (btnCloseMemberCard) {
+      btnCloseMemberCard.addEventListener("click", () => {
+        this.model.setActiveProfileId("prof-admin-01");
+        this._renderCurrentState();
+        if (typeof this.view.closeTierPanel === "function") {
+          this.view.closeTierPanel();
+        }
+        this.view.showSlideToast(
+          "Master Portal Restored",
+          "👑 Returned to Master Founder view (Spiritual Karim Khan)",
+          "info",
+          2500,
+        );
+      });
+    }
+
+    const btnMemberCopyCode = document.getElementById("btn-selected-member-copy-code");
+    if (btnMemberCopyCode) {
+      btnMemberCopyCode.addEventListener("click", () => {
+        const activeP = this.model.getActiveProfile();
+        if (activeP && activeP.referenceCode) {
+          if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(activeP.referenceCode).then(() => {
+              this.view.showToast(`📋 Copied: ${activeP.referenceCode}`);
+            }).catch(() => {
+              this.view.showToast(`📋 Code: ${activeP.referenceCode}`);
+            });
+          } else {
+            this.view.showToast(`📋 Code: ${activeP.referenceCode}`);
+          }
+        }
+      });
+    }
+
+    const btnMemberQr = document.getElementById("btn-selected-member-qr");
+    if (btnMemberQr && flipperWrapper) {
+      btnMemberQr.addEventListener("click", () => {
+        flipperWrapper.classList.toggle("is-flipped");
+        const isFlipped = flipperWrapper.classList.contains("is-flipped");
+        this.view.showSlideToast(
+          isFlipped ? "3D Telemetry Active" : "Profile Identity Active",
+          isFlipped ? "📡 24h Pairing QR & Device Telemetry" : "👤 Viewing Profile Card",
           "info",
           2500,
         );
