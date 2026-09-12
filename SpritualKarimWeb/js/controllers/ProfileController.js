@@ -1169,6 +1169,22 @@ class ProfileController {
           e.preventDefault();
           const tier = parseInt(item.getAttribute("data-tier"), 10);
 
+          // If this tier is already open in the in-body left panel, toggle close it
+          if (
+            this.view.currentOpenTier === tier &&
+            this.view.tierProfilesPanel &&
+            this.view.tierProfilesPanel.classList.contains("is-open")
+          ) {
+            this.view.closeTierPanel();
+            this.view.showSlideToast(
+              "Tier Panel",
+              "◂ Collapsed in-body hierarchy panel",
+              "info",
+              2000,
+            );
+            return;
+          }
+
           // Highlight active item
           document
             .querySelectorAll("#hierarchy-legend-container .legend-item")

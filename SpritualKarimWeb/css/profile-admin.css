@@ -339,10 +339,29 @@ html[data-theme="light"] .tier-profiles-panel {
 }
 
 html[data-theme="light"] .tier-panel-header,
-html[data-theme="light"] .tier-panel-search-wrap {
+html[data-theme="light"] .tier-panel-search-wrap,
+html[data-theme="light"] .tier-panel-filters-wrap {
   background: #f8fafc !important;
   border-bottom: 1px solid #e2e8f0 !important;
 }
+
+html[data-theme="light"] .tier-filter-chip {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+html[data-theme="light"] .tier-filter-chip:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .tier-filter-chip.active {
+  background: #d97706 !important;
+  border-color: #b45309 !important;
+  color: #ffffff !important;
+}
+
 
 html[data-theme="light"] .tier-panel-title {
   color: #0f172a !important;
@@ -1151,7 +1170,13 @@ body {
   display: grid;
   grid-template-columns: 280px 1fr;
   min-height: calc(100vh - 65px);
+  transition: grid-template-columns 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.admin-layout.has-tier-panel-open {
+  grid-template-columns: 280px 330px 1fr;
+}
+
 
 .admin-sidebar {
   background: var(--bg-sidebar);
@@ -6149,41 +6174,89 @@ html[data-theme="light"] .healers-hub-banner-card {
 
 
 /* ==============================================================
-   9. LEFT FLYOUT PROFILE PANEL (APP HIERARCHY TIERS DRILLDOWN)
+   9. IN-BODY LEFT TIER PROFILES PANEL (APP HIERARCHY TIERS)
    ============================================================== */
 .tier-profiles-flyout-panel {
-  position: fixed;
+  display: none;
+  position: sticky;
   top: 65px;
-  left: 280px;
-  width: 350px;
   height: calc(100vh - 65px);
+  width: 330px;
+  flex-shrink: 0;
   background: linear-gradient(180deg, rgba(22, 14, 38, 0.98), rgba(14, 8, 24, 0.98));
-  border-right: 1px solid var(--border-gold, rgba(212, 175, 55, 0.3));
-  box-shadow: 15px 0 35px rgba(0, 0, 0, 0.7);
+  border-right: 1px solid var(--border-gold, rgba(212, 175, 55, 0.25));
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  z-index: 950;
-  display: flex;
+  z-index: 50;
   flex-direction: column;
-  transform: translateX(-110%);
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .tier-profiles-flyout-panel.is-open {
-  transform: translateX(0);
+  display: flex !important;
   opacity: 1;
   pointer-events: auto;
+  animation: slideInTierPanel 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (max-width: 900px) {
-  .tier-profiles-flyout-panel {
-    left: 0;
-    width: 320px;
-    z-index: 1001;
+@keyframes slideInTierPanel {
+  from {
+    opacity: 0;
+    transform: translateX(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
+
+/* Smart Fit Rules for Admin Canvas when Tier Panel is Open */
+.admin-layout.has-tier-panel-open .admin-canvas {
+  padding: 1.25rem 1.5rem;
+}
+
+.admin-layout.has-tier-panel-open .profile-form-container {
+  max-width: 100%;
+}
+
+.admin-layout.has-tier-panel-open .form-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.85rem;
+}
+
+@media (max-width: 1200px) {
+  .admin-layout.has-tier-panel-open {
+    grid-template-columns: 240px 300px 1fr;
+  }
+  .tier-profiles-flyout-panel {
+    width: 300px;
+  }
+}
+
+@media (max-width: 992px) {
+  .admin-layout.has-tier-panel-open {
+    grid-template-columns: 200px 280px 1fr;
+  }
+  .tier-profiles-flyout-panel {
+    width: 280px;
+  }
+}
+
+@media (max-width: 820px) {
+  .admin-layout.has-tier-panel-open {
+    grid-template-columns: 1fr;
+  }
+  .tier-profiles-flyout-panel {
+    position: fixed !important;
+    top: 65px;
+    left: 0;
+    width: 320px !important;
+    z-index: 1050;
+  }
+}
+
 
 .tier-panel-header {
   display: flex;
@@ -6237,8 +6310,11 @@ html[data-theme="light"] .healers-hub-banner-card {
 }
 
 .tier-panel-search-wrap {
-  padding: 0.75rem 1.15rem;
+  padding: 0.65rem 1.15rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .tier-panel-search-wrap input {
@@ -6248,9 +6324,62 @@ html[data-theme="light"] .healers-hub-banner-card {
   color: var(--text-primary, #ffffff);
   border: 1px solid rgba(212, 175, 55, 0.25);
   border-radius: 0.4rem;
-  padding: 0.45rem 0.75rem;
+  padding: 0.45rem 2rem 0.45rem 0.75rem;
   font-size: 0.82rem;
 }
+
+.tier-panel-search-clear-btn {
+  position: absolute;
+  right: 1.5rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #94a3b8);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  line-height: 1;
+}
+
+.tier-panel-search-clear-btn:hover {
+  color: #ffffff;
+}
+
+.tier-panel-filters-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1.15rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+  overflow-x: auto;
+}
+
+.tier-filter-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-muted, #94a3b8);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.tier-filter-chip:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.3);
+  color: #ffffff;
+}
+
+.tier-filter-chip.active {
+  background: var(--gold-500, #d4af37);
+  border-color: var(--gold-400, #f59e0b);
+  color: #0b0616;
+  font-weight: 700;
+}
+
 
 .tier-panel-profiles-list {
   flex: 1;

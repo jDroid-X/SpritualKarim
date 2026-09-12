@@ -799,26 +799,60 @@ ProfileController.prototype._bindEventsPart2 = function () {
     });
   }
 
-  // App Hierarchy Tiers Legend Click -> Open Left Flyout Panel
-  document
-    .querySelectorAll("#hierarchy-legend-container .legend-item")
-    .forEach((item) => {
-      item.addEventListener("click", () => {
-        const tier = parseInt(item.getAttribute("data-tier"), 10);
-        this.view.openTierPanel(
-          tier,
-          this.model.profiles,
-          this.model.activeProfileId,
-        );
-        this.view.showToast(`📁 Opened Tier ${tier} Profiles Panel`);
-      });
-    });
-
+  // In-Body Left Tier Profiles Panel Close & Collapse Controls
   if (this.view.btnCloseTierPanel) {
     this.view.btnCloseTierPanel.addEventListener("click", () => {
       this.view.closeTierPanel();
     });
   }
+
+  if (this.view.btnCollapseTierPanel) {
+    this.view.btnCollapseTierPanel.addEventListener("click", () => {
+      this.view.closeTierPanel();
+    });
+  }
+
+  // Filter helper combining search query and active filter chip
+  const applyTierFiltering = () => {
+    const q = this.view.inputTierPanelSearch
+      ? this.view.inputTierPanelSearch.value.toLowerCase().trim()
+      : "";
+    const activeChip = this.view.tierFilterChips
+      ? this.view.tierFilterChips.querySelector(".tier-filter-chip.active")
+      : null;
+    const filterType = activeChip ? activeChip.getAttribute("data-filter") : "ALL";
+
+    let filtered = (this.view.currentTierProfiles || []).filter((p) => {
+      // 1. Text search match
+      const matchesQuery =
+        !q ||
+        (p.name && p.name.toLowerCase().includes(q)) ||
+        (p.referenceCode && p.referenceCode.toLowerCase().includes(q));
+
+      if (!matchesQuery) return false;
+
+      // 2. Chip filter match
+      if (filterType === "ACTIVE") return p.isActive === true;
+      if (filterType === "PAID") return p.isPaid !== false && p.paymentStatus !== "FREE";
+      if (filterType === "FREE") return p.paymentStatus === "FREE" || p.isPaid === false;
+      return true;
+    });
+
+    const metaColor =
+      { 1: "#8b5cf6", 2: "#10b981", 3: "#f59e0b", 4: "#3b82f6" }[
+        this.view.currentOpenTier
+      ] || "#d4af37";
+
+    this.view._renderTierPanelCards(
+      filtered,
+      this.model.activeProfileId,
+      metaColor,
+    );
+
+    if (this.view.tierPanelCount) {
+      this.view.tierPanelCount.textContent = `${filtered.length} Member${filtered.length !== 1 ? "s" : ""}`;
+    }
+  };
 
   if (this.view.tierPanelProfilesList) {
     this.view.tierPanelProfilesList.addEventListener("click", (e) => {
@@ -842,21 +876,35 @@ ProfileController.prototype._bindEventsPart2 = function () {
 
   if (this.view.inputTierPanelSearch) {
     this.view.inputTierPanelSearch.addEventListener("input", (e) => {
-      const q = e.target.value.toLowerCase().trim();
-      const filtered = (this.view.currentTierProfiles || []).filter(
-        (p) =>
-          (p.name && p.name.toLowerCase().includes(q)) ||
-          (p.referenceCode && p.referenceCode.toLowerCase().includes(q)),
-      );
-      const metaColor =
-        { 1: "#8b5cf6", 2: "#10b981", 3: "#f59e0b", 4: "#3b82f6" }[
-          this.view.currentOpenTier
-        ] || "#d4af37";
-      this.view._renderTierPanelCards(
-        filtered,
-        this.model.activeProfileId,
-        metaColor,
-      );
+      const hasValue = e.target.value.trim().length > 0;
+      if (this.view.btnClearTierSearch) {
+        this.view.btnClearTierSearch.style.display = hasValue ? "block" : "none";
+      }
+      applyTierFiltering();
+    });
+  }
+
+  if (this.view.btnClearTierSearch) {
+    this.view.btnClearTierSearch.addEventListener("click", () => {
+      if (this.view.inputTierPanelSearch) {
+        this.view.inputTierPanelSearch.value = "";
+        this.view.inputTierPanelSearch.focus();
+      }
+      this.view.btnClearTierSearch.style.display = "none";
+      applyTierFiltering();
+    });
+  }
+
+  if (this.view.tierFilterChips) {
+    this.view.tierFilterChips.addEventListener("click", (e) => {
+      const chip = e.target.closest(".tier-filter-chip");
+      if (chip) {
+        this.view.tierFilterChips
+          .querySelectorAll(".tier-filter-chip")
+          .forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        applyTierFiltering();
+      }
     });
   }
 

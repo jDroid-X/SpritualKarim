@@ -4,6 +4,10 @@
 ProfileView.prototype.closeTierPanel = function() {
     if (!this.tierProfilesPanel) return;
     this.tierProfilesPanel.classList.remove('is-open');
+    const adminLayout = document.querySelector('.admin-layout');
+    if (adminLayout) {
+      adminLayout.classList.remove('has-tier-panel-open');
+    }
     this.currentOpenTier = null;
     document.querySelectorAll('#hierarchy-legend-container .legend-item').forEach(item => {
       item.classList.remove('active');

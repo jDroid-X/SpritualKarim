@@ -275,9 +275,15 @@ class ProfileView {
     this.inputTierPanelSearch = document.getElementById(
       "input-tier-panel-search",
     );
+    this.btnClearTierSearch = document.getElementById("btn-clear-tier-search");
+    this.btnCollapseTierPanel = document.getElementById(
+      "btn-collapse-tier-panel",
+    );
     this.btnCloseTierPanel = document.getElementById("btn-close-tier-panel");
+    this.tierFilterChips = document.getElementById("tier-panel-filter-chips");
     this.currentOpenTier = null;
     this.currentTierProfiles = [];
+
 
     // Additional DOM & State References
     this.adminSidebar =
@@ -2297,9 +2303,23 @@ Installation & Activation Steps:
         }
       });
 
+    const adminLayout = document.querySelector(".admin-layout");
+    if (adminLayout) {
+      adminLayout.classList.add("has-tier-panel-open");
+    }
+
     this.tierProfilesPanel.classList.add("is-open");
     if (this.inputTierPanelSearch) {
       this.inputTierPanelSearch.value = "";
+    }
+    if (this.btnClearTierSearch) {
+      this.btnClearTierSearch.style.display = "none";
+    }
+    if (this.tierFilterChips) {
+      this.tierFilterChips.querySelectorAll(".tier-filter-chip").forEach((c) => {
+        if (c.getAttribute("data-filter") === "ALL") c.classList.add("active");
+        else c.classList.remove("active");
+      });
     }
   }
 
