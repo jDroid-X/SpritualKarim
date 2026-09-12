@@ -380,13 +380,13 @@ class ProfileView {
     }
   }
 
-  render(profile, visibleProfiles, roleMode, settings) {
+  render(profile, visibleProfiles, roleMode, settings, anchorProfile = null) {
     this.populateSettings(settings);
     this._renderRoleSelector(roleMode);
-    this.updateLegendCounts(this.allProfiles || visibleProfiles);
+    this.updateLegendCounts(this.allProfiles || visibleProfiles, roleMode);
     this._renderDropdown(profile, visibleProfiles);
     this._renderDirectory(profile, visibleProfiles);
-    this._renderHeaderCard(profile, roleMode);
+    this._renderHeaderCard(profile, roleMode, anchorProfile);
     this._populateForm(profile);
 
     // Lineage Dynamic Units
@@ -575,70 +575,122 @@ class ProfileView {
     this.profileDirectoryList.innerHTML = html;
   }
 
-  _renderHeaderCard(profile, roleMode = "MASTER") {
-    // Master Founder context is Spiritual Karim Khan
-    const masterProfile =
-      (this.allProfiles || []).find(
-        (p) =>
-          p.id === "prof-admin-01" ||
-          p.level === 0 ||
-          p.profileType === "ADMIN",
-      ) || profile;
+  _renderHeaderCard(profile, roleMode = "MASTER", anchorProfile = null) {
+    // Resolve Anchor Authority Profile (Karim for Admin, Devendra for Healer, Rajesh for Trainee, Ananya for Devotee)
+    const anchor =
+      anchorProfile ||
+      (this.allProfiles || []).find((p) => {
+        if (roleMode === "HEALER") return p.profileType === "HEALER";
+        if (roleMode === "TRAINEE") return p.profileType === "TRAINEE";
+        if (roleMode === "DEVOTEE") return p.profileType === "DEVOTEE";
+        return p.id === "prof-admin-01" || p.profileType === "ADMIN";
+      }) ||
+      profile;
 
-    const mainBox = document.getElementById("main-profile-box-1");
-    const isMasterPaid =
-      masterProfile.isPaid !== false && masterProfile.paymentStatus !== "FREE";
-    const initials = (masterProfile.name || "SK")
+    const isAnchorPaid = anchor.isPaid !== false && anchor.paymentStatus !== "FREE";
+    const initials = (anchor.name || "SK")
       .split(" ")
       .map((w) => w[0])
       .slice(0, 2)
       .join("")
       .toUpperCase();
 
+    const roleColors = {
+      ADMIN: "var(--role-admin, #8b5cf6)",
+      MASTER: "var(--role-admin, #8b5cf6)",
+      HEALER: "var(--role-healer, #10b981)",
+      TRAINEE: "var(--role-trainee, #f59e0b)",
+      DEVOTEE: "var(--role-devotee, #3b82f6)",
+    };
+    const anchorColor = roleColors[anchor.profileType] || "var(--gold-400, #d4af37)";
+
+    // 1. Synchronize Header 1 (Top Bar Session User Pill)
+    const h1Pill = document.getElementById("topbar-session-user-pill");
+    if (h1Pill) {
+      const h1Avatar = h1Pill.querySelector("#topbar-session-avatar");
+      if (h1Avatar) {
+        h1Avatar.textContent = initials;
+        h1Avatar.style.borderColor = anchorColor;
+        h1Avatar.style.background = anchorColor;
+      }
+      const h1Name = h1Pill.querySelector("#topbar-session-name");
+      if (h1Name) h1Name.textContent = anchor.name || "Spiritual Karim Khan";
+      const h1Role = h1Pill.querySelector("#topbar-session-role");
+      if (h1Role) {
+        h1Role.textContent = `${anchor.profileType || "ADMIN MASTER"}`;
+        h1Role.style.background = anchorColor;
+      }
+      const h1Sub = h1Pill.querySelector("#topbar-session-subtitle");
+      if (h1Sub) {
+        if (anchor.profileType === "ADMIN") {
+          h1Sub.textContent = "👑 Founder Master Control";
+        } else if (anchor.profileType === "HEALER") {
+          h1Sub.textContent = "🛡️ Certified Healer Guide";
+        } else if (anchor.profileType === "TRAINEE") {
+          h1Sub.textContent = "📿 Trainee Sadhak";
+        } else {
+          h1Sub.textContent = "🌟 Devotee Personal Space";
+        }
+      }
+    }
+
+    // 2. Synchronize Header 2 (In-Body Profile Box 1 - main-profile-box-1)
+    const mainBox = document.getElementById("main-profile-box-1");
     if (mainBox) {
       const pName = mainBox.querySelector("#display-profile-name");
-      if (pName) pName.textContent = masterProfile.name || "Spiritual Karim Khan";
+      if (pName) pName.textContent = anchor.name || "Spiritual Karim Khan";
       const pBadge = mainBox.querySelector("#display-role-badge");
       if (pBadge) {
-        pBadge.textContent = `${masterProfile.profileType || "ADMIN MASTER"} • LEVEL ${masterProfile.level || 1}`;
-        pBadge.style.backgroundColor = "var(--role-admin, #8b5cf6)";
+        pBadge.textContent = `${anchor.profileType || "ADMIN MASTER"} • LEVEL ${anchor.level || 1}`;
+        pBadge.style.backgroundColor = anchorColor;
       }
       const pStatus = mainBox.querySelector("#display-status-pill");
       if (pStatus) {
-        pStatus.textContent = masterProfile.isActive !== false ? "Active Member" : "Inactive";
-        pStatus.className = `status-pill ${masterProfile.isActive !== false ? "active" : ""}`;
+        pStatus.textContent = anchor.isActive !== false ? "Active Member" : "Inactive";
+        pStatus.className = `status-pill ${anchor.isActive !== false ? "active" : ""}`;
       }
       const pStamp = mainBox.querySelector("#display-payment-stamp");
       if (pStamp) {
-        pStamp.className = `stamp-indicator ${isMasterPaid ? "stamp-paid" : "stamp-free"}`;
-        pStamp.textContent = isMasterPaid ? "PAID" : "FREE";
+        pStamp.className = `stamp-indicator ${isAnchorPaid ? "stamp-paid" : "stamp-free"}`;
+        pStamp.textContent = isAnchorPaid ? "PAID" : "FREE";
       }
       const pInitials = mainBox.querySelector("#profile-avatar-initials");
-      if (pInitials) pInitials.textContent = initials;
+      if (pInitials) {
+        pInitials.textContent = initials;
+        pInitials.style.borderColor = anchorColor;
+      }
       const pRef = mainBox.querySelector("#header-ref-code-text");
-      if (pRef)
-        pRef.textContent = masterProfile.referenceCode || "SKHM-ADM1-7788-9900";
+      if (pRef) pRef.textContent = anchor.referenceCode || "SKHM-ADM1-7788-9900";
       const tRef = mainBox.querySelector("#telemetry-ref-code");
-      if (tRef)
-        tRef.textContent = masterProfile.referenceCode || "SKHM-ADM1-7788-9900";
+      if (tRef) tRef.textContent = anchor.referenceCode || "SKHM-ADM1-7788-9900";
 
-      // Center Meta for Master Card 1
-      const masterJoinDate =
-        masterProfile.joinDate || masterProfile.joiningDate || "2024-01-01";
+      // Center Meta for Header 2
+      const anchorJoinDate =
+        anchor.joinDate || anchor.joiningDate || "2024-01-01";
       const pMasterJoin = mainBox.querySelector("#display-master-join-date");
-      if (pMasterJoin) pMasterJoin.textContent = `📅 Joined: ${masterJoinDate}`;
+      if (pMasterJoin) pMasterJoin.textContent = `📅 Joined: ${anchorJoinDate}`;
       const pMasterRole = mainBox.querySelector("#display-master-current-role");
-      if (pMasterRole) pMasterRole.textContent = `👑 Role: Admin Master (Founder)`;
+      if (pMasterRole) {
+        if (anchor.profileType === "ADMIN") {
+          pMasterRole.textContent = `👑 Role: Admin Master (Founder)`;
+        } else if (anchor.profileType === "HEALER") {
+          pMasterRole.textContent = `🛡️ Role: Certified Healer Guide`;
+        } else if (anchor.profileType === "TRAINEE") {
+          pMasterRole.textContent = `📿 Role: Trainee Sadhak`;
+        } else {
+          pMasterRole.textContent = `🌟 Role: Devotee / Seeker`;
+        }
+      }
     }
 
     if (this.headerStampBadge) {
-      this.headerStampBadge.className = `stamp-badge ${isMasterPaid ? "stamp-paid" : "stamp-free"}`;
-      this.headerStampBadge.textContent = isMasterPaid ? "🟢 PAID" : "🔴 FREE";
-      this.headerStampBadge.title = `Active Membership: ${isMasterPaid ? "PAID" : "FREE"}`;
+      this.headerStampBadge.className = `stamp-badge ${isAnchorPaid ? "stamp-paid" : "stamp-free"}`;
+      this.headerStampBadge.textContent = isAnchorPaid ? "🟢 PAID" : "🔴 FREE";
+      this.headerStampBadge.title = `Active Membership: ${isAnchorPaid ? "PAID" : "FREE"}`;
     }
 
-    // Render Card 2: Selected Member Profile Card
-    this.renderSelectedMemberCard(profile);
+    // 3. Render Card 2: Selected Downline Member Profile Card
+    this.renderSelectedMemberCard(profile, anchor);
   }
 
   /**
@@ -646,18 +698,17 @@ class ProfileView {
    * Center of card displays Date of Joining and Current Role.
    * EXPLICITLY NO Approval Pending button!
    */
-  renderSelectedMemberCard(selectedProfile) {
+  renderSelectedMemberCard(selectedProfile, anchorProfile = null) {
     if (!this.selectedMemberCard) {
       this.selectedMemberCard = document.getElementById("selected-member-profile-card");
     }
     if (!this.selectedMemberCard) return;
 
-    // If no profile or if selected profile is Master itself, hide Card 2
+    // If no profile or if selected profile is Anchor itself, hide Card 2
     if (
       !selectedProfile ||
-      selectedProfile.id === "prof-admin-01" ||
-      selectedProfile.level === 0 ||
-      (selectedProfile.profileType === "ADMIN" && selectedProfile.name === "Spiritual Karim Khan")
+      (anchorProfile && selectedProfile.id === anchorProfile.id) ||
+      (!anchorProfile && (selectedProfile.id === "prof-admin-01" || selectedProfile.level === 0))
     ) {
       this.selectedMemberCard.style.display = "none";
       return;
@@ -733,6 +784,22 @@ class ProfileView {
     const pCurrentRole = this.selectedMemberCard.querySelector("#selected-member-current-role");
     if (pCurrentRole) {
       pCurrentRole.textContent = `Current Role: ${roleNames[selectedProfile.profileType] || selectedProfile.profileType || "Devotee"}`;
+    }
+
+    // Dynamic Return to Anchor Button
+    const returnBtn = this.selectedMemberCard.querySelector("#btn-close-selected-member-card");
+    if (returnBtn) {
+      const anchorTitle = (anchorProfile && anchorProfile.profileType === "HEALER") ? "Healer" : "Master";
+      returnBtn.textContent = `✕ Return to ${anchorTitle}`;
+      returnBtn.title = `Close Member View & Return to ${anchorTitle}`;
+    }
+
+    // STRICT GUARANTEE: Remove any approval buttons in Card 2
+    const accidentalApprovalBtn = this.selectedMemberCard.querySelector(
+      ".btn-approve-pairing, .header-approval-tab-btn, #main-tab-approval-btn, [data-main-tab='tab-pending-approvals']"
+    );
+    if (accidentalApprovalBtn) {
+      accidentalApprovalBtn.remove();
     }
   }
 

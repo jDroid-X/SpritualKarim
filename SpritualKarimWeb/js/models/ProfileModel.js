@@ -34,14 +34,41 @@ class ProfileModel {
       } else if (portalModeTag) {
         detectedRole = portalModeTag.toUpperCase();
       } else {
-        detectedRole = localStorage.getItem(this.roleModeKey) || "MASTER";
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlRole = urlParams.get("role");
+        if (urlRole) {
+          const ur = urlRole.toUpperCase();
+          if (["ADMIN", "MASTER"].includes(ur)) detectedRole = "MASTER";
+          else if (["HEALER", "HEALERS"].includes(ur)) detectedRole = "HEALER";
+          else if (["TRAINEE", "SADHAK"].includes(ur)) detectedRole = "TRAINEE";
+          else if (["DEVOTEE", "SEEKER"].includes(ur)) detectedRole = "DEVOTEE";
+        } else {
+          detectedRole = localStorage.getItem(this.roleModeKey) || "MASTER";
+        }
       }
     } catch (e) {
       detectedRole = "MASTER";
     }
     this.roleMode = detectedRole;
 
+    this.anchorProfileId = null;
+    this.inspectedProfileId = null;
+
+    if (this.roleMode === "HEALER") {
+      const hProf = this.profiles.find((p) => p.profileType === "HEALER");
+      this.anchorProfileId = hProf ? hProf.id : "prof-healer-01";
+    } else if (this.roleMode === "TRAINEE") {
+      const tProf = this.profiles.find((p) => p.profileType === "TRAINEE");
+      this.anchorProfileId = tProf ? tProf.id : "prof-trainee-01";
+    } else if (this.roleMode === "DEVOTEE") {
+      const dProf = this.profiles.find((p) => p.profileType === "DEVOTEE");
+      this.anchorProfileId = dProf ? dProf.id : "prof-devotee-01";
+    } else {
+      this.anchorProfileId = "prof-admin-01";
+    }
+
     this.activeProfileId =
+      this.anchorProfileId ||
       localStorage.getItem(this.activeProfileIdKey) ||
       this.profiles[0]?.id ||
       "prof-admin-01";
@@ -194,28 +221,20 @@ class ProfileModel {
   setRoleMode(mode) {
     this.roleMode = mode.toUpperCase();
     localStorage.setItem(this.roleModeKey, this.roleMode);
+    this.clearInspectedProfile();
 
-    // Switch active profile to match selected tier if current does not match
-    const active = this.getActiveProfile();
-    if (this.roleMode === "DEVOTEE" && active?.profileType !== "DEVOTEE") {
-      const devoteeProf = this.profiles.find(
-        (p) => p.profileType === "DEVOTEE",
-      );
-      if (devoteeProf) this.setActiveProfileId(devoteeProf.id);
-    } else if (
-      this.roleMode === "TRAINEE" &&
-      active?.profileType !== "TRAINEE"
-    ) {
-      const traineeProf = this.profiles.find(
-        (p) => p.profileType === "TRAINEE" || p.level === 4,
-      );
-      if (traineeProf) this.setActiveProfileId(traineeProf.id);
-    } else if (this.roleMode === "HEALER" && active?.profileType !== "HEALER") {
+    if (this.roleMode === "DEVOTEE") {
+      const devoteeProf = this.profiles.find((p) => p.profileType === "DEVOTEE");
+      if (devoteeProf) this.setAnchorProfileId(devoteeProf.id);
+    } else if (this.roleMode === "TRAINEE") {
+      const traineeProf = this.profiles.find((p) => p.profileType === "TRAINEE" || p.level === 4);
+      if (traineeProf) this.setAnchorProfileId(traineeProf.id);
+    } else if (this.roleMode === "HEALER") {
       const healerProf = this.profiles.find((p) => p.profileType === "HEALER");
-      if (healerProf) this.setActiveProfileId(healerProf.id);
-    } else if (this.roleMode === "MASTER" && active?.profileType !== "ADMIN") {
-      const adminProf = this.profiles.find((p) => p.profileType === "ADMIN");
-      if (adminProf) this.setActiveProfileId(adminProf.id);
+      if (healerProf) this.setAnchorProfileId(healerProf.id);
+    } else if (this.roleMode === "MASTER" || this.roleMode === "ADMIN") {
+      const adminProf = this.profiles.find((p) => p.profileType === "ADMIN" || p.id === "prof-admin-01");
+      if (adminProf) this.setAnchorProfileId(adminProf.id);
     }
   }
 
@@ -431,19 +450,26 @@ class ProfileModel {
   getVisibleProfiles() {
     const mode = this.roleMode || "MASTER";
 
-    if (mode === "MASTER") {
+    if (mode === "MASTER" || mode === "ADMIN") {
       return this.profiles;
     }
 
     if (mode === "HEALER") {
-      return this.profiles.filter((p) => p.profileType === "HEALER");
+      // Healer downline: sees Healers, Trainees, and Devotees (Admin Master excluded)
+      return this.profiles.filter(
+        (p) => p.profileType !== "ADMIN" && p.level !== 0 && p.id !== "prof-admin-01",
+      );
     }
 
     if (mode === "TRAINEE") {
-      return this.profiles.filter((p) => p.profileType === "TRAINEE");
+      // Trainee downline: sees Trainees and Devotees (Admin and Healers excluded)
+      return this.profiles.filter(
+        (p) => p.profileType === "TRAINEE" || p.profileType === "DEVOTEE",
+      );
     }
 
     if (mode === "DEVOTEE") {
+      // Devotees: sees Devotees only
       return this.profiles.filter((p) => p.profileType === "DEVOTEE");
     }
 
@@ -1919,15 +1945,58 @@ class ProfileModel {
   }
 
   getActiveProfile() {
+    if (this.inspectedProfileId) {
+      const inspected = this.profiles.find((p) => p.id === this.inspectedProfileId);
+      if (inspected) return inspected;
+    }
+    return this.getAnchorProfile();
+  }
+
+  getAnchorProfile() {
+    if (this.anchorProfileId) {
+      const p = this.profiles.find((x) => x.id === this.anchorProfileId);
+      if (p) return p;
+    }
+    if (this.roleMode === "HEALER") {
+      return this.profiles.find((p) => p.profileType === "HEALER") || this.profiles[0];
+    }
+    if (this.roleMode === "TRAINEE") {
+      return this.profiles.find((p) => p.profileType === "TRAINEE") || this.profiles[0];
+    }
+    if (this.roleMode === "DEVOTEE") {
+      return this.profiles.find((p) => p.profileType === "DEVOTEE") || this.profiles[0];
+    }
     return (
-      this.profiles.find((p) => p.id === this.activeProfileId) ||
+      this.profiles.find((p) => p.id === "prof-admin-01" || p.profileType === "ADMIN") ||
       this.profiles[0]
     );
   }
 
-  setActiveProfileId(id) {
+  getInspectedProfile() {
+    if (this.inspectedProfileId) {
+      return this.profiles.find((p) => p.id === this.inspectedProfileId) || null;
+    }
+    return null;
+  }
+
+  setInspectedProfileId(id) {
+    this.inspectedProfileId = id;
+    this.activeProfileId = id;
+  }
+
+  clearInspectedProfile() {
+    this.inspectedProfileId = null;
+    this.activeProfileId = this.anchorProfileId || this.profiles[0]?.id;
+  }
+
+  setAnchorProfileId(id) {
+    this.anchorProfileId = id;
     this.activeProfileId = id;
     localStorage.setItem(this.activeProfileIdKey, id);
+  }
+
+  setActiveProfileId(id) {
+    this.setInspectedProfileId(id);
   }
 
   updateActiveProfile(updatedData) {

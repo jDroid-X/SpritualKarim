@@ -859,7 +859,7 @@ ProfileController.prototype._bindEventsPart2 = function () {
       const card = e.target.closest(".tier-panel-profile-card");
       if (card) {
         const id = card.getAttribute("data-id");
-        this.model.setActiveProfileId(id);
+        this.model.setInspectedProfileId(id);
         this._renderCurrentState();
 
         // Highlight card in tier panel
@@ -869,7 +869,12 @@ ProfileController.prototype._bindEventsPart2 = function () {
         card.classList.add("active");
 
         const activeP = this.model.getActiveProfile();
-        this.view.showToast(`🚀 Viewing profile: ${activeP.name}`);
+        this.view.showSlideToast(
+          "Downline Inspected",
+          `🚀 Viewing downline profile: ${activeP.name} (${activeP.profileType || "DEVOTEE"})`,
+          "info",
+          2500,
+        );
       }
     });
   }

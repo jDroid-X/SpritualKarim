@@ -61,18 +61,51 @@ ProfileView.prototype._renderTierPanelCards = function(profiles, activeProfileId
     }).join('');
 };
 
-ProfileView.prototype.updateLegendCounts = function(profiles) {
+ProfileView.prototype.updateLegendCounts = function(profiles, roleMode = 'MASTER') {
     const counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
     (profiles || []).forEach(p => {
-      if (p.profileType === 'ADMIN' || p.level === 1) counts[1]++;
-      else if (p.profileType === 'HEALER') counts[2]++;
-      else if (p.profileType === 'TRAINEE' || p.level === 4) counts[3]++;
+      if (p.profileType === 'ADMIN' || p.level === 1 || p.level === 0) counts[1]++;
+      else if (p.profileType === 'HEALER' || p.level === 2) counts[2]++;
+      else if (p.profileType === 'TRAINEE' || p.level === 3 || p.level === 4) counts[3]++;
       else counts[4]++;
     });
 
     for (let t = 1; t <= 4; t++) {
       const el = document.getElementById('legend-count-tier-' + t);
       if (el) el.textContent = counts[t];
+    }
+
+    // Higher-to-Lower Tier Visibility Gating in Sidebar:
+    const tier1Item = document.querySelector('#hierarchy-legend-container .legend-item[data-tier="1"]');
+    const tier2Item = document.querySelector('#hierarchy-legend-container .legend-item[data-tier="2"]');
+    const tier3Item = document.querySelector('#hierarchy-legend-container .legend-item[data-tier="3"]');
+    const tier4Item = document.querySelector('#hierarchy-legend-container .legend-item[data-tier="4"]');
+
+    const resolvedRole = (roleMode || 'MASTER').toUpperCase();
+    if (resolvedRole === 'HEALER') {
+      // Healers cannot see or manage Tier 1 (Admin Master)
+      if (tier1Item) tier1Item.style.display = 'none';
+      if (tier2Item) tier2Item.style.display = 'flex';
+      if (tier3Item) tier3Item.style.display = 'flex';
+      if (tier4Item) tier4Item.style.display = 'flex';
+    } else if (resolvedRole === 'TRAINEE') {
+      // Trainees cannot see Tier 1 or Tier 2
+      if (tier1Item) tier1Item.style.display = 'none';
+      if (tier2Item) tier2Item.style.display = 'none';
+      if (tier3Item) tier3Item.style.display = 'flex';
+      if (tier4Item) tier4Item.style.display = 'flex';
+    } else if (resolvedRole === 'DEVOTEE') {
+      // Devotees can only see Tier 4
+      if (tier1Item) tier1Item.style.display = 'none';
+      if (tier2Item) tier2Item.style.display = 'none';
+      if (tier3Item) tier3Item.style.display = 'none';
+      if (tier4Item) tier4Item.style.display = 'flex';
+    } else {
+      // MASTER / ADMIN sees all tiers
+      if (tier1Item) tier1Item.style.display = 'flex';
+      if (tier2Item) tier2Item.style.display = 'flex';
+      if (tier3Item) tier3Item.style.display = 'flex';
+      if (tier4Item) tier4Item.style.display = 'flex';
     }
 };
 

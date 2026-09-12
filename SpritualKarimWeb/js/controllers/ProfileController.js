@@ -125,18 +125,19 @@ class ProfileController {
   }
 
   _renderCurrentState() {
+    const anchor = this.model.getAnchorProfile();
     const active = this.model.getActiveProfile();
     const visibleProfiles = this.model.getVisibleProfiles();
     const roleMode = this.model.getRoleMode();
     const settings = this.model.settings;
     this.view.allProfiles = this.model.profiles;
-    this.view.render(active, visibleProfiles, roleMode, settings);
+    this.view.render(active, visibleProfiles, roleMode, settings, anchor);
 
     // Dynamic authorization matrix applies relative to inspected profile role
     const targetRole =
-      active && active.id !== "prof-admin-01" && active.profileType
+      active && anchor && active.id !== anchor.id && active.profileType
         ? active.profileType
-        : roleMode;
+        : (anchor ? anchor.profileType : roleMode);
     this.view.applyDynamicAuthMatrix(this.model.getAuthMatrix(), targetRole);
 
     // Render dynamic approval notification under mentor name
@@ -1448,14 +1449,15 @@ class ProfileController {
     const btnCloseMemberCard = document.getElementById("btn-close-selected-member-card");
     if (btnCloseMemberCard) {
       btnCloseMemberCard.addEventListener("click", () => {
-        this.model.setActiveProfileId("prof-admin-01");
+        this.model.clearInspectedProfile();
         this._renderCurrentState();
         if (typeof this.view.closeTierPanel === "function") {
           this.view.closeTierPanel();
         }
+        const anchor = this.model.getAnchorProfile();
         this.view.showSlideToast(
-          "Master Portal Restored",
-          "👑 Returned to Master Founder view (Spiritual Karim Khan)",
+          "Authority View Restored",
+          `👑 Returned to ${anchor ? anchor.name : "Anchor Profile"} view`,
           "info",
           2500,
         );
