@@ -67,6 +67,16 @@ class ProfileModel {
       githubRepoUrl: "https://github.com/jDroid-X/SpritualKarim",
       webPortalUrl: "https://jdroid-x.github.io/SpritualKarim/",
       uplineApprovalTimeoutHours: 24,
+      maxPendingInvitesPerMentor: 5,
+      inviteExpiryHours: 24,
+      maxInviteResubmits: 3,
+      requirePhoneOTP: false,
+      requireEmailOTP: false,
+      requireCaptcha: false,
+      requireKYC: false,
+      requireSignature: false,
+      requireTandC: true,
+      defaultInductionRole: "DEVOTEE",
       allowDevoteeDelete: false,
       devoteeCanEditLineage: true,
       devoteeCanEnroll: true,
@@ -2524,37 +2534,37 @@ class ProfileModel {
       return { error: true, message: lineageValidation.reason };
     }
 
-    // 2. Downline Capacity Throttle: Max 5 active pending invites per mentor
+    // 2. Downline Capacity Throttle: Configurable active pending invites per mentor
+    const maxPending = this.settings.maxPendingInvitesPerMentor || 5;
     const activePending = invites.filter(
       (i) => i.sponsorCode === sponsorCode && i.status === "PENDING",
     );
-    if (activePending.length >= 5) {
+    if (activePending.length >= maxPending) {
       return {
         error: true,
         message:
-          "Invite quota reached: Maximum 5 pending pairing requests allowed simultaneously per mentor. Approve or reject pending requests first.",
+          `Invite quota reached: Maximum ${maxPending} pending pairing requests allowed simultaneously per mentor. Approve or reject pending requests first.`,
       };
     }
 
     const cleanCode = sponsorCode.replace(/[^a-zA-Z0-9]/g, "");
-    const hardwareNonce =
-      "HW-" +
-      Math.random().toString(36).substr(2, 6).toUpperCase() +
-      "-" +
-      Date.now().toString(36).toUpperCase();
+    const devoteeCode = candidateCode || this.generate16DigitCode("SKDV");
+    const expiryHours = this.settings.inviteExpiryHours || 24;
 
     const newInvite = {
       id: "inv-" + Date.now().toString(36),
       sponsorCode: sponsorCode,
+      devoteeCode: devoteeCode,
       seekerName: seekerName || "New Seeker",
       seekerPhone: seekerPhone || "+91 98000 00000",
       seekerDeviceModel: deviceModel || "Android Device",
-      hardwareNonce: hardwareNonce,
+      hardwareNonce: devoteeCode,
+      referenceKey: devoteeCode,
       telegramLink: `https://t.me/SpiritualKarimBot?start=pair_${cleanCode}`,
       apkDownloadUrl:
         "https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk",
       createdAtMs: Date.now(),
-      expiresAtMs: Date.now() + 24 * 60 * 60 * 1000,
+      expiresAtMs: Date.now() + expiryHours * 60 * 60 * 1000,
       status: "PENDING",
       resendCount: 0,
       lastResendTimestamp: Date.now(),
@@ -2575,62 +2585,70 @@ class ProfileModel {
     return newInvite;
   }
 
-  approvePairingInvite(inviteId) {
+  approvePairingInvite(inviteId, targetRole = null) {
     const invites = this.getPairingInvites();
     const item = invites.find((i) => i.id === inviteId);
     if (item) {
+      const assignedRole = (targetRole || item.assignedRole || this.settings.defaultInductionRole || "DEVOTEE").toUpperCase();
+      const roleLevel = assignedRole === "HEALER" ? 2 : assignedRole === "TRAINEE" ? 3 : 5;
+
       item.status = "APPROVED";
+      item.assignedRole = assignedRole;
+      item.roleLevel = roleLevel;
       item.approvedAtMs = Date.now();
       this.savePairingInvites(invites);
 
       const profile = this.getActiveProfile();
       if (!profile.healerNetwork) profile.healerNetwork = [];
 
+      const targetRefCode = item.devoteeCode || item.hardwareNonce || item.referenceKey || this.generate16DigitCode("SKDV");
+
       const existsInNet = profile.healerNetwork.some(
         (n) =>
           n.name === item.seekerName ||
-          (n.refCode && n.refCode === item.hardwareNonce),
+          (n.refCode && n.refCode === targetRefCode),
       );
       if (!existsInNet) {
         profile.healerNetwork.push({
           id: "net-" + Date.now().toString().slice(-4),
           name: item.seekerName,
-          refCode: item.hardwareNonce || this.generate16DigitCode("SKDV"),
-          role: "Devotee (Level 5)",
+          refCode: targetRefCode,
+          role: `${assignedRole.charAt(0) + assignedRole.slice(1).toLowerCase()} (Level ${roleLevel})`,
           activeCases: 1,
           phone: item.seekerPhone || "",
           deviceModel: item.seekerDeviceModel || "",
         });
       }
 
-      // Ensure seeker exists as a registered Devotee profile in directory
+      // Ensure seeker exists as a registered profile in directory with assigned role
       const existingProfile = this.profiles.find(
         (p) =>
           p.name === item.seekerName ||
-          (item.seekerPhone && p.phone === item.seekerPhone),
+          (item.seekerPhone && p.phone === item.seekerPhone) ||
+          p.referenceCode === targetRefCode,
       );
       if (!existingProfile) {
         const newDevoteeProfile = {
-          id: "prof-dev-" + Date.now().toString(36),
-          referenceCode: item.hardwareNonce || this.generate16DigitCode("SKDV"),
+          id: "prof-" + assignedRole.toLowerCase().slice(0, 4) + "-" + Date.now().toString(36),
+          referenceCode: targetRefCode,
           referredByCode: profile.referenceCode || "SKHM-ADM1-7788-9900",
           transferredCode: "",
           name: item.seekerName,
           phone: item.seekerPhone || "",
-          email: "",
-          profileType: "DEVOTEE",
-          level: 5,
+          email: item.seekerEmail || "",
+          profileType: assignedRole,
+          level: roleLevel,
           isPaid: false,
           paymentStatus: "FREE",
-          objective:
+          objective: item.objective ||
             "Household cleansing, Three Diya practice, and ancestral karma resolution.",
           selectedRemedies: ["three_diya", "negativity"],
           address: "",
           city: "",
           joinDate: new Date().toISOString().split("T")[0],
           isActive: true,
-          notes: `Paired via 24h token with mentor ${profile.name} (${profile.referenceCode}). Device: ${item.seekerDeviceModel}`,
-          categoryTag: "House Clean & Seekers",
+          notes: `Paired via token with mentor ${profile.name} (${profile.referenceCode}). Assigned Role: ${assignedRole}. Device: ${item.seekerDeviceModel || "Web"}`,
+          categoryTag: assignedRole === "HEALER" ? "Healers & Mentors" : assignedRole === "TRAINEE" ? "Trainee Sadhaks" : "House Clean & Seekers",
           seekerDiagnostics: {
             afflictionDuration: "",
             kuldeviIssues: "",
@@ -2683,13 +2701,23 @@ class ProfileModel {
               approvalDate: null,
             },
           ],
-          traineeSadhanas: [],
+          traineeSadhanas: assignedRole === "TRAINEE" ? [
+            {
+              id: "three_diya",
+              title: "Three Diya Practice",
+              category: "Divine Remedy",
+              status: "IN_PROGRESS",
+              dailyMalasDone: 0,
+              targetMalas: 11,
+              streakDays: 0,
+            }
+          ] : [],
           healerCompletedSadhanas: [],
           healerNetwork: [],
           lineage: {
             currentFamily: {
               selfName: item.seekerName,
-              selfTitle: "Devotee Sadhak",
+              selfTitle: `${assignedRole.charAt(0) + assignedRole.slice(1).toLowerCase()} Sadhak`,
               spouseName: "",
               children: [],
               siblings: [],
@@ -2717,6 +2745,9 @@ class ProfileModel {
           },
         };
         this.profiles.push(newDevoteeProfile);
+      } else {
+        existingProfile.profileType = assignedRole;
+        existingProfile.level = roleLevel;
       }
 
       this.saveProfiles(this.profiles);
@@ -2725,7 +2756,7 @@ class ProfileModel {
       this.logDeviceEvent(
         item.hardwareNonce || item.id,
         "PAIRING_APPROVED",
-        `Pairing approved for "${item.seekerName}" by sponsor ${item.sponsorCode}`,
+        `Pairing approved for "${item.seekerName}" as ${assignedRole} (Level ${roleLevel}) by sponsor ${item.sponsorCode}`,
         item,
         "SUCCESS",
       );
@@ -2756,6 +2787,14 @@ class ProfileModel {
     const invites = this.getPairingInvites();
     const item = invites.find((i) => i.id === inviteId);
     if (item) {
+      const maxResubmits = this.settings.maxInviteResubmits || 3;
+      if ((item.resendCount || 0) >= maxResubmits) {
+        return {
+          error: true,
+          message: `Maximum renewal limit (${maxResubmits} resubmits) reached for this invitation. Please create a new invitation link.`,
+        };
+      }
+
       // Exponential Backoff Check
       const cooldownSecs = this.getResendCooldownRemaining(item);
       if (cooldownSecs > 0) {
@@ -2766,8 +2805,9 @@ class ProfileModel {
         };
       }
 
+      const expiryHours = this.settings.inviteExpiryHours || 24;
       item.createdAtMs = Date.now();
-      item.expiresAtMs = Date.now() + 24 * 60 * 60 * 1000;
+      item.expiresAtMs = Date.now() + expiryHours * 60 * 60 * 1000;
       item.status = "PENDING";
       item.resendCount = (item.resendCount || 0) + 1;
       item.lastResendTimestamp = Date.now();

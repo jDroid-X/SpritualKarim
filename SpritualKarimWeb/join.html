@@ -632,6 +632,12 @@
             >
               <!-- STEP 1: Identity -->
               <div class="wizard-step-content" data-step="1">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                  <span style="font-size: 0.75rem; color: var(--gold-400); font-weight: 700;">Personal Information</span>
+                  <button type="button" onclick="Wizard.fillDummyData()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; font-weight: 700; background: rgba(212, 175, 55, 0.2); border: 1px solid var(--gold-400); color: var(--gold-400); border-radius: 4px; cursor: pointer;">
+                    ⚡ Fill Demo Data
+                  </button>
+                </div>
                 <div class="form-group-custom">
                   <label for="join-name"
                     >Full Name <span style="color: #ef4444">*</span></label
@@ -1532,20 +1538,45 @@
         otpTimers: { phone: null, email: null },
 
         init() {
+          try {
+            const settings = JSON.parse(
+              localStorage.getItem("sk_admin_system_settings_v1") || "{}"
+            );
+            const regConfig = JSON.parse(
+              localStorage.getItem("sk_registration_config") || "{}"
+            );
+            this.requirePhoneOTP = settings.requirePhoneOTP === true || regConfig.requirePhoneOTP === true;
+            this.requireEmailOTP = settings.requireEmailOTP === true || regConfig.requireEmailOTP === true;
+            this.requireCaptcha = settings.requireCaptcha === true || regConfig.requireCaptcha === true;
+            this.requireKYC = settings.requireKYC === true || regConfig.requireKYC === true;
+            this.requireSignature = settings.requireSignature === true || regConfig.requireSignature === true;
+            this.requireTandC = settings.requireTandC !== false && regConfig.requireTandC !== false;
+
+            // Pre-fulfill non-mandatory items with dummy status
+            if (!this.requirePhoneOTP) this.data.phoneOTPVerified = true;
+            if (!this.requireEmailOTP) this.data.emailOTPVerified = true;
+            if (!this.requireCaptcha) this.data.captchaVerified = true;
+            if (!this.requireKYC) {
+              this.data.documents.idProof = true;
+              this.data.documents.photo = true;
+              this.data.documents.addressProof = true;
+            }
+          } catch(e) {}
+
           this.refreshCaptcha();
           // Prefill phone/email when available
           const mobileEl = document.getElementById("join-mobile");
           const emailEl = document.getElementById("join-email");
           if (mobileEl) {
             mobileEl.addEventListener("blur", () => {
-              document.getElementById("otp-phone-display").value =
-                mobileEl.value || "Enter mobile first";
+              const opEl = document.getElementById("otp-phone-display");
+              if (opEl) opEl.value = mobileEl.value || "Enter mobile first";
             });
           }
           if (emailEl) {
             emailEl.addEventListener("blur", () => {
-              document.getElementById("otp-email-display").value =
-                emailEl.value || "Enter email first";
+              const oeEl = document.getElementById("otp-email-display");
+              if (oeEl) oeEl.value = emailEl.value || "Enter email first";
             });
           }
           // Load T&C content
@@ -1574,6 +1605,50 @@
             const el = document.getElementById(id);
             if (el) el.addEventListener("input", () => this.saveDraft());
           });
+        },
+
+        fillDummyData() {
+          const dummyNames = ["Rohan Verma", "Sunil Joshi", "Meera Rajput", "Aarti Patel", "Vikram Rathore"];
+          const name = dummyNames[Math.floor(Math.random() * dummyNames.length)];
+          const phone = "+91 98" + Math.floor(10000000 + Math.random() * 90000000);
+          const email = name.toLowerCase().replace(" ", ".") + "@example.com";
+          const dob = "1994-06-20";
+
+          const nameEl = document.getElementById("join-name");
+          if (nameEl) nameEl.value = name;
+          const dobEl = document.getElementById("join-dob");
+          if (dobEl) dobEl.value = dob;
+          const phoneEl = document.getElementById("join-mobile");
+          if (phoneEl) phoneEl.value = phone;
+          const emailEl = document.getElementById("join-email");
+          if (emailEl) emailEl.value = email;
+
+          const pDisplay = document.getElementById("otp-phone-display");
+          if (pDisplay) pDisplay.value = phone;
+          const eDisplay = document.getElementById("otp-email-display");
+          if (eDisplay) eDisplay.value = email;
+
+          this.data.name = name;
+          this.data.dob = dob;
+          this.data.mobile = phone;
+          this.data.email = email;
+          this.data.phoneOTPVerified = true;
+          this.data.emailOTPVerified = true;
+          this.data.captchaVerified = true;
+          this.data.documents.idProof = true;
+          this.data.documents.photo = true;
+          this.data.documents.addressProof = true;
+          this.data.tcAccepted = true;
+          this.data.signature = name + " (Digital E-Sign)";
+
+          const sigInput = document.getElementById("join-signature");
+          if (sigInput) sigInput.value = this.data.signature;
+          const consent = document.getElementById("join-consent");
+          if (consent) consent.checked = true;
+
+          this.saveDraft();
+          const errEl = document.getElementById("wizard-submit-error");
+          if (errEl) errEl.style.display = "none";
         },
 
         saveDraft() {
@@ -1687,35 +1762,42 @@
               }
               break;
             case 2:
-              if (!this.data.phoneOTPVerified)
+              if (this.requirePhoneOTP && !this.data.phoneOTPVerified)
                 errors.push("Please verify phone OTP.");
-              if (!this.data.emailOTPVerified)
+              if (this.requireEmailOTP && !this.data.emailOTPVerified)
                 errors.push("Please verify email OTP.");
-              if (!this.data.captchaVerified)
+              if (this.requireCaptcha && !this.data.captchaVerified)
                 errors.push("Please solve the security check.");
               break;
             case 3:
-              if (!this.data.documents.idProof)
+              if (this.requireKYC && !this.data.documents.idProof)
                 errors.push("ID Proof is required.");
               break;
             case 4:
               this.data.tcAccepted =
                 document.getElementById("join-consent").checked;
-              if (!this.data.tcAccepted)
+              if (this.requireTandC && !this.data.tcAccepted)
                 errors.push("You must accept Terms & Conditions.");
               this.data.signature = document
                 .getElementById("join-signature")
                 .value.trim();
-              if (!this.data.signature || this.data.signature.length < 3)
+              if (this.requireSignature && (!this.data.signature || this.data.signature.length < 3)) {
                 errors.push("Digital signature is required.");
+              } else if (!this.data.signature) {
+                this.data.signature = (this.data.name || "Devotee") + " (Digital E-Sign)";
+              }
               break;
           }
           if (errors.length > 0) {
             const errEl = document.getElementById("wizard-submit-error");
-            errEl.innerHTML = errors.map((e) => "⚠️ " + e).join("<br>");
-            errEl.style.display = "block";
+            if (errEl) {
+              errEl.innerHTML = errors.map((e) => "⚠️ " + e).join("<br>");
+              errEl.style.display = "block";
+            }
             return false;
           }
+          const errEl = document.getElementById("wizard-submit-error");
+          if (errEl) errEl.style.display = "none";
           return true;
         },
 
@@ -1968,31 +2050,38 @@
               this.data.name || "seeker",
             );
           }
-          // Create invite payload
-          const inviteId = "inv-" + Date.now();
-          const newRefCode =
+          // Create or update invite payload
+          const urlParams = new URLSearchParams(window.location.search);
+          const candidateRefCode = urlParams.get("devoteeCode") || urlParams.get("candidateCode") || urlParams.get("code") || "";
+          const newRefCode = candidateRefCode || (
             "SKDV-" +
             Math.random().toString(36).substr(2, 4).toUpperCase() +
             "-" +
             Math.random().toString(36).substr(2, 4).toUpperCase() +
             "-" +
-            Math.random().toString(36).substr(2, 4).toUpperCase();
+            Math.random().toString(36).substr(2, 4).toUpperCase()
+          );
+
+          let inviteId = "inv-" + Date.now();
           const invitePayload = {
             id: inviteId,
             seekerName: this.data.name,
             seekerPhone: this.data.mobile,
             seekerEmail: this.data.email,
             sponsorCode:
-              new URLSearchParams(window.location.search).get("ref") ||
+              urlParams.get("ref") ||
+              urlParams.get("sponsor") ||
               "SKHM-ADM1-7788-9900",
+            devoteeCode: newRefCode,
             activationPin:
-              new URLSearchParams(window.location.search).get("pin") ||
+              urlParams.get("pin") ||
+              urlParams.get("activationPin") ||
               "140610",
             hardwareNonce: newRefCode,
             referenceKey: newRefCode,
-            seekerDeviceModel: "Web Browser (" + navigator.platform + ")",
+            seekerDeviceModel: "Web Browser (" + (navigator.platform || "Desktop") + ")",
             status: "PENDING",
-            objective: document.getElementById("join-objective").value,
+            objective: document.getElementById("join-objective")?.value || "Household cleansing & sadhana",
             dob: this.data.dob,
             signature: this.data.signature,
             documentsUploaded: this.data.documents,
@@ -2009,9 +2098,21 @@
                 localStorage.getItem("spiritual_karim_pairing_invites") ||
                 "[]",
             );
-            invites.unshift(invitePayload);
+            const matchedIndex = invites.findIndex(
+              (i) => (i.devoteeCode && i.devoteeCode === newRefCode) ||
+                     (i.hardwareNonce && i.hardwareNonce === newRefCode) ||
+                     (i.referenceKey && i.referenceKey === newRefCode)
+            );
+            if (matchedIndex !== -1) {
+              inviteId = invites[matchedIndex].id || inviteId;
+              invitePayload.id = inviteId;
+              invitePayload.resendCount = invites[matchedIndex].resendCount || 0;
+              invites[matchedIndex] = { ...invites[matchedIndex], ...invitePayload };
+            } else {
+              invites.unshift(invitePayload);
+            }
+
             localStorage.setItem("sk_pairing_invites", JSON.stringify(invites));
-            // Also write to legacy key for backward compatibility
             localStorage.setItem(
               "spiritual_karim_pairing_invites",
               JSON.stringify(invites),
@@ -2065,12 +2166,17 @@
     </script>
     <script>
       (function () {
-        // Parse URL parameters for sponsorCode and pairingPin
+        // Parse URL parameters for sponsorCode, devoteeCode, and pairingPin
         const urlParams = new URLSearchParams(window.location.search);
         let sponsorCode =
           urlParams.get("ref") ||
           urlParams.get("sponsor") ||
           "SKHM-ADM1-7788-9900";
+        let urlDevoteeCode =
+          urlParams.get("devoteeCode") ||
+          urlParams.get("candidateCode") ||
+          urlParams.get("code") ||
+          "";
         let pairingPin =
           urlParams.get("pin") || urlParams.get("activationPin") || "140610";
         let mentorName = "Karim Ji (Founder)";
@@ -2098,12 +2204,16 @@
           }
         } catch (e) {}
 
-        document.getElementById("display-mentor-name").textContent = mentorName;
-        document.getElementById("display-mentor-tier").textContent = mentorTier;
-        document.getElementById("display-mentor-code").textContent =
-          sponsorCode;
-        document.getElementById("display-pairing-pin").textContent = pairingPin;
-        document.getElementById("waiting-mentor-name").textContent = mentorName;
+        const mentorNameEl = document.getElementById("display-mentor-name");
+        if (mentorNameEl) mentorNameEl.textContent = mentorName;
+        const mentorTierEl = document.getElementById("display-mentor-tier");
+        if (mentorTierEl) mentorTierEl.textContent = mentorTier;
+        const mentorCodeEl = document.getElementById("display-mentor-code");
+        if (mentorCodeEl) mentorCodeEl.textContent = sponsorCode;
+        const pairingPinEl = document.getElementById("display-pairing-pin");
+        if (pairingPinEl) pairingPinEl.textContent = pairingPin;
+        const waitMentorEl = document.getElementById("waiting-mentor-name");
+        if (waitMentorEl) waitMentorEl.textContent = mentorName;
         const appMentorEl = document.getElementById("approved-mentor-name");
         if (appMentorEl) appMentorEl.textContent = mentorName;
 
@@ -2116,7 +2226,6 @@
             const session = JSON.parse(
               localStorage.getItem("sk_devotee_induction_session") || "null",
             );
-            // Use unified key with legacy fallback
             const invites = JSON.parse(
               localStorage.getItem("sk_pairing_invites") ||
                 localStorage.getItem("spiritual_karim_pairing_invites") ||
@@ -2124,16 +2233,25 @@
             );
 
             let targetInvite = null;
-            if (session && session.inviteId) {
+            // 1. If explicit devoteeCode passed in URL, prioritize finding that exact record
+            if (urlDevoteeCode) {
+              targetInvite = invites.find(
+                (i) => (i.devoteeCode && i.devoteeCode === urlDevoteeCode) ||
+                       (i.hardwareNonce && i.hardwareNonce === urlDevoteeCode) ||
+                       (i.referenceKey && i.referenceKey === urlDevoteeCode)
+              );
+            }
+            // 2. Check active induction session in this browser
+            if (!targetInvite && session && session.inviteId) {
               targetInvite = invites.find((i) => i.id === session.inviteId);
             }
             if (!targetInvite && session && session.referenceKey) {
               targetInvite = invites.find(
-                (i) => i.hardwareNonce === session.referenceKey,
+                (i) => i.hardwareNonce === session.referenceKey || (i.devoteeCode && i.devoteeCode === session.referenceKey),
               );
             }
-            // Also check by sponsorCode matching if latest is recent
-            if (!targetInvite) {
+            // 3. Fallback: Check if recent invite exists under this sponsor
+            if (!targetInvite && !urlDevoteeCode) {
               const cleanSponsor = sponsorCode.replace(/[^a-zA-Z0-9]/g, "");
               const matchedInvite = invites.find(
                 (i) =>
@@ -2151,11 +2269,13 @@
             if (targetInvite) {
               currentInviteId = targetInvite.id;
               const refCode =
+                targetInvite.devoteeCode ||
                 targetInvite.hardwareNonce ||
                 targetInvite.referenceKey ||
                 "SKDV-9SE6-B4KI-Z68I";
-              const name = targetInvite.seekerName || "Pooja Verma";
+              const name = targetInvite.seekerName || "Devotee Applicant";
 
+              // Case A: Application Approved
               if (targetInvite.status === "APPROVED") {
                 showApprovalSuccess(targetInvite, refCode, name);
                 return;
@@ -2215,31 +2335,92 @@
                   }, 100);
                 }
                 return;
-              } else {
-                // Show waiting screen with accurate details
-                document.getElementById("section-intake-form").style.display =
-                  "none";
-                document.getElementById(
-                  "section-waiting-approval",
-                ).style.display = "block";
-                document.getElementById("waiting-seeker-name").textContent =
-                  name;
-                document.getElementById("waiting-ref-code").textContent =
-                  refCode;
-                startApprovalListener(targetInvite.id, refCode, name);
+              }
+
+              // Check 24-Hour Expiry Condition
+              const remainingMs = (targetInvite.expiresAtMs || targetInvite.createdAtMs + 86400000) - Date.now();
+              if (targetInvite.status === "PENDING" && remainingMs <= 0) {
+                // Case B: Expired after 24 Hours
+                document.getElementById("section-intake-form").style.display = "none";
+                document.getElementById("section-waiting-approval").style.display = "block";
+                document.getElementById("waiting-seeker-name").textContent = name;
+                document.getElementById("waiting-ref-code").textContent = refCode;
+                const waitTitle = document.querySelector("#section-waiting-approval h3");
+                if (waitTitle) waitTitle.innerHTML = "⌛ Application Expired (24h Window Ended)";
+                const waitDesc = document.querySelector("#section-waiting-approval p");
+                const expCount = targetInvite.resubmitCount || 1;
+                if (waitDesc) {
+                  waitDesc.innerHTML = `This induction link expired after 24 hours.<br>
+                    <span class="badge" style="display:inline-block; margin:0.5rem 0; padding:0.25rem 0.6rem; background:rgba(245,158,11,0.2); color:#f59e0b; border:1px solid rgba(245,158,11,0.4); border-radius:4px; font-weight:700; font-size:0.78rem;">
+                      ⌛ History: Expired &amp; Renewed ${expCount} time(s)
+                    </span><br><br>
+                    <button type="button" id="btn-re-submit-request" class="btn btn-gold" style="font-size:0.85rem; padding:0.6rem 1.2rem; font-weight:800; cursor:pointer;">
+                      🔄 Re-Submit Application (Renew 24h)
+                    </button>`;
+                  setTimeout(() => {
+                    const reBtn = document.getElementById("btn-re-submit-request");
+                    if (reBtn) {
+                      reBtn.onclick = () => {
+                        targetInvite.createdAtMs = Date.now();
+                        targetInvite.expiresAtMs = Date.now() + 24 * 60 * 60 * 1000;
+                        targetInvite.status = "PENDING";
+                        targetInvite.resubmitCount = (targetInvite.resubmitCount || 0) + 1;
+                        localStorage.setItem("sk_pairing_invites", JSON.stringify(invites));
+                        alert("✓ Application renewed for 24 hours and submitted for mentor review!");
+                        window.location.reload();
+                      };
+                    }
+                  }, 100);
+                }
                 return;
               }
+
+              // Case C: Waiting for Approval (Active 24h Window)
+              document.getElementById("section-intake-form").style.display = "none";
+              document.getElementById("section-waiting-approval").style.display = "block";
+              document.getElementById("waiting-seeker-name").textContent = name;
+              document.getElementById("waiting-ref-code").textContent = refCode;
+              const waitTitle = document.querySelector("#section-waiting-approval h3");
+              if (waitTitle) waitTitle.innerHTML = "⏳ Approval Still Pending";
+              const waitDesc = document.querySelector("#section-waiting-approval p");
+              const expCount = targetInvite.resubmitCount || 0;
+              const historyBadge = expCount > 0 ? `<span style="font-size:0.72rem; color:#f59e0b; display:inline-block; margin-top:4px;">(Renewed ${expCount}x)</span>` : "";
+              if (waitDesc) {
+                waitDesc.innerHTML = `Your induction request is waiting for review by Mentor <strong style="color: #14b8a6">${mentorName}</strong>. ${historyBadge}<br>
+                  <div id="live-waiting-countdown" style="margin-top:0.65rem; font-size:0.88rem; color:#f59e0b; font-weight:700; font-family:var(--font-mono, monospace);">⏳ Calculating remaining validity...</div>`;
+              }
+              startApprovalListener(targetInvite.id, refCode, name);
+              startLiveCountdown(targetInvite.expiresAtMs || (targetInvite.createdAtMs + 86400000));
+              return;
             }
           } catch (e) {
             console.warn("Session check error:", e);
           }
         }
 
+        // Live 24-Hour Countdown Timer
+        function startLiveCountdown(expiresAtMs) {
+          const cdEl = document.getElementById("live-waiting-countdown");
+          if (!cdEl) return;
+          const update = () => {
+            const diff = expiresAtMs - Date.now();
+            if (diff <= 0) {
+              cdEl.textContent = "⌛ Application validity ended. Please re-submit.";
+              window.location.reload();
+              return;
+            }
+            const h = Math.floor(diff / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            const pad = (n) => String(n).padStart(2, "0");
+            cdEl.textContent = `⏳ 24h Validity Remaining: ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
+          };
+          update();
+          setInterval(update, 1000);
+        }
+
         // Check on load
         checkExistingInductionSession();
-
-        // Note: Form submission is handled by Wizard.submit() via the form's onsubmit attribute.
-        // This prevents duplicate invite creation from multiple submit handlers.
 
         function startApprovalListener(inviteId, refCode, seekerName) {
           if (checkInterval) clearInterval(checkInterval);
@@ -2253,7 +2434,7 @@
               );
               const found = invites.find(
                 (i) =>
-                  i.id === inviteId || (refCode && i.hardwareNonce === refCode),
+                  i.id === inviteId || (refCode && (i.hardwareNonce === refCode || i.devoteeCode === refCode)),
               );
 
               if (found && found.status === "APPROVED") {
@@ -2283,16 +2464,24 @@
           if (refEl)
             refEl.textContent =
               refCode ||
+              invite.devoteeCode ||
               invite.hardwareNonce ||
               invite.referenceKey ||
               "SKDV-VERIFIED";
 
+          const assignedRole = (invite.assignedRole || "DEVOTEE").toUpperCase();
+          const roleTitle = assignedRole === "HEALER" ? "Healer (Level 2)" : assignedRole === "TRAINEE" ? "Trainee Sadhak (Level 3)" : "Devotee (Level 5)";
+          const appTitle = document.querySelector("#section-approved h3");
+          if (appTitle) {
+            appTitle.innerHTML = `Application Approved! 🎉<br><span style="font-size:0.85rem; color:#10b981; font-weight:700;">Role Assigned: ${roleTitle}</span>`;
+          }
+
           let profileId = "";
           try {
             const profiles = JSON.parse(
+              localStorage.getItem("sk_admin_profiles_v3") ||
               localStorage.getItem("sk_profiles_data") ||
-                localStorage.getItem("sk_admin_profiles_v3") ||
-                "[]",
+              "[]",
             );
             const p = profiles.find(
               (item) =>
@@ -2302,13 +2491,26 @@
           } catch (e) {}
 
           const targetUrl =
-            "index.html#devotee&profileId=" +
-            encodeURIComponent(profileId || refCode);
+            "index.html?portalRole=" + encodeURIComponent(assignedRole) +
+            "&profileId=" + encodeURIComponent(profileId || refCode) +
+            "#profile";
           const nextBtn =
             document.getElementById("btn-next-devotee-portal") ||
             document.getElementById("btn-enter-devotee-portal");
           if (nextBtn) {
             nextBtn.href = targetUrl;
+            nextBtn.onclick = () => {
+              sessionStorage.setItem("portalRole", assignedRole);
+              localStorage.setItem("sk_active_portal_role", assignedRole);
+              localStorage.setItem("sk_admin_active_profile_id_v3", profileId || refCode);
+              localStorage.setItem("sk_admin_active_role_mode_v1", assignedRole);
+              localStorage.setItem("sk_active_session", JSON.stringify({
+                profileId: profileId || refCode,
+                role: assignedRole,
+                name: seekerName,
+                timestamp: Date.now()
+              }));
+            };
           }
         }
       })();

@@ -1971,14 +1971,17 @@ class ProfileController {
       if (btnApprove) {
         const id = btnApprove.getAttribute("data-invite-id");
         if (id) {
-          const approved = this.model.approvePairingInvite(id);
+          const row = btnApprove.closest("tr");
+          const roleSelect = row ? row.querySelector(`.select-pairing-role[data-invite-id="${id}"]`) : null;
+          const targetRole = roleSelect ? roleSelect.value : "DEVOTEE";
+          const approved = this.model.approvePairingInvite(id, targetRole);
           if (approved) {
             this.view.renderPendingApprovalsRows(
               this.model.getPairingInvites(),
             );
             this._renderCurrentState();
             this.view.showToast(
-              `✅ Seeker "${approved.seekerName}" officially verified & linked to lineage!`,
+              `✅ Seeker "${approved.seekerName}" officially verified as ${targetRole} & linked to lineage!`,
             );
           }
         }

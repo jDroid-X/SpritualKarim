@@ -2110,8 +2110,71 @@
           <!-- REGISTER DEVOTEE SETTINGS -->
           <div class="settings-section" id="section-register-devotee" style="display: none;">
             <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
-              <h4 style="margin: 0 0 0.5rem; font-size: 0.9rem; color: var(--text-primary);">Registration Field Requirements</h4>
-              <p style="margin: 0 0 1rem; font-size: 0.75rem; color: var(--text-muted);">Toggle checkboxes to make fields mandatory (*) or optional during devotee registration</p>
+              <h4 style="margin: 0 0 0.5rem; font-size: 0.9rem; color: var(--text-primary);">Registration Field Requirements &amp; Intake Gateways</h4>
+              <p style="margin: 0 0 1rem; font-size: 0.75rem; color: var(--text-muted);">Toggle mandatory fields, security verification gates, and pairing invitation quotas</p>
+              
+              <!-- Verification Gateways (Intake Wizard Security) -->
+              <div style="margin-bottom: 1rem; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; padding: 0.85rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: #10b981; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                  <span>🛡️ Intake Wizard Security &amp; Gateways</span>
+                  <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: normal;">Unticked = Non-mandatory (Auto dummy verified)</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.6rem;">
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-phone-otp">
+                    <span>Phone OTP Required</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-email-otp">
+                    <span>Email OTP Required</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-captcha">
+                    <span>Security Captcha Required</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-kyc">
+                    <span>KYC ID Proof Required</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-signature">
+                    <span>E-Signature Required</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="setting-require-tandc" checked>
+                    <span>T&amp;C Acceptance Required</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Pairing Quota & Dynamic Thresholds -->
+              <div style="margin-bottom: 1rem; background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 6px; padding: 0.85rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 0.5rem;">
+                  ⚙️ Dynamic Pairing Invites &amp; Role Quota Configuration
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem;">
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Max Pending per Mentor</label>
+                    <input type="number" id="setting-max-pending-invites" class="form-control" value="5" min="1" max="100" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                  </div>
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Invite Validity (Hours)</label>
+                    <input type="number" id="setting-invite-expiry-hours" class="form-control" value="24" min="1" max="168" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                  </div>
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Max Resubmit Renewals</label>
+                    <input type="number" id="setting-max-invite-resubmits" class="form-control" value="3" min="1" max="10" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                  </div>
+                  <div>
+                    <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Default Induction Role</label>
+                    <select id="setting-default-induction-role" class="form-control" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                      <option value="DEVOTEE" selected>Devotee (Level 5)</option>
+                      <option value="TRAINEE">Trainee Sadhak (Level 3)</option>
+                      <option value="HEALER">Healer (Level 2)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
               
               <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
                 <!-- Identity Section -->
@@ -2208,10 +2271,9 @@
               </div>
 
               <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(212, 175, 55, 0.1); border-radius: 6px; border: 1px solid rgba(212, 175, 55, 0.3);">
-                <div style="font-size: 0.75rem; color: var(--gold-400); font-weight: 600; margin-bottom: 0.5rem;">ℹ️ Note</div>
+                <div style="font-size: 0.75rem; color: var(--gold-400); font-weight: 600; margin-bottom: 0.5rem;">ℹ️ Registration &amp; Quota Policy</div>
                 <p style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">
-                  Checked fields are <strong>mandatory</strong> during registration. Unchecked fields can be skipped. 
-                  Minimum 3 fields must be mandatory for valid registration.
+                  Checked fields are <strong>mandatory</strong> during registration. Unchecked verification items (Phone OTP, Email OTP, KYC, Signature) will automatically accept verified dummy inputs for rapid testing and zero-friction devotee intake.
                 </p>
               </div>
             </div>

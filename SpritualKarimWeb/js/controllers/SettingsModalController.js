@@ -271,7 +271,56 @@ class SettingsModalController {
       defaultRoleMode: document.getElementById("setting-default-role-mode")
         ?.value,
       autoSaveMode: document.getElementById("setting-auto-save")?.value,
+      maxPendingInvitesPerMentor:
+        parseInt(document.getElementById("setting-max-pending-invites")?.value) || 5,
+      inviteExpiryHours:
+        parseInt(document.getElementById("setting-invite-expiry-hours")?.value) || 24,
+      maxInviteResubmits:
+        parseInt(document.getElementById("setting-max-invite-resubmits")?.value) || 3,
+      defaultInductionRole:
+        document.getElementById("setting-default-induction-role")?.value || "DEVOTEE",
+      requirePhoneOTP:
+        document.getElementById("setting-require-phone-otp")?.checked || false,
+      requireEmailOTP:
+        document.getElementById("setting-require-email-otp")?.checked || false,
+      requireCaptcha:
+        document.getElementById("setting-require-captcha")?.checked || false,
+      requireKYC:
+        document.getElementById("setting-require-kyc")?.checked || false,
+      requireSignature:
+        document.getElementById("setting-require-signature")?.checked || false,
+      requireTandC:
+        document.getElementById("setting-require-tandc")?.checked !== false,
     };
+
+    // Also persist registration field requirements & intake gateways to sk_registration_config
+    const regConfig = {
+      fullName: document.getElementById("reg-field-full-name")?.checked !== false,
+      phone: document.getElementById("reg-field-phone")?.checked !== false,
+      email: document.getElementById("reg-field-email")?.checked || false,
+      dob: document.getElementById("reg-field-dob")?.checked || false,
+      city: document.getElementById("reg-field-city")?.checked !== false,
+      address: document.getElementById("reg-field-address")?.checked || false,
+      pincode: document.getElementById("reg-field-pincode")?.checked || false,
+      country: document.getElementById("reg-field-country")?.checked !== false,
+      sponsor: document.getElementById("reg-field-sponsor")?.checked !== false,
+      objective: document.getElementById("reg-field-objective")?.checked !== false,
+      affliction: document.getElementById("reg-field-affliction")?.checked || false,
+      kuldevi: document.getElementById("reg-field-kuldevi")?.checked || false,
+      selfName: document.getElementById("reg-field-self-name")?.checked || false,
+      spouse: document.getElementById("reg-field-spouse")?.checked || false,
+      father: document.getElementById("reg-field-father")?.checked || false,
+      mother: document.getElementById("reg-field-mother")?.checked || false,
+      requirePhoneOTP: settings.requirePhoneOTP,
+      requireEmailOTP: settings.requireEmailOTP,
+      requireCaptcha: settings.requireCaptcha,
+      requireKYC: settings.requireKYC,
+      requireSignature: settings.requireSignature,
+      requireTandC: settings.requireTandC,
+    };
+    try {
+      localStorage.setItem("sk_registration_config", JSON.stringify(regConfig));
+    } catch (e) {}
 
     this.controller.model.saveSettings(settings);
     this._showToast("✅ Settings saved successfully");
@@ -357,6 +406,16 @@ class SettingsModalController {
       "setting-data-minimization": "dataMinimizationEnabled",
       "setting-default-role-mode": "defaultRoleMode",
       "setting-auto-save": "autoSaveMode",
+      "setting-max-pending-invites": "maxPendingInvitesPerMentor",
+      "setting-invite-expiry-hours": "inviteExpiryHours",
+      "setting-max-invite-resubmits": "maxInviteResubmits",
+      "setting-default-induction-role": "defaultInductionRole",
+      "setting-require-phone-otp": "requirePhoneOTP",
+      "setting-require-email-otp": "requireEmailOTP",
+      "setting-require-captcha": "requireCaptcha",
+      "setting-require-kyc": "requireKYC",
+      "setting-require-signature": "requireSignature",
+      "setting-require-tandc": "requireTandC",
     };
 
     Object.entries(settingMap).forEach(([inputId, settingKey]) => {
@@ -365,11 +424,14 @@ class SettingsModalController {
 
       const value = settings[settingKey];
       if (input.type === "checkbox") {
-        input.checked = value !== false;
+        input.checked = value === true || (value !== false && ["requireTandC", "setting-require-tandc"].includes(settingKey));
       } else {
-        input.value = value || "";
+        input.value = value !== undefined ? value : "";
       }
     });
+
+    // Load registration requirements fields
+    this._loadRegistrationFields();
 
     // Load auth cloud sync separately
     const autoSync = document.getElementById("setting-auto-cloud-sync");

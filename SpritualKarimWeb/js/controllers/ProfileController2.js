@@ -1216,15 +1216,104 @@ ProfileController.prototype._bindEventsPart2 = function () {
       const approveBtn = e.target.closest(".btn-approve-pairing");
       if (approveBtn) {
         const inviteId = approveBtn.getAttribute("data-invite-id");
-        const approved = this.model.approvePairingInvite(inviteId);
+        const row = approveBtn.closest("tr");
+        const roleSelect = row ? row.querySelector(`.select-pairing-role[data-invite-id="${inviteId}"]`) : null;
+        const targetRole = roleSelect ? roleSelect.value : "DEVOTEE";
+        const approved = this.model.approvePairingInvite(inviteId, targetRole);
         if (approved) {
           const profile = this.model.getActiveProfile();
           const invites = this.model.getPairingInvites();
           this.view._renderSharePairingModal(profile, invites);
           this._renderCurrentState();
           this.view.showToast(
-            `✓ Approved & Linked "${approved.seekerName}" to your downline!`,
+            `✓ Approved & Linked "${approved.seekerName}" as ${targetRole} to your downline!`,
           );
+          // Broadcast real-time approval to devotee tab
+          try {
+            if (window.__skBroadcast) {
+              window.__skBroadcast.postMessage({
+                type: 'INVITE_APPROVED',
+                data: {
+                  inviteId: approved.id,
+                  seekerName: approved.seekerName,
+                  referenceCode: approved.devoteeCode || approved.hardwareNonce,
+                  assignedRole: targetRole,
+                }
+              });
+            }
+          } catch(e) {}
+        }
+        return;
+      }
+
+      const newDevoteeBtn = e.target.closest("#btn-open-new-devotee-modal");
+      if (newDevoteeBtn) {
+        const profile = this.model.getActiveProfile();
+        const sponsorCode = profile.referenceCode || "SKHM-ADM1-7788-9900";
+        const invites = this.model.getPairingInvites();
+        const maxPending = this.model.settings.maxPendingInvitesPerMentor || 5;
+        const activePending = invites.filter(
+          (i) => i.sponsorCode === sponsorCode && i.status === "PENDING"
+        );
+        if (activePending.length >= maxPending) {
+          alert(`Invite quota reached: Maximum ${maxPending} pending pairing requests allowed simultaneously per mentor. Please approve or reject waiting applicants first.`);
+          return;
+        }
+
+        // Generate fresh 16-digit devotee code
+        const devoteeCode = this.model.generate16DigitCode("SKDV");
+        const activePin = (profile.lastPairingPin || "140610").toString();
+        const origin = window.location.origin || "";
+        const pathPrefix = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+        const freshUrl = `${origin}${pathPrefix}/join.html?sponsor=${encodeURIComponent(sponsorCode)}&devoteeCode=${encodeURIComponent(devoteeCode)}&pin=${encodeURIComponent(activePin)}`;
+
+        // Create pre-provisioned invite in model
+        this.model.createPairingInvite({
+          seekerName: "Pending Devotee",
+          seekerPhone: "",
+          deviceModel: "Web / Mobile Applicant",
+          candidateCode: devoteeCode,
+        });
+
+        // Populate and show popup modal
+        const modal = document.getElementById("modal-fresh-devotee-joining");
+        if (modal) {
+          const spCodeEl = document.getElementById("display-fresh-sponsor-code");
+          if (spCodeEl) spCodeEl.textContent = sponsorCode;
+          const devCodeEl = document.getElementById("display-fresh-devotee-code");
+          if (devCodeEl) devCodeEl.textContent = devoteeCode;
+          const urlInput = document.getElementById("input-fresh-devotee-url");
+          if (urlInput) urlInput.value = freshUrl;
+          const openLink = document.getElementById("btn-open-fresh-devotee-link");
+          if (openLink) openLink.href = freshUrl;
+          modal.style.display = "flex";
+        }
+        return;
+      }
+
+      const closeFreshModalBtn = e.target.closest("#btn-close-fresh-devotee-modal");
+      if (closeFreshModalBtn) {
+        const modal = document.getElementById("modal-fresh-devotee-joining");
+        if (modal) modal.style.display = "none";
+        const profile = this.model.getActiveProfile();
+        const invites = this.model.getPairingInvites();
+        this.view._renderSharePairingModal(profile, invites);
+        return;
+      }
+
+      const copyFreshLinkBtn = e.target.closest("#btn-copy-fresh-devotee-link");
+      if (copyFreshLinkBtn) {
+        const urlInput = document.getElementById("input-fresh-devotee-url");
+        if (urlInput && urlInput.value) {
+          const sponsorCode = document.getElementById("display-fresh-sponsor-code")?.textContent || "";
+          const devoteeCode = document.getElementById("display-fresh-devotee-code")?.textContent || "";
+          const shareText = `🕉️ SHREE SPRITUAL KARIM SANSTHAN • DEVOTEE INTAKE INVITE\n\nMentor Sponsor Code: ${sponsorCode}\nAssigned Devotee Code: ${devoteeCode}\n\n👉 Joining Link (Valid 24h):\n${urlInput.value}\n\nOpen the link to complete registration and submit for approval!`;
+          navigator.clipboard.writeText(shareText).then(() => {
+            this.view.showToast("✓ Fresh Devotee Joining Link copied to clipboard!");
+          }).catch(() => {
+            navigator.clipboard.writeText(urlInput.value);
+            this.view.showToast("✓ Link copied!");
+          });
         }
         return;
       }

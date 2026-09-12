@@ -1752,9 +1752,58 @@ Installation & Activation Steps:
           <button type="button" class="btn btn-sm btn-gold" id="btn-copy-direct-devotee-link" data-link="${joinUrl}" title="Copy Direct Registration Link to Clipboard" style="font-weight: 700; display: flex; align-items: center; gap: 0.35rem; white-space: nowrap; padding: 0.5rem 0.9rem;">
             📋 Copy Link
           </button>
-          <a href="${joinUrl}" target="_blank" class="btn btn-sm btn-outline" title="Open Registration Page in New Tab" style="display: flex; align-items: center; gap: 0.35rem; white-space: nowrap; text-decoration: none; padding: 0.5rem 0.8rem;">
-            🚀 Open Page
-          </a>
+          <button type="button" class="btn btn-sm btn-gold" id="btn-open-new-devotee-modal" title="Generate Fresh Devotee Joining Link with Dual Codes" style="font-weight: 700; display: flex; align-items: center; gap: 0.35rem; white-space: nowrap; padding: 0.5rem 0.9rem; background: linear-gradient(135deg, #10b981, #059669); border-color: #10b981; color: #fff;">
+            ✨ New Devotee
+          </button>
+        </div>
+      </div>
+
+      <!-- Fresh Devotee Dual-Code Popup Modal Overlay -->
+      <div id="modal-fresh-devotee-joining" style="display: none; position: fixed; inset: 0; background: rgba(5, 2, 10, 0.85); backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 1rem;">
+        <div style="background: var(--bg-card, #120b1e); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; max-width: 540px; width: 100%; padding: 1.5rem; box-shadow: 0 16px 40px rgba(0,0,0,0.8); position: relative;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(212, 175, 55, 0.25); padding-bottom: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.25rem;">✨</span>
+              <h3 style="margin: 0; font-size: 1.05rem; color: var(--gold-400, #d4af37); font-weight: 800;">Fresh Devotee Pairing Link</h3>
+            </div>
+            <button type="button" id="btn-close-fresh-devotee-modal" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; padding: 0.2rem 0.5rem;">✕</button>
+          </div>
+          
+          <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0 0 1rem 0;">
+            A fresh Devotee 16-digit slot has been provisioned and bound to your Sponsor Lineage. Share this joining link with the new devotee:
+          </p>
+
+          <!-- Dual Codes Display Cards -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+            <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; padding: 0.75rem;">
+              <div style="font-size: 0.65rem; color: var(--gold-400); text-transform: uppercase; font-weight: 700; margin-bottom: 0.25rem;">1. Mentor / Sponsor Code</div>
+              <div id="display-fresh-sponsor-code" style="font-family: var(--font-mono, monospace); font-size: 0.85rem; font-weight: 800; color: #fff; letter-spacing: 1px;">${sponsorCode}</div>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 8px; padding: 0.75rem;">
+              <div style="font-size: 0.65rem; color: #10b981; text-transform: uppercase; font-weight: 700; margin-bottom: 0.25rem;">2. New Devotee Code</div>
+              <div id="display-fresh-devotee-code" style="font-family: var(--font-mono, monospace); font-size: 0.85rem; font-weight: 800; color: #34d399; letter-spacing: 1px;">GENERATING...</div>
+            </div>
+          </div>
+
+          <!-- Fresh Joining URL Input -->
+          <div style="margin-bottom: 1.25rem;">
+            <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem; font-weight: 600;">Full Induction URL (24-Hour Validity):</label>
+            <input type="text" id="input-fresh-devotee-url" readonly value="" style="width: 100%; box-sizing: border-box; font-family: var(--font-mono, monospace); font-size: 0.78rem; padding: 0.6rem 0.75rem; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius: 6px; color: #f0fdf4;">
+          </div>
+
+          <!-- Buttons: Copy & Open -->
+          <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
+            <button type="button" class="btn btn-sm btn-gold" id="btn-copy-fresh-devotee-link" style="font-weight: 800; padding: 0.6rem 1.15rem; display: flex; align-items: center; gap: 0.4rem;">
+              📋 Copy Link &amp; Text
+            </button>
+            <a href="#" target="_blank" id="btn-open-fresh-devotee-link" class="btn btn-sm btn-outline" style="font-weight: 700; padding: 0.6rem 1rem; display: flex; align-items: center; gap: 0.4rem; text-decoration: none; border-color: #10b981; color: #10b981;">
+              🚀 Open Link
+            </a>
+          </div>
+
+          <div style="margin-top: 1rem; font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.65rem;">
+            ℹ️ When opened before approval, the link will show <strong>Approval Still Pending</strong> with a live 24h countdown. Once approved, opening the link displays <strong>Approved</strong> with the <strong>Next</strong> button to enter the devotee portal.
+          </div>
         </div>
       </div>
 
@@ -1953,6 +2002,11 @@ Installation & Activation Steps:
         const isExpired = inv.status === "PENDING" && remainingMs <= 0;
         const isApproved = inv.status === "APPROVED";
 
+        const resubmitCount = inv.resubmitCount || 0;
+        const resubmitBadge = resubmitCount > 0
+          ? `<span style="display:inline-block; font-size:0.65rem; padding:0.1rem 0.35rem; background:rgba(245, 158, 11, 0.2); color:#f59e0b; border:1px solid rgba(245,158,11,0.4); border-radius:3px; margin-top:2px;" title="Application expired and renewed ${resubmitCount} time(s)">⌛ Expired ${resubmitCount}x</span>`
+          : "";
+
         let timerBadgeHtml = "";
         if (isApproved) {
           timerBadgeHtml = `<span class="countdown-timer-badge countdown-approved">🟢 Approved &amp; Linked</span>`;
@@ -1970,13 +2024,18 @@ Installation & Activation Steps:
 
         let actionsHtml = "";
         if (isApproved) {
-          actionsHtml = `<span style="color: #10b981; font-weight: 700; font-size: 0.8rem;">✓ Linked to Tab 4</span>`;
+          actionsHtml = `<span style="color: #10b981; font-weight: 700; font-size: 0.8rem;">✓ Linked as ${inv.assignedRole || "Devotee"}</span>`;
         } else if (isExpired) {
           actionsHtml = `<button type="button" class="btn btn-sm btn-outline btn-resend-pairing" data-invite-id="${inv.id}" style="font-size: 0.75rem;">🔄 Resend (24h)</button>`;
         } else {
           actionsHtml = `
-          <div style="display: flex; gap: 0.35rem;">
-            <button type="button" class="btn btn-sm btn-gold btn-approve-pairing" data-invite-id="${inv.id}" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">✓ Approve</button>
+          <div style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
+            <select class="select-pairing-role" data-invite-id="${inv.id}" style="font-size: 0.72rem; padding: 0.2rem 0.35rem; background: rgba(0,0,0,0.45); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 4px; font-weight: 600;">
+              <option value="DEVOTEE" ${(!inv.assignedRole || inv.assignedRole === "DEVOTEE") ? "selected" : ""}>Devotee (L5)</option>
+              <option value="TRAINEE" ${inv.assignedRole === "TRAINEE" ? "selected" : ""}>Trainee (L3)</option>
+              <option value="HEALER" ${inv.assignedRole === "HEALER" ? "selected" : ""}>Healer (L2)</option>
+            </select>
+            <button type="button" class="btn btn-sm btn-gold btn-approve-pairing" data-invite-id="${inv.id}" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; font-weight: 700;">✓ Approve</button>
             <button type="button" class="btn btn-sm btn-outline btn-reject-pairing" data-invite-id="${inv.id}" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; color: #ef4444;">✕</button>
           </div>
         `;
@@ -1987,12 +2046,16 @@ Installation & Activation Steps:
           <td>
             <div style="font-weight: 700; color: var(--text-primary);">${inv.seekerName || "Seeker"}</div>
             <div style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono);">${inv.seekerPhone || "No Phone"}</div>
+            ${inv.devoteeCode ? `<div style="font-size: 0.68rem; color: var(--gold-400); font-family: var(--font-mono);">${inv.devoteeCode}</div>` : ""}
           </td>
           <td>
             <div style="font-size: 0.82rem; color: var(--text-secondary);">${inv.seekerDeviceModel || "Android Device"}</div>
             <div style="font-size: 0.72rem; color: var(--text-muted);">${inv.formattedCreatedTime || "Recent"}</div>
           </td>
-          <td>${timerBadgeHtml}</td>
+          <td>
+            ${timerBadgeHtml}
+            ${resubmitBadge ? `<br>${resubmitBadge}` : ""}
+          </td>
           <td><span class="verification-status-badge ${isApproved ? "status-verified" : isExpired ? "status-unverified" : "status-pending"}">${inv.status}</span></td>
           <td>${actionsHtml}</td>
         </tr>
