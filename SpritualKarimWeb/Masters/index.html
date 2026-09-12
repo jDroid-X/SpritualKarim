@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1789191064715">
+  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1789192088399">
 </head>
 <body data-portal-role="ADMIN" class="portal-admin">
   <!-- Top Admin Control Header (2-Row Smart Fit Layout) -->
@@ -268,39 +268,6 @@
       </div>
     </aside>
 
-    <!-- Left In-Body Tier Profiles Panel -->
-    <div id="tier-profiles-panel" class="tier-profiles-flyout-panel" role="region" aria-label="Hierarchy Tier Profiles">
-      <div class="tier-panel-header">
-        <div class="tier-panel-title-wrap">
-          <span class="tier-panel-icon" id="tier-panel-icon">👑</span>
-          <div>
-            <h3 class="tier-panel-title" id="tier-panel-title">Admin Master Profiles</h3>
-            <span class="tier-panel-count-badge" id="tier-panel-count">1 Member</span>
-          </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.35rem;">
-          <button type="button" class="tier-panel-close-btn" id="btn-collapse-tier-panel" title="Collapse Left Panel" style="font-size: 1.1rem;">◂</button>
-          <button type="button" class="tier-panel-close-btn" id="btn-close-tier-panel" title="Close Left Panel">&times;</button>
-        </div>
-      </div>
-
-      <div class="tier-panel-search-wrap">
-        <input type="search" id="input-tier-panel-search" class="form-control form-control-sm" placeholder="🔍 Search profiles in tier...">
-        <button type="button" id="btn-clear-tier-search" class="tier-panel-search-clear-btn" title="Clear Search" style="display: none;">✕</button>
-      </div>
-
-      <div class="tier-panel-filters-wrap" id="tier-panel-filter-chips">
-        <button type="button" class="tier-filter-chip active" data-filter="ALL">All</button>
-        <button type="button" class="tier-filter-chip" data-filter="ACTIVE">Active</button>
-        <button type="button" class="tier-filter-chip" data-filter="PAID">Paid</button>
-        <button type="button" class="tier-filter-chip" data-filter="FREE">Free</button>
-      </div>
-
-      <div id="tier-panel-profiles-list" class="tier-panel-profiles-list">
-        <!-- Rendered dynamically with image / avatar profiles -->
-      </div>
-    </div>
-
     <!-- Main Canvas Area -->
     <main class="admin-canvas">
       <div class="profile-form-container">
@@ -422,6 +389,45 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- In-Body Stretched Tier Profiles Ribbon (Compact 1-Row Smart Fit Directly Under Profile Box 1) -->
+        <div id="tier-profiles-panel" class="tier-profiles-flyout-panel tier-panel-stretched-row" role="region" aria-label="Hierarchy Tier Profiles">
+          <!-- 1. Tier Meta Badge (Icon + Title + Count) -->
+          <div class="tier-panel-header">
+            <div class="tier-panel-title-wrap">
+              <span class="tier-panel-icon" id="tier-panel-icon">👑</span>
+              <div class="tier-panel-title-text-group">
+                <h3 class="tier-panel-title" id="tier-panel-title">Admin Master Profiles</h3>
+                <span class="tier-panel-count-badge" id="tier-panel-count">1 Member</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Search Box (Compact) -->
+          <div class="tier-panel-search-wrap">
+            <input type="search" id="input-tier-panel-search" class="form-control form-control-sm" placeholder="🔍 Search...">
+            <button type="button" id="btn-clear-tier-search" class="tier-panel-search-clear-btn" title="Clear Search" style="display: none;">✕</button>
+          </div>
+
+          <!-- 3. Filter Chips -->
+          <div class="tier-panel-filters-wrap" id="tier-panel-filter-chips">
+            <button type="button" class="tier-filter-chip active" data-filter="ALL">All</button>
+            <button type="button" class="tier-filter-chip" data-filter="ACTIVE">Active</button>
+            <button type="button" class="tier-filter-chip" data-filter="PAID">Paid</button>
+            <button type="button" class="tier-filter-chip" data-filter="FREE">Free</button>
+          </div>
+
+          <!-- 4. Member Profile Tiles Strip (Horizontally Scrollable) -->
+          <div id="tier-panel-profiles-list" class="tier-panel-profiles-list">
+            <!-- Rendered dynamically as horizontal compact cards -->
+          </div>
+
+          <!-- 5. Actions / Close Button -->
+          <div class="tier-panel-actions-wrap">
+            <button type="button" class="tier-panel-close-btn" id="btn-collapse-tier-panel" title="Collapse Panel" style="display: none;">◂</button>
+            <button type="button" class="tier-panel-close-btn" id="btn-close-tier-panel" title="Close Tier Ribbon">&times;</button>
           </div>
         </div>
 
@@ -2747,17 +2753,17 @@
   </div>
 
   <!-- External Vendor & Core Logic Scripts -->
-  <script src="../js/profile-admin-header.js?v=sk_v5_1789191064715"></script>
-  <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789191064715"></script>
-  <script src="../js/models/ProfileModel.js?v=sk_v5_1789191064715"></script>
+  <script src="../js/profile-admin-header.js?v=sk_v5_1789192088399"></script>
+  <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789192088399"></script>
+  <script src="../js/models/ProfileModel.js?v=sk_v5_1789192088399"></script>
   <script src="../js/config/appConfig.js?v=sk_v5_remediated_2026"></script>
-  <script src="../js/models/FirebaseSyncEngine.js?v=sk_v5_1789191064715"></script>
-  <script src="../js/views/ProfileView.js?v=sk_v5_1789191064715"></script>
-  <script src="../js/views/ProfileView2.js?v=sk_v5_1789191064715"></script>
-  <script src="../js/controllers/ProfileController.js?v=sk_v5_1789191064715"></script>
-  <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789191064715"></script>
-  <script src="../js/controllers/SettingsModalController.js?v=sk_v5_1789191064715"></script>
-  <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789191064715"></script>
+  <script src="../js/models/FirebaseSyncEngine.js?v=sk_v5_1789192088399"></script>
+  <script src="../js/views/ProfileView.js?v=sk_v5_1789192088399"></script>
+  <script src="../js/views/ProfileView2.js?v=sk_v5_1789192088399"></script>
+  <script src="../js/controllers/ProfileController.js?v=sk_v5_1789192088399"></script>
+  <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789192088399"></script>
+  <script src="../js/controllers/SettingsModalController.js?v=sk_v5_1789192088399"></script>
+  <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789192088399"></script>
 
   <!-- ==============================================================
        SLIDE-IN NOTIFICATIONS STACK & CUSTOM DIALOG BACKDROP

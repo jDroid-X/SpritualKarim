@@ -19,9 +19,9 @@ ProfileView.prototype._renderTierPanelCards = function(profiles, activeProfileId
 
     if (profiles.length === 0) {
       this.tierPanelProfilesList.innerHTML = `
-        <div style="text-align: center; padding: 2rem 1rem; color: var(--text-muted);">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
-          <div>No member profiles found in this tier.</div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.75rem; color: var(--text-muted); font-size: 0.8rem; white-space: nowrap;">
+          <span>🔍</span>
+          <span>No member profiles found in this tier.</span>
         </div>
       `;
       return;
