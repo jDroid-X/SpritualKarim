@@ -10,7 +10,7 @@
       name="description"
       content="Official Seeker Onboarding, Sacred Lineage Pairing & Devotee Induction Protocol"
     />
-    <link rel="icon" type="image/png" href="Logo.png" />
+    <link rel="icon" type="image/png" href="../Logo.png" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,36 +20,63 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="css/theme.css">
-  <link rel="stylesheet" href="css/profile-admin.css" />
-    <script src="js/config/appConfig.js"></script>
-    <script src="js/utils/sanitizer.js"></script>
-    <script src="js/utils/FormValidator.js"></script>
+    <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/profile-admin.css" />
+    <script src="../js/config/appConfig.js"></script>
+    <script src="../js/utils/sanitizer.js"></script>
+    <script src="../js/utils/FormValidator.js"></script>
 
+    
     <style>
       :root {
-        --gold-glow: 0 0 25px rgba(212, 175, 55, 0.25);
-        --teal-glow: 0 0 25px rgba(20, 184, 166, 0.25);
+        --gold-300: #d4af37;
+        --gold-400: #b8960c;
+        --gold-500: #9a7800;
+        --gold-600: #785d00;
+        --gold-glow: 0 4px 18px rgba(184, 150, 12, 0.22);
+        --teal-glow: 0 4px 18px rgba(16, 185, 129, 0.2);
+        --radius-card: 14px;
+        --radius-input: 8px;
+      }
+
+      /* ==========================================================================
+         LIGHT THEME (DEFAULT / PRIMARY)
+         ========================================================================== */
+      :root,
+      html[data-theme="light"],
+      [data-theme="light"],
+      body {
+        --bg-page: #f8fafc;
+        --bg-card: #ffffff;
+        --bg-card-subtle: #f8fafc;
+        --bg-card-elevated: #ffffff;
+        --bg-input: #ffffff;
+        --bg-input-focus: #ffffff;
+        --border-card: #e2e8f0;
+        --border-input: #cbd5e1;
+        --border-gold-subtle: rgba(184, 150, 12, 0.32);
+        --text-main: #0f172a;
+        --text-body: #334155;
+        --text-muted: #64748b;
+        --text-light: #94a3b8;
+        --shadow-soft: 0 8px 30px -4px rgba(15, 23, 42, 0.07), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+        --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
       }
 
       body {
-        background: var(--bg-radial, radial-gradient(
-          circle at top center,
-          #1b0e2f 0%,
-          #0c0714 65%,
-          #050308 100%
-        ));
-        color: var(--text-primary, #f1ecdf);
-        font-family: "Outfit", sans-serif;
+        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 45%, #e2e8f0 100%) !important;
+        color: var(--text-main) !important;
+        font-family: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         min-height: 100vh;
         margin: 0;
         padding: 0;
+        -webkit-font-smoothing: antialiased;
       }
 
       .join-container {
-        max-width: 1200px;
+        max-width: 1240px;
         margin: 0 auto;
-        padding: 1.5rem 1rem;
+        padding: 2rem 1.25rem 3.5rem;
       }
 
       .join-header {
@@ -59,74 +86,102 @@
       }
 
       .join-brand-logo {
-        width: 70px;
-        height: 70px;
+        width: 76px;
+        height: 76px;
         border-radius: 50%;
-        border: 2px solid var(--gold-400);
-        box-shadow: var(--gold-glow);
-        margin-bottom: 0.75rem;
+        border: 2.5px solid #d4af37;
+        box-shadow: 0 4px 16px rgba(184, 150, 12, 0.25);
+        margin-bottom: 0.85rem;
+        background: #ffffff;
       }
 
       .join-title {
         font-family: "Cinzel", serif;
-        font-size: 2rem;
+        font-size: 2.1rem;
         font-weight: 800;
-        color: var(--gold-400);
-        letter-spacing: 1px;
-        margin: 0 0 0.4rem 0;
+        color: #0f172a !important;
+        letter-spacing: 0.5px;
+        margin: 0 0 0.45rem 0;
       }
 
       .join-subtitle {
-        font-size: 0.95rem;
-        color: var(--text-muted);
-        max-width: 600px;
+        font-size: 0.96rem;
+        color: #475569 !important;
+        max-width: 640px;
         margin: 0 auto;
+        line-height: 1.5;
+        font-weight: 500;
       }
 
       /* 2-Column Split Layout */
       .join-split-layout {
         display: grid;
-        grid-template-columns: 1.15fr 0.85fr;
-        gap: 1.75rem;
+        grid-template-columns: 1fr 1.05fr;
+        gap: 2rem;
         align-items: start;
       }
 
-      @media (max-width: 960px) {
+      @media (max-width: 980px) {
         .join-split-layout {
           grid-template-columns: 1fr;
         }
       }
 
-      /* Left Panel: Instruction Manual */
+      /* LEFT PANEL: SPIRITUAL INDUCTION MANUAL */
       .manual-card {
-        background: rgba(22, 14, 38, 0.75);
-        border: 1px solid rgba(212, 175, 55, 0.3);
-        border-radius: 1rem;
-        padding: 1.75rem;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+        background: #ffffff !important;
+        border: 1.5px solid rgba(184, 150, 12, 0.28) !important;
+        border-radius: var(--radius-card);
+        padding: 1.85rem;
+        box-shadow: var(--shadow-card) !important;
+        position: relative;
+        overflow: hidden;
+      }
+      .manual-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #d4af37, #b8960c, #10b981, #d4af37);
+      }
+
+      .manual-card h3 {
+        color: #9a7800 !important;
+        font-family: "Cinzel", serif !important;
+        font-size: 1.28rem !important;
+        font-weight: 800 !important;
+      }
+
+      .manual-card span[style*="border-radius: 1rem"] {
+        background: #fef9c3 !important;
+        color: #854d0e !important;
+        border: 1px solid #fde047 !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.04em !important;
       }
 
       .manual-step {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1.25rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        gap: 1.15rem;
+        margin-bottom: 1.4rem;
+        padding-bottom: 1.35rem;
+        border-bottom: 1px solid #f1f5f9 !important;
       }
 
       .manual-step:last-child {
         margin-bottom: 0;
         padding-bottom: 0;
-        border-bottom: none;
+        border-bottom: none !important;
       }
 
       .step-badge {
         width: 38px;
         height: 38px;
         min-width: 38px;
-        background: linear-gradient(135deg, var(--gold-500), #9a781b);
-        color: #0b0714;
+        background: linear-gradient(135deg, #d4af37, #b8960c) !important;
+        color: #ffffff !important;
         font-weight: 800;
         font-family: "Cinzel", serif;
         border-radius: 50%;
@@ -134,133 +189,353 @@
         align-items: center;
         justify-content: center;
         font-size: 1.05rem;
-        box-shadow: var(--gold-glow);
+        box-shadow: 0 3px 10px rgba(184, 150, 12, 0.3) !important;
       }
 
       .step-content h4 {
         margin: 0 0 0.35rem 0;
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: var(--gold-300);
-        font-family: "Cinzel", serif;
+        font-size: 1.02rem !important;
+        font-weight: 750 !important;
+        color: #0f172a !important;
+        font-family: "Cinzel", serif !important;
       }
 
       .step-content p {
         margin: 0 0 0.5rem 0;
-        font-size: 0.85rem;
-        color: #d8d0c5;
-        line-height: 1.5;
+        font-size: 0.86rem !important;
+        color: #334155 !important;
+        line-height: 1.55 !important;
       }
 
       .step-bullets {
         margin: 0;
-        padding-left: 1.2rem;
-        font-size: 0.82rem;
-        color: var(--text-muted);
+        padding-left: 1.25rem;
+        font-size: 0.83rem !important;
+        color: #475569 !important;
+        line-height: 1.5;
       }
 
       .step-bullets li {
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.3rem;
+      }
+      .step-bullets li strong {
+        color: #0f172a !important;
       }
 
-      /* Right Panel: Mentor Metadata & Intake Form */
+      /* RIGHT PANEL: INTAKE CARD */
       .intake-card {
-        background: var(--bg-card, rgba(26, 17, 44, 0.85));
-        border: 1px solid rgba(20, 184, 166, 0.35);
-        border-radius: 1rem;
-        padding: 1.75rem;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+        background: #ffffff !important;
+        border: 1.5px solid rgba(184, 150, 12, 0.32) !important;
+        border-radius: var(--radius-card);
+        padding: 1.85rem;
+        box-shadow: var(--shadow-card) !important;
         position: sticky;
         top: 1.5rem;
       }
+      .intake-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #10b981, #d4af37, #059669);
+      }
 
+      /* VERIFIED SPONSOR MENTOR BOX */
       .mentor-profile-box {
-        background: rgba(20, 184, 166, 0.08);
-        border: 1px solid rgba(20, 184, 166, 0.3);
-        border-radius: 0.75rem;
-        padding: 1rem;
-        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%) !important;
+        border: 1.5px solid #a7f3d0 !important;
+        border-radius: 10px !important;
+        padding: 1rem 1.15rem !important;
+        margin-bottom: 1.4rem !important;
+        box-shadow: 0 2px 6px rgba(16, 185, 129, 0.08) !important;
       }
 
       .mentor-meta-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.45rem;
       }
 
       .mentor-name {
-        font-size: 1.15rem;
-        font-weight: 700;
-        color: #14b8a6;
-        font-family: "Cinzel", serif;
+        font-size: 1.18rem !important;
+        font-weight: 800 !important;
+        color: #065f46 !important;
+        font-family: "Cinzel", serif !important;
+      }
+
+      #display-mentor-tier {
+        font-size: 0.78rem !important;
+        font-weight: 700 !important;
+        color: #059669 !important;
+      }
+
+      .badge-status-pill {
+        background: #d1fae5 !important;
+        color: #065f46 !important;
+        border: 1px solid #6ee7b7 !important;
+        font-size: 0.72rem !important;
+        font-weight: 750 !important;
+        padding: 0.18rem 0.55rem !important;
+        border-radius: 6px !important;
       }
 
       .mentor-code-pill {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.82rem;
-        background: rgba(0, 0, 0, 0.4);
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.35rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--gold-400);
-        letter-spacing: 1px;
+        font-family: "JetBrains Mono", monospace !important;
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
+        background: #ffffff !important;
+        padding: 0.3rem 0.65rem !important;
+        border-radius: 6px !important;
+        border: 1.5px solid #cbd5e1 !important;
+        color: #0f172a !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        letter-spacing: 0.5px;
       }
 
+      #display-pairing-pin {
+        background: #fef9c3 !important;
+        border: 1.5px solid #fde047 !important;
+        color: #854d0e !important;
+        font-weight: 800 !important;
+        font-size: 0.95rem !important;
+      }
+
+      /* FORM CONTROLS & LABELS */
       .form-group-custom {
-        margin-bottom: 1.1rem;
+        margin-bottom: 1.15rem;
       }
 
       .form-group-custom label {
         display: block;
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: #e5dfd2;
-        margin-bottom: 0.35rem;
+        font-size: 0.84rem !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        margin-bottom: 0.38rem;
       }
 
       .input-custom {
         width: 100%;
-        background: var(--bg-input, rgba(8, 4, 15, 0.75));
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 0.5rem;
-        color: #f1ecdf;
+        background: #ffffff !important;
+        border: 1.5px solid #cbd5e1 !important;
+        border-radius: var(--radius-input) !important;
+        color: #0f172a !important;
         font-family: inherit;
-        font-size: 0.9rem;
-        padding: 0.65rem 0.85rem;
+        font-size: 0.92rem !important;
+        font-weight: 500 !important;
+        padding: 0.68rem 0.88rem !important;
         box-sizing: border-box;
-        transition: all 0.2s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+        transition: all 0.2s ease;
+      }
+
+      .input-custom::placeholder {
+        color: #94a3b8 !important;
       }
 
       .input-custom:focus {
-        outline: none;
-        border-color: var(--gold-400);
-        box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        outline: none !important;
+        border-color: #b8960c !important;
+        box-shadow: 0 0 0 3.5px rgba(212, 175, 55, 0.22) !important;
+        background: #ffffff !important;
       }
 
+      select.input-custom {
+        cursor: pointer;
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+      }
+
+      select.input-custom option {
+        background-color: #ffffff;
+        color: #0f172a;
+      }
+
+      /* FAST ACTION CONTROLS BAR */
+      div[style*="Fast-Action Controls"] {
+        background: #f8fafc !important;
+        border: 1.5px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+      }
+
+      /* STEP PILLS & NAVIGATION */
+      .wizard-step-pill {
+        padding: 0.45rem 0.35rem !important;
+        font-size: 0.74rem !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+        background: #f8fafc !important;
+        border: 1.5px solid #e2e8f0 !important;
+        color: #64748b !important;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.15s ease;
+      }
+
+      .wizard-step-pill:hover {
+        background: #f1f5f9 !important;
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
+      }
+
+      .wizard-step-pill.active {
+        background: linear-gradient(135deg, #d4af37, #b8960c) !important;
+        border: 1.5px solid #9a7800 !important;
+        color: #ffffff !important;
+        font-weight: 800 !important;
+        box-shadow: 0 3px 8px rgba(184, 150, 12, 0.28) !important;
+      }
+
+      .wizard-step-bar {
+        background: #e2e8f0 !important;
+        height: 4px;
+        border-radius: 2px;
+      }
+
+      .wizard-step-bar.active {
+        background: linear-gradient(90deg, #b8960c, #f59e0b) !important;
+      }
+
+      /* PILLAR 2 ANCESTRAL BOX */
+      div[style*="Pillar 2: Ancestral Roots"] {
+        background: #fdfbf7 !important;
+        border: 1.5px dashed rgba(184, 150, 12, 0.4) !important;
+        border-radius: 10px !important;
+        padding: 1rem 1.15rem !important;
+      }
+
+      /* BUTTONS */
       .btn-submit-induction {
         width: 100%;
-        padding: 0.85rem;
-        background: linear-gradient(135deg, var(--gold-500), #9a781b);
-        color: #0b0714;
-        font-size: 0.95rem;
+        padding: 0.85rem 1.25rem;
+        background: linear-gradient(135deg, #d4af37 0%, #b8960c 50%, #9a7800 100%) !important;
+        color: #ffffff !important;
+        font-size: 0.98rem;
         font-weight: 800;
         font-family: "Cinzel", serif;
         border: none;
-        border-radius: 0.6rem;
+        border-radius: 8px;
         cursor: pointer;
-        box-shadow: var(--gold-glow);
-        transition: all 0.2s;
-        margin-top: 0.5rem;
+        box-shadow: 0 4px 14px rgba(184, 150, 12, 0.32) !important;
+        transition: all 0.2s ease;
+        margin-top: 0.6rem;
       }
 
       .btn-submit-induction:hover {
         transform: translateY(-2px);
-        box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+        box-shadow: 0 8px 22px rgba(184, 150, 12, 0.4) !important;
       }
 
-      /* Live Waiting Screen */
+      button[onclick*="Wizard.prev"] {
+        background: #ffffff !important;
+        border: 1.5px solid #cbd5e1 !important;
+        color: #475569 !important;
+        font-weight: 700 !important;
+        border-radius: 8px !important;
+        padding: 0.75rem !important;
+        transition: all 0.15s ease;
+      }
+
+      button[onclick*="Wizard.prev"]:hover {
+        background: #f8fafc !important;
+        color: #0f172a !important;
+        border-color: #94a3b8 !important;
+      }
+
+      /* STEP 2: OTP & SECURITY CHECK */
+      #otp-phone-display, #otp-email-display {
+        background: #f8fafc !important;
+        border: 1.5px solid #e2e8f0 !important;
+        color: #0f172a !important;
+        opacity: 1 !important;
+        font-weight: 600 !important;
+      }
+
+      .btn-otp-send {
+        background: linear-gradient(135deg, #fef3c7, #fde68a) !important;
+        border: 1.5px solid #f59e0b !important;
+        color: #92400e !important;
+        font-weight: 750 !important;
+        border-radius: 6px !important;
+        padding: 0.55rem 0.85rem !important;
+      }
+
+      #phone-otp-input, #email-otp-input {
+        background: #ffffff !important;
+        border: 1.5px solid #cbd5e1 !important;
+        color: #0f172a !important;
+        font-weight: 800 !important;
+        font-size: 1.05rem !important;
+        letter-spacing: 2px;
+        text-align: center;
+      }
+
+      #captcha-question {
+        background: #f1f5f9 !important;
+        border: 1.5px solid #cbd5e1 !important;
+        color: #0f172a !important;
+        font-weight: 800 !important;
+        font-size: 1.1rem !important;
+        border-radius: 6px !important;
+      }
+
+      #captcha-answer {
+        background: #ffffff !important;
+        border: 1.5px solid #cbd5e1 !important;
+        color: #0f172a !important;
+        font-weight: 800 !important;
+        text-align: center;
+      }
+
+      /* STEP 3: DOCUMENT VAULT */
+      input[type="file"].input-custom {
+        background: #f8fafc !important;
+        border: 1.5px dashed #cbd5e1 !important;
+        padding: 0.85rem !important;
+        color: #334155 !important;
+        cursor: pointer;
+      }
+      input[type="file"].input-custom:hover {
+        border-color: #b8960c !important;
+        background: #fffdf7 !important;
+      }
+
+      /* STEP 4: TERMS & CONDITIONS */
+      #tc-content {
+        background: #f8fafc !important;
+        border: 1.5px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        color: #334155 !important;
+        font-size: 0.78rem !important;
+        line-height: 1.6 !important;
+      }
+
+      #join-signature {
+        background: #ffffff !important;
+        border: 1.5px solid #cbd5e1 !important;
+        color: #0f172a !important;
+        font-family: "Cinzel", serif !important;
+        font-size: 1.15rem !important;
+        font-weight: 750 !important;
+      }
+
+      /* STEP 5: REVIEW SUMMARY */
+      #review-summary {
+        background: #f8fafc !important;
+        border: 1.5px solid #e2e8f0 !important;
+        border-radius: 10px !important;
+        color: #1e293b !important;
+        font-size: 0.82rem !important;
+        line-height: 1.8 !important;
+      }
+
+      #review-summary strong {
+        color: #0f172a !important;
+      }
+
+      /* WAITING & APPROVED SCREENS */
       .status-panel-waiting {
         display: none;
         text-align: center;
@@ -272,8 +547,8 @@
         height: 75px;
         margin: 0 auto 1.25rem auto;
         border-radius: 50%;
-        background: rgba(212, 175, 55, 0.15);
-        border: 2px solid var(--gold-400);
+        background: #fef9c3 !important;
+        border: 2px solid #b8960c !important;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -282,28 +557,129 @@
       }
 
       @keyframes waitingPulse {
-        0% {
-          box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
-        }
-        70% {
-          box-shadow: 0 0 0 18px rgba(212, 175, 55, 0);
-        }
-        100% {
-          box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
-        }
+        0% { box-shadow: 0 0 0 0 rgba(184, 150, 12, 0.4); }
+        70% { box-shadow: 0 0 0 18px rgba(184, 150, 12, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(184, 150, 12, 0); }
       }
 
       .approved-box {
         display: none;
-        background: rgba(16, 185, 129, 0.12);
-        border: 1px solid #10b981;
-        border-radius: 0.75rem;
-        padding: 1.5rem;
+        background: #f0fdf4 !important;
+        border: 2px solid #10b981 !important;
+        border-radius: 12px !important;
+        padding: 1.85rem !important;
         text-align: center;
         margin-top: 1rem;
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15) !important;
+      }
+
+      /* SITE FOOTER */
+      .site-footer {
+        margin-top: 3rem;
+        padding: 1rem 0;
+        border-top: 1px solid #e2e8f0;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.75rem;
+      }
+
+      /* ==========================================================================
+         DARK THEME OVERRIDES (SWITCHABLE)
+         ========================================================================== */
+      html[data-theme="dark"],
+      [data-theme="dark"] {
+        --bg-page: #0c0914;
+        --bg-card: #181229;
+        --bg-card-subtle: #201836;
+        --bg-input: #100b1c;
+        --border-card: rgba(212, 175, 55, 0.25);
+        --border-input: rgba(255, 255, 255, 0.15);
+        --text-main: #f1ecdf;
+        --text-body: #d8d0c5;
+        --text-muted: #94a3b8;
+      }
+
+      html[data-theme="dark"] body {
+        background: radial-gradient(circle at top center, #1b0e2f 0%, #0c0714 65%, #050308 100%) !important;
+        color: #f1ecdf !important;
+      }
+
+      html[data-theme="dark"] .join-title {
+        color: var(--gold-300) !important;
+      }
+      html[data-theme="dark"] .join-subtitle {
+        color: #94a3b8 !important;
+      }
+
+      html[data-theme="dark"] .manual-card {
+        background: rgba(24, 18, 41, 0.85) !important;
+        border-color: rgba(212, 175, 55, 0.35) !important;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6) !important;
+      }
+      html[data-theme="dark"] .manual-card h3 {
+        color: var(--gold-300) !important;
+      }
+      html[data-theme="dark"] .step-content h4 {
+        color: var(--gold-300) !important;
+      }
+      html[data-theme="dark"] .step-content p {
+        color: #d8d0c5 !important;
+      }
+      html[data-theme="dark"] .step-bullets {
+        color: #94a3b8 !important;
+      }
+      html[data-theme="dark"] .manual-step {
+        border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      html[data-theme="dark"] .intake-card {
+        background: rgba(24, 18, 41, 0.9) !important;
+        border-color: rgba(20, 184, 166, 0.4) !important;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7) !important;
+      }
+
+      html[data-theme="dark"] .mentor-profile-box {
+        background: rgba(20, 184, 166, 0.1) !important;
+        border-color: rgba(20, 184, 166, 0.35) !important;
+      }
+      html[data-theme="dark"] .mentor-name {
+        color: #14b8a6 !important;
+      }
+      html[data-theme="dark"] .mentor-code-pill {
+        background: rgba(0, 0, 0, 0.5) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        color: var(--gold-300) !important;
+      }
+
+      html[data-theme="dark"] .form-group-custom label {
+        color: #e2e8f0 !important;
+      }
+
+      html[data-theme="dark"] .input-custom {
+        background: #100b1c !important;
+        border-color: rgba(255, 255, 255, 0.18) !important;
+        color: #f1ecdf !important;
+      }
+
+      html[data-theme="dark"] .wizard-step-pill {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(255, 255, 255, 0.12) !important;
+        color: #94a3b8 !important;
+      }
+      html[data-theme="dark"] .wizard-step-pill.active {
+        background: linear-gradient(135deg, var(--gold-400), #9a781b) !important;
+        color: #0b0714 !important;
+      }
+
+      html[data-theme="dark"] #tc-content,
+      html[data-theme="dark"] #review-summary {
+        background: rgba(0, 0, 0, 0.4) !important;
+        border-color: rgba(255, 255, 255, 0.12) !important;
+        color: #cbd5e1 !important;
       }
     </style>
-    <script src="js/utils/ThemeEngine.js"></script>
+
+    <script src="../js/utils/ThemeEngine.js"></script>
 </head>
   <body>
     <div class="join-container">
@@ -315,12 +691,12 @@
           </button>
         </div>
         <img
-          src="Logo.png"
+          src="../Logo.png"
           alt="Shree Spritual Karim Sansthan"
           class="join-brand-logo"
           onerror="
             this.src =
-              'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'70\' height=\'70\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23d4af37\'/><text x=\'50\' y=\'65\' font-size=\'40\' text-anchor=\'middle\' fill=\'%230b0714\'>à¥</text></svg>'
+              'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'70\' height=\'70\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23d4af37\'/><text x=\'50\' y=\'65\' font-size=\'40\' text-anchor=\'middle\' fill=\'%230b0714\'>🕉️</text></svg>'
           "
         />
         <h1 class="join-title">SHREE SPRITUAL KARIM SANSTHAN</h1>
@@ -861,7 +1237,7 @@
                       cursor: pointer;
                     "
                   >
-                    â† Edit Mobile/Email
+                    ← Edit Mobile/Email
                   </button>
                 </div>
                 <p style="font-size: 0.8rem; color: var(--text-muted)">
@@ -1125,7 +1501,7 @@
                       cursor: pointer;
                     "
                   >
-                    â† Back
+                    ← Back
                   </button>
                   <button
                     type="button"
@@ -1145,7 +1521,7 @@
                       cursor: pointer;
                     "
                   >
-                    Next â†’
+                    Next →
                   </button>
                 </div>
               </div>
@@ -1231,7 +1607,7 @@
                       cursor: pointer;
                     "
                   >
-                    â† Back
+                    ← Back
                   </button>
                   <button
                     type="button"
@@ -1251,7 +1627,7 @@
                       cursor: pointer;
                     "
                   >
-                    Next â†’
+                    Next →
                   </button>
                 </div>
               </div>
@@ -1360,7 +1736,7 @@
                       cursor: pointer;
                     "
                   >
-                    â† Back
+                    ← Back
                   </button>
                   <button
                     type="button"
@@ -1380,7 +1756,7 @@
                       cursor: pointer;
                     "
                   >
-                    Next â†’
+                    Next →
                   </button>
                 </div>
               </div>
@@ -1443,7 +1819,7 @@
                       cursor: pointer;
                     "
                   >
-                    â† Back
+                    ← Back
                   </button>
                   <button
                     type="submit"
@@ -1648,10 +2024,10 @@
               "
             >
               <span>Next</span>
-              <span style="font-size: 1.25rem; line-height: 1">âž”</span>
+              <span style="font-size: 1.25rem; line-height: 1">➔</span>
             </a>
             <div style="margin-top: 0.75rem; text-align: center;">
-              <a href="Devotee/index.html" id="btn-alt-devotee-portal" style="font-size: 0.76rem; color: #a7f3d0; text-decoration: underline;">
+              <a href="../Devotee/index.html" id="btn-alt-devotee-portal" style="font-size: 0.76rem; color: #a7f3d0; text-decoration: underline;">
                 Or open Dedicated Devotee Sanctum Portal ➔
               </a>
             </div>
@@ -1665,7 +2041,7 @@
       </div>
     </div>
 
-    <script src="js/onboarding.js"></script>
+    <script src="../js/onboarding.js"></script>
     <script>
       /**
        * Dynamic pairing invite validity window TTL from settings
@@ -2528,7 +2904,7 @@
                 <h3 style="color:#ef4444; margin-bottom:0.5rem;">Application Not Approved</h3>
                 <p style="color:#fca5a5; font-size:0.9rem;">Your registration could not be verified by the mentor at this time.</p>
                 <div style="margin-top:1rem;">
-                  <a href="join.html" class="btn btn-secondary" style="padding:0.5rem 1rem; color:#fff; text-decoration:none;">Start New Registration</a>
+                  <a href="../join.html" class="btn btn-secondary" style="padding:0.5rem 1rem; color:#fff; text-decoration:none;">Start New Registration</a>
                 </div>
               </div>
             `;
