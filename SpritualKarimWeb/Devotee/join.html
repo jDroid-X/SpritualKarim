@@ -10,7 +10,7 @@
       name="description"
       content="Official Seeker Onboarding, Sacred Lineage Pairing & Devotee Induction Protocol"
     />
-    <link rel="icon" type="image/png" href="../Logo.png" />
+    <link rel="icon" type="image/png" href="Logo.png" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,11 +20,11 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="../css/theme.css">
-  <link rel="stylesheet" href="../css/profile-admin.css" />
-    <script src="../js/config/appConfig.js"></script>
-    <script src="../js/utils/sanitizer.js"></script>
-    <script src="../js/utils/FormValidator.js"></script>
+    <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/profile-admin.css" />
+    <script src="js/config/appConfig.js"></script>
+    <script src="js/utils/sanitizer.js"></script>
+    <script src="js/utils/FormValidator.js"></script>
 
     
     <style>
@@ -679,7 +679,7 @@
       }
     </style>
 
-    <script src="../js/utils/ThemeEngine.js"></script>
+    <script src="js/utils/ThemeEngine.js"></script>
 </head>
   <body>
     <div class="join-container">
@@ -691,7 +691,7 @@
           </button>
         </div>
         <img
-          src="../Logo.png"
+          src="Logo.png"
           alt="Shree Spritual Karim Sansthan"
           class="join-brand-logo"
           onerror="
@@ -2027,7 +2027,7 @@
               <span style="font-size: 1.25rem; line-height: 1">➔</span>
             </a>
             <div style="margin-top: 0.75rem; text-align: center;">
-              <a href="../Devotee/index.html" id="btn-alt-devotee-portal" style="font-size: 0.76rem; color: #a7f3d0; text-decoration: underline;">
+              <a href="Devotee/index.html" id="btn-alt-devotee-portal" style="font-size: 0.76rem; color: #a7f3d0; text-decoration: underline;">
                 Or open Dedicated Devotee Sanctum Portal ➔
               </a>
             </div>
@@ -2041,7 +2041,7 @@
       </div>
     </div>
 
-    <script src="../js/onboarding.js"></script>
+    <script src="js/onboarding.js"></script>
     <script>
       /**
        * Dynamic pairing invite validity window TTL from settings
@@ -2854,6 +2854,21 @@
               }),
             );
 
+            // Live Real-Time Firebase Sync for Cross-Device Onboarding
+            try {
+              const fbUrl = (typeof appConfig !== "undefined" && appConfig.firebaseUrl) || "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/";
+              fetch(`${fbUrl.replace(/\/$/, "")}/pairing_invites/${encodeURIComponent(invitePayload.id)}.json`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(invitePayload)
+              }).catch(e => console.warn("Firebase invite submit sync:", e));
+            } catch(e) {}
+
+            // Broadcast to other open tabs
+            if (typeof __skNotify === "function") {
+              __skNotify("INVITE_SUBMITTED", invitePayload);
+            }
+
             // TC-14: T&C Version & E-Signature Audit Hash Table
             const tcAcceptance = {
               acceptanceId: "tc-" + Date.now(),
@@ -2904,7 +2919,7 @@
                 <h3 style="color:#ef4444; margin-bottom:0.5rem;">Application Not Approved</h3>
                 <p style="color:#fca5a5; font-size:0.9rem;">Your registration could not be verified by the mentor at this time.</p>
                 <div style="margin-top:1rem;">
-                  <a href="../join.html" class="btn btn-secondary" style="padding:0.5rem 1rem; color:#fff; text-decoration:none;">Start New Registration</a>
+                  <a href="join.html" class="btn btn-secondary" style="padding:0.5rem 1rem; color:#fff; text-decoration:none;">Start New Registration</a>
                 </div>
               </div>
             `;
@@ -3256,9 +3271,31 @@
               if (found && found.status === "APPROVED") {
                 clearInterval(checkInterval);
                 showApprovalSuccess(found, refCode, seekerName);
+                return;
               }
             } catch (e) {}
-          }, 1200);
+
+            // Cross-device / online Firebase Realtime DB listener
+            try {
+              const fbUrl = (typeof appConfig !== "undefined" && appConfig.firebaseUrl) || "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/";
+              fetch(`${fbUrl.replace(/\/$/, "")}/pairing_invites/${encodeURIComponent(inviteId)}.json`)
+                .then(r => r.json())
+                .then(remoteInv => {
+                  if (remoteInv && remoteInv.status === "APPROVED") {
+                    clearInterval(checkInterval);
+                    try {
+                      const local = JSON.parse(localStorage.getItem("sk_pairing_invites") || "[]");
+                      const lIdx = local.findIndex(i => i.id === inviteId);
+                      if (lIdx !== -1) local[lIdx] = remoteInv;
+                      else local.unshift(remoteInv);
+                      localStorage.setItem("sk_pairing_invites", JSON.stringify(local));
+                    } catch(e) {}
+                    showApprovalSuccess(remoteInv, refCode, seekerName);
+                  }
+                })
+                .catch(() => {});
+            } catch(e) {}
+          }, 1500);
         }
 
         function showApprovalSuccess(invite, refCode, seekerName) {

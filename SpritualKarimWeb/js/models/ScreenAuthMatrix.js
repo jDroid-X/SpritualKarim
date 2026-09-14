@@ -3819,29 +3819,32 @@ class ScreenAuthMatrix {
             parsed.forEach(item => {
               if (item && item.id) storedMap.set(item.id, item);
             });
+            const rbacConfig = (typeof localStorage !== 'undefined') ? JSON.parse(localStorage.getItem('sk_rbac_roles_config') || '{}') : {};
             const defaults = this.getDefaultAuthMatrix();
             const merged = defaults.map(def => {
               const s = storedMap.get(def.id);
-              if (s) {
-                const master = s.MASTER !== undefined ? s.MASTER : (s.roles && s.roles.MASTER !== undefined ? s.roles.MASTER : def.MASTER);
-                const healer = s.HEALER !== undefined ? s.HEALER : (s.roles && s.roles.HEALER !== undefined ? s.roles.HEALER : def.HEALER);
-                const trainee = s.TRAINEE !== undefined ? s.TRAINEE : (s.roles && s.roles.TRAINEE !== undefined ? s.roles.TRAINEE : def.TRAINEE);
-                const devotee = s.DEVOTEE !== undefined ? s.DEVOTEE : (s.roles && s.roles.DEVOTEE !== undefined ? s.roles.DEVOTEE : def.DEVOTEE);
-                const seeker = s.SEEKER !== undefined ? s.SEEKER : (s.roles && s.roles.SEEKER !== undefined ? s.roles.SEEKER : devotee);
-                return {
-                  ...def,
-                  label: s.label || def.label,
-                  name: s.name || s.label || def.label,
-                  roles: { MASTER: master, HEALER: healer, TRAINEE: trainee, DEVOTEE: devotee, SEEKER: seeker },
-                  MASTER: master,
-                  HEALER: healer,
-                  TRAINEE: trainee,
-                  DEVOTEE: devotee,
-                  SEEKER: seeker,
-                  portalVisible: s.portalVisible ? { ...def.portalVisible, ...s.portalVisible } : def.portalVisible
-                };
-              }
-              return def;
+              const rbac = rbacConfig[def.id] || {};
+              
+              // RBAC Settings directly set/unticked by user have highest precedence
+              const master = rbac.MASTER !== undefined ? rbac.MASTER : (s && s.roles && s.roles.MASTER !== undefined ? s.roles.MASTER : (s && s.MASTER !== undefined ? s.MASTER : def.MASTER));
+              const healer = rbac.HEALER !== undefined ? rbac.HEALER : (s && s.roles && s.roles.HEALER !== undefined ? s.roles.HEALER : (s && s.HEALER !== undefined ? s.HEALER : def.HEALER));
+              const trainee = rbac.TRAINEE !== undefined ? rbac.TRAINEE : (s && s.roles && s.roles.TRAINEE !== undefined ? s.roles.TRAINEE : (s && s.TRAINEE !== undefined ? s.TRAINEE : def.TRAINEE));
+              const devotee = rbac.DEVOTEE !== undefined ? rbac.DEVOTEE : (s && s.roles && s.roles.DEVOTEE !== undefined ? s.roles.DEVOTEE : (s && s.DEVOTEE !== undefined ? s.DEVOTEE : def.DEVOTEE));
+              const seeker = rbac.SEEKER !== undefined ? rbac.SEEKER : (s && s.roles && s.roles.SEEKER !== undefined ? s.roles.SEEKER : (s && s.SEEKER !== undefined ? s.SEEKER : devotee));
+
+              return {
+                ...def,
+                ...(s || {}),
+                label: (s && s.label) || def.label,
+                name: (s && s.name) || (s && s.label) || def.label,
+                roles: { MASTER: master, HEALER: healer, TRAINEE: trainee, DEVOTEE: devotee, SEEKER: seeker },
+                MASTER: master,
+                HEALER: healer,
+                TRAINEE: trainee,
+                DEVOTEE: devotee,
+                SEEKER: seeker,
+                portalVisible: (s && s.portalVisible) ? { ...def.portalVisible, ...s.portalVisible } : def.portalVisible
+              };
             });
             // Include user-added dynamic custom elements
             parsed.forEach(item => {

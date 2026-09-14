@@ -8,22 +8,38 @@ class ProfileModel {
     this.profiles = this._loadProfiles();
     this.settings = this._loadSettings();
 
-    // Determine initial roleMode from pathname, body tag, or localStorage
-    // NOTE: URL query params (e.g., ?role=MASTER) are intentionally NOT used
-    // for role detection to prevent auth bypass via URL manipulation.
+    // Determine initial roleMode respecting explicit URL param, session, localStorage, and portal tags
     let detectedRole = "MASTER";
     try {
       const pathName = window.location.pathname.toLowerCase();
       const portalModeTag = document.body.getAttribute("data-portal-mode");
       const portalRoleTag = document.body.getAttribute("data-portal-role");
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlRole = urlParams.get("role") || urlParams.get("portalRole");
 
-      if (portalRoleTag) {
-        const rp = portalRoleTag.toUpperCase();
-        if (["ADMIN", "MASTER"].includes(rp)) detectedRole = "MASTER";
-        else if (["HEALER", "HEALERS"].includes(rp)) detectedRole = "HEALER";
-        else if (["TRAINEE", "SADHAK"].includes(rp)) detectedRole = "TRAINEE";
-        else if (["DEVOTEE", "SEEKER"].includes(rp)) detectedRole = "DEVOTEE";
-      } else if (pathName.includes("/devotee") || pathName.endsWith("devotee.html")) {
+      // 1. Explicit URL parameter has top priority for portal viewing/switching
+      if (urlRole) {
+        const ur = urlRole.toUpperCase();
+        if (["ADMIN", "MASTER"].includes(ur)) detectedRole = "MASTER";
+        else if (["HEALER", "HEALERS"].includes(ur)) detectedRole = "HEALER";
+        else if (["TRAINEE", "SADHAK"].includes(ur)) detectedRole = "TRAINEE";
+        else if (["DEVOTEE", "SEEKER"].includes(ur)) detectedRole = "DEVOTEE";
+      }
+      // 2. Active Authenticated Session from login.html
+      else if (typeof sessionStorage !== "undefined" && sessionStorage.getItem("sk_auth_sessions")) {
+        try {
+          const s = JSON.parse(sessionStorage.getItem("sk_auth_sessions"));
+          if (s && s.role) {
+            const sr = s.role.toUpperCase();
+            if (["ADMIN", "MASTER"].includes(sr)) detectedRole = "MASTER";
+            else if (["HEALER", "HEALERS"].includes(sr)) detectedRole = "HEALER";
+            else if (["TRAINEE", "SADHAK"].includes(sr)) detectedRole = "TRAINEE";
+            else if (["DEVOTEE", "SEEKER"].includes(sr)) detectedRole = "DEVOTEE";
+          }
+        } catch(e) {}
+      }
+      // 3. Subportal pathname detection
+      else if (pathName.includes("/devotee") || pathName.endsWith("devotee.html")) {
         detectedRole = "DEVOTEE";
       } else if (pathName.includes("/trainee") || pathName.endsWith("trainee.html")) {
         detectedRole = "TRAINEE";
@@ -31,20 +47,17 @@ class ProfileModel {
         detectedRole = "HEALER";
       } else if (pathName.includes("/masters") || pathName.endsWith("masters.html")) {
         detectedRole = "MASTER";
+      }
+      // 4. Portal role tag if not generic admin
+      else if (portalRoleTag && !["ADMIN", "MASTER"].includes(portalRoleTag.toUpperCase())) {
+        const rp = portalRoleTag.toUpperCase();
+        if (["HEALER", "HEALERS"].includes(rp)) detectedRole = "HEALER";
+        else if (["TRAINEE", "SADHAK"].includes(rp)) detectedRole = "TRAINEE";
+        else if (["DEVOTEE", "SEEKER"].includes(rp)) detectedRole = "DEVOTEE";
       } else if (portalModeTag) {
         detectedRole = portalModeTag.toUpperCase();
       } else {
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlRole = urlParams.get("role");
-        if (urlRole) {
-          const ur = urlRole.toUpperCase();
-          if (["ADMIN", "MASTER"].includes(ur)) detectedRole = "MASTER";
-          else if (["HEALER", "HEALERS"].includes(ur)) detectedRole = "HEALER";
-          else if (["TRAINEE", "SADHAK"].includes(ur)) detectedRole = "TRAINEE";
-          else if (["DEVOTEE", "SEEKER"].includes(ur)) detectedRole = "DEVOTEE";
-        } else {
-          detectedRole = localStorage.getItem(this.roleModeKey) || "MASTER";
-        }
+        detectedRole = localStorage.getItem(this.roleModeKey) || "MASTER";
       }
     } catch (e) {
       detectedRole = "MASTER";
@@ -116,7 +129,9 @@ class ProfileModel {
         }
         if (found) {
           this.anchorProfileId = found.id;
-          if (found.profileType) this.roleMode = found.profileType;
+          if (found.profileType && (urlParams.get("role") || urlParams.get("portalRole") || portalRoleTag !== "ADMIN")) {
+            this.roleMode = found.profileType;
+          }
         }
       }
       if (!this.anchorProfileId && typeof sessionStorage !== "undefined") {
@@ -127,7 +142,9 @@ class ProfileModel {
             const found = this.profiles.find(p => p.id === session.profileId);
             if (found) {
               this.anchorProfileId = found.id;
-              if (found.profileType) this.roleMode = found.profileType;
+              if (found.profileType && portalRoleTag !== "ADMIN") {
+                this.roleMode = found.profileType;
+              }
             }
           } else if (session && session.username) {
             const u = session.username.toLowerCase();
@@ -2582,27 +2599,67 @@ class ProfileModel {
     }
   }
 
+  /**
+   * Returns pairing invites filtered strictly per caller's authorization level:
+   * - DEVOTEE / SEEKER & TRAINEE / SADHAK: No access (empty array)
+   * - HEALER: Respective sponsor access only (invites where sponsorCode === healer's refCode)
+   * - ADMIN / MASTER: Full access across entire lineage
+   */
+  getPairingInvitesForRole(roleMode = null, activeProfile = null) {
+    const role = (roleMode || this.getRoleMode() || "MASTER").toUpperCase();
+    const active = activeProfile || this.getActiveProfile() || {};
+    const allInvites = this.getPairingInvites();
+
+    // 1. Devotee & Trainee have ZERO access to devotee pairing applications
+    if (["DEVOTEE", "SEEKER", "TRAINEE", "SADHAK"].includes(role)) {
+      return [];
+    }
+
+    // 2. Healers only see seeker applications for which they are the upline sponsor
+    if (role === "HEALER") {
+      const healerRef = (active.referenceCode || "").trim();
+      const healerName = (active.name || "").trim().toLowerCase();
+      return allInvites.filter((inv) => {
+        if (!inv) return false;
+        const sCode = (inv.sponsorCode || "").trim();
+        const mCode = (inv.mentorCode || "").trim();
+        const sName = (inv.sponsorName || "").trim().toLowerCase();
+        return (healerRef && (sCode === healerRef || mCode === healerRef)) ||
+               (healerName && sName === healerName);
+      });
+    }
+
+    // 3. Admin / Master has complete lineage visibility
+    return allInvites;
+  }
+
   getPairingInvites() {
+    const defaultInvites = this.getDefaultPairingInvites();
     try {
       // Primary key: sk_pairing_invites (CLAUDE.md standard)
-      const stored = localStorage.getItem("sk_pairing_invites");
+      const stored = localStorage.getItem("sk_pairing_invites") || localStorage.getItem("spiritual_karim_pairing_invites");
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length >= 4) return parsed;
-      }
-      // Fallback: migrate from legacy key
-      const legacy = localStorage.getItem("spiritual_karim_pairing_invites");
-      if (legacy) {
-        const invites = JSON.parse(legacy);
-        if (Array.isArray(invites) && invites.length >= 4) {
-          localStorage.setItem("sk_pairing_invites", JSON.stringify(invites));
-          return invites;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const defaultIds = new Set(defaultInvites.map((d) => d.id));
+          const customInvites = parsed.filter((p) => !defaultIds.has(p.id));
+          const existingDefaults = parsed.filter((p) => defaultIds.has(p.id));
+          const merged = [
+            ...customInvites,
+            ...(existingDefaults.length > 0 ? existingDefaults : defaultInvites),
+          ];
+          return merged;
         }
       }
     } catch (e) {
       console.warn("Could not load pairing invites", e);
     }
-    const defaultInvites = [
+    this.savePairingInvites(defaultInvites);
+    return defaultInvites;
+  }
+
+  getDefaultPairingInvites() {
+    return [
       {
         id: "inv-01",
         sponsorCode: "SKHM-ADM1-7788-9900",
@@ -2764,8 +2821,6 @@ class ProfileModel {
         formattedCreatedTime: "Yesterday",
       },
     ];
-    this.savePairingInvites(defaultInvites);
-    return defaultInvites;
   }
 
   /**
@@ -3044,6 +3099,35 @@ class ProfileModel {
 
       this.saveProfiles(this.profiles);
 
+      // Real-time bi-directional Firebase RTDB Push
+      const firebaseUrl = this.settings?.firebaseUrl || "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/";
+      try {
+        fetch(`${firebaseUrl.replace(/\/$/, "")}/pairing_invites/${encodeURIComponent(item.id)}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(item),
+        }).catch(() => {});
+        if (newDevoteeProfile) {
+          this.pushProfileToFirebase(newDevoteeProfile);
+        }
+      } catch (e) {}
+
+      // Cross-Tab/Window Notification Channel
+      if (typeof BroadcastChannel !== "undefined") {
+        try {
+          const syncChan = new BroadcastChannel("spiritual_karim_sync");
+          syncChan.postMessage({
+            type: "INVITE_APPROVED",
+            data: {
+              seekerName: item.seekerName,
+              referenceCode: targetRefCode,
+              assignedRole: assignedRole,
+              invite: item,
+            },
+          });
+        } catch (e) {}
+      }
+
       // Log verified approval to Firebase Realtime DB
       this.logDeviceEvent(
         item.hardwareNonce || item.id,
@@ -3063,6 +3147,29 @@ class ProfileModel {
     if (item) {
       item.status = "REJECTED";
       this.savePairingInvites(invites);
+
+      const firebaseUrl = this.settings?.firebaseUrl || "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/";
+      try {
+        fetch(`${firebaseUrl.replace(/\/$/, "")}/pairing_invites/${encodeURIComponent(item.id)}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(item),
+        }).catch(() => {});
+      } catch (e) {}
+
+      if (typeof BroadcastChannel !== "undefined") {
+        try {
+          const syncChan = new BroadcastChannel("spiritual_karim_sync");
+          syncChan.postMessage({
+            type: "INVITE_REJECTED",
+            data: {
+              inviteId: inviteId,
+              invite: item,
+            },
+          });
+        } catch (e) {}
+      }
+
       this.logDeviceEvent(
         item.hardwareNonce || item.id,
         "PAIRING_REJECTED",
@@ -3236,6 +3343,37 @@ class ProfileModel {
             });
             if (updated) {
               this.saveProfiles(this.profiles);
+            }
+          }
+        }
+      }
+
+      // Live 2-way sync for pairing_invites from online submissions
+      const invitesResp = await fetch(
+        `${firebaseUrl.replace(/\/$/, "")}/pairing_invites.json`,
+      );
+      if (invitesResp.ok) {
+        const cloudInvites = await invitesResp.json();
+        if (cloudInvites && typeof cloudInvites === "object") {
+          const remoteInvites = Object.values(cloudInvites);
+          if (remoteInvites.length > 0) {
+            const currentInvites = this.getPairingInvites();
+            let changed = false;
+            remoteInvites.forEach((ri) => {
+              if (!ri || !ri.id) return;
+              const idx = currentInvites.findIndex(
+                (ci) => ci.id === ri.id || (ri.devoteeCode && ci.devoteeCode === ri.devoteeCode),
+              );
+              if (idx === -1) {
+                currentInvites.unshift(ri);
+                changed = true;
+              } else if (ri.status !== currentInvites[idx].status || (ri.submittedAt && (!currentInvites[idx].submittedAt || ri.submittedAt > currentInvites[idx].submittedAt))) {
+                currentInvites[idx] = { ...currentInvites[idx], ...ri };
+                changed = true;
+              }
+            });
+            if (changed) {
+              this.savePairingInvites(currentInvites);
             }
           }
         }

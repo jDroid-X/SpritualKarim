@@ -10028,13 +10028,25 @@ html[data-theme="dark"] .admin-canvas,
    ========================================================================== */
 .admin-metrics-tiles-row,
 #admin-hierarchy-metrics-strip {
-  display: grid !important;
+  display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   gap: 8px !important;
   width: 100% !important;
   box-sizing: border-box !important;
   margin: 0 0 8px 0 !important;
   padding: 0 !important;
+}
+
+#admin-hierarchy-metrics-strip.auth-hidden,
+#admin-hierarchy-metrics-strip.portal-hidden,
+.portal-hidden,
+body[data-portal-role="DEVOTEE"] #admin-hierarchy-metrics-strip,
+body[data-portal-role="TRAINEE"] #admin-hierarchy-metrics-strip,
+body[data-portal-role="SEEKER"] #admin-hierarchy-metrics-strip,
+body.portal-devotee #admin-hierarchy-metrics-strip,
+body.portal-trainee #admin-hierarchy-metrics-strip,
+body.portal-seeker #admin-hierarchy-metrics-strip {
+  display: none !important;
 }
 
 .admin-metric-tile-card {

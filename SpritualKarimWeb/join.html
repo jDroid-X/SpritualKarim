@@ -2854,6 +2854,21 @@
               }),
             );
 
+            // Live Real-Time Firebase Sync for Cross-Device Onboarding
+            try {
+              const fbUrl = (typeof appConfig !== "undefined" && appConfig.firebaseUrl) || "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/";
+              fetch(`${fbUrl.replace(/\/$/, "")}/pairing_invites/${encodeURIComponent(invitePayload.id)}.json`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(invitePayload)
+              }).catch(e => console.warn("Firebase invite submit sync:", e));
+            } catch(e) {}
+
+            // Broadcast to other open tabs
+            if (typeof __skNotify === "function") {
+              __skNotify("INVITE_SUBMITTED", invitePayload);
+            }
+
             // TC-14: T&C Version & E-Signature Audit Hash Table
             const tcAcceptance = {
               acceptanceId: "tc-" + Date.now(),
@@ -3256,9 +3271,31 @@
               if (found && found.status === "APPROVED") {
                 clearInterval(checkInterval);
                 showApprovalSuccess(found, refCode, seekerName);
+                return;
               }
             } catch (e) {}
-          }, 1200);
+
+            // Cross-device / online Firebase Realtime DB listener
+            try {
+              const fbUrl = (typeof appConfig !== "undefined" && appConfig.firebaseUrl) || "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/";
+              fetch(`${fbUrl.replace(/\/$/, "")}/pairing_invites/${encodeURIComponent(inviteId)}.json`)
+                .then(r => r.json())
+                .then(remoteInv => {
+                  if (remoteInv && remoteInv.status === "APPROVED") {
+                    clearInterval(checkInterval);
+                    try {
+                      const local = JSON.parse(localStorage.getItem("sk_pairing_invites") || "[]");
+                      const lIdx = local.findIndex(i => i.id === inviteId);
+                      if (lIdx !== -1) local[lIdx] = remoteInv;
+                      else local.unshift(remoteInv);
+                      localStorage.setItem("sk_pairing_invites", JSON.stringify(local));
+                    } catch(e) {}
+                    showApprovalSuccess(remoteInv, refCode, seekerName);
+                  }
+                })
+                .catch(() => {});
+            } catch(e) {}
+          }, 1500);
         }
 
         function showApprovalSuccess(invite, refCode, seekerName) {

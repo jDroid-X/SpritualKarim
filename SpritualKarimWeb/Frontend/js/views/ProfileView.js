@@ -1077,6 +1077,10 @@ class ProfileView {
       const totalInvites = m.pendingInvites?.total ?? 0;
       pendingEl.textContent = `${pendingCount} Pending / ${totalInvites} Total`;
     }
+    const sidePending = document.getElementById("sidebar-pending-badge");
+    if (sidePending) sidePending.textContent = m.pendingInvites?.pending ?? 0;
+    const headerPending = document.getElementById("header-pending-badge");
+    if (headerPending) headerPending.textContent = m.pendingInvites?.pending ?? 0;
   }
 
   /**
@@ -2214,13 +2218,28 @@ class ProfileView {
   // RIGHT SLIDE-OUT DRAWER: PENDING APPROVALS DOSSIER & ACTIONS
   // ==============================================================
   openPendingApprovalsDrawer(invites = [], selectedInviteId = null) {
+    const roleMode = (this.model ? this.model.getRoleMode() : (this.currentRoleMode || "MASTER")).toUpperCase();
+    
+    // Strict Access Control: Devotee & Trainee have NO ACCESS to approvals queue
+    if (["DEVOTEE", "SEEKER", "TRAINEE", "SADHAK"].includes(roleMode)) {
+      this.closePendingApprovalsDrawer();
+      if (typeof this.showSlideToast === "function") {
+        this.showSlideToast("Access Restricted", "Devotee/Seeker and Trainee/Sadhak do not have approval permissions.", "warning");
+      } else if (typeof this.showToast === "function") {
+        this.showToast("⛔ Access Denied: Seeker application approvals are restricted to Mentors and Admin Masters.", "warning");
+      }
+      return;
+    }
+
     const drawer = this.pendingApprovalDrawer || document.getElementById("pending-approval-drawer");
     const backdrop = this.pendingApprovalDrawerBackdrop || document.getElementById("pending-approval-drawer-backdrop");
     const body = this.pendingApprovalDrawerBody || document.getElementById("pending-approval-drawer-body");
     if (!drawer) return;
 
     if (!invites || invites.length === 0) {
-      if (this.model && typeof this.model.getPairingInvites === "function") {
+      if (this.model && typeof this.model.getPairingInvitesForRole === "function") {
+        invites = this.model.getPairingInvitesForRole(roleMode, this.model.getActiveProfile());
+      } else if (this.model && typeof this.model.getPairingInvites === "function") {
         invites = this.model.getPairingInvites();
       }
     }
@@ -3852,10 +3871,29 @@ Installation & Activation Steps:
     }
     if (!this.pendingApprovalBanner) return;
 
-    const isMentor = roleMode === "MASTER" || roleMode === "HEALER";
-    const pendingList = (pendingInvites || []).filter(
-      (i) => i.status === "PENDING",
-    );
+    const resolvedR = (roleMode || "MASTER").toUpperCase();
+    const isMentor = resolvedR === "MASTER" || resolvedR === "HEALER";
+
+    // Devotee and Trainee have no approval notifications
+    if (!isMentor || ["DEVOTEE", "SEEKER", "TRAINEE", "SADHAK"].includes(resolvedR)) {
+      const hCount = this.headerPendingApprovalCount || document.getElementById("header-pending-approval-count");
+      if (hCount) { hCount.textContent = "0"; hCount.style.display = "none"; }
+      const sideB = document.getElementById("sidebar-pending-badge");
+      if (sideB) sideB.textContent = "0";
+      const headB = document.getElementById("header-pending-badge");
+      if (headB) headB.textContent = "0";
+      if (this.pendingApprovalBanner) this.pendingApprovalBanner.style.display = "none";
+      return;
+    }
+
+    // Healers only see counts for their own sponsored applicants
+    const activeProf = (this.model && typeof this.model.getActiveProfile === "function") ? this.model.getActiveProfile() : {};
+    let roleFiltered = pendingInvites || [];
+    if (resolvedR === "HEALER") {
+      const healerRef = (activeProf.referenceCode || "").trim();
+      roleFiltered = roleFiltered.filter(i => i && (i.sponsorCode === healerRef || i.mentorCode === healerRef));
+    }
+    const pendingList = roleFiltered.filter((i) => i.status === "PENDING");
     const count = pendingList.length;
 
     const headerCount =
@@ -3866,6 +3904,10 @@ Installation & Activation Steps:
       headerCount.style.background = count > 0 ? "#eab308" : "rgba(255, 255, 255, 0.15)";
       headerCount.style.color = count > 0 ? "#000000" : "var(--text-muted)";
     }
+    const sideBadge = document.getElementById("sidebar-pending-badge");
+    if (sideBadge) sideBadge.textContent = count;
+    const headerBadge = document.getElementById("header-pending-badge");
+    if (headerBadge) headerBadge.textContent = count;
 
     if (isMentor && count > 0) {
       if (this.pendingApprovalBanner) {

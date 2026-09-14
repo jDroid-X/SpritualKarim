@@ -303,6 +303,7 @@ class SettingsModalController {
         if (config[m.id]) {
           if (!m.roles) m.roles = {};
           Object.assign(m.roles, config[m.id]);
+          Object.assign(m, config[m.id]);
           updated = true;
         }
       });

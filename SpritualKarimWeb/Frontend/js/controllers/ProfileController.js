@@ -36,6 +36,17 @@ class ProfileController {
             this.view.applyDynamicAuthMatrix(freshMatrix, currentRole);
             this.view.renderAuthMatrixInSettings(freshMatrix, currentRole);
           }
+          if (event.data && event.data.type === "INVITE_SUBMITTED") {
+            const freshInvites = this.model.getPairingInvites();
+            this.view.renderPendingApprovalsRows(freshInvites);
+            this._renderCurrentState();
+            const seekerName = event.data.data?.seekerName || "Seeker";
+            if (typeof this.view.showSlideToast === "function") {
+              this.view.showSlideToast("New Devotee Application", `New induction application received from "${seekerName}"!`, "info");
+            } else {
+              this.view.showToast(`📩 New application received from "${seekerName}"!`);
+            }
+          }
         };
       } catch (e) {
         console.warn("Cross-tab sync listener error:", e);
@@ -2182,9 +2193,20 @@ class ProfileController {
         this.view.toggleSharePairingModal(true);
         return;
       }
-      if (e.target.closest("#pending-approval-notification-banner, #metric-tile-approvals, .tile-composite-down, [data-main-tab='tab-pending-approvals']")) {
+      if (e.target.closest("#pending-approval-notification-banner, #metric-tile-approvals, .tile-composite-down, [data-main-tab='tab-pending-approvals'], #sidebar-btn-pending-approvals, #btn-header-pending-approvals, #btn-sidebar-pending-approvals")) {
         e.preventDefault();
-        this.view.openPendingApprovalsDrawer(this.model.getPairingInvites());
+        const role = (this.model.getRoleMode() || "MASTER").toUpperCase();
+        // Devotee and Trainee have zero access to approval queue
+        if (["DEVOTEE", "SEEKER", "TRAINEE", "SADHAK"].includes(role)) {
+          if (typeof this.view.showSlideToast === "function") {
+            this.view.showSlideToast("Access Restricted", "Devotee/Seeker and Trainee/Sadhak do not have approval permissions.", "warning");
+          } else {
+            this.view.showToast("⛔ Access Denied: Approvals are restricted to Mentors and Admin Masters.", "warning");
+          }
+          return;
+        }
+        const scopedInvites = this.model.getPairingInvitesForRole(role, this.model.getActiveProfile());
+        this.view.openPendingApprovalsDrawer(scopedInvites);
         return;
       }
       if (e.target.closest("#metric-tile-genealogy, .tile-composite-up, #btn-open-tree-view")) {

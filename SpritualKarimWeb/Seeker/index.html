@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1789391093077">
+  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1789412630827">
   <style id="sk-critical-header-styles">
     /* Single-Row Permanent Fit Across All Browsers & Devices */
     .admin-topbar,
@@ -342,6 +342,12 @@
             <span class="btn-text">New Profile</span>
           </button>
 
+          <!-- 2b. Pending Approvals -->
+          <button type="button" id="btn-header-pending-approvals" class="btn-compact-header btn-header-approvals" style="background: rgba(234, 179, 8, 0.12); border: 1.5px solid rgba(234, 179, 8, 0.4); color: #b45309;" title="Open Seeker Pending Approvals Queue (Slide-Out Drawer)">
+            <span class="btn-icon-bell" style="font-size: 0.85rem;">⏳</span>
+            <span class="btn-text">Approvals (<strong id="header-pending-badge">0</strong>)</span>
+          </button>
+
           <!-- 3. Light / Dark Theme Mode -->
           <button type="button" id="btn-theme-toggle" class="btn-compact-header btn-header-theme" title="Toggle Light/Dark/Auto Mode" aria-label="Toggle Theme Mode">
             <span class="theme-icon" id="theme-icon">☀️</span>
@@ -450,6 +456,10 @@
         <div class="sidebar-heading">System Tools &amp; Actions</div>
         <button type="button" id="sidebar-btn-share-pairing" class="btn btn-sm btn-gold w-100 mb-2" title="Share &amp; Invite Seeker (24h Device Pairing Protocol)">
           <span>📲</span> Share &amp; Pair Invite
+        </button>
+        <button type="button" id="sidebar-btn-pending-approvals" class="btn btn-sm btn-gold w-100 mb-2" style="display: flex; justify-content: space-between; align-items: center;" title="Open Seeker Pending Approvals Queue (Slide-Out Drawer)">
+          <span><span>⏳</span> Pending Approvals</span>
+          <span class="badge-pending-pill" id="sidebar-pending-badge" style="background: #eab308; color: #000; font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 999px;">0</span>
         </button>
         <button type="button" id="sidebar-btn-rbac-matrix" class="btn btn-sm btn-outline w-100 mb-2" title="4-Tier Authorization Access Matrix &amp; Master Governance Rules">
           <span>🛡️</span> Access Matrix
@@ -3259,17 +3269,17 @@
   </div>
 
   <!-- External Vendor & Core Logic Scripts -->
-  <script src="../js/profile-admin-header.js?v=sk_v5_1789391093077"></script>
-  <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789391093077"></script>
-  <script src="../js/models/ProfileModel.js?v=sk_v5_1789391093077"></script>
-  <script src="../js/config/appConfig.js?v=sk_v5_1789391093077"></script>
-  <script src="../js/models/FirebaseSyncEngine.js?v=sk_v5_1789391093077"></script>
-  <script src="../js/views/ProfileView.js?v=sk_v5_1789391093077"></script>
-  <script src="../js/views/ProfileView2.js?v=sk_v5_1789391093077"></script>
-  <script src="../js/controllers/ProfileController.js?v=sk_v5_1789391093077"></script>
-  <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789391093077"></script>
-  <script src="../js/controllers/SettingsModalController.js?v=sk_v5_1789391093077"></script>
-  <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789391093077"></script>
+  <script src="../js/profile-admin-header.js?v=sk_v5_1789412630827"></script>
+  <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789412630827"></script>
+  <script src="../js/models/ProfileModel.js?v=sk_v5_1789412630827"></script>
+  <script src="../js/config/appConfig.js?v=sk_v5_1789412630827"></script>
+  <script src="../js/models/FirebaseSyncEngine.js?v=sk_v5_1789412630827"></script>
+  <script src="../js/views/ProfileView.js?v=sk_v5_1789412630827"></script>
+  <script src="../js/views/ProfileView2.js?v=sk_v5_1789412630827"></script>
+  <script src="../js/controllers/ProfileController.js?v=sk_v5_1789412630827"></script>
+  <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789412630827"></script>
+  <script src="../js/controllers/SettingsModalController.js?v=sk_v5_1789412630827"></script>
+  <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789412630827"></script>
 
   <!-- ==============================================================
        SLIDE-IN NOTIFICATIONS STACK & CUSTOM DIALOG BACKDROP
