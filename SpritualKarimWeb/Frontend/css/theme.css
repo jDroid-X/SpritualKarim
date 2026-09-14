@@ -1,0 +1,128 @@
+/* ==========================================================================
+   Shree Spritual Karim Sansthan — Unified Theme System (v1.0)
+   Default: Light Theme (Spiritual Gold & High-Contrast Crisp Surfaces)
+   Switchable: Dark Theme (Obsidian & Sacred Purple-Gold Glow)
+   ========================================================================== */
+
+:root,
+html[data-theme="light"],
+[data-theme="light"] {
+  /* Surface & Canvas Backgrounds */
+  --bg-main: #f0f3f8;
+  --bg-sidebar: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-elevated: #f4f7fb;
+  --bg-input: #ffffff;
+  --bg-input-focus: #f8fafc;
+  --topbar-bg: rgba(255, 255, 255, 0.98);
+  --header-row2-bg: rgba(244, 247, 251, 0.98);
+  --drawer-bg: #ffffff;
+  --tabs-nav-bg: #e2e8f0;
+  --tab-btn-bg: #ffffff;
+  --tab-btn-active-bg: linear-gradient(135deg, #fae596, #f3d478);
+  --tab-btn-active-color: #0f172a;
+  --ref-code-bg: #e2e8f0;
+  --memo-item-bg: #f8fafc;
+  --profile-card-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+
+  /* Borders */
+  --border-color: rgba(180, 130, 20, 0.45);
+  --border-subtle: rgba(0, 0, 0, 0.12);
+  --border-gold: rgba(184, 150, 12, 0.4);
+
+  /* Sacred Gold Palette */
+  --gold-300: #8c5800;
+  --gold-400: #9e6400;
+  --gold-500: #b47500;
+  --gold-600: #6b4300;
+  --gold-glow: rgba(180, 140, 30, 0.25);
+  --gold-gradient: linear-gradient(135deg, #b8960c 0%, #9a7800 100%);
+
+  /* 4-Tier Role Colors */
+  --role-admin: #8b1c3e;
+  --role-healer: #b88300;
+  --role-trainee: #008751;
+  --role-devotee: #006da3;
+  --color-master: #7c3aed;
+  --color-healer: #059669;
+  --color-trainee: #d97706;
+  --color-devotee: #2563eb;
+
+  /* Typography Colors */
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-gold: #9e6400;
+
+  /* Shadows */
+  --shadow-card: 0 4px 18px rgba(0, 0, 0, 0.08);
+  --shadow-gold: 0 0 14px rgba(180, 140, 30, 0.2);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  /* Font Families */
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace, Consolas;
+
+  /* Border Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+/* ==========================================================================
+   Dark Theme (Switchable)
+   ========================================================================== */
+html[data-theme="dark"],
+[data-theme="dark"] {
+  --bg-main: #0c0914;
+  --bg-sidebar: #130e20;
+  --bg-card: #181229;
+  --bg-card-elevated: #201836;
+  --bg-input: #100b1c;
+  --bg-input-focus: #171029;
+  --topbar-bg: rgba(19, 14, 32, 0.95);
+  --header-row2-bg: rgba(15, 10, 25, 0.92);
+  --drawer-bg: #140f24;
+  --tabs-nav-bg: rgba(19, 14, 32, 0.85);
+  --tab-btn-bg: rgba(255, 255, 255, 0.04);
+  --tab-btn-active-bg: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(122, 28, 55, 0.45));
+  --tab-btn-active-color: #ffffff;
+  --ref-code-bg: rgba(0, 0, 0, 0.35);
+  --memo-item-bg: rgba(255, 255, 255, 0.03);
+  --profile-card-bg: linear-gradient(135deg, #241336 0%, #150e26 100%);
+
+  --border-color: rgba(212, 175, 55, 0.25);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-gold: rgba(212, 175, 55, 0.5);
+
+  --gold-300: #fae596;
+  --gold-400: #f5d365;
+  --gold-500: #d4af37;
+  --gold-600: #b38c22;
+  --gold-glow: rgba(212, 175, 55, 0.28);
+  --gold-gradient: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
+
+  --role-admin: #7A1C37;
+  --role-healer: #FCB900;
+  --role-trainee: #00D084;
+  --role-devotee: #0088CC;
+  --color-master: #a855f7;
+  --color-healer: #10b981;
+  --color-trainee: #f59e0b;
+  --color-devotee: #3b82f6;
+
+  --text-primary: #fbf9f4;
+  --text-secondary: #c7c0da;
+  --text-muted: #857b9e;
+  --text-gold: #f5d365;
+
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-gold: 0 0 16px rgba(212, 175, 55, 0.2);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.6);
+}

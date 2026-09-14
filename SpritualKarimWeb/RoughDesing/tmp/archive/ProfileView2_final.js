@@ -9,7 +9,6 @@ ProfileView.prototype.closeTierPanel = function() {
     document.querySelectorAll('#hierarchy-legend-container .legend-item').forEach(item => {
       item.classList.remove('active');
     });
-  }
 };
 
 ProfileView.prototype.initSadhanaListbox = function() {

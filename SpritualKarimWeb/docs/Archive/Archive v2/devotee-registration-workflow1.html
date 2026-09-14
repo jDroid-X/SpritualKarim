@@ -1,0 +1,2319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Devotee Registration Workflow Architecture • Shree Spritual Karim Sansthan</title>
+<meta name="description" content="Complete End-to-End Devotee Registration Workflow Architecture with Decision Branching, Validations, Closed-Loop Feedback, and OOPS MVC System Integration">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cinzel:wght@700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --border: #e2e8f0;
+  --border-dark: #cbd5e1;
+  --txt: #0f172a;
+  --txt-muted: #64748b;
+  --txt-light: #94a3b8;
+  --gold: #b8960c;
+  --gold-light: #fef9c3;
+  --gold-border: #fde047;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --blue-border: #bfdbfe;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --purple-border: #ddd6fe;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --green-border: #a7f3d0;
+  --amber: #d97706;
+  --amber-light: #fffbeb;
+  --amber-border: #fde68a;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --red-border: #fecaca;
+  --cyan: #0891b2;
+  --cyan-light: #ecfeff;
+  --cyan-border: #a5f3fc;
+  --pink: #be185d;
+  --pink-light: #fdf2f8;
+  --pink-border: #fbcfe8;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px -2px rgba(0,0,0,0.08), 0 2px 6px -1px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.04);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 3rem;
+}
+
+/* TOP BRAND HEADER */
+.brand-header {
+  background: linear-gradient(135deg, #1e1b4b 0%, #311042 50%, #172554 100%);
+  color: #ffffff;
+  padding: 1.6rem 2rem 1.4rem;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.brand-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b, #d4af37, #10b981, #3b82f6);
+}
+.brand-emblem {
+  font-size: 1.75rem;
+  opacity: 0.9;
+  margin-bottom: 0.15rem;
+}
+.brand-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #f8fafc;
+}
+.brand-subtitle {
+  font-size: 0.88rem;
+  color: rgba(241, 245, 249, 0.82);
+  margin-top: 0.25rem;
+}
+.brand-tags {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+.btag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid;
+}
+.btag-gold { background: rgba(212,175,55,0.18); color: #fde047; border-color: rgba(212,175,55,0.4); }
+.btag-blue { background: rgba(59,130,246,0.18); color: #93c5fd; border-color: rgba(59,130,246,0.4); }
+.btag-green { background: rgba(16,185,129,0.18); color: #6ee7b7; border-color: rgba(16,185,129,0.4); }
+.btag-purple { background: rgba(168,85,247,0.18); color: #d8b4fe; border-color: rgba(168,85,247,0.4); }
+
+/* CONTROLS BAR */
+.controls-bar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.doc-links {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.doc-link-btn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.4rem;
+  text-decoration: none;
+  color: var(--txt-muted);
+  border: 1px solid var(--border);
+  background: var(--bg-subtle);
+  transition: all 0.15s ease;
+}
+.doc-link-btn:hover {
+  background: #ffffff;
+  color: var(--blue);
+  border-color: var(--blue-border);
+}
+.doc-link-btn.active {
+  background: var(--blue-light);
+  color: var(--blue);
+  border-color: var(--blue-border);
+  font-weight: 700;
+}
+.action-btns {
+  display: flex;
+  gap: 0.5rem;
+}
+.btn-action {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 0.85rem;
+  border-radius: 0.45rem;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--txt);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+}
+.btn-action:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border-dark);
+}
+.btn-primary {
+  background: var(--blue);
+  color: #ffffff;
+  border-color: var(--blue);
+}
+.btn-primary:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* MAIN CONTAINER */
+.container {
+  max-width: 1720px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem;
+}
+
+/* BANNER */
+.intro-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem 1.4rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+.intro-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--txt);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.intro-desc {
+  font-size: 0.82rem;
+  color: var(--txt-muted);
+  max-width: 950px;
+  margin-top: 0.2rem;
+}
+.filter-pills {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+.fpill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.35rem;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--txt-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.fpill.active, .fpill:hover {
+  background: var(--blue-light);
+  color: var(--blue);
+  border-color: var(--blue-border);
+}
+
+/* MAIN WORKFLOW GRID */
+.workflow-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 1.25rem;
+  align-items: start;
+}
+@media (max-width: 1300px) {
+  .workflow-layout { grid-template-columns: 1fr; }
+}
+
+/* WORKFLOW CANVAS */
+.workflow-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* STAGE SECTION */
+.stage-block {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 0.85rem;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  transition: border-color 0.2s;
+}
+.stage-block:hover {
+  border-color: var(--border-dark);
+  box-shadow: var(--shadow-md);
+}
+.stage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--border);
+}
+.stage-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.stage-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+.sn-0 { background: #64748b; }
+.sn-1 { background: var(--blue); }
+.sn-2 { background: var(--cyan); }
+.sn-3 { background: var(--purple); }
+.sn-4 { background: var(--amber); }
+.sn-5 { background: #f59e0b; }
+.sn-6 { background: var(--green); }
+.sn-7 { background: var(--pink); }
+
+.stage-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--txt);
+  letter-spacing: 0.2px;
+}
+.stage-sub {
+  font-size: 0.74rem;
+  color: var(--txt-muted);
+  font-weight: 500;
+}
+.stage-sla {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.35rem;
+  border: 1px solid;
+}
+
+/* FLOW ROW OF NODES */
+.flow-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.85rem;
+  position: relative;
+}
+
+/* WORKFLOW NODES */
+.wf-node {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 0.65rem;
+  padding: 0.8rem 0.9rem;
+  position: relative;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+.wf-node:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.wf-node-top {
+  border-top-width: 4px;
+}
+
+/* NODE COLORS BY SEMANTIC */
+.node-start { border-top-color: #64748b; background: #fafaf9; }
+.node-process { border-top-color: var(--blue); }
+.node-decision { border-top-color: var(--amber); background: #fffdfa; }
+.node-security { border-top-color: var(--cyan); }
+.node-approval { border-top-color: var(--purple); background: #faf8ff; }
+.node-success { border-top-color: var(--green); background: #f6fdf9; }
+.node-feedback { border-top-color: var(--red); background: #fff8f8; }
+
+.node-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+}
+.node-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.node-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.node-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--txt);
+  line-height: 1.25;
+}
+.node-type-badge {
+  font-size: 0.55rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+}
+.badge-process { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); }
+.badge-decision { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber-border); }
+.badge-security { background: var(--cyan-light); color: var(--cyan); border: 1px solid var(--cyan-border); }
+.badge-loop { background: var(--red-light); color: var(--red); border: 1px solid var(--red-border); }
+.badge-success { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.badge-gate { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple-border); }
+
+.node-desc {
+  font-size: 0.68rem;
+  color: var(--txt-muted);
+  line-height: 1.45;
+  margin-bottom: 0.6rem;
+}
+
+/* NODE DATA ATTRIBUTES */
+.node-attrs {
+  list-style: none;
+  font-size: 0.64rem;
+  color: var(--txt);
+  line-height: 1.5;
+  margin-bottom: 0.6rem;
+  flex: 1;
+}
+.node-attrs li {
+  position: relative;
+  padding-left: 0.85rem;
+  margin-bottom: 0.2rem;
+}
+.node-attrs li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--txt-muted);
+  font-size: 0.6rem;
+}
+
+/* CODE / SYSTEM SNIPPET IN NODE */
+.node-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.45rem;
+  border-radius: 0.3rem;
+  color: #334155;
+  margin-top: auto;
+  word-break: break-all;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.node-code::before {
+  content: '⚡';
+  font-size: 0.65rem;
+}
+
+/* DECISION BRANCH BOX */
+.branch-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed var(--border-dark);
+}
+.branch-path {
+  border-radius: 0.4rem;
+  padding: 0.45rem 0.55rem;
+  font-size: 0.62rem;
+}
+.branch-pass {
+  background: var(--green-light);
+  border: 1px solid var(--green-border);
+  color: #065f46;
+}
+.branch-pass-title {
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.2rem;
+}
+.branch-fail {
+  background: var(--red-light);
+  border: 1px solid var(--red-border);
+  color: #991b1b;
+}
+.branch-fail-title {
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.2rem;
+}
+.loop-arrow-tag {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--red);
+  font-size: 0.58rem;
+  margin-top: 0.25rem;
+  background: rgba(239,68,68,0.12);
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+}
+
+/* CONNECTOR STRIP */
+.connector-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+}
+.connector-line {
+  flex: 1;
+  height: 2px;
+  background: var(--border-dark);
+  position: relative;
+}
+.connector-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--txt-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: #ffffff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+}
+
+/* CLOSED LOOP FEEDBACK BANNER */
+.feedback-loop-banner {
+  background: linear-gradient(90deg, #fff1f2 0%, #fffbeb 50%, #f0fdf4 100%);
+  border: 1.5px dashed #f43f5e;
+  border-radius: 0.65rem;
+  padding: 0.75rem 1rem;
+  margin-top: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.flb-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.flb-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f43f5e;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.flb-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #9f1239;
+}
+.flb-desc {
+  font-size: 0.68rem;
+  color: #4b5563;
+}
+.flb-tag {
+  font-size: 0.62rem;
+  font-weight: 800;
+  background: #ffffff;
+  border: 1px solid #f43f5e;
+  color: #e11d48;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+}
+
+/* RIGHT SIDEBAR */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 4.5rem;
+}
+.side-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+.side-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--txt);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.legend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.68rem;
+}
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 0.25rem;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.kpi-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.55rem;
+  text-align: center;
+}
+.kpi-val {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--blue);
+}
+.kpi-lbl {
+  font-size: 0.58rem;
+  color: var(--txt-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 0.15rem;
+}
+
+/* MASTER DATA BOTTOM BAR */
+.master-bar {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 0.85rem;
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.master-title-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.master-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--txt);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.master-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.85rem;
+}
+.mcard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  padding: 0.75rem;
+  transition: all 0.15s;
+}
+.mcard:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-dark);
+  box-shadow: var(--shadow-sm);
+}
+.mcard-hdr {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.mcard-name {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--txt);
+}
+.mcard-attrs {
+  list-style: none;
+  font-size: 0.62rem;
+  color: var(--txt-muted);
+  line-height: 1.5;
+}
+.mcard-attrs li::before {
+  content: '▪ ';
+  color: var(--blue);
+}
+
+/* INTERACTIVE MODAL */
+.spec-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.spec-modal.open {
+  display: flex;
+}
+.spec-box {
+  background: #ffffff;
+  border-radius: 0.85rem;
+  max-width: 650px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  position: relative;
+}
+.spec-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.spec-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--txt);
+  margin-bottom: 0.25rem;
+}
+.spec-meta {
+  font-size: 0.72rem;
+  color: var(--txt-muted);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.spec-section-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--blue);
+  margin: 0.75rem 0 0.35rem;
+}
+.spec-code-block {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+/* PRINT STYLES */
+@media print {
+  body { background: #ffffff !important; }
+  .controls-bar, .filter-pills, .btn-action, .spec-modal { display: none !important; }
+  .workflow-layout { grid-template-columns: 1fr !important; }
+  .stage-block, .master-bar, .intro-card { page-break-inside: avoid; border: 1px solid #ccc !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BRAND HEADER -->
+<header class="brand-header">
+  <div class="brand-emblem">ॐ</div>
+  <h1 class="brand-title">SHREE SPRITUAL KARIM SANSTHAN</h1>
+  <p class="brand-subtitle">Devotee Induction & Sacred Lineage Registration • Universal Workflow Architecture</p>
+  <div class="brand-tags">
+    <span class="btag btag-gold">OOPS MVC Architecture</span>
+    <span class="btag btag-blue">Closed-Loop Feedback</span>
+    <span class="btag btag-green">24h SLA Pairing Token</span>
+    <span class="btag btag-purple">5-Stage Validation Wizard</span>
+  </div>
+</header>
+
+<!-- CONTROLS & NAVIGATION BAR -->
+<div class="controls-bar">
+  <div class="doc-links">
+    <span style="font-size: 0.72rem; font-weight: 700; color: var(--txt-muted); margin-right: 0.25rem;">ARCHITECTURE SUITE:</span>
+    <a href="platform-overview.html" class="doc-link-btn">① Platform Overview</a>
+    <a href="workflow-architecture.html" class="doc-link-btn">② Business Objects</a>
+    <a href="transaction-lifecycle.html" class="doc-link-btn">③ Universal Lifecycle</a>
+    <a href="devotee-registration-workflow.html" class="doc-link-btn">④ Devotee Flowchart (HITL)</a>
+    <a href="devotee-registration-workflow1.html" class="doc-link-btn active">⑤ Devotee Stages (Original)</a>
+    <a href="data-structure-workflow.html" class="doc-link-btn">⑥ Data Structure &amp; Hierarchy</a>
+    <a href="core-operations-workflow.html" class="doc-link-btn">⑦ Core Operations &amp; Workflows</a>
+  </div>
+  <div class="action-btns">
+    <button class="btn-action" onclick="toggleAllBranches()">
+      <span>🔄</span> <span id="toggle-branches-lbl">Collapse Conditions</span>
+    </button>
+    <button class="btn-action btn-primary" onclick="window.print()">
+      <span>🖨️</span> Print / Save PDF
+    </button>
+  </div>
+</div>
+
+<!-- MAIN WORKFLOW CONTAINER -->
+<div class="container">
+
+  <!-- INTRO BANNER -->
+  <div class="intro-card">
+    <div>
+      <div class="intro-title">
+        <span>☸️</span> Devotee Registration & Induction Workflow (End-to-End)
+      </div>
+      <p class="intro-desc">
+        Visual representation of every validation check, conditional branch, error state, and closed feedback loop implemented across 
+        <strong style="color:var(--txt);">join.html</strong>, <strong style="color:var(--txt);">ProfileModel.js</strong>, <strong style="color:var(--txt);">onboarding.js</strong>, and the <strong style="color:var(--txt);">Devotee Portal</strong>.
+        Every failed condition gracefully loops back to user action with zero dangling logic paths.
+      </p>
+    </div>
+    <div class="filter-pills">
+      <button class="fpill active" onclick="filterStages('all')">All Stages</button>
+      <button class="fpill" onclick="filterStages('s0')">0. Discovery</button>
+      <button class="fpill" onclick="filterStages('s1-3')">1-3. Wizard Intake</button>
+      <button class="fpill" onclick="filterStages('s4-5')">4-5. Audit & Token</button>
+      <button class="fpill" onclick="filterStages('s6')">6. Mentor Gate</button>
+      <button class="fpill" onclick="filterStages('s7')">7. 4 Sacred Pillars</button>
+    </div>
+  </div>
+
+  <!-- WORKFLOW + SIDEBAR LAYOUT -->
+  <div class="workflow-layout">
+
+    <!-- WORKFLOW CANVAS -->
+    <div class="workflow-canvas">
+
+      <!-- ========================================================================= -->
+      <!-- STAGE 0: ENTRY CHANNELS & SPONSOR DISCOVERY -->
+      <!-- ========================================================================= -->
+      <section class="stage-block" id="stage-0">
+        <div class="stage-header">
+          <div class="stage-badge-group">
+            <div class="stage-number sn-0">0</div>
+            <div>
+              <div class="stage-title">Entry Channels & Lineage Sponsor Discovery</div>
+              <div class="stage-sub">How candidates discover the Sansthan and establish authentic lineage connection</div>
+            </div>
+          </div>
+          <span class="stage-sla" style="background:var(--blue-light); color:var(--blue); border-color:var(--blue-border);">
+            Channel Discovery • Input
+          </span>
+        </div>
+
+        <div class="flow-row">
+          <!-- Node 0.1 -->
+          <div class="wf-node node-start wf-node-top" onclick="showSpec('0.1')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🌐</span>
+                <span class="node-title">Candidate Entry Portal</span>
+              </div>
+              <span class="node-type-badge badge-process">ENTRY</span>
+            </div>
+            <p class="node-desc">Candidate enters induction protocol through one of 4 official discovery channels.</p>
+            <ul class="node-attrs">
+              <li>Web Portal Direct Link (<code>join.html</code>)</li>
+              <li>Sponsor Mentor Referral (<code>•ref=SKHM...&pin=...</code>)</li>
+              <li>Android App 3D Flipper QR Code Scan</li>
+              <li>Telegram Bot Pairing Link (<code>@SpiritualKarimBot</code>)</li>
+            </ul>
+            <div class="node-code">join.html•ref=SKHM-ADM1-7788-9900&pin=140610</div>
+          </div>
+
+          <!-- Node 0.2: Sponsor & PIN Resolution -->
+          <div class="wf-node node-decision wf-node-top" onclick="showSpec('0.2')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🔍</span>
+                <span class="node-title">Sponsor Verification Gate</span>
+              </div>
+              <span class="node-type-badge badge-decision">DECISION</span>
+            </div>
+            <p class="node-desc">Validates the 16-digit sponsor code against active Healers/Founders directory.</p>
+            <ul class="node-attrs">
+              <li>Resolves mentor name & tier (Tier 1 Master / Tier 2 Healer)</li>
+              <li>Validates 6-digit dynamic pairing security PIN</li>
+              <li>Checks mentor active status & verified badge</li>
+            </ul>
+
+            <!-- Branching -->
+            <div class="branch-container">
+              <div class="branch-path branch-pass">
+                <div class="branch-pass-title">✓ VALID MENTOR</div>
+                Link confirmed to Mentor (e.g. Karim Ji). Proceed to Wizard.
+              </div>
+              <div class="branch-path branch-fail">
+                <div class="branch-fail-title">✕ INVALID / EXPIRED</div>
+                Sponsor not found or PIN expired.
+                <div class="loop-arrow-tag">↩ FEEDBACK LOOP: Fallback to Founder Root & Notify</div>
+              </div>
+            </div>
+            <div class="node-code">ProfileModel.getProfileByRef(sponsorCode)</div>
+          </div>
+
+          <!-- Node 0.3: Circular Sponsor Anti-Loop -->
+          <div class="wf-node node-decision wf-node-top" onclick="showSpec('0.3')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🛡️</span>
+                <span class="node-title">Anti-Loop Lineage Check</span>
+              </div>
+              <span class="node-type-badge badge-security">RULE 13</span>
+            </div>
+            <p class="node-desc">Recursive downline traversal to prevent circular dependency cycles in sacred MLM lineage.</p>
+            <ul class="node-attrs">
+              <li>Prevents candidate from sponsoring their own upline</li>
+              <li>Recursive memoized tree traversal (<code>visited Set</code>)</li>
+              <li>Enforces parent-child hierarchy integrity</li>
+            </ul>
+
+            <!-- Branching -->
+            <div class="branch-container">
+              <div class="branch-path branch-pass">
+                <div class="branch-pass-title">✓ TREE CLEAN</div>
+                No circular reference. Tree depth valid.
+              </div>
+              <div class="branch-path branch-fail">
+                <div class="branch-fail-title">✕ CIRCULAR CYCLE</div>
+                Cycle detected!
+                <div class="loop-arrow-tag">↩ FEEDBACK: Reject upline assignment & Prompt valid sponsor</div>
+              </div>
+            </div>
+            <div class="node-code">isCircularSponsor(profileId, sponsorCode)</div>
+          </div>
+        </div>
+
+        <!-- Closed Loop Feedback Summary Bar -->
+        <div class="feedback-loop-banner">
+          <div class="flb-left">
+            <div class="flb-icon">↺</div>
+            <div>
+              <div class="flb-title">Stage 0 Closed-Loop Convergence (Rule 13 Compliance)</div>
+              <div class="flb-desc">If sponsor is invalid or missing, system automatically defaults to Sansthan Master Founder Root (<code>SKHM-ADM1-7788-9900</code>) and allows user to proceed without dead navigation.</div>
+            </div>
+          </div>
+          <span class="flb-tag">Closed Loop • 0 Dangling Branches</span>
+        </div>
+      </section>
+
+      <!-- CONNECTOR -->
+      <div class="connector-strip">
+        <div class="connector-line"></div>
+        <span class="connector-label">Sponsor Verified ➔ Wizard Step 1 Intake</span>
+        <div class="connector-line"></div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- STAGE 1: WIZARD STEP 1 — IDENTITY & ELIGIBILITY -->
+      <!-- ========================================================================= -->
+      <section class="stage-block" id="stage-1">
+        <div class="stage-header">
+          <div class="stage-badge-group">
+            <div class="stage-number sn-1">1</div>
+            <div>
+              <div class="stage-title">Wizard Step 1: Sacred Identity &amp; Age Eligibility</div>
+              <div class="stage-sub">Personal identity collection with statutory age and format boundary checks</div>
+            </div>
+          </div>
+          <span class="stage-sla" style="background:var(--blue-light); color:var(--blue); border-color:var(--blue-border);">
+            Wizard Step 1 of 5
+          </span>
+        </div>
+
+        <div class="flow-row">
+          <!-- Node 1.1 -->
+          <div class="wf-node node-process wf-node-top" onclick="showSpec('1.1')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">👤</span>
+                <span class="node-title">Personal Data Inputs</span>
+              </div>
+              <span class="node-type-badge badge-process">PROCESS</span>
+            </div>
+            <p class="node-desc">Devotee inputs core identification profile attributes.</p>
+            <ul class="node-attrs">
+              <li><strong>Full Legal Name:</strong> Min 3 characters required</li>
+              <li><strong>Date of Birth:</strong> Calendar picker with age parser</li>
+              <li><strong>WhatsApp Mobile:</strong> 10+ digits with country code</li>
+              <li><strong>Email Address:</strong> RFC-compliant syntax format</li>
+              <li><strong>Spiritual Objective:</strong> 4 options (House Clean, Negative Energy, Three Diya, Healing)</li>
+            </ul>
+            <div class="node-code">Wizard.validateStep(1)</div>
+          </div>
+
+          <!-- Node 1.2: Age Eligibility Decision -->
+          <div class="wf-node node-decision wf-node-top" onclick="showSpec('1.2')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">⚖️</span>
+                <span class="node-title">Age Verification Gate</span>
+              </div>
+              <span class="node-type-badge badge-decision">DECISION</span>
+            </div>
+            <p class="node-desc">Legal compliance check: Devotee must be at least 18 years old for spiritual contract validity.</p>
+            <ul class="node-attrs">
+              <li>Calculates precise age taking month/day difference</li>
+              <li>Rejects minor applicants from self-induction</li>
+              <li>Requires parental / guardian proxy if under 18</li>
+            </ul>
+
+            <div class="branch-container">
+              <div class="branch-path branch-pass">
+                <div class="branch-pass-title">✓ AGE >= 18 YEARS</div>
+                Eligible. Advance to field formatting verification.
+              </div>
+              <div class="branch-path branch-fail">
+                <div class="branch-fail-title">✕ UNDER 18 YEARS</div>
+                <code>age < 18</code> restriction triggered.
+                <div class="loop-arrow-tag">↩ FEEDBACK: Red toast warning + Block 'Next' button + Stay on Step 1</div>
+              </div>
+            </div>
+            <div class="node-code">DemoAgeVerification.verify(dobString)</div>
+          </div>
+
+          <!-- Node 1.3: Duplicate & Format Checks -->
+          <div class="wf-node node-decision wf-node-top" onclick="showSpec('1.3')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">📋</span>
+                <span class="node-title">Format & Duplicate Check</span>
+              </div>
+              <span class="node-type-badge badge-decision">DECISION</span>
+            </div>
+            <p class="node-desc">Validates phone & email against current directory to prevent duplicate registrations.</p>
+            <ul class="node-attrs">
+              <li>Sanitizes phone: removes spaces, dashes, country code</li>
+              <li>Validates email format: must contain <code>@</code> and valid TLD</li>
+              <li>Checks <code>sk_admin_profiles_v3</code> for existing phone/email</li>
+            </ul>
+
+            <div class="branch-container">
+              <div class="branch-path branch-pass">
+                <div class="branch-pass-title">✓ UNIQUE APPLICANT</div>
+                No collisions found. Enable Step 2 transition.
+              </div>
+              <div class="branch-path branch-fail">
+                <div class="branch-fail-title">✕ DUPLICATE DETECTED</div>
+                Phone/Email already registered.
+                <div class="loop-arrow-tag">↩ FEEDBACK: Prompt 'Direct Login / Profile Recovery' link</div>
+              </div>
+            </div>
+            <div class="node-code">profiles.some(p => p.phone === mobile)</div>
+          </div>
+        </div>
+
+        <div class="feedback-loop-banner">
+          <div class="flb-left">
+            <div class="flb-icon">↺</div>
+            <div>
+              <div class="flb-title">Step 1 Closed-Loop Convergence</div>
+              <div class="flb-desc">Input validation errors display inline beneath each field (<code>dob-validation-msg</code>, <code>wizard-submit-error</code>). Focus is maintained on invalid inputs without losing form state.</div>
+            </div>
+          </div>
+          <span class="flb-tag">Feedback Loop • Realtime Inline Error State</span>
+        </div>
+      </section>
+
+      <!-- CONNECTOR -->
+      <div class="connector-strip">
+        <div class="connector-line"></div>
+        <span class="connector-label">Step 1 Validated ➔ Wizard Step 2 Dual OTP & CAPTCHA</span>
+        <div class="connector-line"></div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- STAGE 2: WIZARD STEP 2 — DUAL OTP & SECURITY AUTHENTICATION -->
+      <!-- ========================================================================= -->
+      <section class="stage-block" id="stage-2">
+        <div class="stage-header">
+          <div class="stage-badge-group">
+            <div class="stage-number sn-2">2</div>
+            <div>
+              <div class="stage-title">Wizard Step 2: Dual OTP &amp; Security Validation</div>
+              <div class="stage-sub">Independent multi-channel authentication (Phone OTP + Email OTP + Math CAPTCHA)</div>
+            </div>
+          </div>
+          <span class="stage-sla" style="background:var(--cyan-light); color:var(--cyan); border-color:var(--cyan-border);">
+            Wizard Step 2 of 5 • 5m OTP Expiry
+          </span>
+        </div>
+
+        <div class="flow-row">
+          <!-- Node 2.1: Phone OTP -->
+          <div class="wf-node node-security wf-node-top" onclick="showSpec('2.1')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">📱</span>
+                <span class="node-title">Phone SMS OTP Check</span>
+              </div>
+              <span class="node-type-badge badge-security">SECURITY</span>
+            </div>
+            <p class="node-desc">6-digit cryptographically generated OTP dispatched via SMS service with 5-minute window.</p>
+            <ul class="node-attrs">
+              <li>Max 3 attempts permitted before lock</li>
+              <li>60-second cooldown on resend trigger</li>
+              <li>Demo mode exposes in-memory token popup for test suites</li>
+            </ul>
+
+            <div class="branch-container">
+              <div class="branch-path branch-pass">
+                <div class="branch-pass-title">✓ PHONE VERIFIED</div>
+                Token match. <code>phoneOTPVerified = true</code>.
+              </div>
+              <div class="branch-path branch-fail">
+                <div class="branch-fail-title">✕ INVALID / EXPIRED</div>
+                Wrong code or 3 attempts exhausted.
+                <div class="loop-arrow-tag">↩ FEEDBACK: Decrement attempts remaining; trigger 60s cooldown resend</div>
+              </div>
+            </div>
+            <div class="node-code">DemoOTPService.verifyOTP(phone, entered)</div>
+          </div>
+
+          <!-- Node 2.2: Email OTP -->
+          <div class="wf-node node-security wf-node-top" onclick="showSpec('2.2')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">📧</span>
+                <span class="node-title">Email OTP Verification</span>
+              </div>
+              <span class="node-type-badge badge-security">SECURITY</span>
+            </div>
+            <p class="node-desc">Simultaneous email delivery of 6-digit confirmation key to verify mailbox deliverability.</p>
+            <ul class="node-attrs">
+              <li>Prevents spoofing and fake email generation</li>
+              <li>Independent attempt counter (3 tries max)</li>
+              <li>In-memory ephemeral store consumes OTP upon success</li>
+            </ul>
+
+            <div class="branch-container">
+              <div class="branch-path branch-pass">
+                <div class="branch-pass-title">✓ EMAIL VERIFIED</div>
+                <code>emailOTPVerified = true</code>.
+              </div>
+              <div class="branch-path branch-fail">
+                <div class="branch-fail-title">✕ INCORRECT OTP</div>
+                Failed match.
+                <div class="loop-arrow-tag">↩ FEEDBACK: Show error alert + Resend OTP option</div>
+              </div>
+            </div>
+            <div class="node-code">DemoOTPService.verifyOTP(email, entered)</div>
+          </div>
+
+          <!-- Node 2.3: Anti-Bot Math CAPTCHA -->
+          <div class="wf-node node-security wf-node-top" onclick="showSpec('2.3')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🤖</span>
+                <span class="node-title">Anti-Bot Math CAPTCHA</span>
+              </div>
+              <span class="node-type-badge badge-security">BOT GUARD</span>
+            </div>
+            <p class="node-desc">Lightweight dynamic arithmetic challenge (e.g. <code>7 + 4 = •</code>) with instant live verification.</p>
+            <ul class="node-attrs">
+              <li>Guards against automated scripts & crawlers</li>
+              <li>One-click refresh button regenerates challenge</li>
+              <li>Auto-evaluates on keyup input event</li>
+            </ul>
+
+            <div class="branch-container">
+              <div class="branch-path branch-pass">
+                <div class="branch-pass-title">✓ CAPTCHA SOLVED</div>
+                <code>captchaVerified = true</code>.
+              </div>
+              <div class="branch-path branch-fail">
+                <div class="branch-fail-title">✕ MISMATCH</div>
+                Incorrect math sum.
+                <div class="loop-arrow-tag">↩ FEEDBACK: Clear input, auto-refresh challenge, keep user on step</div>
+              </div>
+            </div>
+            <div class="node-code">DemoCaptcha.verify(answer)</div>
+          </div>
+        </div>
+
+        <div class="feedback-loop-banner">
+          <div class="flb-left">
+            <div class="flb-icon">↺</div>
+            <div>
+              <div class="flb-title">Step 2 Multi-Gate Convergence Rule</div>
+              <div class="flb-desc">All three security locks (Phone ✓, Email ✓, CAPTCHA ✓) must resolve to <code>true</code> simultaneously. Failure of any single lock prevents Wizard progression and loops back to that exact widget.</div>
+            </div>
+          </div>
+          <span class="flb-tag">3-Way Convergence Gate</span>
+        </div>
+      </section>
+
+      <!-- CONNECTOR -->
+      <div class="connector-strip">
+        <div class="connector-line"></div>
+        <span class="connector-label">Step 2 Verified ➔ Wizard Step 3 Document & KYC Upload</span>
+        <div class="connector-line"></div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- STAGE 3: WIZARD STEP 3 — DOCUMENT & KYC REPOSITORY -->
+      <!-- ========================================================================= -->
+      <section class="stage-block" id="stage-3">
+        <div class="stage-header">
+          <div class="stage-badge-group">
+            <div class="stage-number sn-3">3</div>
+            <div>
+              <div class="stage-title">Wizard Step 3: Sacred Document &amp; KYC Verification</div>
+              <div class="stage-sub">Client-side document intake, mime-type verification, and Base64 persistence</div>
+            </div>
+          </div>
+          <span class="stage-sla" style="background:var(--purple-light); color:var(--purple); border-color:var(--purple-border);">
+            Wizard Step 3 of 5 • Max 5MB / File
+          </span>
+        </div>
+
+        <div class="flow-row">
+          <!-- Node 3.1: Profile Photo Upload -->
+          <div class="wf-node node-process wf-node-top" onclick="showSpec('3.1')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">📷</span>
+                <span class="node-title">Devotee Face Portrait</span>
+              </div>
+              <span class="node-type-badge badge-process">DOC OPTIONAL</span>
+            </div>
+            <p class="node-desc">Devotee portrait for identity card generation and 3D flipper avatar rendering.</p>
+            <ul class="node-attrs">
+              <li>Allowed types: <code>JPG, PNG, WEBP</code></li>
+              <li>Size boundary: Max 2MB</li>
+              <li>Encodes to DataURL for offline storage</li>
+            </ul>
+            <div class="node-code">Wizard.handleFile(this, 'photo')</div>
+          </div>
+
+          <!-- Node 3.2: Government ID Proof -->
+          <div class="wf-node node-decision wf-node-top" onclick="showSpec('3.2')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🪪</span>
+                <span class="node-title">Government ID Proof (Mandatory)</span>
+              </div>
+              <span class="node-type-badge badge-decision">MANDATORY KYC</span>
+            </div>
+            <p class="node-desc">Official identity proof (Aadhaar Card, PAN Card, or Passport) required for induction.</p>
+            <ul class="node-attrs">
+              <li>Allowed types: <code>JPG, PNG, PDF</code></li>
+              <li>Strict size limit: Max 5MB</li>
+              <li>Mandatory: Wizard blocks progression if absent</li>
+            </ul>
+
+            <div class="branch-container">
+              <div class="branch-path branch-pass">
+                <div class="branch-pass-title">✓ VALID ID UPLOADED</div>
+                MIME ok & Size &lt; 5MB. Stored in <code>sk_documents</code>.
+              </div>
+              <div class="branch-path branch-fail">
+                <div class="branch-fail-title">✕ MISSING / INVALID</div>
+                No file or exceeds 5MB.
+                <div class="loop-arrow-tag">↩ FEEDBACK: Red upload error label + Wizard Step 3 stay</div>
+              </div>
+            </div>
+            <div class="node-code">DemoDocUpload.validate(file)</div>
+          </div>
+
+          <!-- Node 3.3: Address Proof -->
+          <div class="wf-node node-process wf-node-top" onclick="showSpec('3.3')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🏠</span>
+                <span class="node-title">Sanctum Residence Proof</span>
+              </div>
+              <span class="node-type-badge badge-process">DOC OPTIONAL</span>
+            </div>
+            <p class="node-desc">Utility bill or bank statement establishing physical residence for Level 1 House Clean.</p>
+            <ul class="node-attrs">
+              <li>Allowed types: <code>JPG, PNG, PDF</code> (Max 5MB)</li>
+              <li>Optional at induction; mandatory before Level 1 House Clean</li>
+              <li>Status logged as <code>PENDING_VERIFICATION</code></li>
+            </ul>
+            <div class="node-code">DemoDocUpload.upload(file, id, 'address_proof')</div>
+          </div>
+        </div>
+
+        <div class="feedback-loop-banner">
+          <div class="flb-left">
+            <div class="flb-icon">↺</div>
+            <div>
+              <div class="flb-title">Step 3 Closed-Loop Document Guard</div>
+              <div class="flb-desc">If a user selects an unsupported file (e.g. <code>.exe</code>, <code>.zip</code>) or a file > 5MB, the dropzone clears immediately and renders a descriptive message (<code>File too large: 6.2MB. Max: 5MB</code>) without leaving the step.</div>
+            </div>
+          </div>
+          <span class="flb-tag">File Validation Loop</span>
+        </div>
+      </section>
+
+      <!-- CONNECTOR -->
+      <div class="connector-strip">
+        <div class="connector-line"></div>
+        <span class="connector-label">Step 3 Uploads OK ➔ Wizard Step 4 Terms & Digital E-Signature</span>
+        <div class="connector-line"></div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- STAGE 4: WIZARD STEP 4 — TERMS, CODE OF CONDUCT & DIGITAL SIGNATURE -->
+      <!-- ========================================================================= -->
+      <section class="stage-block" id="stage-4">
+        <div class="stage-header">
+          <div class="stage-badge-group">
+            <div class="stage-number sn-4">4</div>
+            <div>
+              <div class="stage-title">Wizard Step 4: Terms of Sacred Order &amp; Digital Signature</div>
+              <div class="stage-sub">Statutory legal contract acceptance, code of conduct, and typed electronic signature</div>
+            </div>
+          </div>
+          <span class="stage-sla" style="background:var(--amber-light); color:var(--amber); border-color:var(--amber-border);">
+            Wizard Step 4 of 5 • T&amp;C v1.2.0
+          </span>
+        </div>
+
+        <div class="flow-row">
+          <!-- Node 4.1: T&C Acceptance -->
+          <div class="wf-node node-decision wf-node-top" onclick="showSpec('4.1')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">📜</span>
+                <span class="node-title">Terms &amp; Conduct Consent</span>
+              </div>
+              <span class="node-type-badge badge-decision">DECISION</span>
+            </div>
+            <p class="node-desc">Devotee scrolls and accepts the 8-clause Sansthan legal charter and privacy policy.</p>
+            <ul class="node-attrs">
+              <li>Version tracking: Bound to active charter v1.2.0</li>
+              <li>Logs IP, User Agent, and ISO timestamp upon acceptance</li>
+              <li>Mandatory checkbox: Cannot advance without explicit check</li>
+            </ul>
+
+            <div class="branch-container">
+              <div class="branch-path branch-pass">
+                <div class="branch-pass-title">✓ ACCEPTED</div>
+                Checkbox marked. <code>tcAccepted = true</code>.
+              </div>
+              <div class="branch-path branch-fail">
+                <div class="branch-fail-title">✕ UNCHECKED</div>
+                Terms not accepted.
+                <div class="loop-arrow-tag">↩ FEEDBACK: Prompt alert "You must accept Terms & Conditions"</div>
+              </div>
+            </div>
+            <div class="node-code">DemoTandC.recordAcceptance(profileId)</div>
+          </div>
+
+          <!-- Node 4.2: Digital E-Signature -->
+          <div class="wf-node node-decision wf-node-top" onclick="showSpec('4.2')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">✍️</span>
+                <span class="node-title">Digital Signature Capture</span>
+              </div>
+              <span class="node-type-badge badge-decision">LEGAL SIGN</span>
+            </div>
+            <p class="node-desc">Applicant types their full legal name into styled signature pad as digital consent.</p>
+            <ul class="node-attrs">
+              <li>Renders in Cinzel calligraphic typeface</li>
+              <li>Validation rule: Signature must match name length (&gt;= 3 chars)</li>
+              <li>Stored in <code>sk_signatures</code> with audit hash</li>
+            </ul>
+
+            <div class="branch-container">
+              <div class="branch-path branch-pass">
+                <div class="branch-pass-title">✓ SIGNED</div>
+                Shows "✓ Signature captured" green badge.
+              </div>
+              <div class="branch-path branch-fail">
+                <div class="branch-fail-title">✕ MISSING</div>
+                Empty signature box.
+                <div class="loop-arrow-tag">↩ FEEDBACK: Outline red + Focus input + Prevent step progression</div>
+              </div>
+            </div>
+            <div class="node-code">DemoLegalAgreement.recordSignature(id, sig)</div>
+          </div>
+        </div>
+
+        <div class="feedback-loop-banner">
+          <div class="flb-left">
+            <div class="flb-icon">↺</div>
+            <div>
+              <div class="flb-title">Step 4 Legal Compliance Closed Loop</div>
+              <div class="flb-desc">Neither button nor keyboard shortcut allows submission until both legal consent and signature are validated. Step 5 Review screen is locked until Step 4 clears all hurdles.</div>
+            </div>
+          </div>
+          <span class="flb-tag">Statutory Enforce Loop</span>
+        </div>
+      </section>
+
+      <!-- CONNECTOR -->
+      <div class="connector-strip">
+        <div class="connector-line"></div>
+        <span class="connector-label">Step 4 Agreed ➔ Wizard Step 5 Summary Review & Submission Dispatch</span>
+        <div class="connector-line"></div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- STAGE 5: WIZARD STEP 5 — REVIEW, DISPATCH & TELEMETRY STREAM -->
+      <!-- ========================================================================= -->
+      <section class="stage-block" id="stage-5">
+        <div class="stage-header">
+          <div class="stage-badge-group">
+            <div class="stage-number sn-5">5</div>
+            <div>
+              <div class="stage-title">Wizard Step 5: Review Summary, Key Generation &amp; Dispatch</div>
+              <div class="stage-sub">Comprehensive audit summary, 16-digit Reference Key generation, and multi-store dispatch</div>
+            </div>
+          </div>
+          <span class="stage-sla" style="background:var(--amber-light); color:var(--amber); border-color:var(--amber-border);">
+            Wizard Step 5 of 5 • 24h Expiry
+          </span>
+        </div>
+
+        <div class="flow-row">
+          <!-- Node 5.1: Review Matrix -->
+          <div class="wf-node node-process wf-node-top" onclick="showSpec('5.1')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">📊</span>
+                <span class="node-title">10-Point Review Matrix</span>
+              </div>
+              <span class="node-type-badge badge-process">SUMMARY</span>
+            </div>
+            <p class="node-desc">Populates all 10 verified registration metrics for devotee final check.</p>
+            <ul class="node-attrs">
+              <li>👤 Name &amp; 📅 DOB</li>
+              <li>📱 Phone OTP (✓) &amp; 📧 Email OTP (✓)</li>
+              <li>🔒 Anti-Bot Math CAPTCHA (✓)</li>
+              <li>📄 Govt ID Proof &amp; 📷 Photo Portrait</li>
+              <li>📜 T&amp;C Acceptance &amp; ✍️ Digital Signature</li>
+            </ul>
+            <div class="node-code">Wizard.populateReview()</div>
+          </div>
+
+          <!-- Node 5.2: Downline Quota Throttle -->
+          <div class="wf-node node-decision wf-node-top" onclick="showSpec('5.2')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🚦</span>
+                <span class="node-title">Mentor Quota Throttle Gate</span>
+              </div>
+              <span class="node-type-badge badge-decision">THROTTLE</span>
+            </div>
+            <p class="node-desc">Prevents mentor backlog starvation by enforcing max 5 simultaneous pending invites.</p>
+            <ul class="node-attrs">
+              <li>Counts pending invites for sponsor (<code>status === 'PENDING'</code>)</li>
+              <li>Protects mentors from onboarding overload</li>
+              <li>Preserves 1-on-1 spiritual quality care</li>
+            </ul>
+
+            <div class="branch-container">
+              <div class="branch-path branch-pass">
+                <div class="branch-pass-title">✓ QUOTA UNDER 5</div>
+                Queue capacity ok. Allow payload dispatch.
+              </div>
+              <div class="branch-path branch-fail">
+                <div class="branch-fail-title">✕ QUEUE FULL (&gt;= 5)</div>
+                Mentor has 5 unreviewed requests.
+                <div class="loop-arrow-tag">↩ FEEDBACK: Alert applicant + Send notification to mentor to clear queue</div>
+              </div>
+            </div>
+            <div class="node-code">activePending.length &lt; 5</div>
+          </div>
+
+          <!-- Node 5.3: Key Generation & Dispatch -->
+          <div class="wf-node node-process wf-node-top" onclick="showSpec('5.3')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🔑</span>
+                <span class="node-title">16-Digit Key &amp; Dispatch</span>
+              </div>
+              <span class="node-type-badge badge-success">DISPATCH</span>
+            </div>
+            <p class="node-desc">Generates official reference key and stores invite payload across 4 repositories.</p>
+            <ul class="node-attrs">
+              <li>Generates: <code>SKDV-XXXX-XXXX-XXXX</code></li>
+              <li>Saves: <code>spiritual_karim_pairing_invites</code></li>
+              <li>Sets: <code>sk_devotee_induction_session</code></li>
+              <li>Broadcasts: <code>BroadcastChannel('spiritual_karim_sync')</code></li>
+              <li>Streams: Firebase Realtime DB <code>PAIRING_REQUESTED</code></li>
+            </ul>
+            <div class="node-code">Wizard.submit() & startApprovalListener()</div>
+          </div>
+        </div>
+
+        <div class="feedback-loop-banner">
+          <div class="flb-left">
+            <div class="flb-icon">↺</div>
+            <div>
+              <div class="flb-title">Stage 5 Dispatch &amp; Live Telemetry Handshake</div>
+              <div class="flb-desc">Form automatically transitions to Waiting Screen with pulsing hourglass (⏳), displaying reference key and mentor name while launching an active polling heartbeat (1200ms) + BroadcastChannel event listener.</div>
+            </div>
+          </div>
+          <span class="flb-tag">Live Polling • Cross-Tab Broadcast</span>
+        </div>
+      </section>
+
+      <!-- CONNECTOR -->
+      <div class="connector-strip">
+        <div class="connector-line"></div>
+        <span class="connector-label">Dispatched ➔ Stage 6 Mentor 24-Hour Crucible & Approval Gate</span>
+        <div class="connector-line"></div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- STAGE 6: THE 24-HOUR CRUCIBLE — MENTOR REVIEW, APPROVAL, REJECTION & APPEAL -->
+      <!-- ========================================================================= -->
+      <section class="stage-block" id="stage-6">
+        <div class="stage-header">
+          <div class="stage-badge-group">
+            <div class="stage-number sn-6">6</div>
+            <div>
+              <div class="stage-title">Stage 6: The 24-Hour Crucible — Mentor Review &amp; Tri-Branch Gate</div>
+              <div class="stage-sub">Mentor evaluation in Healers Hub with 3 possible closed-loop branches (Approve / Reject / Expire)</div>
+            </div>
+          </div>
+          <span class="stage-sla" style="background:var(--green-light); color:var(--green); border-color:var(--green-border);">
+            Mentor Review SLA: 24 Hours
+          </span>
+        </div>
+
+        <div class="flow-row">
+          <!-- Branch A: Approval (Main Happy Path) -->
+          <div class="wf-node node-success wf-node-top" onclick="showSpec('6.1')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">👑</span>
+                <span class="node-title">Branch A: Mentor Approval (Happy Path)</span>
+              </div>
+              <span class="node-type-badge badge-success">APPROVED</span>
+            </div>
+            <p class="node-desc">Mentor reviews credentials in Healers Hub dashboard and confirms sacred sponsorship.</p>
+            <ul class="node-attrs">
+              <li>Status transitions: <code>PENDING ➔ APPROVED</code></li>
+              <li>Creates permanent profile in <code>sk_admin_profiles_v3</code></li>
+              <li>Devotee Level 5 assigned with <code>FREE</code> status</li>
+              <li>Adds Devotee to Mentor's <code>healerNetwork</code> downline</li>
+              <li>Initializes 4 Sacred Pillars (Lineage, 3 House Clean, 3 Diya)</li>
+              <li>Devotee browser receives live signal &amp; unlocks "Next ➔" button</li>
+            </ul>
+            <div class="node-code">approvePairingInvite(inviteId) ➔ Devotee/index.html</div>
+          </div>
+
+          <!-- Branch B: Rejection & Closed-Loop Appeal -->
+          <div class="wf-node node-feedback wf-node-top" onclick="showSpec('6.2')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🚫</span>
+                <span class="node-title">Branch B: Rejection &amp; Closed-Loop Appeal</span>
+              </div>
+              <span class="node-type-badge badge-loop">CLOSED LOOP APPEAL</span>
+            </div>
+            <p class="node-desc">If mentor flags discrepancy or insufficient intent, applicant is rejected with full appeal rights.</p>
+            <ul class="node-attrs">
+              <li>Status transitions: <code>PENDING ➔ REJECTED</code></li>
+              <li>Mentor logs specific rejection remarks</li>
+              <li>Devotee sees rejection explanation screen</li>
+              <li><strong>Closed-Loop Option 1:</strong> Submit appeal via <code>DemoAppeal.submitAppeal()</code></li>
+              <li><strong>Closed-Loop Option 2:</strong> Correct details and re-apply to alternative mentor</li>
+              <li>Admin reviews appeal ➔ If approved, merges back to Branch A!</li>
+            </ul>
+            <div class="node-code">rejectPairingInvite() ➔ DemoAppeal.submitAppeal()</div>
+          </div>
+
+          <!-- Branch C: 24h Expiry & Token Refresh Loop -->
+          <div class="wf-node node-decision wf-node-top" onclick="showSpec('6.3')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">⏰</span>
+                <span class="node-title">Branch C: 24h Expiration &amp; Token Refresh</span>
+              </div>
+              <span class="node-type-badge badge-decision">CLOSED LOOP SLA</span>
+            </div>
+            <p class="node-desc">If mentor does not act within 24 hours (<code>expiresAtMs &lt; Date.now()</code>), invite auto-expires.</p>
+            <ul class="node-attrs">
+              <li>Status transitions: <code>PENDING ➔ EXPIRED</code></li>
+              <li>Protects applicant data from lingering indefinitely</li>
+              <li><strong>Closed-Loop Recovery:</strong> Devotee clicks "Refresh Token"</li>
+              <li>Exponential backoff check prevents spamming (cooldown timer)</li>
+              <li>Resets <code>expiresAtMs = Date.now() + 24h</code> and re-queues to mentor!</li>
+            </ul>
+            <div class="node-code">resendPairingInvite(id) ➔ Cooldown Check ➔ Re-queue</div>
+          </div>
+        </div>
+
+        <div class="feedback-loop-banner">
+          <div class="flb-left">
+            <div class="flb-icon">↺</div>
+            <div>
+              <div class="flb-title">Stage 6 Tri-Branch Closed-Loop Guarantee</div>
+              <div class="flb-desc">Every branch converges: Branch A leads to portal entry; Branch B leads to appeal arbitration or mentor re-selection; Branch C refreshes the token and re-queues without forcing the user to re-type their entire application.</div>
+            </div>
+          </div>
+          <span class="flb-tag">Zero Dead Ends • 100% Convergence</span>
+        </div>
+      </section>
+
+      <!-- CONNECTOR -->
+      <div class="connector-strip">
+        <div class="connector-line"></div>
+        <span class="connector-label">Approved Devotee Enters Portal ➔ Stage 7 The 4 Sacred Pillars</span>
+        <div class="connector-line"></div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- STAGE 7: POST-INDUCTION — THE 4 SACRED PILLARS INITIALIZATION -->
+      <!-- ========================================================================= -->
+      <section class="stage-block" id="stage-7">
+        <div class="stage-header">
+          <div class="stage-badge-group">
+            <div class="stage-number sn-7">7</div>
+            <div>
+              <div class="stage-title">Stage 7: Post-Induction — Initialization of the 4 Sacred Pillars</div>
+              <div class="stage-sub">Automated setup of Devotee lifecycle structures in the Devotee Portal upon first login</div>
+            </div>
+          </div>
+          <span class="stage-sla" style="background:var(--pink-light); color:var(--pink); border-color:var(--pink-border);">
+            Devotee Portal • Level 5 Active
+          </span>
+        </div>
+
+        <div class="flow-row">
+          <!-- Pillar 1 -->
+          <div class="wf-node node-process wf-node-top" onclick="showSpec('7.1')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🔱</span>
+                <span class="node-title">Pillar 1: Sacred Identity &amp; Key</span>
+              </div>
+              <span class="node-type-badge badge-process">PILLAR 1</span>
+            </div>
+            <p class="node-desc">Active profile dashboard initialized with verified reference code and sponsor telemetry.</p>
+            <ul class="node-attrs">
+              <li>16-digit Reference Code (<code>SKDV-...</code>) locked</li>
+              <li>Upline mentor link active (<code>referredByCode</code>)</li>
+              <li>3D Flipper Card with dynamic QR Pairing active</li>
+            </ul>
+            <div class="node-code">ProfileView.renderHeroSection()</div>
+          </div>
+
+          <!-- Pillar 2 -->
+          <div class="wf-node node-process wf-node-top" onclick="showSpec('7.2')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🧬</span>
+                <span class="node-title">Pillar 2: 3-Gen Pitru Karma Lineage</span>
+              </div>
+              <span class="node-type-badge badge-process">PILLAR 2</span>
+            </div>
+            <p class="node-desc">Ancestral genealogical framework to diagnose generational karmic afflictions.</p>
+            <ul class="node-attrs">
+              <li><strong>Current Family:</strong> Self, Spouse, Children, Siblings</li>
+              <li><strong>Paternal Lineage:</strong> Father, Paternal Grandparents</li>
+              <li><strong>Maternal Lineage:</strong> Mother, Maternal Grandparents</li>
+              <li><strong>Kuldevi / Kuldevta:</strong> Clan root identification</li>
+            </ul>
+            <div class="node-code">ProfileModel.profiles.lineage</div>
+          </div>
+
+          <!-- Pillar 3 -->
+          <div class="wf-node node-process wf-node-top" onclick="showSpec('7.3')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🧹</span>
+                <span class="node-title">Pillar 3: 3-Tier House Clean</span>
+              </div>
+              <span class="node-type-badge badge-process">PILLAR 3</span>
+            </div>
+            <p class="node-desc">Living space sanctum cleansing protocol with percentage progress and mentor sign-off.</p>
+            <ul class="node-attrs">
+              <li><strong>Level 1:</strong> Self Residence (Min 75% threshold)</li>
+              <li><strong>Level 2:</strong> Parents / In-Laws Ancestral Home</li>
+              <li><strong>Level 3:</strong> Extended Family Relatives Sanctum</li>
+              <li>Requires photo proof &amp; mentor verified certification</li>
+            </ul>
+            <div class="node-code">ProfileModel.profiles.houseCleanLevels</div>
+          </div>
+
+          <!-- Pillar 4 -->
+          <div class="wf-node node-process wf-node-top" onclick="showSpec('7.4')">
+            <div class="node-header">
+              <div class="node-title-wrap">
+                <span class="node-icon">🪔</span>
+                <span class="node-title">Pillar 4: Three Diya Sadhana</span>
+              </div>
+              <span class="node-type-badge badge-process">PILLAR 4</span>
+            </div>
+            <p class="node-desc">Daily divine light ritual anchoring spiritual protection and clearing negative cords.</p>
+            <ul class="node-attrs">
+              <li>Mustard Oil Lamp (Protection / Negative dispersion)</li>
+              <li>Pure Ghee Lamp (Divine light / Ancestral harmony)</li>
+              <li>Sesame (Til) Oil Lamp (Planetary &amp; dosha peace)</li>
+              <li>Daily evening time window: <code>06:15 PM – 07:00 PM</code></li>
+            </ul>
+            <div class="node-code">ProfileModel.settings.threeDiyaEveningWindow</div>
+          </div>
+        </div>
+
+        <div class="feedback-loop-banner">
+          <div class="flb-left">
+            <div class="flb-icon">★</div>
+            <div>
+              <div class="flb-title">Devotee Induction Lifecycle Complete</div>
+              <div class="flb-desc">Devotee is now fully registered, paired under an authenticated lineage mentor, empowered with the 4 Sacred Pillars, and eligible for promotion to Trainee Sadhak (Level 4) upon completing house clean milestones.</div>
+            </div>
+          </div>
+          <span class="flb-tag" style="background:#059669; color:#ffffff; border-color:#059669;">Induction Accomplished</span>
+        </div>
+      </section>
+
+    </div>
+
+    
+  <!-- ========================================================================= -->
+  <!-- ENTERPRISE EXTENSION: DATABASE PERSISTENCE, BACKEND MVC & NOTIFICATIONS -->
+  <!-- ========================================================================= -->
+  <div style="margin-top:2rem; padding:1.5rem; background:#ffffff; border:1.5px solid var(--border); border-radius:0.85rem; box-shadow:var(--shadow-sm); margin-bottom:2rem;">
+    
+    <div style="font-size:1.05rem; font-weight:800; color:var(--txt); display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+      <span>🗄️</span> <span>Database Persistence Timeline &amp; State Mutation Map</span>
+    </div>
+    <p style="font-size:0.75rem; color:var(--txt-muted); margin-bottom:1rem; line-height:1.5;">
+      Step-by-step persistence timeline mapping exactly where and how candidate data is committed, validated, and reconciled across browser memory, LocalStorage drafts, and master Firebase RTDB nodes.
+    </p>
+
+    <div style="overflow-x:auto; margin-bottom:1.5rem;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.72rem; text-align:left;">
+        <thead>
+          <tr style="background:#f8fafc; border-bottom:1.5px solid #e2e8f0; color:#334155;">
+            <th style="padding:0.5rem 0.6rem;">Registration Step</th>
+            <th style="padding:0.5rem 0.6rem;">Storage Target &amp; Key</th>
+            <th style="padding:0.5rem 0.6rem;">Payload Data Structure</th>
+            <th style="padding:0.5rem 0.6rem;">Validation &amp; Integrity Guard</th>
+            <th style="padding:0.5rem 0.6rem;">Notification Triggered</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #f1f5f9;">
+            <td style="padding:0.45rem 0.6rem; font-weight:700;">Step 1: Contact</td>
+            <td style="padding:0.45rem 0.6rem;"><code>sk_join_wizard_draft</code> (Local)</td>
+            <td style="padding:0.45rem 0.6rem;"><code>{ name, mobile, email, dob, objective }</code></td>
+            <td style="padding:0.45rem 0.6rem;">Age &ge; 18, 10-digit mobile regex, RFC email syntax</td>
+            <td style="padding:0.45rem 0.6rem;">SMS OTP Dispatched (Gateway)</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f1f5f9;">
+            <td style="padding:0.45rem 0.6rem; font-weight:700;">Step 2: Lineage</td>
+            <td style="padding:0.45rem 0.6rem;"><code>sk_join_wizard_draft.lineage</code></td>
+            <td style="padding:0.45rem 0.6rem;"><code>{ father, mother, paternalGrandparents, kuldevi }</code></td>
+            <td style="padding:0.45rem 0.6rem;">Sanitized strings, non-empty Kuldevi clan root</td>
+            <td style="padding:0.45rem 0.6rem;">Draft auto-save visual pulse</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f1f5f9;">
+            <td style="padding:0.45rem 0.6rem; font-weight:700;">Step 3: House Clean</td>
+            <td style="padding:0.45rem 0.6rem;"><code>sk_join_wizard_draft.houseClean</code></td>
+            <td style="padding:0.45rem 0.6rem;"><code>{ checklist[], selfCleanScore: 85, sanctumPhoto }</code></td>
+            <td style="padding:0.45rem 0.6rem;">Self checklist score &ge; 75%, Image &le; 5MB payload</td>
+            <td style="padding:0.45rem 0.6rem;">In-app checklist completion toast</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f1f5f9;">
+            <td style="padding:0.45rem 0.6rem; font-weight:700;">Step 4: Commit</td>
+            <td style="padding:0.45rem 0.6rem;"><code>/profiles/{id}</code> &bull; <code>/pairing_invites</code></td>
+            <td style="padding:0.45rem 0.6rem;">Full DevoteeProfile + PairingTicket</td>
+            <td style="padding:0.45rem 0.6rem;">Luhn 16-digit ID check, anti-circular sponsor loop</td>
+            <td style="padding:0.45rem 0.6rem;">Healer Push + WhatsApp Welcome</td>
+          </tr>
+          <tr>
+            <td style="padding:0.45rem 0.6rem; font-weight:700;">Step 5: Sign-Off</td>
+            <td style="padding:0.45rem 0.6rem;"><code>/house_clean_logs</code> &bull; <code>sk_admin_profiles_v3</code></td>
+            <td style="padding:0.45rem 0.6rem;"><code>{ mentorSignature, verifiedAt, status: 'APPROVED' }</code></td>
+            <td style="padding:0.45rem 0.6rem;">Verified mentor credentials, immutable audit timestamp</td>
+            <td style="padding:0.45rem 0.6rem;">Devotee SMS: Sanctum Verified</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="font-size:0.95rem; font-weight:800; color:var(--txt); display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+      <span>📱</span> <span>Multi-Channel Notification Architecture &amp; Delivery SLA</span>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:0.5rem; padding:0.85rem;">
+        <div style="font-weight:700; font-size:0.76rem; color:#1d4ed8;">1. SMS Transactional Engine</div>
+        <p style="font-size:0.7rem; color:#475569; margin:0.3rem 0;">Direct operator DLT routes for OTP delivery with delivery SLA &lt; 3.2s. Automatic gateway fallback to secondary provider on delivery timeout.</p>
+        <div style="font-size:0.65rem; color:#2563eb; font-family:'JetBrains Mono',monospace;">Provider: Twilio / Gupshup &bull; Multi-Route Gateway</div>
+      </div>
+      <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:0.5rem; padding:0.85rem;">
+        <div style="font-weight:700; font-size:0.76rem; color:#047857;">2. WhatsApp Business Messaging</div>
+        <p style="font-size:0.7rem; color:#475569; margin:0.3rem 0;">Meta Cloud API delivering rich message templates with quick action buttons (<em>"Accept Devotee"</em> / <em>"Reject with Reason"</em>) directly to the healer's smartphone.</p>
+        <div style="font-size:0.65rem; color:#059669; font-family:'JetBrains Mono',monospace;">Templates: sk_mentor_pair_alert_v2 &bull; Interactive CTA</div>
+      </div>
+      <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:0.5rem; padding:0.85rem;">
+        <div style="font-weight:700; font-size:0.76rem; color:#b45309;">3. WebPush &amp; In-App Notification Center</div>
+        <p style="font-size:0.7rem; color:#475569; margin:0.3rem 0;">ServiceWorker background push listener waking up mentor portal when a pairing invitation arrives. Displays persistent bell drawer with unread count.</p>
+        <div style="font-size:0.65rem; color:#d97706; font-family:'JetBrains Mono',monospace;">ServiceWorker: sw-notifications.js &bull; W3C Push Spec</div>
+      </div>
+    </div>
+
+    <div style="font-size:0.95rem; font-weight:800; color:var(--txt); display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+      <span>⚙️</span> <span>Backend OOPS MVC / MVVM Integration Flow (join.html &bull; OnboardingController)</span>
+    </div>
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:0.5rem; padding:0.85rem; font-size:0.72rem; color:#334155; line-height:1.55;">
+      <code>join.html</code> operates as a pure View bound to <code>OnboardingController.js</code>. 
+      Every user action dispatches through the controller state machine:
+      <br>&bull; <code>Wizard.validateStep(1) &rarr; OnboardingController.verifyCandidateInputs() &rarr; ProfileModel.checkDuplicate()</code>
+      <br>&bull; <code>Wizard.submitPairing() &rarr; OnboardingController.generatePairingTicket() &rarr; FirebaseSyncEngine.pushPairingQueue()</code>
+      <br>&bull; <code>Wizard.saveDraft() &rarr; LocalStorage.setItem('sk_join_wizard_draft')</code> with automatic debounce (300ms) on keystroke.
+    </div>
+
+  </div>
+<!-- RIGHT SIDEBAR: LEGEND, KPIS & SYSTEM CONTEXT -->
+    <aside class="sidebar">
+
+      <!-- WORKFLOW SYMBOL LEGEND -->
+      <div class="side-card">
+        <div class="side-title">
+          <span>📐</span> Workflow Elements
+        </div>
+        <div class="legend-list">
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#fafaf9; border-color:#64748b;"></div>
+            <span><strong>Start / Entry:</strong> Portal Discovery</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#ffffff; border-color:var(--blue);"></div>
+            <span><strong>Process Block:</strong> Data Transformation</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#fffdfa; border-color:var(--amber);"></div>
+            <span><strong>Decision Gate:</strong> Condition Validation</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#ffffff; border-color:var(--cyan);"></div>
+            <span><strong>Security Lock:</strong> OTP / CAPTCHA / Age</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#faf8ff; border-color:var(--purple);"></div>
+            <span><strong>Mentor Crucible:</strong> 24h Approval Gate</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#f6fdf9; border-color:var(--green);"></div>
+            <span><strong>Terminal Success:</strong> Active Induction</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#fff8f8; border-color:var(--red);"></div>
+            <span><strong>Closed Feedback Loop:</strong> Error Recovery</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERFORMANCE & VALIDATION KPIS -->
+      <div class="side-card">
+        <div class="side-title">
+          <span>⚡</span> Architectural KPIs
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-box">
+            <div class="kpi-val">100%</div>
+            <div class="kpi-lbl">Closed Loop Coverage</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-val">24h</div>
+            <div class="kpi-lbl">Mentor Approval SLA</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-val">5 Max</div>
+            <div class="kpi-lbl">Pending Invites / Mentor</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-val">16-Dig</div>
+            <div class="kpi-lbl">Sansthan Ref Key</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SACRED PILLARS QUICK GLANCE -->
+      <div class="side-card">
+        <div class="side-title">
+          <span>🔱</span> The 4 Sacred Pillars
+        </div>
+        <div style="font-size: 0.68rem; color: var(--txt-muted); line-height: 1.55;">
+          <div style="margin-bottom: 0.4rem;"><strong>Pillar 1:</strong> Mentor Pairing &amp; Sacred Ref Key</div>
+          <div style="margin-bottom: 0.4rem;"><strong>Pillar 2:</strong> 3-Gen Pitru Karma Ancestral Lineage</div>
+          <div style="margin-bottom: 0.4rem;"><strong>Pillar 3:</strong> 3-Level Sanctum House Clean</div>
+          <div><strong>Pillar 4:</strong> Daily Three Diya Sadhana Lamps</div>
+        </div>
+      </div>
+
+      <!-- MVC COMPLIANCE CHECK -->
+      <div class="side-card">
+        <div class="side-title">
+          <span>🏛️</span> MVC Responsibility
+        </div>
+        <div style="font-size: 0.68rem; color: var(--txt-muted); line-height: 1.55;">
+          <p><strong style="color:var(--blue);">Model:</strong> <code>ProfileModel.js</code> handles invite state, circular check, and telemetry persistence.</p>
+          <p style="margin-top: 0.35rem;"><strong style="color:var(--purple);">View:</strong> <code>join.html</code> &amp; <code>ProfileView.js</code> handle wizard layout and status modals.</p>
+          <p style="margin-top: 0.35rem;"><strong style="color:var(--green);">Controller:</strong> <code>Wizard</code> object in <code>join.html</code> &amp; <code>ProfileController.js</code> execute state transitions.</p>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- BOTTOM BAR: MASTER SYSTEM REPOSITORIES & DATA CONTRACTS -->
+  <!-- ========================================================================= -->
+  <footer class="master-bar">
+    <div class="master-title-wrap">
+      <div class="master-title">
+        <span>🗄️</span> MASTER SYSTEM OBJECTS &amp; REPOSITORIES (Managed in Spiritual Karim Core OOPS MVC)
+      </div>
+      <span style="font-size: 0.7rem; font-weight: 700; color: var(--txt-muted);">
+        Single Source of Truth • LocalStorage + Firebase Realtime DB
+      </span>
+    </div>
+
+    <div class="master-grid">
+      <!-- Repo 1 -->
+      <div class="mcard">
+        <div class="mcard-hdr">
+          <span style="font-size: 1.1rem;">📑</span>
+          <span class="mcard-name">spiritual_karim_pairing_invites</span>
+        </div>
+        <ul class="mcard-attrs">
+          <li>Primary invite state ledger</li>
+          <li>Fields: <code>id, sponsorCode, seekerName, hardwareNonce</code></li>
+          <li>Statuses: <code>PENDING, APPROVED, REJECTED, EXPIRED</code></li>
+          <li>TTL: <code>expiresAtMs = Date.now() + 86400000</code></li>
+        </ul>
+      </div>
+
+      <!-- Repo 2 -->
+      <div class="mcard">
+        <div class="mcard-hdr">
+          <span style="font-size: 1.1rem;">🗂️</span>
+          <span class="mcard-name">sk_admin_profiles_v3</span>
+        </div>
+        <ul class="mcard-attrs">
+          <li>Master profiles repository</li>
+          <li>Stores Devotee, Healer, Trainee, Admin profiles</li>
+          <li>Fields: <code>referenceCode, referredByCode, lineage</code></li>
+          <li>Tracks <code>houseCleanLevels</code> and <code>selectedRemedies</code></li>
+        </ul>
+      </div>
+
+      <!-- Repo 3 -->
+      <div class="mcard">
+        <div class="mcard-hdr">
+          <span style="font-size: 1.1rem;">🔐</span>
+          <span class="mcard-name">sk_devotee_induction_session</span>
+        </div>
+        <ul class="mcard-attrs">
+          <li>Local induction session checkpoint</li>
+          <li>Allows cross-page / reload session recovery</li>
+          <li>Fields: <code>inviteId, referenceKey, phoneVerified</code></li>
+          <li>Prevents redundant re-typing if tab is closed</li>
+        </ul>
+      </div>
+
+      <!-- Repo 4 -->
+      <div class="mcard">
+        <div class="mcard-hdr">
+          <span style="font-size: 1.1rem;">📁</span>
+          <span class="mcard-name">sk_documents</span>
+        </div>
+        <ul class="mcard-attrs">
+          <li>KYC document vault (DataURLs)</li>
+          <li>Doc types: <code>id_proof, address_proof, photo</code></li>
+          <li>Stores upload timestamp, mime type &amp; size</li>
+          <li>Status: <code>PENDING_VERIFICATION</code></li>
+        </ul>
+      </div>
+
+      <!-- Repo 5 -->
+      <div class="mcard">
+        <div class="mcard-hdr">
+          <span style="font-size: 1.1rem;">⚖️</span>
+          <span class="mcard-name">sk_tc_acceptances &amp; sk_signatures</span>
+        </div>
+        <ul class="mcard-attrs">
+          <li>Legal compliance audit trail</li>
+          <li>Tracks T&amp;C version v1.2.0 acceptance</li>
+          <li>Captures client IP, UserAgent, timestamp</li>
+          <li>Electronic signature string hash</li>
+        </ul>
+      </div>
+
+      <!-- Repo 6 -->
+      <div class="mcard">
+        <div class="mcard-hdr">
+          <span style="font-size: 1.1rem;">🔥</span>
+          <span class="mcard-name">Firebase Realtime DB</span>
+        </div>
+        <ul class="mcard-attrs">
+          <li>Live cloud telemetry event stream</li>
+          <li>Endpoint: <code>/devices/{id}/telemetry</code></li>
+          <li>Events: <code>PAIRING_REQUESTED, APPROVED, REJECTED</code></li>
+          <li>Live multi-device heartbeat synchronization</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<!-- INTERACTIVE TECHNICAL SPECIFICATION MODAL -->
+<div class="spec-modal" id="spec-modal" onclick="if(event.target === this) closeSpec();">
+  <div class="spec-box">
+    <button class="spec-close" onclick="closeSpec()">✕</button>
+    <div class="spec-title" id="spec-title">Workflow Node Specification</div>
+    <div class="spec-meta" id="spec-meta">MVC Layer • Method • Validation Rule • Closed Loop</div>
+    
+    <div class="spec-section-title">FUNCTIONAL DESCRIPTION</div>
+    <p id="spec-desc" style="font-size: 0.78rem; color: var(--txt); line-height: 1.5; margin-bottom: 0.75rem;"></p>
+
+    <div class="spec-section-title">TECHNICAL &amp; VALIDATION RULES</div>
+    <ul id="spec-rules" style="font-size: 0.72rem; color: var(--txt-muted); line-height: 1.6; margin-bottom: 0.75rem; padding-left: 1.2rem;"></ul>
+
+    <div class="spec-section-title">CLOSED-LOOP RECOVERY / FEEDBACK MECHANISM</div>
+    <p id="spec-loop" style="font-size: 0.75rem; color: #991b1b; background: var(--red-light); border: 1px solid var(--red-border); padding: 0.5rem 0.75rem; border-radius: 0.4rem; margin-bottom: 0.75rem;"></p>
+
+    <div class="spec-section-title">CODE IMPLEMENTATION REFERENCE</div>
+    <pre class="spec-code-block" id="spec-code"></pre>
+  </div>
+</div>
+
+<script>
+// TECHNICAL SPECIFICATIONS DATA REPOSITORY
+const SPECS = {
+  '0.1': {
+    title: 'Candidate Entry Portal',
+    meta: 'View Layer • join.html • Multi-Channel Entry',
+    desc: 'Devotee accesses induction portal via web browser, Android QR scan, or Telegram deep-link. URL parameters are parsed for sponsor reference code (•ref=...) and dynamic activation pin (•pin=...).',
+    rules: [
+      'Extracts ref and pin query parameters using URLSearchParams',
+      'Falls back to default Master Founder Karim Ji (SKHM-ADM1-7788-9900) if omitted',
+      'Initializes Session check to restore in-progress applications automatically'
+    ],
+    loop: 'If URL is malformed, defaults gracefully to Sansthan Master Founder link without crashing.',
+    code: `const urlParams = new URLSearchParams(window.location.search);
+let sponsorCode = urlParams.get('ref') || 'SKHM-ADM1-7788-9900';
+let pairingPin = urlParams.get('pin') || '140610';`
+  },
+  '0.2': {
+    title: 'Sponsor Verification Gate',
+    meta: 'Controller / Model • ProfileModel.getProfileById() • Sponsor Resolution',
+    desc: 'Verifies the sponsor code against active Healers and Founders directory. Confirms mentor name, tier badge, and ensures pairing security PIN is active.',
+    rules: [
+      'Normalizes reference code by removing hyphens and non-alphanumerics',
+      'Matches against sk_profiles_data or sk_admin_profiles_v3',
+      'Resolves mentor tier: Master Founder (Tier 1) or Certified Healer (Tier 2)'
+    ],
+    loop: 'If sponsor code is invalid, UI triggers toast alert and falls back to Founder Master Root, allowing candidate to continue.',
+    code: `const matched = savedProfiles.find(p => p.referenceCode.replace(/[^a-zA-Z0-9]/g, '') === sponsorCode.replace(/[^a-zA-Z0-9]/g, ''));
+if (!matched) {
+  mentorName = 'Karim Ji (Founder)';
+  sponsorCode = 'SKHM-ADM1-7788-9900';
+}`
+  },
+  '0.3': {
+    title: 'Anti-Loop Lineage Check (Rule 13 Compliance)',
+    meta: 'Model Layer • ProfileModel.isCircularSponsor() • Tree Traversal',
+    desc: 'Enforces recursive tree traversal through downline connections using a Set to detect and prevent circular sponsorship loops.',
+    rules: [
+      'Rejects self-pairing (profile.referenceCode === proposedSponsorCode)',
+      'Recursively traverses all children profiles matching referredByCode',
+      'Maintains visited Set to avoid infinite loop locks during graph search'
+    ],
+    loop: 'If circular cycle is discovered, registration under proposed sponsor is blocked and user is prompted to select a valid upline.',
+    code: `isCircularSponsor(profileId, proposedSponsorCode) {
+  if (currentProfile.referenceCode === proposedSponsorCode) return true;
+  const isDownline = (parentCode, targetCode, visited = new Set()) => {
+    if (visited.has(parentCode)) return false;
+    visited.add(parentCode);
+    const children = this.profiles.filter(p => p.referredByCode === parentCode);
+    for (const child of children) {
+      if (child.referenceCode === targetCode) return true;
+      if (isDownline(child.referenceCode, targetCode, visited)) return true;
+    }
+    return false;
+  };
+  return isDownline(currentProfile.referenceCode, proposedSponsorCode);
+}`
+  },
+  '1.1': {
+    title: 'Personal Data Inputs & Wizard Step 1',
+    meta: 'View / Controller • join.html & Wizard.validateStep(1)',
+    desc: 'Captures full name, date of birth, WhatsApp mobile number, email address, and spiritual objective from the applicant.',
+    rules: [
+      'Name must be at least 3 characters',
+      'Mobile must contain 10+ digits',
+      'Email must satisfy RFC email syntax (include @ and domain)',
+      'Objective selected from predefined sacred options'
+    ],
+    loop: 'Invalid inputs render red border and trigger specific error feedback in wizard-submit-error without page reload.',
+    code: `if (!this.data.name || this.data.name.length < 3) errors.push('Name must be at least 3 characters.');
+if (!this.data.mobile || this.data.mobile.length < 10) errors.push('Enter a valid mobile number.');`
+  },
+  '1.2': {
+    title: 'Age Eligibility Gate (18+ Statutory Compliance)',
+    meta: 'Domain Service • onboarding.js: DemoAgeVerification.verify()',
+    desc: 'Computes applicant age from date of birth taking exact day, month, and year differences into account.',
+    rules: [
+      'Calculates exact age relative to current system date',
+      'Rejects applicants under 18 years old',
+      'Displays inline error in dob-validation-msg'
+    ],
+    loop: 'Under-18 applicant sees message "You must be at least 18 years old. Current age: X" and Next button is disabled.',
+    code: `verify(dobString) {
+  const age = this.calculateAge(dobString);
+  if (age < this.MIN_AGE) return { valid: false, reason: \`You must be at least \${this.MIN_AGE} years old. Current age: \${age}.\`, age };
+  return { valid: true, reason: \`Age verified: \${age} years.\`, age };
+}`
+  },
+  '2.1': {
+    title: 'Phone SMS OTP Verification',
+    meta: 'Domain Service • onboarding.js: DemoOTPService.verifyOTP()',
+    desc: 'Generates 6-digit random token with 5-minute TTL and max 3 verification attempts.',
+    rules: [
+      'Expires strictly after 5 minutes (expiresAt: Date.now() + 300000)',
+      'Limits failed verification attempts to maximum 3',
+      'Enforces 60-second cooldown timer before allowing Resend OTP'
+    ],
+    loop: 'Failed OTP shows remaining attempts. After 3 failures, OTP invalidates and user must click Resend after 60s cooldown.',
+    code: `if (Date.now() > record.expiresAt) return { valid: false, reason: 'OTP expired. Please request a new one.' };
+if (record.attempts >= 3) return { valid: false, reason: 'Max attempts reached. Please request a new one.' };`
+  },
+  '3.2': {
+    title: 'Government ID Proof Upload & Validation',
+    meta: 'Domain Service • onboarding.js: DemoDocUpload.validate()',
+    desc: 'Validates file type (JPG, PNG, PDF) and strictly enforces 5MB size ceiling before encoding to DataURL.',
+    rules: [
+      'ALLOWED_TYPES: [image/jpeg, image/png, image/webp, application/pdf]',
+      'MAX_SIZE: 5 * 1024 * 1024 (5 Megabytes)',
+      'Encodes file via FileReader into Base64 dataURL for localStorage persistence'
+    ],
+    loop: 'Invalid file triggers descriptive warning and resets file input without affecting previous form entries.',
+    code: `if (!this.ALLOWED_TYPES.includes(file.type)) return { valid: false, reason: 'Invalid file type. Allowed: JPG, PNG, PDF.' };
+if (file.size > this.MAX_SIZE) return { valid: false, reason: 'File too large. Max: 5MB.' };`
+  },
+  '5.2': {
+    title: 'Downline Quota Throttle Gate',
+    meta: 'Model Layer • ProfileModel.createPairingInvite() • Quota Throttling',
+    desc: 'Ensures no mentor is overwhelmed with pending applications by limiting active pending invites to 5 per mentor simultaneously.',
+    rules: [
+      'Filters invites where sponsorCode matches mentor and status === PENDING',
+      'If activePending.length >= 5, blocks new invite generation',
+      'Returns error object with actionable directive'
+    ],
+    loop: 'Candidate is notified that mentor queue is currently at capacity; candidate can either wait or select another certified mentor.',
+    code: `const activePending = invites.filter(i => i.sponsorCode === sponsorCode && i.status === 'PENDING');
+if (activePending.length >= 5) {
+  return { error: true, message: 'Invite quota reached: Maximum 5 pending pairing requests allowed simultaneously per mentor.' };
+}`
+  },
+  '6.1': {
+    title: 'Mentor Approval (Happy Path & 4 Pillars Initialization)',
+    meta: 'Model / Controller • ProfileModel.approvePairingInvite()',
+    desc: 'Mentor approves devotee pairing in Healers Hub. System creates Level 5 devotee profile, assigns 16-digit reference key, and initializes the 4 Sacred Pillars.',
+    rules: [
+      'Transitions invite status from PENDING to APPROVED',
+      'Pushes devotee to sk_admin_profiles_v3 with Level 5 status',
+      'Adds devotee into mentor healerNetwork downline roster',
+      'Initializes 3-Tier House Clean, Lineage, and Three Diya Sadhana models'
+    ],
+    loop: 'Devotee browser polling listener detects APPROVED status, reveals celebratory emblem, and redirects to Devotee Portal.',
+    code: `approvePairingInvite(inviteId) {
+  item.status = 'APPROVED';
+  item.approvedAtMs = Date.now();
+  this.savePairingInvites(invites);
+  this.profiles.push(newDevoteeProfile);
+  this.logDeviceEvent(item.hardwareNonce, 'PAIRING_APPROVED', ..., 'SUCCESS');
+}`
+  },
+  '6.2': {
+    title: 'Branch B: Rejection & Closed-Loop Appeal',
+    meta: 'Domain Service • onboarding.js: DemoAppeal.submitAppeal()',
+    desc: 'If mentor rejects an application, candidate is given structured appeal recourse with admin arbitration.',
+    rules: [
+      'Mentor enters justification note explaining rejection reason',
+      'Devotee can submit an appeal record into sk_appeals',
+      'Admin reviews appeal: If APPROVED, system overrides rejection and triggers profile creation'
+    ],
+    loop: 'Appeals merge seamlessly back into Branch A upon administrative sign-off, or allow candidate to re-apply with adjusted documents.',
+    code: `submitAppeal(inviteId, reason, additionalInfo) {
+  const appeal = { id: 'appeal-' + Date.now(), inviteId, reason, status: 'PENDING_REVIEW' };
+  sk_appeals.push(appeal);
+}`
+  },
+  '6.3': {
+    title: 'Branch C: 24h Expiration & Token Refresh',
+    meta: 'Model Layer • ProfileModel.resendPairingInvite()',
+    desc: 'Pending invites automatically expire after 24 hours (86,400,000 ms). Candidate can trigger a token refresh with exponential backoff protection.',
+    rules: [
+      'Checks cooldown period before allowing token renewal',
+      'Resets expiresAtMs = Date.now() + 24 * 60 * 60 * 1000',
+      'Increments resendCount and updates lastResendTimestamp'
+    ],
+    loop: 'Refreshed token re-queues applicant into mentor dashboard without requiring re-entry of data.',
+    code: `const cooldownSecs = this.getResendCooldownRemaining(item);
+if (cooldownSecs > 0) return { error: true, message: 'Resend rate-limited.' };
+item.expiresAtMs = Date.now() + 24 * 60 * 60 * 1000;
+item.status = 'PENDING';`
+  }
+};
+
+function showSpec(id) {
+  const spec = SPECS[id] || {
+    title: 'Workflow Component',
+    meta: 'Spiritual Karim MVC Core',
+    desc: 'Detailed architectural component specification.',
+    rules: ['Validated against OOPS MVC standards', 'Zero unresolved references'],
+    loop: 'Graceful fallback mechanism active.',
+    code: '// Implementation in ProfileModel.js or join.html'
+  };
+
+  document.getElementById('spec-title').textContent = spec.title;
+  document.getElementById('spec-meta').textContent = spec.meta;
+  document.getElementById('spec-desc').textContent = spec.desc;
+  
+  const rulesEl = document.getElementById('spec-rules');
+  rulesEl.innerHTML = spec.rules.map(r => `<li>${r}</li>`).join('');
+  
+  document.getElementById('spec-loop').textContent = spec.loop;
+  document.getElementById('spec-code').textContent = spec.code;
+  
+  document.getElementById('spec-modal').classList.add('open');
+}
+
+function closeSpec() {
+  document.getElementById('spec-modal').classList.remove('open');
+}
+
+// TOGGLE CONDITIONS VISIBILITY
+let branchesVisible = true;
+function toggleAllBranches() {
+  branchesVisible = !branchesVisible;
+  const branches = document.querySelectorAll('.branch-container, .feedback-loop-banner');
+  branches.forEach(b => {
+    b.style.display = branchesVisible • '' : 'none';
+  });
+  document.getElementById('toggle-branches-lbl').textContent = branchesVisible • 'Collapse Conditions' : 'Expand Conditions';
+}
+
+// STAGE FILTERING
+function filterStages(stageKey) {
+  document.querySelectorAll('.fpill').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const allStages = document.querySelectorAll('.stage-block');
+  const allConnectors = document.querySelectorAll('.connector-strip');
+
+  if (stageKey === 'all') {
+    allStages.forEach(s => s.style.display = 'block');
+    allConnectors.forEach(c => c.style.display = 'flex');
+    return;
+  }
+
+  allStages.forEach(s => s.style.display = 'none');
+  allConnectors.forEach(c => c.style.display = 'none');
+
+  if (stageKey === 's0') document.getElementById('stage-0').style.display = 'block';
+  if (stageKey === 's1-3') {
+    document.getElementById('stage-1').style.display = 'block';
+    document.getElementById('stage-2').style.display = 'block';
+    document.getElementById('stage-3').style.display = 'block';
+  }
+  if (stageKey === 's4-5') {
+    document.getElementById('stage-4').style.display = 'block';
+    document.getElementById('stage-5').style.display = 'block';
+  }
+  if (stageKey === 's6') document.getElementById('stage-6').style.display = 'block';
+  if (stageKey === 's7') document.getElementById('stage-7').style.display = 'block';
+}
+
+// ESC KEY TO CLOSE MODAL
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeSpec();
+});
+</script>
+
+</body>
+</html>

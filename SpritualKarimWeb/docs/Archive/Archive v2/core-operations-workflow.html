@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Core Operations &amp; Workflows Architecture • Shree Spritual Karim Sansthan</title>
+<meta name="description" content="Closed-Loop Flowchart Architecture for Sadhana Drawer, Goli Gyan Guidance, JSON Vault Import/Export, and Genealogy Spiderweb Canvas with Human-in-the-Loop (HITL) Recovery">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cinzel:wght@700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --border: #e2e8f0;
+  --border-dark: #cbd5e1;
+  --txt: #0f172a;
+  --txt-muted: #64748b;
+  --txt-light: #94a3b8;
+  --gold: #b8960c;
+  --gold-light: #fef9c3;
+  --gold-border: #fde047;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --blue-border: #bfdbfe;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --purple-border: #ddd6fe;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --green-border: #a7f3d0;
+  --amber: #d97706;
+  --amber-light: #fffbeb;
+  --amber-border: #fde68a;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --red-border: #fecaca;
+  --cyan: #0891b2;
+  --cyan-light: #ecfeff;
+  --cyan-border: #a5f3fc;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 14px -2px rgba(0,0,0,0.08), 0 2px 6px -1px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 28px -5px rgba(0,0,0,0.12), 0 8px 12px -6px rgba(0,0,0,0.04);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 3rem;
+}
+
+/* BRAND HEADER */
+.brand-header {
+  background: linear-gradient(135deg, #1e1b4b 0%, #311042 50%, #172554 100%);
+  color: #ffffff;
+  padding: 1.6rem 2rem 1.4rem;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.brand-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b, #d4af37, #10b981, #3b82f6);
+}
+.brand-emblem { font-size: 1.75rem; opacity: 0.9; margin-bottom: 0.15rem; }
+.brand-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #f8fafc;
+}
+.brand-subtitle {
+  font-size: 0.88rem;
+  color: rgba(241, 245, 249, 0.85);
+  margin-top: 0.25rem;
+}
+.brand-tags {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+.btag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid;
+}
+.btag-gold { background: rgba(212,175,55,0.18); color: #fde047; border-color: rgba(212,175,55,0.4); }
+.btag-blue { background: rgba(59,130,246,0.18); color: #93c5fd; border-color: rgba(59,130,246,0.4); }
+.btag-green { background: rgba(16,185,129,0.18); color: #6ee7b7; border-color: rgba(16,185,129,0.4); }
+.btag-purple { background: rgba(168,85,247,0.18); color: #d8b4fe; border-color: rgba(168,85,247,0.4); }
+.btag-cyan { background: rgba(8,145,178,0.18); color: #a5f3fc; border-color: rgba(8,145,178,0.4); }
+
+/* CONTROLS BAR */
+.controls-bar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  padding: 0.65rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.doc-links {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.doc-link-btn {
+  font-size: 0.73rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 0.4rem;
+  text-decoration: none;
+  background: var(--bg-subtle);
+  color: var(--txt-muted);
+  border: 1px solid var(--border);
+  transition: all 0.15s ease;
+}
+.doc-link-btn:hover { background: #e2e8f0; color: var(--txt); }
+.doc-link-btn.active {
+  background: var(--blue-light);
+  color: var(--blue);
+  border-color: var(--blue-border);
+  font-weight: 700;
+}
+.action-btns {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.btn-action {
+  font-size: 0.73rem;
+  font-weight: 700;
+  padding: 0.35rem 0.8rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--txt);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s;
+}
+.btn-action:hover { background: var(--bg-subtle); }
+.btn-primary {
+  background: var(--blue);
+  color: #ffffff;
+  border-color: var(--blue);
+}
+.btn-primary:hover { background: #1d4ed8; }
+
+/* VIEW TABS BAR */
+.view-tabs-bar {
+  background: #ffffff;
+  border-bottom: 1.5px solid var(--border);
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  overflow-x: auto;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.vtab-btn {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.45rem 0.95rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--txt-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.vtab-btn:hover { background: var(--bg-subtle); color: var(--txt); }
+.vtab-btn.active {
+  background: var(--blue);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+}
+
+/* MAIN CONTAINER */
+.container {
+  max-width: 1440px;
+  margin: 1.25rem auto 0;
+  padding: 0 1.25rem;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* INTRO CARD */
+.intro-card {
+  background: linear-gradient(135deg, #ffffff 0%, #eff6ff 50%, #f5f3ff 100%);
+  border: 1.5px solid var(--blue-border);
+  border-radius: 0.85rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.intro-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--txt);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.intro-desc {
+  font-size: 0.82rem;
+  color: var(--txt-muted);
+  max-width: 1150px;
+  margin-top: 0.35rem;
+  line-height: 1.55;
+}
+
+/* FLOWCHART SECTION */
+.fc-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 0.85rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.75rem;
+}
+.fc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  border-bottom: 1.5px solid var(--border);
+  padding-bottom: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+.fc-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--txt);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.fc-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.35rem;
+}
+.fc-badge-blue { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); }
+.fc-badge-green { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.fc-badge-purple { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple-border); }
+.fc-badge-amber { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber-border); }
+
+/* FLOW NODES GRID & FLOW ROW */
+.flow-diagram-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
+}
+.fn-step-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.fn-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 0.65rem;
+  padding: 1rem 1.15rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  position: relative;
+  cursor: pointer;
+}
+.fn-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--blue);
+}
+.fn-card.sim-highlight {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.25), 0 8px 20px rgba(37,99,235,0.15);
+  background: #f8fbff;
+}
+.fn-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  border-top-left-radius: 0.65rem;
+  border-bottom-left-radius: 0.65rem;
+}
+.fn-action::before { background: var(--blue); }
+.fn-decision::before { background: var(--amber); }
+.fn-success::before { background: var(--green); }
+.fn-error::before { background: var(--red); }
+.fn-modal::before { background: var(--purple); }
+
+.fn-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+}
+.fn-num {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--txt-light);
+  font-family: 'JetBrains Mono', monospace;
+}
+.fn-type {
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.2rem;
+}
+.fnt-act { background: var(--blue-light); color: var(--blue); }
+.fnt-dec { background: var(--amber-light); color: var(--amber); }
+.fnt-err { background: var(--red-light); color: var(--red); }
+.fnt-suc { background: var(--green-light); color: var(--green); }
+.fnt-mod { background: var(--purple-light); color: var(--purple); }
+
+.fn-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--txt);
+  margin-bottom: 0.25rem;
+}
+.fn-desc {
+  font-size: 0.74rem;
+  color: var(--txt-muted);
+  line-height: 1.45;
+  margin-bottom: 0.5rem;
+}
+.fn-code-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  background: var(--bg-subtle);
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  color: #334155;
+  display: inline-block;
+}
+
+/* CLOSED-LOOP FEEDBACK BANNER */
+.loop-banner {
+  background: #fdfefe;
+  border: 1.5px dashed var(--blue-border);
+  border-radius: 0.65rem;
+  padding: 0.85rem 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.loop-banner-icon { font-size: 1.25rem; color: var(--blue); }
+.loop-banner-text {
+  font-size: 0.76rem;
+  color: var(--txt);
+  line-height: 1.45;
+}
+.loop-banner-text strong { color: var(--blue); }
+
+/* HITL SIMULATOR CONTROLS */
+.hitl-sim-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 0.85rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.75rem;
+  box-shadow: var(--shadow-sm);
+}
+.hitl-sim-pills {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+.hitl-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.35rem 0.8rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--txt-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s;
+}
+.hitl-pill:hover { background: var(--bg-subtle); color: var(--txt); }
+.hitl-pill.active {
+  background: var(--blue);
+  color: #ffffff;
+  border-color: var(--blue);
+  box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+}
+
+.sim-output-box {
+  background: #f8fafc;
+  border: 1.5px solid var(--border);
+  border-radius: 0.65rem;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+  display: none;
+}
+.sim-out-title {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--txt);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+}
+.sim-out-desc {
+  font-size: 0.75rem;
+  color: var(--txt-muted);
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+.sim-out-loop {
+  font-size: 0.75rem;
+  color: #1e3a8a;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.4rem;
+  line-height: 1.45;
+}
+
+/* MODAL */
+.spec-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.65);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.spec-modal.open { display: flex; }
+.spec-box {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 0.85rem;
+  max-width: 640px;
+  width: 100%;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+.spec-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--txt-muted);
+  cursor: pointer;
+}
+.spec-code-block {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 0.85rem;
+  border-radius: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  margin-top: 0.5rem;
+}
+</style>
+</head>
+<body>
+
+<!-- BRAND HEADER -->
+<header class="brand-header">
+  <div class="brand-emblem">☸️</div>
+  <h1 class="brand-title">SHREE SPRITUAL KARIM SANSTHAN</h1>
+  <p class="brand-subtitle">Core Operations &amp; Workflows Architecture &bull; Sadhana Drawer, Goli Gyan, JSON Vault &amp; Genealogy Spiderweb</p>
+  <div class="brand-tags">
+    <span class="btag btag-gold">Human-in-the-Loop (HITL)</span>
+    <span class="btag btag-blue">Closed-Loop Flowcharts</span>
+    <span class="btag btag-green">Decision Diamonds &amp; Bounds</span>
+    <span class="btag btag-purple">Database &amp; OOPS MVC</span>
+    <span class="btag btag-cyan">Pure White Theme</span>
+  </div>
+</header>
+
+<!-- CONTROLS & ARCHITECTURE SUITE NAVIGATION BAR -->
+<div class="controls-bar">
+  <div class="doc-links">
+    <span style="font-size: 0.72rem; font-weight: 700; color: var(--txt-muted); margin-right: 0.25rem;">ARCHITECTURE SUITE:</span>
+    <a href="platform-overview.html" class="doc-link-btn">① Platform Overview</a>
+    <a href="workflow-architecture.html" class="doc-link-btn">② Business Objects</a>
+    <a href="transaction-lifecycle.html" class="doc-link-btn">③ Universal Lifecycle</a>
+    <a href="devotee-registration-workflow.html" class="doc-link-btn">④ Devotee Flowchart (HITL)</a>
+    <a href="devotee-registration-workflow1.html" class="doc-link-btn">⑤ Devotee Stages (Original)</a>
+    <a href="data-structure-workflow.html" class="doc-link-btn">⑥ Data Structure &amp; Hierarchy</a>
+    <a href="core-operations-workflow.html" class="doc-link-btn active">⑦ Core Operations &amp; Workflows</a>
+  </div>
+  <div class="action-btns">
+    <button class="btn-action" onclick="resetSimulations()">
+      <span>🔄</span> Reset Simulator
+    </button>
+    <button class="btn-action btn-primary" onclick="window.print()">
+      <span>🖨️</span> Print / Save PDF
+    </button>
+  </div>
+</div>
+
+<!-- VIEW TABS BAR -->
+<div class="view-tabs-bar">
+  <button class="vtab-btn active" onclick="switchViewTab('tab-sadhana')">
+    <span>🧘</span> 1. Sadhana Drawer &amp; Trainee Dispatch
+  </button>
+  <button class="vtab-btn" onclick="switchViewTab('tab-goli')">
+    <span>📖</span> 2. Goli Gyan Knowledge &amp; Guidance
+  </button>
+  <button class="vtab-btn" onclick="switchViewTab('tab-json')">
+    <span>💾</span> 3. JSON Vault &amp; Safe Recovery
+  </button>
+  <button class="vtab-btn" onclick="switchViewTab('tab-genealogy')">
+    <span>🕸️</span> 4. Genealogy Spiderweb Canvas (Tab 5)
+  </button>
+  <button class="vtab-btn" onclick="switchViewTab('tab-matrix')">
+    <span>🗄️</span> 5. Database, MVC &amp; HITL Matrix
+  </button>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: SADHANA DRAWER ENROLLMENT & TRAINEE DISPATCH -->
+  <!-- ========================================================================= -->
+  <div class="tab-panel active" id="tab-sadhana">
+    
+    <div class="intro-card">
+      <div class="intro-title">
+        <span>🧘</span> Sadhana Drawer Enrollment &amp; Trainee Dispatch Closed-Loop Lifecycle
+      </div>
+      <p class="intro-desc">
+        Governs the interactive lifecycle when a Devotee or Mentor clicks on a spiritual practice tile to inspect details, enroll in the personal queue (<code>btn-drawer-enroll</code>), or transfer to Trainee In-Progress (<code>btn-drawer-send-trainee</code>).
+        Enforces prerequisite validation (House Clean $\ge 75\%$), duplicate enrollment checks, quota caps (max 3 concurrent sadhanas), and multi-channel notification dispatches with closed-loop feedback.
+      </p>
+    </div>
+
+    <!-- FLOWCHART 1 -->
+    <div class="fc-card">
+      <div class="fc-header">
+        <div class="fc-title">
+          <span>🔄</span> Closed-Loop Flowchart: Sadhana Drawer &amp; Trainee Dispatch
+        </div>
+        <span class="fc-badge fc-badge-blue">ProfileView.js lines 144-149 &bull; ProfileController.js</span>
+      </div>
+
+      <div class="flow-diagram-row">
+        <div class="fn-step-grid">
+          <!-- Step 1 -->
+          <div class="fn-card fn-action" id="node-sd-open" onclick="showSpec('SD_OPEN')">
+            <div class="fn-hdr">
+              <span class="fn-num">STEP 1</span>
+              <span class="fn-type fnt-act">ACTION</span>
+            </div>
+            <div class="fn-title">Click Sadhana Tile &rarr; Open Drawer</div>
+            <p class="fn-desc">User selects a tile from Tab 2 or Tab 3. Invokes <code>openSadhanaDrawer(item)</code>, sets title, category, mantra, and sets <code>data-sadhana-key</code> on action buttons.</p>
+            <span class="fn-code-tag">ProfileView.openSadhanaDrawer(item)</span>
+          </div>
+
+          <!-- Decision 1 -->
+          <div class="fn-card fn-decision" id="node-sd-active" onclick="showSpec('SD_ACTIVE_CHECK')">
+            <div class="fn-hdr">
+              <span class="fn-num">GATE 1</span>
+              <span class="fn-type fnt-dec">DECISION</span>
+            </div>
+            <div class="fn-title">Active Profile Selected•</div>
+            <p class="fn-desc">Checks if <code>model.getActiveProfile()</code> is non-null. Prevents unhandled null references when operating without a profile context.</p>
+            <span class="fn-code-tag">[No &rarr; Closed-Loop: Auto-select Master or prompt]</span>
+          </div>
+
+          <!-- Decision 2 -->
+          <div class="fn-card fn-decision" id="node-sd-dup" onclick="showSpec('SD_DUP_CHECK')">
+            <div class="fn-hdr">
+              <span class="fn-num">GATE 2</span>
+              <span class="fn-type fnt-dec">DECISION</span>
+            </div>
+            <div class="fn-title">Already Enrolled in Sadhana•</div>
+            <p class="fn-desc">Scans <code>profile.traineeSadhanas[]</code> by key or title. Prevents progress resets or duplicate entries in devotee ledger.</p>
+            <span class="fn-code-tag">[Yes &rarr; Closed-Loop: Open in Trainee Tab]</span>
+          </div>
+
+          <!-- Decision 3 -->
+          <div class="fn-card fn-decision" id="node-sd-prereq" onclick="showSpec('SD_PREREQ_CHECK')">
+            <div class="fn-hdr">
+              <span class="fn-num">GATE 3</span>
+              <span class="fn-type fnt-dec">DECISION</span>
+            </div>
+            <div class="fn-title">Prerequisites Satisfied•</div>
+            <p class="fn-desc">Higher level sadhanas require Level 1 House Clean &ge; 75% and verified upline mentor pairing before enrollment.</p>
+            <span class="fn-code-tag">[No &rarr; Closed-Loop: Redirect to House Clean]</span>
+          </div>
+        </div>
+
+        <div class="fn-step-grid" style="margin-top: 0.5rem;">
+          <!-- Decision 4 -->
+          <div class="fn-card fn-decision" id="node-sd-quota" onclick="showSpec('SD_QUOTA_CHECK')">
+            <div class="fn-hdr">
+              <span class="fn-num">GATE 4</span>
+              <span class="fn-type fnt-dec">DECISION</span>
+            </div>
+            <div class="fn-title">Active Quota Available (Max 3)•</div>
+            <p class="fn-desc">Prevents spiritual exhaustion by capping in-progress sadhanas to 3. Prompts user to complete or pause existing practices.</p>
+            <span class="fn-code-tag">[No &rarr; Closed-Loop: Pause Existing Sadhana]</span>
+          </div>
+
+          <!-- Commit Step -->
+          <div class="fn-card fn-success" id="node-sd-commit" onclick="showSpec('SD_COMMIT')">
+            <div class="fn-hdr">
+              <span class="fn-num">STEP 2</span>
+              <span class="fn-type fnt-suc">DATABASE COMMIT</span>
+            </div>
+            <div class="fn-title">Atomic Enrollment &amp; Persistence</div>
+            <p class="fn-desc">Appends sadhana object to <code>profile.traineeSadhanas[]</code>, creates audit memo, updates <code>sk_last_write_ts</code>, and triggers Firebase RTDB sync.</p>
+            <span class="fn-code-tag">ProfileModel.sendSadhanaToTrainee()</span>
+          </div>
+
+          <!-- Feedback Step -->
+          <div class="fn-card fn-action" id="node-sd-feedback" onclick="showSpec('SD_FEEDBACK')">
+            <div class="fn-hdr">
+              <span class="fn-num">STEP 3</span>
+              <span class="fn-type fnt-act">NOTIFICATIONS</span>
+            </div>
+            <div class="fn-title">Multi-Channel Alerts &amp; Tab Switch</div>
+            <p class="fn-desc">Displays toast feedback, switches to Tab 3 (Trainee Sadhak), highlights newly enrolled tile, and queues mentor notification.</p>
+            <span class="fn-code-tag">switchMainTab('tab-trainee-sadhak')</span>
+          </div>
+        </div>
+
+        <!-- CLOSED-LOOP FEEDBACK BANNER -->
+        <div class="loop-banner">
+          <div class="loop-banner-icon">🔄</div>
+          <div class="loop-banner-text">
+            <strong>CLOSED-LOOP FEEDBACK GUARANTEE:</strong> If enrollment encounters an error (duplicate sadhana, missing profile, or quota exceeded), the system never dead-ends. It displays an interactive toast with a 1-click action: <em>"Already Enrolled: Jump to Trainee Workspace"</em> or <em>"Review House Clean Checklist"</em>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULATOR -->
+    <div class="hitl-sim-card">
+      <div style="font-size: 0.95rem; font-weight: 800; color: var(--txt); display: flex; align-items: center; gap: 0.45rem;">
+        <span>🧪</span> <span>Human-in-the-Loop (HITL) Interactive Simulations &bull; Sadhana Drawer</span>
+      </div>
+      <p style="font-size: 0.74rem; color: var(--txt-muted); margin-top: 0.25rem;">
+        Click any simulation scenario below to highlight the corresponding decision diamond and observe the closed-loop recovery workflow:
+      </p>
+      <div class="hitl-sim-pills">
+        <button class="hitl-pill" onclick="runSimulation('sd_dup')">⚡ Sim 1: Duplicate Enrollment Attempt</button>
+        <button class="hitl-pill" onclick="runSimulation('sd_quota')">⚡ Sim 2: Quota Exceeded (3/3 Active)</button>
+        <button class="hitl-pill" onclick="runSimulation('sd_prereq')">⚡ Sim 3: House Clean Prerequisite Missing (&lt;75%)</button>
+        <button class="hitl-pill" onclick="runSimulation('sd_no_prof')">⚡ Sim 4: No Active Profile Context</button>
+      </div>
+
+      <div class="sim-output-box" id="sim-output-box">
+        <div class="sim-out-title" id="sim-title">Simulation Active</div>
+        <p class="sim-out-desc" id="sim-desc"></p>
+        <div class="sim-out-loop" id="sim-loop"></div>
+      </div>
+    </div>
+
+  </div><!-- /tab-sadhana -->
+
+
+  <!-- ========================================================================= -->
+  <!-- TAB 2: GOLI GYAN KNOWLEDGE & GUIDANCE -->
+  <!-- ========================================================================= -->
+  <div class="tab-panel" id="tab-goli">
+    
+    <div class="intro-card">
+      <div class="intro-title">
+        <span>📖</span> Goli Gyan Sacred Knowledge &amp; Remedy Guidance Lifecycle
+      </div>
+      <p class="intro-desc">
+        Governs how seekers, trainees, and mentors interact with the sacred Goli Gyan guidance modal (<code>#goli-gyan-modal</code>).
+        Includes instant category filtering (Navagraha, Pitru Karma, Vastu Dosh, Daily Sadhana), voice narration accessibility, study bookmarks, and closed-loop mentor inquiry escalation.
+      </p>
+    </div>
+
+    <!-- FLOWCHART 2 -->
+    <div class="fc-card">
+      <div class="fc-header">
+        <div class="fc-title">
+          <span>🔄</span> Closed-Loop Flowchart: Goli Gyan Knowledge &amp; Guidance
+        </div>
+        <span class="fc-badge fc-badge-green">ProfileView.js line 151 &bull; toggleGoliGyanModal()</span>
+      </div>
+
+      <div class="flow-diagram-row">
+        <div class="fn-step-grid">
+          <div class="fn-card fn-action" id="node-gg-open" onclick="showSpec('GG_OPEN')">
+            <div class="fn-hdr">
+              <span class="fn-num">STEP 1</span>
+              <span class="fn-type fnt-act">ACTION</span>
+            </div>
+            <div class="fn-title">Trigger Goli Gyan Modal</div>
+            <p class="fn-desc">Invoked via <code>toggleGoliGyanModal(true)</code> or quick-chip buttons. Renders bilingual spiritual documentation reader.</p>
+            <span class="fn-code-tag">ProfileView.toggleGoliGyanModal()</span>
+          </div>
+
+          <div class="fn-card fn-decision" id="node-gg-search" onclick="showSpec('GG_SEARCH')">
+            <div class="fn-hdr">
+              <span class="fn-num">GATE 1</span>
+              <span class="fn-type fnt-dec">DECISION</span>
+            </div>
+            <div class="fn-title">Remedy / Category Matched•</div>
+            <p class="fn-desc">Instant text and chip search across 40+ chapters. Matches keywords like "Pitru Dosh", "Navagraha", "Vastu Clean".</p>
+            <span class="fn-code-tag">[No &rarr; Closed-Loop: Ask Mentor Dispatch]</span>
+          </div>
+
+          <div class="fn-card fn-action" id="node-gg-study" onclick="showSpec('GG_STUDY')">
+            <div class="fn-hdr">
+              <span class="fn-num">STEP 2</span>
+              <span class="fn-type fnt-act">PROGRESS SAVE</span>
+            </div>
+            <div class="fn-title">Bookmark &amp; Study Checkpoint</div>
+            <p class="fn-desc">Saves reading progress and timestamp to <code>sk_goli_gyan_bookmarks</code> in LocalStorage. Enables speech narration reader.</p>
+            <span class="fn-code-tag">LocalStorage.setItem('sk_goli_gyan_bookmarks')</span>
+          </div>
+
+          <div class="fn-card fn-success" id="node-gg-prescribe" onclick="showSpec('GG_PRESCRIBE')">
+            <div class="fn-hdr">
+              <span class="fn-num">STEP 3</span>
+              <span class="fn-type fnt-suc">MENTOR ATTACH</span>
+            </div>
+            <div class="fn-title">Attach Remedy to Devotee Prescription</div>
+            <p class="fn-desc">Healer role clicks <em>"Prescribe This Remedy"</em> to attach chapter protocol directly to mentee's active prescription ledger.</p>
+            <span class="fn-code-tag">ProfileModel.prescribeRemedy(devoteeId, code)</span>
+          </div>
+        </div>
+
+        <div class="loop-banner">
+          <div class="loop-banner-icon">🔄</div>
+          <div class="loop-banner-text">
+            <strong>CLOSED-LOOP FEEDBACK GUARANTEE:</strong> If a seeker cannot find a specific remedy or karmic symptom in the manual, a 1-click button triggers: <em>"Consult Assigned Mentor"</em>, which queues an inquiry directly into the healer's mentorship hub with the seeker's query.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULATOR -->
+    <div class="hitl-sim-card">
+      <div style="font-size: 0.95rem; font-weight: 800; color: var(--txt); display: flex; align-items: center; gap: 0.45rem;">
+        <span>🧪</span> <span>Human-in-the-Loop (HITL) Interactive Simulations &bull; Goli Gyan</span>
+      </div>
+      <div class="hitl-sim-pills">
+        <button class="hitl-pill" onclick="runSimulation('gg_not_found')">⚡ Sim 5: Unknown Remedy &rarr; Mentor Query Dispatch</button>
+        <button class="hitl-pill" onclick="runSimulation('gg_audio_drop')">⚡ Sim 6: Network Audio Stream Drop &rarr; Offline Text Mode</button>
+      </div>
+    </div>
+
+  </div><!-- /tab-goli -->
+
+
+  <!-- ========================================================================= -->
+  <!-- TAB 3: JSON VAULT & SAFE RECOVERY -->
+  <!-- ========================================================================= -->
+  <div class="tab-panel" id="tab-json">
+    
+    <div class="intro-card">
+      <div class="intro-title">
+        <span>💾</span> JSON Vault, Backup, Import/Export &amp; Recovery Lifecycle
+      </div>
+      <p class="intro-desc">
+        Governs mobile app JSON payload preview (<code>#json-drawer</code>), full data backup export, and safe JSON file imports (<code>#import-modal</code>).
+        Enforces automated pre-import snapshots, syntax validation, circular sponsor detection, and visual diff confirmations to prevent data corruption.
+      </p>
+    </div>
+
+    <!-- FLOWCHART 3 -->
+    <div class="fc-card">
+      <div class="fc-header">
+        <div class="fc-title">
+          <span>🔄</span> Closed-Loop Flowchart: JSON Vault, Import/Export &amp; Recovery
+        </div>
+        <span class="fc-badge fc-badge-purple">ProfileView.js lines 152-156 &bull; toggleJsonDrawer()</span>
+      </div>
+
+      <div class="flow-diagram-row">
+        <div class="fn-step-grid">
+          <div class="fn-card fn-action" id="node-jv-open" onclick="showSpec('JV_OPEN')">
+            <div class="fn-hdr">
+              <span class="fn-num">STEP 1</span>
+              <span class="fn-type fnt-act">VIEW PAYLOAD</span>
+            </div>
+            <div class="fn-title">Open JSON Drawer / Export</div>
+            <p class="fn-desc">Renders formatted JSON payload in <code>#json-preview-code</code>. Strips sensitive auth tokens unless Master role confirmed.</p>
+            <span class="fn-code-tag">ProfileView.toggleJsonDrawer(true)</span>
+          </div>
+
+          <div class="fn-card fn-decision" id="node-jv-syntax" onclick="showSpec('JV_SYNTAX')">
+            <div class="fn-hdr">
+              <span class="fn-num">GATE 1</span>
+              <span class="fn-type fnt-dec">DECISION</span>
+            </div>
+            <div class="fn-title">Valid JSON Syntax on Import•</div>
+            <p class="fn-desc">Parses file text with <code>JSON.parse()</code>. Catches syntax errors (missing commas, quotes, unclosed braces).</p>
+            <span class="fn-code-tag">[Syntax Error &rarr; Closed-Loop: Line Error Toast]</span>
+          </div>
+
+          <div class="fn-card fn-decision" id="node-jv-schema" onclick="showSpec('JV_SCHEMA')">
+            <div class="fn-hdr">
+              <span class="fn-num">GATE 2</span>
+              <span class="fn-type fnt-dec">DECISION</span>
+            </div>
+            <div class="fn-title">Schema &amp; Anti-Loop Valid•</div>
+            <p class="fn-desc">Validates profile array, unique mobile numbers, and runs <code>isCircularSponsor()</code> to prevent circular graph locks.</p>
+            <span class="fn-code-tag">[Cycle Detected &rarr; Closed-Loop: Abort &amp; Report]</span>
+          </div>
+
+          <div class="fn-card fn-success" id="node-jv-snapshot" onclick="showSpec('JV_SNAPSHOT')">
+            <div class="fn-hdr">
+              <span class="fn-num">STEP 2</span>
+              <span class="fn-type fnt-suc">AUTO-SNAPSHOT</span>
+            </div>
+            <div class="fn-title">Pre-Import Snapshot &amp; Commit</div>
+            <p class="fn-desc">Creates <code>sk_pre_import_backup_{timestamp}</code> in LocalStorage before overwriting, displays diff modal, and commits to Firebase.</p>
+            <span class="fn-code-tag">LocalStorage.setItem('sk_pre_import_backup_...')</span>
+          </div>
+        </div>
+
+        <div class="loop-banner">
+          <div class="loop-banner-icon">🔄</div>
+          <div class="loop-banner-text">
+            <strong>CLOSED-LOOP FEEDBACK GUARANTEE:</strong> If an imported JSON file fails validation or corrupts current state, the system automatically offers a 1-click recovery button: <em>"Rollback to Pre-Import Snapshot"</em>, restoring the exact previous state in &lt; 200ms.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULATOR -->
+    <div class="hitl-sim-card">
+      <div style="font-size: 0.95rem; font-weight: 800; color: var(--txt); display: flex; align-items: center; gap: 0.45rem;">
+        <span>🧪</span> <span>Human-in-the-Loop (HITL) Interactive Simulations &bull; JSON Vault</span>
+      </div>
+      <div class="hitl-sim-pills">
+        <button class="hitl-pill" onclick="runSimulation('jv_corrupt')">⚡ Sim 7: Corrupt JSON Import &rarr; Line Number Error &amp; Abort</button>
+        <button class="hitl-pill" onclick="runSimulation('jv_cycle')">⚡ Sim 8: Circular Sponsor Graph in Import &rarr; Cycle Block</button>
+      </div>
+    </div>
+
+  </div><!-- /tab-json -->
+
+
+  <!-- ========================================================================= -->
+  <!-- TAB 4: GENEALOGY SPIDERWEB CANVAS (TAB 5) -->
+  <!-- ========================================================================= -->
+  <div class="tab-panel" id="tab-genealogy">
+    
+    <div class="intro-card">
+      <div class="intro-title">
+        <span>🕸️</span> Organization Hierarchy Tree &amp; Genealogy Spiderweb Canvas (Tab 5)
+      </div>
+      <p class="intro-desc">
+        Governs the interactive multi-level visualization in Tab 5 (<code>#tab-genealogy-tree</code>).
+        Coordinates canvas pan/zoom clamping ($0.2	imes$ to $3.0	imes$), Smart Fit auto-centering (<code>#btn-body-smart-fit</code>), zoom controls (<code>#btn-body-zoom-in</code>, <code>#btn-body-zoom-out</code>, <code>#btn-body-zoom-reset</code>), fullscreen toggling, and orphan node auto-quarantine.
+      </p>
+    </div>
+
+    <!-- FLOWCHART 4 -->
+    <div class="fc-card">
+      <div class="fc-header">
+        <div class="fc-title">
+          <span>🔄</span> Closed-Loop Flowchart: Genealogy Tree &amp; Spiderweb Canvas
+        </div>
+        <span class="fc-badge fc-badge-amber">ProfileView.js lines 158-175 &bull; renderInBodyHierarchyTree()</span>
+      </div>
+
+      <div class="flow-diagram-row">
+        <div class="fn-step-grid">
+          <div class="fn-card fn-action" id="node-gt-switch" onclick="showSpec('GT_SWITCH')">
+            <div class="fn-hdr">
+              <span class="fn-num">STEP 1</span>
+              <span class="fn-type fnt-act">MOUNT</span>
+            </div>
+            <div class="fn-title">Switch to Tab 5 Genealogy</div>
+            <p class="fn-desc">Triggered by header Tab 5 button or navigation bar. Invokes <code>renderInBodyHierarchyTree()</code> with active role downline scope.</p>
+            <span class="fn-code-tag">switchMainTab('tab-genealogy-tree')</span>
+          </div>
+
+          <div class="fn-card fn-decision" id="node-gt-scope" onclick="showSpec('GT_SCOPE')">
+            <div class="fn-hdr">
+              <span class="fn-num">GATE 1</span>
+              <span class="fn-type fnt-dec">DECISION</span>
+            </div>
+            <div class="fn-title">Role Downline Privacy Filter</div>
+            <p class="fn-desc">Master sees all 5 levels; Healer sees assigned downlines; Devotee sees self + mentor card only. Prevents unauthorized tree traversal.</p>
+            <span class="fn-code-tag">ScreenAuthMatrix.filterTreeScope(role)</span>
+          </div>
+
+          <div class="fn-card fn-decision" id="node-gt-orphan" onclick="showSpec('GT_ORPHAN')">
+            <div class="fn-hdr">
+              <span class="fn-num">GATE 2</span>
+              <span class="fn-type fnt-dec">DECISION</span>
+            </div>
+            <div class="fn-title">Orphan Profile Nodes Detected•</div>
+            <p class="fn-desc">Checks if any profile's <code>referredByCode</code> references a deleted or missing node. Prevents broken SVG link lines.</p>
+            <span class="fn-code-tag">[Orphan &rarr; Closed-Loop: Auto-Quarantine]</span>
+          </div>
+
+          <div class="fn-card fn-action" id="node-gt-viewport" onclick="showSpec('GT_VIEWPORT')">
+            <div class="fn-hdr">
+              <span class="fn-num">STEP 2</span>
+              <span class="fn-type fnt-act">CANVAS ENGINE</span>
+            </div>
+            <div class="fn-title">Pan / Zoom Clamping &amp; Smart Fit</div>
+            <p class="fn-desc">Clamps scale between 0.2x and 3.0x. <code>smartFitInBodyTree()</code> calculates node bounding boxes and centers surface inside viewport.</p>
+            <span class="fn-code-tag">ProfileView.smartFitInBodyTree()</span>
+          </div>
+        </div>
+
+        <div class="loop-banner">
+          <div class="loop-banner-icon">🔄</div>
+          <div class="loop-banner-text">
+            <strong>CLOSED-LOOP FEEDBACK GUARANTEE:</strong> If the canvas is panned off-screen or zoom scale becomes extreme, clicking <em>"Smart Fit"</em> or <em>"Reset 100%"</em> recalculates the centroid coordinates and smoothly glides all cards back into view without page reload.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULATOR -->
+    <div class="hitl-sim-card">
+      <div style="font-size: 0.95rem; font-weight: 800; color: var(--txt); display: flex; align-items: center; gap: 0.45rem;">
+        <span>🧪</span> <span>Human-in-the-Loop (HITL) Interactive Simulations &bull; Genealogy Canvas</span>
+      </div>
+      <div class="hitl-sim-pills">
+        <button class="hitl-pill" onclick="runSimulation('gt_offscreen')">⚡ Sim 9: Canvas Panned Off-Screen &rarr; Smart Fit Centering</button>
+        <button class="hitl-pill" onclick="runSimulation('gt_orphan')">⚡ Sim 10: Orphan Devotee &rarr; Unassigned Bucket Auto-Quarantine</button>
+      </div>
+    </div>
+
+  </div><!-- /tab-genealogy -->
+
+
+  <!-- ========================================================================= -->
+  <!-- TAB 5: DATABASE, MVC & HITL MATRIX -->
+  <!-- ========================================================================= -->
+  <div class="tab-panel" id="tab-matrix">
+    
+    <div class="intro-card">
+      <div class="intro-title">
+        <span>🗄️</span> Integrated Technical Matrix: Database, Backend MVC &amp; HITL Error Scenarios
+      </div>
+      <p class="intro-desc">
+        Comprehensive architectural matrix mapping the 4 core activities across database persistence tiers, controller method contracts, and human-in-the-loop exception recovery paths.
+      </p>
+    </div>
+
+    <div class="fc-card">
+      <div style="font-size: 0.92rem; font-weight: 800; color: var(--txt); margin-bottom: 0.75rem;">
+        Activity &bull; Persistence &bull; Controller &bull; Closed-Loop Architecture Table
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.72rem; text-align:left;">
+          <thead>
+            <tr style="background:#f8fafc; border-bottom:1.5px solid #e2e8f0; color:#334155;">
+              <th style="padding:0.5rem 0.6rem;">Activity Area</th>
+              <th style="padding:0.5rem 0.6rem;">DOM Element Hooks</th>
+              <th style="padding:0.5rem 0.6rem;">Database Storage Target</th>
+              <th style="padding:0.5rem 0.6rem;">Controller Method Contract</th>
+              <th style="padding:0.5rem 0.6rem;">Closed-Loop Recovery UX</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.5rem 0.6rem; font-weight:700;">Sadhana Enrollment</td>
+              <td style="padding:0.5rem 0.6rem;"><code>btnDrawerEnroll</code><br><code>btnDrawerSendTrainee</code></td>
+              <td style="padding:0.5rem 0.6rem;"><code>profile.traineeSadhanas[]</code><br><code>/profiles/{id}/sadhanas</code></td>
+              <td style="padding:0.5rem 0.6rem;"><code>ProfileModel.sendSadhanaToTrainee(key)</code></td>
+              <td style="padding:0.5rem 0.6rem;">If already enrolled, switches to Trainee tab &amp; highlights card</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.5rem 0.6rem; font-weight:700;">Goli Gyan Guidance</td>
+              <td style="padding:0.5rem 0.6rem;"><code>goliGyanModal</code><br><code>btn-open-goli-gyan</code></td>
+              <td style="padding:0.5rem 0.6rem;"><code>sk_goli_gyan_bookmarks</code><br>Local cache</td>
+              <td style="padding:0.5rem 0.6rem;"><code>ProfileView.toggleGoliGyanModal(state)</code></td>
+              <td style="padding:0.5rem 0.6rem;">If remedy unlisted, "Ask Mentor" queues query to healer</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.5rem 0.6rem; font-weight:700;">JSON Vault &amp; Import</td>
+              <td style="padding:0.5rem 0.6rem;"><code>jsonDrawer</code><br><code>importModal</code></td>
+              <td style="padding:0.5rem 0.6rem;"><code>sk_admin_profiles_v3</code><br><code>sk_pre_import_backup_{ts}</code></td>
+              <td style="padding:0.5rem 0.6rem;"><code>ProfileView.toggleJsonDrawer(state)</code><br><code>importJsonDatabase()</code></td>
+              <td style="padding:0.5rem 0.6rem;">If corrupt or cycle found, 1-click rollback to snapshot</td>
+            </tr>
+            <tr>
+              <td style="padding:0.5rem 0.6rem; font-weight:700;">Genealogy Canvas</td>
+              <td style="padding:0.5rem 0.6rem;"><code>bodyTreeCanvasViewport</code><br><code>btnBodyZoomIn/Out/Fit</code></td>
+              <td style="padding:0.5rem 0.6rem;"><code>ProfileModel.profiles</code><br>Tree graph nodes</td>
+              <td style="padding:0.5rem 0.6rem;"><code>ProfileView.smartFitInBodyTree()</code><br><code>ProfileView.zoomInBodyTree()</code></td>
+              <td style="padding:0.5rem 0.6rem;">If panned off-screen, "Smart Fit" auto-centers bounding centroid</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /tab-matrix -->
+
+</div><!-- /container -->
+
+<!-- SPECIFICATION MODAL -->
+<div class="spec-modal" id="spec-modal" onclick="if(event.target === this) closeSpec();">
+  <div class="spec-box">
+    <button class="spec-close" onclick="closeSpec()">✕</button>
+    <div style="font-size: 1rem; font-weight: 800; color: var(--txt); margin-bottom: 0.25rem;" id="spec-title">Workflow Node Specification</div>
+    <div style="font-size: 0.72rem; color: var(--txt-muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.75rem;" id="spec-meta">MVC Layer Reference</div>
+    
+    <div style="font-size: 0.76rem; font-weight: 800; color: var(--txt); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">FUNCTIONAL SPECIFICATION</div>
+    <p style="font-size: 0.78rem; color: var(--txt-muted); line-height: 1.5; margin-bottom: 0.75rem;" id="spec-desc"></p>
+
+    <div style="font-size: 0.76rem; font-weight: 800; color: var(--txt); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">CLOSED-LOOP FEEDBACK ACTION</div>
+    <div style="font-size: 0.76rem; color: #1e3a8a; background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.5rem 0.75rem; border-radius: 0.4rem; line-height: 1.45; margin-bottom: 0.75rem;" id="spec-loop"></div>
+
+    <div style="font-size: 0.76rem; font-weight: 800; color: var(--txt); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">IMPLEMENTATION CODE REFERENCE</div>
+    <pre class="spec-code-block" id="spec-code"></pre>
+  </div>
+</div>
+
+<script>
+// VIEW TABS SWITCHER
+function switchViewTab(tabId) {
+  document.querySelectorAll('.vtab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  
+  event.currentTarget.classList.add('active');
+  const target = document.getElementById(tabId);
+  if (target) target.classList.add('active');
+}
+
+// TECHNICAL SPECIFICATIONS
+const SPECS = {
+  SD_OPEN: {
+    title: 'Sadhana Drawer Slide-Out Initiation',
+    meta: 'View Layer • ProfileView.openSadhanaDrawer(item)',
+    desc: 'Extracts item attributes (title, mantra, procedure, duration) and binds data-sadhana-key to btnDrawerEnroll and btnDrawerSendTrainee.',
+    loop: 'If item data is missing or drawer fails to render, falls back to Tab 2 catalog list with non-blocking toast.',
+    code: `openSadhanaDrawer(item) {
+  if (this.btnDrawerEnroll) this.btnDrawerEnroll.setAttribute("data-sadhana-key", item.id);
+  if (this.btnDrawerSendTrainee) this.btnDrawerSendTrainee.setAttribute("data-sadhana-key", item.id);
+  this.sadhanaDrawer.classList.add("open");
+}`
+  },
+  SD_ACTIVE_CHECK: {
+    title: 'Active Profile Context Gate',
+    meta: 'Controller / Model • ProfileModel.getActiveProfile()',
+    desc: 'Verifies that a valid devotee profile is active before processing enrollments.',
+    loop: 'If no profile selected, automatically defaults to active session or shows profile selector modal without crashing.',
+    code: `const profile = this.model.getActiveProfile();
+if (!profile) {
+  this.view.showToast('Please select a Devotee profile first.');
+  return;
+}`
+  },
+  SD_DUP_CHECK: {
+    title: 'Duplicate Enrollment Prevention Gate',
+    meta: 'Model Layer • ProfileModel.sendSadhanaToTrainee()',
+    desc: 'Scans existing traineeSadhanas array to detect if the spiritual practice is already in-progress.',
+    loop: 'If duplicate detected, skips re-enrollment, switches to Trainee tab, and highlights existing progress card.',
+    code: `const exists = profile.traineeSadhanas.some(ts => ts.sadhanaKey === key);
+if (exists) {
+  this.view.showToast('Sadhana is already in-progress! Switched to workspace.');
+  this.switchMainTab('tab-trainee-sadhak');
+  return;
+}`
+  },
+  SD_PREREQ_CHECK: {
+    title: 'House Clean Prerequisite Gate',
+    meta: 'Business Rule • House Clean Level 1 >= 75%',
+    desc: 'Higher level sadhanas require living space sanctification before initiation.',
+    loop: 'If clean score < 75%, opens prompt directing user to House Clean checklist to complete sanctum prep.',
+    code: `const cleanScore = profile.houseCleanLevels•.[0]•.cleanPercentage || 0;
+if (catalogItem.requiresClean && cleanScore < 75) {
+  this.view.showToast('Requires House Clean Level 1 >= 75% first.');
+  return;
+}`
+  },
+  SD_QUOTA_CHECK: {
+    title: 'Concurrent Sadhana Quota Gate (Max 3)',
+    meta: 'Business Rule • Spiritual Load Throttling',
+    desc: 'Limits simultaneous practices to maximum 3 concurrent sadhanas.',
+    loop: 'If limit exceeded, alerts user to finish or pause an existing sadhana.',
+    code: `const activeCount = profile.traineeSadhanas.filter(s => s.status === 'In Progress').length;
+if (activeCount >= 3) {
+  this.view.showToast('Active limit reached (3/3). Please complete an existing sadhana.');
+  return;
+}`
+  },
+  SD_COMMIT: {
+    title: 'Atomic Enrollment Database Mutation',
+    meta: 'Model Layer • Dual-Write Local & Firebase',
+    desc: 'Appends sadhana object, logs mentor audit memo, updates timestamp, and syncs to cloud.',
+    loop: 'If cloud sync fails, buffers in offline sync queue and completes local state update safely.',
+    code: `profile.traineeSadhanas.push(sadhanaRecord);
+this.saveProfiles(this.profiles);`
+  },
+  SD_FEEDBACK: {
+    title: 'Multi-Channel Alert & View Transition',
+    meta: 'View / Controller • Toast + Navigation Transition',
+    desc: 'Closes drawer, switches main tab to Trainee Sadhak, and triggers confirmation toast.',
+    loop: 'User can undo enrollment within 5 seconds via toast action button.',
+    code: `this.view.closeSadhanaDrawer();
+this.switchMainTab('tab-trainee-sadhak');
+this.view.showToast('Enrolled in Trainee Sadhak In-Progress!');`
+  },
+  GG_OPEN: {
+    title: 'Goli Gyan Modal Presentation',
+    meta: 'View Layer • ProfileView.toggleGoliGyanModal()',
+    desc: 'Toggles #goli-gyan-modal with aria-hidden accessibility state.',
+    loop: 'ESC key closes modal and returns focus to previous active element.',
+    code: `toggleGoliGyanModal(forceState) {
+  this.goliGyanModal.classList.toggle('open', forceState);
+}`
+  },
+  GG_SEARCH: {
+    title: 'Goli Gyan Instant Search & Category Filter',
+    meta: 'View Layer • Keyword & Chip Filter',
+    desc: 'Filters chapter list in realtime matching user search queries.',
+    loop: 'If 0 results, shows "Ask Assigned Mentor" button to dispatch query.',
+    code: `if (filteredChapters.length === 0) showMentorQueryCTA();`
+  },
+  GG_STUDY: {
+    title: 'Reading Progress Persistence',
+    meta: 'LocalStorage • sk_goli_gyan_bookmarks',
+    desc: 'Stores last-read chapter ID and reading timestamp.',
+    loop: 'Reopening modal resumes directly at last-read section.',
+    code: `localStorage.setItem('sk_goli_gyan_bookmarks', JSON.stringify({ chapterId, ts: Date.now() }));`
+  },
+  GG_PRESCRIBE: {
+    title: 'Healer Remedy Prescription Link',
+    meta: 'Controller / Model • Mentorship Service',
+    desc: 'Allows healers to attach remedy chapters directly to mentee profiles.',
+    loop: 'Devotee receives WhatsApp alert with customized study link.',
+    code: `profile.prescribedRemedies.push({ remedyId, healerSignature });`
+  },
+  JV_OPEN: {
+    title: 'JSON Payload Drawer Inspector',
+    meta: 'View Layer • ProfileView.toggleJsonDrawer()',
+    desc: 'Renders formatted, sanitized mobile app payload.',
+    loop: 'Clicking outside backdrop closes drawer safely.',
+    code: `toggleJsonDrawer(forceState) {
+  this.jsonDrawer.classList.toggle('open', forceState);
+}`
+  },
+  JV_SYNTAX: {
+    title: 'JSON Syntax Linter on Import',
+    meta: 'Validation Guard • JSON.parse()',
+    desc: 'Intercepts malformed JSON and reports exact parse error.',
+    loop: 'Shows error alert without clearing current database state.',
+    code: `try { JSON.parse(text); } catch(err) { showLineError(err.message); }`
+  },
+  JV_SCHEMA: {
+    title: 'Schema & Anti-Loop Cycle Validation',
+    meta: 'Model Layer • ProfileModel.isCircularSponsor()',
+    desc: 'Checks required fields and ensures imported tree has no cyclic dependencies.',
+    loop: 'Blocks import if circular sponsorship detected, preserving existing database.',
+    code: `if (hasCircularReference(importedData)) abortImport('Cycle detected');`
+  },
+  JV_SNAPSHOT: {
+    title: 'Pre-Import Automatic Snapshot',
+    meta: 'Storage Engine • sk_pre_import_backup',
+    desc: 'Snapshots database before importing and provides 1-click rollback.',
+    loop: 'User can click "Undo Import" to restore previous snapshot instantly.',
+    code: `localStorage.setItem('sk_pre_import_backup_' + Date.now(), JSON.stringify(currentData));`
+  },
+  GT_SWITCH: {
+    title: 'Genealogy Canvas Initialization',
+    meta: 'View / Controller • switchMainTab("tab-genealogy-tree")',
+    desc: 'Switches to Tab 5 and invokes renderInBodyHierarchyTree().',
+    loop: 'If rendering fails, falls back to 5-level list view seamlessly.',
+    code: `this.view.renderInBodyHierarchyTree(this.model.profiles);`
+  },
+  GT_SCOPE: {
+    title: 'Role-Gated Downline Boundary Scoping',
+    meta: 'Security Layer • ScreenAuthMatrix',
+    desc: 'Filters visible subtree according to logged-in user role.',
+    loop: 'Devotee restricted to self + mentor; Healer restricted to downline mentees.',
+    code: `const scopedProfiles = filterByRoleHierarchy(profiles, currentRole);`
+  },
+  GT_ORPHAN: {
+    title: 'Orphan Profile Auto-Quarantine',
+    meta: 'Data Integrity • Tree Traversal',
+    desc: 'Detects profiles with missing parent links and auto-groups under Unassigned Seekers bucket.',
+    loop: 'Admin sees re-link button to reconnect orphan into active lineage.',
+    code: `if (!parentExists) attachToUnassignedBucket(profile);`
+  },
+  GT_VIEWPORT: {
+    title: 'Canvas Pan / Zoom Clamping & Smart Fit',
+    meta: 'View Layer • smartFitInBodyTree()',
+    desc: 'Calculates node bounding box and glides surface to center of viewport.',
+    loop: 'Clamps scale between 0.2x and 3.0x; Smart Fit recovers off-screen drift.',
+    code: `smartFitInBodyTree() {
+  const bbox = calculateNodesBoundingBox();
+  centerSurface(bbox.cx, bbox.cy);
+}`
+  }
+};
+
+function showSpec(id) {
+  const spec = SPECS[id];
+  if (!spec) return;
+
+  document.getElementById('spec-title').textContent = spec.title;
+  document.getElementById('spec-meta').textContent = spec.meta;
+  document.getElementById('spec-desc').textContent = spec.desc;
+  document.getElementById('spec-loop').textContent = spec.loop;
+  document.getElementById('spec-code').textContent = spec.code;
+  document.getElementById('spec-modal').classList.add('open');
+}
+
+function closeSpec() {
+  document.getElementById('spec-modal').classList.remove('open');
+}
+
+// HITL SIMULATOR ENGINE
+const SIMULATIONS = {
+  sd_dup: {
+    title: 'Simulation 1: Duplicate Enrollment Attempt',
+    targetNodes: ['node-sd-open', 'node-sd-dup'],
+    desc: 'A devotee accidentally clicks "Enroll in Queue" on a sadhana that is already in-progress.',
+    loop: 'Closed-Loop Action: Model detects existing key in profile.traineeSadhanas. Instead of duplicating, controller shows toast: "Already in-progress! Switched to workspace" and navigates to Tab 3.'
+  },
+  sd_quota: {
+    title: 'Simulation 2: Quota Exceeded (3/3 Active Sadhanas)',
+    targetNodes: ['node-sd-open', 'node-sd-quota'],
+    desc: 'Devotee attempts to enroll in a 4th concurrent sadhana.',
+    loop: 'Closed-Loop Action: Gate 4 detects activeCount >= 3. Displays modal: "Active sadhana capacity reached (3/3). Please complete or pause an existing practice" with links to current sadhanas.'
+  },
+  sd_prereq: {
+    title: 'Simulation 3: House Clean Prerequisite Missing (<75%)',
+    targetNodes: ['node-sd-open', 'node-sd-prereq'],
+    desc: 'Seeker attempts to enroll in an advanced sadhana without completing Level 1 House Clean.',
+    loop: 'Closed-Loop Action: Gate 3 checks cleanScore < 75%. Displays advisory toast with direct button: "Go to House Clean Checklist" to complete prerequisite.'
+  },
+  sd_no_prof: {
+    title: 'Simulation 4: No Active Profile Context Selected',
+    targetNodes: ['node-sd-open', 'node-sd-active'],
+    desc: 'User opens Sadhana drawer when active profile is uninitialized.',
+    loop: 'Closed-Loop Action: System automatically defaults to primary admin profile or shows profile selector modal, preventing null pointer crashes.'
+  },
+  gg_not_found: {
+    title: 'Simulation 5: Unknown Remedy in Goli Gyan Search',
+    targetNodes: ['node-gg-open', 'node-gg-search'],
+    desc: 'Seeker searches for an uncommon astrological or health symptom.',
+    loop: 'Closed-Loop Action: Search returns 0 results. Prompt offers: "Consult Assigned Mentor". 1-click sends query to mentor queue with seeker context.'
+  },
+  gg_audio_drop: {
+    title: 'Simulation 6: Network Drop during Audio Narration',
+    targetNodes: ['node-gg-open', 'node-gg-study'],
+    desc: 'Audio stream drops while listening to Goli Gyan guidance.',
+    loop: 'Closed-Loop Action: Audio player auto-falls back to offline text display and bookmarks current timestamp in local storage.'
+  },
+  jv_corrupt: {
+    title: 'Simulation 7: Corrupted JSON File on Import',
+    targetNodes: ['node-jv-open', 'node-jv-syntax'],
+    desc: 'Admin uploads a .json file with syntax errors.',
+    loop: 'Closed-Loop Action: Linter intercepts syntax error, shows line number, and aborts import without modifying current database.'
+  },
+  jv_cycle: {
+    title: 'Simulation 8: Circular Sponsor Graph in Import',
+    targetNodes: ['node-jv-open', 'node-jv-schema'],
+    desc: 'Imported JSON contains circular sponsorship loop (A -> B -> A).',
+    loop: 'Closed-Loop Action: isCircularSponsor() flags cycle, blocks import, and highlights offending nodes for correction.'
+  },
+  gt_offscreen: {
+    title: 'Simulation 9: Canvas Panned Off-Screen into Infinity',
+    targetNodes: ['node-gt-switch', 'node-gt-viewport'],
+    desc: 'User drags tree surface far off-screen and loses view of cards.',
+    loop: 'Closed-Loop Action: User clicks "Smart Fit" or "Reset View". Engine calculates bounding box centroid and smoothly glides canvas back into center.'
+  },
+  gt_orphan: {
+    title: 'Simulation 10: Orphan Devotee Node Detected',
+    targetNodes: ['node-gt-switch', 'node-gt-orphan'],
+    desc: 'Devotee profile has invalid referredByCode pointing to non-existent mentor.',
+    loop: 'Closed-Loop Action: Orphan profile is auto-quarantined under "Unassigned Seekers" bucket and admin is notified to re-link.'
+  }
+};
+
+function runSimulation(key) {
+  resetSimulations();
+  const sim = SIMULATIONS[key];
+  if (!sim) return;
+
+  sim.targetNodes.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('sim-highlight');
+  });
+
+  const box = document.getElementById('sim-output-box');
+  if (box) {
+    document.getElementById('sim-title').textContent = sim.title;
+    document.getElementById('sim-desc').textContent = sim.desc;
+    document.getElementById('sim-loop').textContent = sim.loop;
+    box.style.display = 'block';
+  }
+
+  const firstCard = document.getElementById(sim.targetNodes[0]);
+  if (firstCard) firstCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetSimulations() {
+  document.querySelectorAll('.fn-card').forEach(c => c.classList.remove('sim-highlight'));
+  const box = document.getElementById('sim-output-box');
+  if (box) box.style.display = 'none';
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeSpec();
+});
+</script>
+
+</body>
+</html>

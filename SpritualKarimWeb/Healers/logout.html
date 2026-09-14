@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Logged Out • Shree Spritual Karim Sansthan</title>
+  <meta name="description" content="Session Terminated - Shree Spritual Karim Sansthan Member Portal" />
+  
+  <link rel="icon" type="image/png" href="Logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="css/profile-admin.css" />
+  <style>
+    .logout-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0b0714 0%, #161026 50%, #1a0f30 100%);
+      padding: 1.5rem;
+    }
+    .logout-card {
+      background: rgba(26, 17, 43, 0.75);
+      border: 1px solid var(--border-glass-gold, rgba(212, 175, 55, 0.35));
+      border-radius: var(--radius-lg, 1rem);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 440px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(212, 175, 55, 0.15);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .logout-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold-400, #d4af37), transparent);
+    }
+    .logout-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--gold-400, #d4af37);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.25rem;
+      box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+    }
+    .logout-title {
+      font-family: var(--font-heading, 'Cinzel', serif);
+      color: var(--gold-300, #f6d878);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
+      letter-spacing: 0.5px;
+    }
+    .logout-desc {
+      color: var(--text-secondary, #cbd5e1);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin: 0 0 1.5rem 0;
+    }
+    .logout-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .logout-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .btn-action-primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: linear-gradient(135deg, var(--gold-400, #d4af37) 0%, var(--gold-500, #b8860b) 100%);
+      color: #0b0714;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: var(--radius-md, 0.5rem);
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition-fast, all 0.2s ease);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+    }
+    .btn-action-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+    }
+    .btn-action-secondary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.65rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass-gold, rgba(212, 175, 55, 0.3));
+      color: var(--text-primary, #f8fafc);
+      font-weight: 600;
+      font-size: 0.85rem;
+      border-radius: var(--radius-md, 0.5rem);
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition-fast, all 0.2s ease);
+    }
+    .btn-action-secondary:hover {
+      background: rgba(212, 175, 55, 0.1);
+      border-color: var(--gold-400, #d4af37);
+      color: var(--gold-300, #f6d878);
+    }
+    .redirect-timer-note {
+      font-size: 0.75rem;
+      color: var(--text-muted, #94a3b8);
+      margin-top: 1.25rem;
+    }
+    .redirect-timer-note span {
+      font-weight: 700;
+      color: var(--gold-400, #d4af37);
+    }
+  </style>
+</head>
+<body>
+  <div class="logout-container">
+    <div class="logout-card">
+      <div class="logout-icon-wrap">
+        <span>🕉️</span>
+      </div>
+      <h1 class="logout-title">Logged Out Successfully</h1>
+      <p class="logout-desc">
+        Your active session has been safely closed and local security tokens cleared.
+      </p>
+
+      <div class="logout-status-badge">
+        <span>🟢</span> Session Securely Cleared
+      </div>
+
+      <div class="logout-actions">
+        <a href="login.html" class="btn-action-primary" id="btn-login-again">
+          <span>🔑</span> <span>Sign In Again</span>
+        </a>
+        <a href="index.html" class="btn-action-secondary" id="btn-home-return">
+          <span>🏠</span> <span>Return to Portal</span>
+        </a>
+        <a href="join.html" class="btn-action-secondary" id="btn-join-return" style="border-color: rgba(20, 184, 166, 0.4); color: #2dd4bf;">
+          <span>🕉️</span> <span>Devotee Induction (Join Portal)</span>
+        </a>
+        <button type="button" id="btn-clear-all-cache" style="background: none; border: 1px dashed rgba(255,255,255,0.2); color: var(--text-muted); font-size: 0.76rem; padding: 0.45rem; border-radius: 0.4rem; cursor: pointer; margin-top: 0.25rem;">
+          🧹 Reset Local Storage &amp; Clear Demo State
+        </button>
+      </div>
+
+      <div class="redirect-timer-note" id="redirect-note">
+        Redirecting to sign-in page in <span id="countdown">5</span>s...
+        <br>
+        <button type="button" id="btn-stop-redirect" style="background:none;border:none;color:var(--text-muted);font-size:0.72rem;cursor:pointer;text-decoration:underline;margin-top:0.35rem;">
+          Stay on this page
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/onboarding.js"></script>
+  <script>
+    // Complete Session Purge
+    try {
+      if (typeof DemoAuth !== 'undefined' && DemoAuth.logout) {
+        DemoAuth.logout();
+      }
+      if (typeof DemoSession !== 'undefined' && DemoSession.destroy) {
+        DemoSession.destroy();
+      }
+      sessionStorage.removeItem("sk_auth_sessions");
+      sessionStorage.removeItem("portalRole");
+      localStorage.removeItem("sk_admin_active_role_mode_v1");
+    } catch (e) {
+      console.warn("Session purge error:", e);
+    }
+
+    // Auto-countdown redirect
+    let secondsLeft = 5;
+    const countdownEl = document.getElementById("countdown");
+    const redirectNote = document.getElementById("redirect-note");
+    let countdownTimer = setInterval(() => {
+      secondsLeft--;
+      if (countdownEl) countdownEl.textContent = secondsLeft;
+      if (secondsLeft <= 0) {
+        clearInterval(countdownTimer);
+        window.location.href = "login.html";
+      }
+    }, 1000);
+
+    // Allow user to cancel auto-redirect
+    document.getElementById("btn-stop-redirect")?.addEventListener("click", () => {
+      clearInterval(countdownTimer);
+      if (redirectNote) {
+        redirectNote.innerHTML = "Auto-redirect paused. Click <strong>Sign In Again</strong> when ready.";
+      }
+    });
+
+    // Clear all cache button
+    document.getElementById("btn-clear-all-cache")?.addEventListener("click", () => {
+      clearInterval(countdownTimer);
+      sessionStorage.clear();
+      localStorage.clear();
+      alert("Local storage and cache cleared. Redirecting to login...");
+      window.location.href = "login.html";
+    });
+  </script>
+</body>
+</html>

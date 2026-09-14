@@ -1,132 +1,1671 @@
 {
   "profiles": {
-    "prof_master_karim": {
-      "id": "prof_master_karim",
+    "prof-admin-01": {
+      "id": "prof-admin-01",
       "referenceCode": "SKHM-ADM1-7788-9900",
+      "referredByCode": "ROOT-0000-0000-0000",
+      "transferredCode": "",
       "name": "Spiritual Karim Khan",
+      "phone": "+91 98765 43210",
+      "email": "karim.master@spiritualkarim.org",
       "profileType": "ADMIN",
       "level": 1,
-      "categoryTag": "Spiritual Cleansing & Guidance",
-      "referredByCode": "ROOT-0000-0000-0000",
-      "phone": "+91 98765 43210",
-      "email": "master@spiritualkarim.org",
-      "city": "Mumbai, Maharashtra",
-      "address": "Sansthan Central Ashram, Malabar Hill",
-      "notes": "Founder Master Guide and Chief Spiritual Preceptor",
-      "isActive": true,
+      "isPaid": true,
       "paymentStatus": "PAID",
+      "objective": "Spiritual illumination, Kundalini awakening, cosmic balance, and global guidance.",
+      "selectedRemedies": [
+        "sri_yantra",
+        "kalashtami",
+        "navratri",
+        "diwali",
+        "three_diya",
+        "negativity",
+        "healing"
+      ],
+      "address": "Spiritual Karim Central Sanctuary",
+      "city": "Mumbai, Maharashtra",
       "joinDate": "2024-01-01",
+      "isActive": true,
+      "notes": "Master Head of Organization. Direct lineage origin. Supreme Spiritual Guide of the Sanctuary.",
+      "categoryTag": "Master Guide & Supreme Cleansing",
+      "seekerDiagnostics": {
+        "afflictionDuration": "N/A (Master Guide)",
+        "kuldeviIssues": "Kuldevi Blessings Activated",
+        "targetOutcome": "Universal sadhana transmission & supreme house purification"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "sri_yantra",
+          "name": "Sri Yantra Sadhana",
+          "category": "Sacred Sadhana",
+          "priority": "High",
+          "status": "Enrolled"
+        },
+        {
+          "id": "kalashtami",
+          "name": "Kalashtami Bhairav Sadhana",
+          "category": "Sacred Sadhana",
+          "priority": "High",
+          "status": "Enrolled"
+        },
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Sanctum Sanctorum daily purification.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Spiritual Karim Khan",
+          "mentorRemarks": "Direct master lineage purity verified 100%.",
+          "approvalDate": "Today ? Dawn"
+        },
+        {
+          "id": "hc-2",
+          "levelNumber": 2,
+          "levelTitle": "Level 2 — Parents House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Ancestral Haveli purified with traditional copper havan kund.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Spiritual Karim Khan",
+          "mentorRemarks": "Ancestral peace established.",
+          "approvalDate": "Yesterday"
+        },
+        {
+          "id": "hc-3",
+          "levelNumber": 3,
+          "levelTitle": "Level 3 — Relative House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Extended family residences blessed and purified with 3-diya process.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Spiritual Karim Khan",
+          "mentorRemarks": "Complete 3-level clan purification certified.",
+          "approvalDate": "2 days ago"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-1",
+          "sadhanaKey": "sri_yantra",
+          "title": "Sri Yantra Sadhana",
+          "categoryDomain": "sadhanas",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 4 — Master Attunement",
+          "dailyTarget": "21 Malas Daily + Havan",
+          "currentStreak": "108 Days Continuous",
+          "progressPercent": 100,
+          "status": "Master Siddhi",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "diaryNotes": "Golden geometry visualization stabilized at Ajna Chakra."
+        },
+        {
+          "id": "ts-2",
+          "sadhanaKey": "three_diya",
+          "title": "Three Diya Process",
+          "categoryDomain": "remedies",
+          "isPaid": false,
+          "paymentStatus": "FREE",
+          "level": "Level 3 — Havan & Energy Transmission",
+          "dailyTarget": "3 Diyas at Sunset",
+          "currentStreak": "21 Days Completed",
+          "progressPercent": 100,
+          "status": "Completed",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "diaryNotes": "Heavy astral smoke clearing certified."
+        }
+      ],
+      "healerCompletedSadhanas": [
+        {
+          "id": "hcs-1",
+          "title": "Master Sri Yantra Siddhi",
+          "levelCompleted": "Level 4 — Master Guru",
+          "completionDate": "2023-11-15",
+          "status": "Certified Master & Guru",
+          "seekersGuidedCount": 1450,
+          "authorizedToGuide": true,
+          "sealCode": "SKHM-SEAL-MASTER-001"
+        }
+      ],
+      "healerNetwork": [
+        {
+          "id": "net-1",
+          "name": "Acharya Devendra",
+          "refCode": "SKHM-HLR2-3344-5566",
+          "role": "Healer (Level 2)",
+          "activeCases": 12
+        },
+        {
+          "id": "net-2",
+          "name": "Maa Anandita Devi",
+          "refCode": "SKHM-HLR2-5566-7788",
+          "role": "Healer (Level 2)",
+          "activeCases": 8
+        }
+      ],
       "lineage": {
         "currentFamily": {
           "selfName": "Spiritual Karim Khan",
           "selfTitle": "Founder & Master Guide",
           "spouseName": "Fatima Karim Khan",
-          "children": []
+          "children": [
+            {
+              "id": "c1",
+              "name": "Zaid Karim Khan",
+              "gender": "Son",
+              "ageOrNote": "Elder Son"
+            },
+            {
+              "id": "c2",
+              "name": "Ayesha Karim Khan",
+              "gender": "Daughter",
+              "ageOrNote": "Daughter"
+            }
+          ],
+          "siblings": [
+            {
+              "id": "s1",
+              "name": "Tariq Karim Khan",
+              "relation": "Brother",
+              "spouseName": "Shabnam Khan",
+              "childrenSummary": "2 Sons",
+              "isMarried": true,
+              "notes": "Senior Ashram Coordinator"
+            },
+            {
+              "id": "s2",
+              "name": "Zubaida Begum",
+              "relation": "Sister",
+              "spouseName": "Rashid Ahmed",
+              "childrenSummary": "1 Son, 1 Daughter",
+              "isMarried": true,
+              "notes": "Lucknow Branch Trustee"
+            }
+          ]
+        },
+        "husbandAncestral": {
+          "fatherName": "Late Master Father",
+          "motherName": "Late Divine Mother",
+          "paternalGrandfather": "Grandfather Senior",
+          "paternalGrandmother": "Grandmother Senior",
+          "maternalGrandfather": "Nana Ji Senior",
+          "maternalGrandmother": "Nani Ji Senior",
+          "siblings": [],
+          "address": "Ancestral Lineage Roots"
+        },
+        "wifeAncestral": {
+          "fatherName": "Late Father-in-law",
+          "motherName": "Mother-in-law",
+          "paternalGrandfather": "Dada Ji",
+          "paternalGrandmother": "Dadi Ji",
+          "maternalGrandfather": "Nana Ji",
+          "maternalGrandmother": "Nani Ji",
+          "siblings": [],
+          "address": "Wife Ancestral Village"
         }
-      },
-      "houseCleanLogs": [
-        {
-          "auditId": "hcl_init_001",
-          "level": 1,
-          "score": 95,
-          "mentorSignature": "SKHM-ADM1-7788-9900",
-          "timestamp": 1704067200000,
-          "notes": "Initial purification audit verified"
-        }
-      ],
-      "dailyDiyaLogs": [
-        {
-          "logId": "ddl_init_001",
-          "date": "2026-09-11",
-          "streakCount": 254,
-          "oilTypes": ["Cow Ghee", "Til Oil"],
-          "timestamp": 1789128000000
-        }
-      ],
-      "inProgressSadhanas": [
-        {
-          "sadhanaId": "sri_yantra",
-          "title": "Sri Yantra Maha Sadhana",
-          "category": "Wealth & Divine Harmony",
-          "startDate": "2026-01-01",
-          "targetDays": 41,
-          "completedDays": 41,
-          "status": "COMPLETED"
-        }
-      ]
+      }
     },
-    "prof_healer_anand": {
-      "id": "prof_healer_anand",
-      "referenceCode": "SKHM-HLR2-1122-3344",
-      "name": "Anand Mohan Sharma",
+    "prof-healer-02": {
+      "id": "prof-healer-02",
+      "referenceCode": "SKHM-HLR2-3344-5566",
+      "referredByCode": "SKHM-ADM1-7788-9900",
+      "transferredCode": "",
+      "name": "Acharya Devendra",
+      "phone": "+91 98220 11223",
+      "email": "devendra.healer@spiritualkarim.org",
       "profileType": "HEALER",
       "level": 2,
-      "categoryTag": "Energy Alignment",
-      "referredByCode": "SKHM-ADM1-7788-9900",
-      "phone": "+91 98234 56789",
-      "email": "anand.healer@spiritualkarim.org",
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Energy healing, aura purification, and house negativity cleansing.",
+      "selectedRemedies": [
+        "three_diya",
+        "negativity",
+        "healing",
+        "court_cases"
+      ],
+      "address": "42 Sacred Grove Road",
       "city": "Pune, Maharashtra",
-      "address": "Koregaon Park Ashram Branch",
-      "notes": "Senior Healer guiding Pune Devotee Circle",
+      "joinDate": "2024-06-15",
       "isActive": true,
-      "paymentStatus": "PAID",
-      "joinDate": "2024-03-15",
-      "houseCleanLogs": [],
-      "dailyDiyaLogs": [],
-      "inProgressSadhanas": []
+      "notes": "Specialist in Three Diya remedies and Pitru Dosha diagnostics.",
+      "categoryTag": "Cleansing & Guidance",
+      "seekerDiagnostics": {
+        "afflictionDuration": "Overcome in 2021",
+        "kuldeviIssues": "Kuldevi Shanti Puja Performed",
+        "targetOutcome": "Guide 100+ families"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-4",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Purified residence in Pune with sea-salt water, loban & camphor.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Karim Ji (Founder)",
+          "mentorRemarks": "High vibrational field observed.",
+          "approvalDate": "2024-06-20"
+        },
+        {
+          "id": "hc-5",
+          "levelNumber": 2,
+          "levelTitle": "Level 2 — Parents House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 95,
+          "cleanedDetails": "Parents ancestral home cleaned.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Karim Ji (Founder)",
+          "mentorRemarks": "Ancestral blessings restored.",
+          "approvalDate": "2024-07-02"
+        },
+        {
+          "id": "hc-6",
+          "levelNumber": 3,
+          "levelTitle": "Level 3 — Relative House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 65,
+          "cleanedDetails": "Cleansing maternal uncle residence.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Karim Ji (Founder)",
+          "mentorRemarks": "Under supervision.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-3",
+          "sadhanaKey": "three_diya",
+          "title": "Three Diya Process",
+          "categoryDomain": "remedies",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 3 — Havan Transmission",
+          "dailyTarget": "3 Diyas at Dusk",
+          "currentStreak": "18 Days",
+          "progressPercent": 85,
+          "status": "In Progress",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "diaryNotes": "Smoke clearance observed."
+        }
+      ],
+      "healerCompletedSadhanas": [
+        {
+          "id": "hcs-2",
+          "title": "Three Diya Master Certification",
+          "levelCompleted": "Level 3 — Healer Acharya",
+          "completionDate": "2024-05-10",
+          "status": "Certified Master",
+          "seekersGuidedCount": 340,
+          "authorizedToGuide": true,
+          "sealCode": "SKHM-SEAL-DIYA-301"
+        }
+      ],
+      "healerNetwork": [
+        {
+          "id": "net-3",
+          "name": "Amitabh Sen",
+          "refCode": "SKHM-TRN3-1122-3344",
+          "role": "Trainee (Level 3)",
+          "activeCases": 6
+        },
+        {
+          "id": "net-4",
+          "name": "Rajeshwari Joshi",
+          "refCode": "SKHM-TRN3-2233-4455",
+          "role": "Trainee (Level 3)",
+          "activeCases": 4
+        }
+      ],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Acharya Devendra",
+          "selfTitle": "Senior Spiritual Healer",
+          "spouseName": "Sunita Sharma",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Ramprasad Sharma",
+          "motherName": "Kaushalya Devi",
+          "paternalGrandfather": "Pt. Badri Prasad",
+          "paternalGrandmother": "Sita Devi",
+          "maternalGrandfather": "Govind Ram",
+          "maternalGrandmother": "Radha Devi",
+          "siblings": [],
+          "address": "Varanasi, UP"
+        },
+        "wifeAncestral": {
+          "fatherName": "Mukesh Trivedi",
+          "motherName": "Shanti Trivedi",
+          "paternalGrandfather": "Hiralal Trivedi",
+          "paternalGrandmother": "Kamala Trivedi",
+          "maternalGrandfather": "Din Dayal",
+          "maternalGrandmother": "Uma Devi",
+          "siblings": [],
+          "address": "Nashik, Maharashtra"
+        }
+      }
     },
-    "prof_trainee_radha": {
-      "id": "prof_trainee_radha",
-      "referenceCode": "SKHM-TRN4-5566-7788",
-      "name": "Radha Devi",
+    "prof-healer-03": {
+      "id": "prof-healer-03",
+      "referenceCode": "SKHM-HLR2-5566-7788",
+      "referredByCode": "SKHM-ADM1-7788-9900",
+      "transferredCode": "",
+      "name": "Maa Anandita Devi",
+      "phone": "+91 98330 44556",
+      "email": "anandita.healer@spiritualkarim.org",
+      "profileType": "HEALER",
+      "level": 2,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Maa Chamunda Navratri Sadhana, Kundalini awakening, and ancestral Pitru Dosha clearance.",
+      "selectedRemedies": [
+        "navratri",
+        "kundalini",
+        "material_benefits",
+        "aura_strengthening"
+      ],
+      "address": "88 Ganga Ghat Sanctuary",
+      "city": "Varanasi, UP",
+      "joinDate": "2024-05-20",
+      "isActive": true,
+      "notes": "Specialist in Chamunda Shakti Anushthan and Kundalini energy flows.",
+      "categoryTag": "Kundalini & Aura Shield",
+      "seekerDiagnostics": {
+        "afflictionDuration": "Transmuted in 2020",
+        "kuldeviIssues": "Kuldevi Temple Established",
+        "targetOutcome": "Guide 50+ seekers to diksha"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "navratri",
+          "name": "Navratri Chamunda Sadhana",
+          "category": "Sacred Sadhana",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-h3-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Ganga water purification with daily Akhand Jyoti.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Karim Ji (Founder)",
+          "mentorRemarks": "Divine grace awakened.",
+          "approvalDate": "2024-05-25"
+        },
+        {
+          "id": "hc-h3-2",
+          "levelNumber": 2,
+          "levelTitle": "Level 2 — Parents House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Varanasi ancestral sanctuary purified.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Karim Ji (Founder)",
+          "mentorRemarks": "Ancestral blessings flowing.",
+          "approvalDate": "2024-06-10"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-h3-1",
+          "sadhanaKey": "navratri",
+          "title": "Navratri Chamunda Sadhana",
+          "categoryDomain": "sadhanas",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 4 — Master Attunement",
+          "dailyTarget": "108 Malas + Havan",
+          "currentStreak": "45 Days",
+          "progressPercent": 100,
+          "status": "Master Siddhi",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "diaryNotes": "Navarna mantra Siddhi complete."
+        }
+      ],
+      "healerCompletedSadhanas": [
+        {
+          "id": "hcs-3",
+          "title": "Navarna Shakti Master Certification",
+          "levelCompleted": "Level 3 — Healer Acharya",
+          "completionDate": "2024-04-15",
+          "status": "Certified Master",
+          "seekersGuidedCount": 210,
+          "authorizedToGuide": true,
+          "sealCode": "SKHM-SEAL-SHAKTI-402"
+        }
+      ],
+      "healerNetwork": [
+        {
+          "id": "net-5",
+          "name": "Rohan Verma",
+          "refCode": "SKHM-TRN3-6677-8899",
+          "role": "Trainee (Level 3)",
+          "activeCases": 5
+        },
+        {
+          "id": "net-6",
+          "name": "Priya Sharma",
+          "refCode": "SKHM-TRN3-7788-9900",
+          "role": "Trainee (Level 3)",
+          "activeCases": 3
+        }
+      ],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Maa Anandita Devi",
+          "selfTitle": "Acharya Yogini",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "Pt. Vidyadhar Shastri",
+          "motherName": "Gayatri Devi",
+          "paternalGrandfather": "Pt. Ishwar Das",
+          "paternalGrandmother": "Saraswati Devi",
+          "maternalGrandfather": "Harishchandra",
+          "maternalGrandmother": "Gauri Devi",
+          "siblings": [],
+          "address": "Varanasi, UP"
+        }
+      }
+    },
+    "prof-trainee-04": {
+      "id": "prof-trainee-04",
+      "referenceCode": "SKHM-TRN3-1122-3344",
+      "referredByCode": "SKHM-HLR2-3344-5566",
+      "transferredCode": "",
+      "name": "Amitabh Sen",
+      "phone": "+91 98450 77889",
+      "email": "amitabh.sen@trainee.org",
       "profileType": "TRAINEE",
-      "level": 4,
-      "categoryTag": "Sadhana Mentorship",
-      "referredByCode": "SKHM-HLR2-1122-3344",
-      "phone": "+91 91234 56780",
-      "email": "radha.trainee@spiritualkarim.org",
-      "city": "Ahmedabad, Gujarat",
-      "address": "Navrangpura Spiritual Center",
-      "notes": "Mentorship Trainee assisting seekers",
-      "isActive": true,
+      "level": 3,
+      "isPaid": true,
       "paymentStatus": "PAID",
-      "joinDate": "2024-06-10",
-      "houseCleanLogs": [],
-      "dailyDiyaLogs": [],
-      "inProgressSadhanas": []
+      "objective": "Mastering 3 Diya fire cleansing and Sri Yantra geometry.",
+      "selectedRemedies": [
+        "three_diya",
+        "sri_yantra"
+      ],
+      "address": "12 Temple Street",
+      "city": "Kolkata, West Bengal",
+      "joinDate": "2024-07-10",
+      "isActive": true,
+      "notes": "Advanced trainee under Acharya Devendra.",
+      "categoryTag": "Trainee Sadhak",
+      "seekerDiagnostics": {
+        "afflictionDuration": "2 Years",
+        "kuldeviIssues": "Purification active",
+        "targetOutcome": "Advance to Level 3 Havan"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-t4-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Doorway threshold purified daily.",
+          "mentorCode": "SKHM-HLR2-3344-5566",
+          "mentorName": "Acharya Devendra",
+          "mentorRemarks": "Purity certified.",
+          "approvalDate": "2024-07-18"
+        },
+        {
+          "id": "hc-t4-2",
+          "levelNumber": 2,
+          "levelTitle": "Level 2 — Parents House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 60,
+          "cleanedDetails": "Cleansing ancestral flat in Kolkata.",
+          "mentorCode": "SKHM-HLR2-3344-5566",
+          "mentorName": "Acharya Devendra",
+          "mentorRemarks": "In Progress.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-t4-1",
+          "sadhanaKey": "three_diya",
+          "title": "Three Diya Process",
+          "categoryDomain": "remedies",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 2 — Mantra Diksha",
+          "dailyTarget": "3 Diyas at Dusk",
+          "currentStreak": "14 Days",
+          "progressPercent": 75,
+          "status": "In Progress",
+          "mentorCode": "SKHM-HLR2-3344-5566",
+          "diaryNotes": "Threshold cleared."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Amitabh Sen",
+          "selfTitle": "Trainee Sadhak",
+          "spouseName": "Rupali Sen",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Birendra Sen",
+          "motherName": "Suniti Sen",
+          "paternalGrandfather": "Kalyan Sen",
+          "paternalGrandmother": "Asha Sen",
+          "maternalGrandfather": "S. K. Roy",
+          "maternalGrandmother": "Manju Roy",
+          "siblings": [],
+          "address": "Kolkata, WB"
+        },
+        "wifeAncestral": {
+          "fatherName": "Subhas Bose",
+          "motherName": "Ila Bose",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
     },
-    "prof_devotee_suresh": {
-      "id": "prof_devotee_suresh",
-      "referenceCode": "SKHM-DEV5-9988-1122",
-      "name": "Suresh Patel",
-      "profileType": "DEVOTEE",
-      "level": 5,
-      "categoryTag": "Family Harmony",
-      "referredByCode": "SKHM-TRN4-5566-7788",
-      "phone": "+91 99887 76655",
-      "email": "suresh.patel@gmail.com",
-      "city": "Surat, Gujarat",
-      "address": "Ring Road Residential Complex",
-      "notes": "Active Devotee Seeker",
-      "isActive": true,
+    "prof-trainee-05": {
+      "id": "prof-trainee-05",
+      "referenceCode": "SKHM-TRN3-2233-4455",
+      "referredByCode": "SKHM-HLR2-3344-5566",
+      "transferredCode": "",
+      "name": "Rajeshwari Joshi",
+      "phone": "+91 98560 88990",
+      "email": "rajeshwari.j@trainee.org",
+      "profileType": "TRAINEE",
+      "level": 3,
+      "isPaid": true,
       "paymentStatus": "PAID",
+      "objective": "Negativity fumigation and Pitru Rin Mukti fire rituals.",
+      "selectedRemedies": [
+        "negativity",
+        "karmic_debts"
+      ],
+      "address": "24 Navrangpura",
+      "city": "Ahmedabad, Gujarat",
+      "joinDate": "2024-07-22",
+      "isActive": true,
+      "notes": "Specializing in Bakhoor cleansing.",
+      "categoryTag": "Trainee Sadhak",
+      "seekerDiagnostics": {
+        "afflictionDuration": "1 Year",
+        "kuldeviIssues": "Blessings restored",
+        "targetOutcome": "Level 2 Sadhana completion"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "negativity",
+          "name": "Negativity Cleansing",
+          "category": "Cleansing & Healing",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-t5-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 90,
+          "cleanedDetails": "Full fumigation with pure Loban & Bakhoor.",
+          "mentorCode": "SKHM-HLR2-3344-5566",
+          "mentorName": "Acharya Devendra",
+          "mentorRemarks": "Good energetic shift.",
+          "approvalDate": "2024-08-01"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-t5-1",
+          "sadhanaKey": "negativity",
+          "title": "Negativity Cleansing (Bakhoor)",
+          "categoryDomain": "cleansing",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 2 — Mantra Diksha",
+          "dailyTarget": "Dusk Fumigation",
+          "currentStreak": "12 Days",
+          "progressPercent": 70,
+          "status": "In Progress",
+          "mentorCode": "SKHM-HLR2-3344-5566",
+          "diaryNotes": "Atmosphere purified."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Rajeshwari Joshi",
+          "selfTitle": "Trainee Sadhak",
+          "spouseName": "Manish Joshi",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Kirit Joshi",
+          "motherName": "Bhavana Joshi",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Ahmedabad"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-trainee-06": {
+      "id": "prof-trainee-06",
+      "referenceCode": "SKHM-TRN3-6677-8899",
+      "referredByCode": "SKHM-HLR2-5566-7788",
+      "transferredCode": "",
+      "name": "Rohan Verma",
+      "phone": "+91 98670 99001",
+      "email": "rohan.verma@trainee.org",
+      "profileType": "TRAINEE",
+      "level": 3,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Kaal Bhairav protection and family aura fortification.",
+      "selectedRemedies": [
+        "kalashtami",
+        "nazar_suraksha"
+      ],
+      "address": "55 Gomti Nagar",
+      "city": "Lucknow, UP",
+      "joinDate": "2024-08-05",
+      "isActive": true,
+      "notes": "Trainee guided by Maa Anandita Devi.",
+      "categoryTag": "Trainee Sadhak",
+      "seekerDiagnostics": {
+        "afflictionDuration": "3 Years",
+        "kuldeviIssues": "Puja scheduled",
+        "targetOutcome": "Astral shield mastery"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "kalashtami",
+          "name": "Kalashtami Bhairav Sadhana",
+          "category": "Sacred Sadhana",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-t6-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 85,
+          "cleanedDetails": "4-wick mustard lamp protection established.",
+          "mentorCode": "SKHM-HLR2-5566-7788",
+          "mentorName": "Maa Anandita Devi",
+          "mentorRemarks": "Protection seal active.",
+          "approvalDate": "2024-08-10"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-t6-1",
+          "sadhanaKey": "kalashtami",
+          "title": "Kalashtami Bhairav Sadhana",
+          "categoryDomain": "sadhanas",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 2 — Mantra Diksha",
+          "dailyTarget": "11 Malas Night Sandhya",
+          "currentStreak": "9 Days",
+          "progressPercent": 60,
+          "status": "In Progress",
+          "mentorCode": "SKHM-HLR2-5566-7788",
+          "diaryNotes": "Fear banished."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Rohan Verma",
+          "selfTitle": "Trainee Sadhak",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Dr. S. K. Verma",
+          "motherName": "Rekha Verma",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Lucknow"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-trainee-07": {
+      "id": "prof-trainee-07",
+      "referenceCode": "SKHM-TRN3-7788-9900",
+      "referredByCode": "SKHM-HLR2-5566-7788",
+      "transferredCode": "",
+      "name": "Priya Sharma",
+      "phone": "+91 98780 11223",
+      "email": "priya.sharma@trainee.org",
+      "profileType": "TRAINEE",
+      "level": 3,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "Aura strengthening and business obstacle removal.",
+      "selectedRemedies": [
+        "aura_strengthening",
+        "business_money"
+      ],
+      "address": "19 Vasant Vihar",
+      "city": "New Delhi",
+      "joinDate": "2024-08-12",
+      "isActive": true,
+      "notes": "Dedicated sadhak in crystal and Gayatri practices.",
+      "categoryTag": "Trainee Sadhak",
+      "seekerDiagnostics": {
+        "afflictionDuration": "6 Months",
+        "kuldeviIssues": "None",
+        "targetOutcome": "Aura energy stabilization"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "aura_strengthening",
+          "name": "Aura Strengthening",
+          "category": "Cleansing & Healing",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-t7-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 80,
+          "cleanedDetails": "Sphatik crystal water harmonization.",
+          "mentorCode": "SKHM-HLR2-5566-7788",
+          "mentorName": "Maa Anandita Devi",
+          "mentorRemarks": "Good progress.",
+          "approvalDate": "2024-08-16"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-t7-1",
+          "sadhanaKey": "aura_strengthening",
+          "title": "Aura Strengthening & Psychic Shield",
+          "categoryDomain": "cleansing",
+          "isPaid": false,
+          "paymentStatus": "FREE",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "24 Gayatri Chants",
+          "currentStreak": "6 Days",
+          "progressPercent": 50,
+          "status": "In Progress",
+          "mentorCode": "SKHM-HLR2-5566-7788",
+          "diaryNotes": "Calm mind felt."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Priya Sharma",
+          "selfTitle": "Trainee Sadhak",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "V. K. Sharma",
+          "motherName": "Saroj Sharma",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Delhi"
+        }
+      }
+    },
+    "prof-devotee-08": {
+      "id": "prof-devotee-08",
+      "referenceCode": "SKHM-DEV4-9988-1122",
+      "referredByCode": "SKHM-TRN3-1122-3344",
+      "transferredCode": "",
+      "name": "Sunita Mehra",
+      "phone": "+91 97110 55443",
+      "email": "sunita.mehra@devotee.org",
+      "profileType": "DEVOTEE",
+      "level": 4,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "Overcoming household stress, learning 3 Diya process, and purifying ancestral karma.",
+      "selectedRemedies": [
+        "three_diya",
+        "negativity"
+      ],
+      "address": "108 Shanti Niketan",
+      "city": "Jaipur, Rajasthan",
+      "joinDate": "2024-08-01",
+      "isActive": true,
+      "notes": "Dedicated devotee initiated into Level 1 House Clean.",
+      "categoryTag": "Devotee Seeker",
+      "seekerDiagnostics": {
+        "afflictionDuration": "3 Years",
+        "kuldeviIssues": "Kuldevi Puja pending",
+        "targetOutcome": "Peace of mind and family health"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-d8-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 50,
+          "cleanedDetails": "Purifying main doorway and altar daily.",
+          "mentorCode": "SKHM-TRN3-1122-3344",
+          "mentorName": "Amitabh Sen",
+          "mentorRemarks": "Good progress.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-d8-1",
+          "sadhanaKey": "three_diya",
+          "title": "Three Diya Process",
+          "categoryDomain": "remedies",
+          "isPaid": false,
+          "paymentStatus": "FREE",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "3 Diyas at Dusk",
+          "currentStreak": "7 Days",
+          "progressPercent": 35,
+          "status": "In Progress",
+          "mentorCode": "SKHM-TRN3-1122-3344",
+          "diaryNotes": "Noticed positive shift in home."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Sunita Mehra",
+          "selfTitle": "Devotee Seeker",
+          "spouseName": "Ramesh Mehra",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Om Prakash Mehra",
+          "motherName": "Kanti Mehra",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Jaipur, Rajasthan"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-seeker-09": {
+      "id": "prof-seeker-09",
+      "referenceCode": "SKDV-SEEK-3322-1100",
+      "referredByCode": "SKHM-DEV4-9988-1122",
+      "transferredCode": "",
+      "name": "Deepak Saxena",
+      "phone": "+91 97220 66554",
+      "email": "deepak.saxena@seeker.org",
+      "profileType": "SEEKER",
+      "level": 5,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Business growth, stuck payments recovery, and Sri Yantra worship.",
+      "selectedRemedies": [
+        "business_money",
+        "sri_yantra"
+      ],
+      "address": "77 Arera Colony",
+      "city": "Bhopal, MP",
+      "joinDate": "2024-08-15",
+      "isActive": true,
+      "notes": "Level 5 Seeker in 24h verification window paired 1:1 with Devotee Sunita Mehra and Trainee Amitabh Sen.",
+      "categoryTag": "Seeker Intake (24h Window)",
+      "seekerDiagnostics": {
+        "afflictionDuration": "1.5 Years",
+        "kuldeviIssues": "Kuldevi Puja Done",
+        "targetOutcome": "Clear business debt"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "business_money",
+          "name": "Business & Wealth Upaya",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-d9-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 40,
+          "cleanedDetails": "Clearing commercial shop cash altar.",
+          "mentorCode": "SKHM-DEV4-9988-1122",
+          "mentorName": "Sunita Mehra",
+          "mentorRemarks": "Under guidance.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-d9-1",
+          "sadhanaKey": "business_money",
+          "title": "Business & Wealth Upaya",
+          "categoryDomain": "remedies",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "Friday Silver Diya",
+          "currentStreak": "4 Days",
+          "progressPercent": 30,
+          "status": "In Progress",
+          "mentorCode": "SKHM-DEV4-9988-1122",
+          "diaryNotes": "Payments started unlocking."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Deepak Saxena",
+          "selfTitle": "Seeker Applicant",
+          "spouseName": "Neelam Saxena",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "J. P. Saxena",
+          "motherName": "Maya Saxena",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Bhopal"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-devotee-10": {
+      "id": "prof-devotee-10",
+      "referenceCode": "SKHM-DEV4-4433-2211",
+      "referredByCode": "SKHM-TRN3-2233-4455",
+      "transferredCode": "",
+      "name": "Aarohi Patel",
+      "phone": "+91 97330 77665",
+      "email": "aarohi.patel@devotee.org",
+      "profileType": "DEVOTEE",
+      "level": 4,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "House Clean Level 1 and family peace.",
+      "selectedRemedies": [
+        "three_diya",
+        "healing"
+      ],
+      "address": "33 Ring Road",
+      "city": "Surat, Gujarat",
       "joinDate": "2024-08-20",
-      "houseCleanLogs": [],
-      "dailyDiyaLogs": [],
-      "inProgressSadhanas": []
+      "isActive": true,
+      "notes": "Devotee practicing daily sunset 3-diya purification.",
+      "categoryTag": "Devotee Seeker",
+      "seekerDiagnostics": {
+        "afflictionDuration": "8 Months",
+        "kuldeviIssues": "Pending",
+        "targetOutcome": "Calm household environment"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-d10-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 30,
+          "cleanedDetails": "Purifying main entryway with sea salt.",
+          "mentorCode": "SKHM-TRN3-2233-4455",
+          "mentorName": "Rajeshwari Joshi",
+          "mentorRemarks": "Under review.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-d10-1",
+          "sadhanaKey": "three_diya",
+          "title": "Three Diya Process",
+          "categoryDomain": "remedies",
+          "isPaid": false,
+          "paymentStatus": "FREE",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "3 Diyas at Sunset",
+          "currentStreak": "5 Days",
+          "progressPercent": 25,
+          "status": "In Progress",
+          "mentorCode": "SKHM-TRN3-2233-4455",
+          "diaryNotes": "Peace observed."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Aarohi Patel",
+          "selfTitle": "Devotee Seeker",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "Nitin Patel",
+          "motherName": "Geeta Patel",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Surat"
+        }
+      }
+    },
+    "prof-devotee-11": {
+      "id": "prof-devotee-11",
+      "referenceCode": "SKHM-DEV4-5544-3322",
+      "referredByCode": "SKHM-TRN3-6677-8899",
+      "transferredCode": "",
+      "name": "Meera Nair",
+      "phone": "+91 97440 88776",
+      "email": "meera.nair@devotee.org",
+      "profileType": "DEVOTEE",
+      "level": 4,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Spiritual protection, evil eye shielding, and aura fortification.",
+      "selectedRemedies": [
+        "nazar_suraksha",
+        "aura_strengthening"
+      ],
+      "address": "5 Marine Drive",
+      "city": "Kochi, Kerala",
+      "joinDate": "2024-08-22",
+      "isActive": true,
+      "notes": "Devotee practicing daily Nazar Suraksha rituals.",
+      "categoryTag": "Devotee Seeker",
+      "seekerDiagnostics": {
+        "afflictionDuration": "2 Years",
+        "kuldeviIssues": "Done",
+        "targetOutcome": "Dissolve physical exhaustion"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "nazar_suraksha",
+          "name": "Nazar Suraksha & Evil Eye Shield",
+          "category": "Cleansing & Healing",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-d11-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 45,
+          "cleanedDetails": "Rai and salt cleansing twice weekly.",
+          "mentorCode": "SKHM-TRN3-6677-8899",
+          "mentorName": "Rohan Verma",
+          "mentorRemarks": "Good energetic clearance.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-d11-1",
+          "sadhanaKey": "nazar_suraksha",
+          "title": "Nazar Suraksha & Evil Eye Shield",
+          "categoryDomain": "cleansing",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "Tuesday & Saturday Godhuli Bela",
+          "currentStreak": "6 Days",
+          "progressPercent": 40,
+          "status": "In Progress",
+          "mentorCode": "SKHM-TRN3-6677-8899",
+          "diaryNotes": "Headaches relieved."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Meera Nair",
+          "selfTitle": "Devotee Seeker",
+          "spouseName": "Ajay Nair",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Madhavan Nair",
+          "motherName": "Lalitha Nair",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Kochi"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-devotee-12": {
+      "id": "prof-devotee-12",
+      "referenceCode": "SKHM-DEV4-6655-4433",
+      "referredByCode": "SKHM-TRN3-7788-9900",
+      "transferredCode": "",
+      "name": "Suresh Rao",
+      "phone": "+91 97550 99887",
+      "email": "suresh.rao@devotee.org",
+      "profileType": "DEVOTEE",
+      "level": 4,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "Ancestral Rin Mukti and positive vibration in home.",
+      "selectedRemedies": [
+        "karmic_debts",
+        "three_diya"
+      ],
+      "address": "101 Indiranagar",
+      "city": "Bengaluru, Karnataka",
+      "joinDate": "2024-08-25",
+      "isActive": true,
+      "notes": "Devotee initiated by Priya Sharma.",
+      "categoryTag": "Devotee Seeker",
+      "seekerDiagnostics": {
+        "afflictionDuration": "1 Year",
+        "kuldeviIssues": "Under consultation",
+        "targetOutcome": "Debt settlement and harmony"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "karmic_debts",
+          "name": "Karmic Debts Fire Cleansing",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-d12-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 20,
+          "cleanedDetails": "Commencing Rin Mukteshwar havan.",
+          "mentorCode": "SKHM-TRN3-7788-9900",
+          "mentorName": "Priya Sharma",
+          "mentorRemarks": "First cycle active.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-d12-1",
+          "sadhanaKey": "karmic_debts",
+          "title": "Karmic Debts Fire Cleansing",
+          "categoryDomain": "remedies",
+          "isPaid": false,
+          "paymentStatus": "FREE",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "Tuesday Havan",
+          "currentStreak": "2 Days",
+          "progressPercent": 20,
+          "status": "In Progress",
+          "mentorCode": "SKHM-TRN3-7788-9900",
+          "diaryNotes": "Red lentils offering done."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Suresh Rao",
+          "selfTitle": "Devotee Seeker",
+          "spouseName": "Shalini Rao",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Venkatesh Rao",
+          "motherName": "Padma Rao",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Bengaluru"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-seeker-10": {
+      "id": "prof-seeker-10",
+      "referenceCode": "SKDV-SEEK-4433-2211",
+      "referredByCode": "SKHM-DEV4-4433-2211",
+      "transferredCode": "",
+      "name": "Kavita Rao",
+      "phone": "+91 97660 11223",
+      "email": "kavita.rao@seeker.org",
+      "profileType": "SEEKER",
+      "level": 5,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "Sadhana initiation and 3-Diya house purification.",
+      "selectedRemedies": [
+        "three_diya",
+        "healing"
+      ],
+      "address": "44 Ring Road",
+      "city": "Surat, Gujarat",
+      "joinDate": "2024-08-26",
+      "isActive": true,
+      "notes": "Level 5 Seeker in 24h verification window paired 1:1 with Devotee Aarohi Patel and Trainee Rajeshwari Joshi.",
+      "categoryTag": "Seeker Intake (24h Window)",
+      "seekerDiagnostics": {
+        "afflictionDuration": "5 Months",
+        "kuldeviIssues": "Consultation in progress",
+        "targetOutcome": "Household harmony"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [],
+      "traineeSadhanas": [],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Kavita Rao",
+          "selfTitle": "Seeker Applicant",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-seeker-11": {
+      "id": "prof-seeker-11",
+      "referenceCode": "SKDV-SEEK-5544-3322",
+      "referredByCode": "SKHM-DEV4-5544-3322",
+      "transferredCode": "",
+      "name": "Rahul Sen",
+      "phone": "+91 97770 22334",
+      "email": "rahul.sen@seeker.org",
+      "profileType": "SEEKER",
+      "level": 5,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Protection against negative energies and evil eye.",
+      "selectedRemedies": [
+        "nazar_suraksha"
+      ],
+      "address": "12 Beach Road",
+      "city": "Kochi, Kerala",
+      "joinDate": "2024-08-28",
+      "isActive": true,
+      "notes": "Level 5 Seeker in 24h verification window paired 1:1 with Devotee Meera Nair and Trainee Rohan Verma.",
+      "categoryTag": "Seeker Intake (24h Window)",
+      "seekerDiagnostics": {
+        "afflictionDuration": "1 Year",
+        "kuldeviIssues": "Blessings requested",
+        "targetOutcome": "Astral protection"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "nazar_suraksha",
+          "name": "Nazar Suraksha Shield",
+          "category": "Cleansing & Healing",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [],
+      "traineeSadhanas": [],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Rahul Sen",
+          "selfTitle": "Seeker Applicant",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-seeker-12": {
+      "id": "prof-seeker-12",
+      "referenceCode": "SKDV-SEEK-6655-4433",
+      "referredByCode": "SKHM-DEV4-6655-4433",
+      "transferredCode": "",
+      "name": "Manish Joshi",
+      "phone": "+91 97880 33445",
+      "email": "manish.joshi@seeker.org",
+      "profileType": "SEEKER",
+      "level": 5,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "Karmic clearance and financial breakthrough.",
+      "selectedRemedies": [
+        "karmic_debts"
+      ],
+      "address": "88 Gandhi Bazaar",
+      "city": "Bengaluru, Karnataka",
+      "joinDate": "2024-08-30",
+      "isActive": true,
+      "notes": "Level 5 Seeker in 24h verification window paired 1:1 with Devotee Suresh Rao and Trainee Priya Sharma.",
+      "categoryTag": "Seeker Intake (24h Window)",
+      "seekerDiagnostics": {
+        "afflictionDuration": "2 Years",
+        "kuldeviIssues": "Consultation booked",
+        "targetOutcome": "Peace and abundance"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "karmic_debts",
+          "name": "Karmic Debts Remedy",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [],
+      "traineeSadhanas": [],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Manish Joshi",
+          "selfTitle": "Seeker Applicant",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
     }
   },
-  "pairing_invites": {
-    "pair_token_778899": {
-      "token": "pair_token_778899",
-      "pin": "778899",
+  "pairing_invites": [
+    {
+      "id": "inv-01",
       "sponsorCode": "SKHM-ADM1-7788-9900",
-      "targetDevoteeId": "prof_devotee_suresh",
-      "status": "APPROVED",
-      "expiresAt": 1789214400000,
-      "createdAt": 1789128000000
+      "seekerName": "Ananya Sharma",
+      "seekerPhone": "+91 98112 33445",
+      "seekerDeviceModel": "Samsung Galaxy SM-G998B",
+      "hardwareNonce": "HW-FPRINT-8891-9921",
+      "telegramLink": "https://t.me/SpiritualKarimBot?start=pair_SKHMADM177889900",
+      "apkDownloadUrl": "https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk",
+      "createdAtMs": 1789297004884,
+      "expiresAtMs": 1789383404884,
+      "status": "PENDING",
+      "resendCount": 0,
+      "lastResendTimestamp": 1789297004884,
+      "formattedCreatedTime": "Today • 1h ago"
+    },
+    {
+      "id": "inv-02",
+      "sponsorCode": "SKHM-ADM1-7788-9900",
+      "seekerName": "Vikram Aditya",
+      "seekerPhone": "+91 98223 44556",
+      "seekerDeviceModel": "OnePlus 11 5G",
+      "hardwareNonce": "HW-FPRINT-1122-3344",
+      "telegramLink": "https://t.me/SpiritualKarimBot?start=pair_SKHMADM177889900",
+      "apkDownloadUrl": "https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk",
+      "createdAtMs": 1789214204885,
+      "expiresAtMs": 1789300603885,
+      "status": "EXPIRED",
+      "resendCount": 1,
+      "lastResendTimestamp": 1789214204885,
+      "formattedCreatedTime": "Yesterday"
     }
-  },
+  ],
   "sadhana_catalog": {
     "sri_yantra": {
       "id": "sri_yantra",
@@ -179,7 +1718,10 @@
       "gpsSpoofDetected": false,
       "airplaneModeDetected": false,
       "cloudSyncState": "SYNCED"
-    }
+    },
+    "deviceId": "test-device-01",
+    "battery": 94,
+    "isSecure": true
   },
   "system_config": {
     "appName": "Spiritual Karim Admin",
@@ -195,7 +1737,8 @@
     "otpMaxAttempts": 3,
     "autoSaveMode": "INSTANT",
     "defaultRoleMode": "MASTER",
-    "speechLang": "en-US"
+    "speechLang": "en-US",
+    "defaultTargetMalas": 21
   },
   "lineage_graph": {
     "SKHM-ADM1-7788-9900": {
@@ -203,21 +1746,27 @@
       "name": "Spiritual Karim Khan (Founder)",
       "parentCode": "ROOT",
       "depth": 1,
-      "downline": ["SKHM-HLR2-1122-3344"]
+      "downline": [
+        "SKHM-HLR2-1122-3344"
+      ]
     },
     "SKHM-HLR2-1122-3344": {
       "code": "SKHM-HLR2-1122-3344",
       "name": "Anand Mohan Sharma",
       "parentCode": "SKHM-ADM1-7788-9900",
       "depth": 2,
-      "downline": ["SKHM-TRN4-5566-7788"]
+      "downline": [
+        "SKHM-TRN4-5566-7788"
+      ]
     },
     "SKHM-TRN4-5566-7788": {
       "code": "SKHM-TRN4-5566-7788",
       "name": "Radha Devi",
       "parentCode": "SKHM-HLR2-1122-3344",
       "depth": 3,
-      "downline": ["SKHM-DEV5-9988-1122"]
+      "downline": [
+        "SKHM-DEV5-9988-1122"
+      ]
     },
     "SKHM-DEV5-9988-1122": {
       "code": "SKHM-DEV5-9988-1122",
@@ -244,11 +1793,83 @@
       "devoteeId": "prof_master_karim",
       "date": "2026-09-11",
       "streakCount": 254,
-      "oilTypes": ["Cow Ghee"],
+      "oilTypes": [
+        "Cow Ghee"
+      ],
       "timestamp": 1789128000000
     }
   ],
   "audit_logs": [
+    {
+      "id": "log-mtysgtpm",
+      "timestamp": 1789241962090,
+      "isoTime": "2026-09-12T19:39:22.090Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyrtlys",
+      "timestamp": 1789240878964,
+      "isoTime": "2026-09-12T19:21:18.964Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyrc5yl",
+      "timestamp": 1789240065069,
+      "isoTime": "2026-09-12T19:07:45.069Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyi2tpa",
+      "timestamp": 1789224512734,
+      "isoTime": "2026-09-12T14:48:32.734Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyhd36c",
+      "timestamp": 1789223311956,
+      "isoTime": "2026-09-12T14:28:31.956Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtygpys5",
+      "timestamp": 1789222233173,
+      "isoTime": "2026-09-12T14:10:33.173Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtygbmk0",
+      "timestamp": 1789221564144,
+      "isoTime": "2026-09-12T13:59:24.144Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyfxj8k",
+      "timestamp": 1789220906660,
+      "isoTime": "2026-09-12T13:48:26.660Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyfkazm",
+      "timestamp": 1789220289442,
+      "isoTime": "2026-09-12T13:38:09.442Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyfijzj",
+      "timestamp": 1789220207791,
+      "isoTime": "2026-09-12T13:36:47.791Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
     {
       "auditId": "aud_001",
       "action": "SYSTEM_INITIALIZATION",
@@ -280,5 +1901,2675 @@
       "role": "DEVOTEE",
       "active": true
     }
-  }
+  },
+  "component_states": {
+    "activeToggle": "right",
+    "darkSwitch": false
+  },
+  "last_component_state_update": 1789299859922,
+  "auth_matrix": [
+    {
+      "id": "tab_devotee_personal",
+      "name": "Tab 1: Devotee Personal",
+      "label": "Tab 1: Devotee Personal",
+      "type": "SCREEN",
+      "selector": "#tab-devotee-personal",
+      "category": "Tab 1: Devotee Personal",
+      "level": 0,
+      "parent": null,
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "devotee_sub_identity",
+      "name": "Personal Identity Panel",
+      "label": "Personal Identity Panel",
+      "type": "SUBTAB",
+      "selector": "#devotee-sub-identity",
+      "category": "Tab 1: Devotee Personal",
+      "level": 1,
+      "parent": "tab_devotee_personal",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "devotee_card_contact_data",
+      "name": "Personal Contact & Residential Data",
+      "label": "Personal Contact & Residential Data",
+      "type": "CARD",
+      "selector": "#devotee-sub-identity .card:first-child",
+      "category": "Tab 1: Devotee Personal",
+      "level": 2,
+      "parent": "devotee_sub_identity",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "devotee_card_identity_config",
+      "name": "Role & Reference Code Config",
+      "label": "Role & Reference Code Config",
+      "type": "CARD",
+      "selector": "#devotee-sub-identity .card:nth-child(2)",
+      "category": "Tab 1: Devotee Personal",
+      "level": 2,
+      "parent": "devotee_sub_identity",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "btn_edit_identity",
+      "name": "Edit Identity Button",
+      "label": "Edit Identity Button",
+      "type": "BUTTON",
+      "selector": "#btn-edit-identity",
+      "category": "Tab 1: Devotee Personal",
+      "level": 2,
+      "parent": "devotee_sub_identity",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_reset_identity",
+      "name": "Reset Identity Button",
+      "label": "Reset Identity Button",
+      "type": "BUTTON",
+      "selector": "#btn-reset-identity",
+      "category": "Tab 1: Devotee Personal",
+      "level": 2,
+      "parent": "devotee_sub_identity",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "devotee_sub_lineage",
+      "name": "3-Gen Ancestral Lineage Panel",
+      "label": "3-Gen Ancestral Lineage Panel",
+      "type": "SUBTAB",
+      "selector": "#devotee-sub-lineage",
+      "category": "Tab 1: Devotee Personal",
+      "level": 1,
+      "parent": "tab_devotee_personal",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "devotee_card_lineage_tree",
+      "name": "Ancestral Lineage Hierarchy Card",
+      "label": "Ancestral Lineage Hierarchy Card",
+      "type": "CARD",
+      "selector": "#devotee-sub-lineage .card",
+      "category": "Tab 1: Devotee Personal",
+      "level": 2,
+      "parent": "devotee_sub_lineage",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "btn_add_lineage_node",
+      "name": "Add Custom Lineage Node",
+      "label": "Add Custom Lineage Node",
+      "type": "BUTTON",
+      "selector": "#btn-add-lineage-node",
+      "category": "Tab 1: Devotee Personal",
+      "level": 2,
+      "parent": "devotee_sub_lineage",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_reset_lineage",
+      "name": "Reset Lineage Button",
+      "label": "Reset Lineage Button",
+      "type": "BUTTON",
+      "selector": "#btn-reset-lineage",
+      "category": "Tab 1: Devotee Personal",
+      "level": 2,
+      "parent": "devotee_sub_lineage",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "devotee_sub_houseclean",
+      "name": "House Clean (All Levels) Panel",
+      "label": "House Clean (All Levels) Panel",
+      "type": "SUBTAB",
+      "selector": "#devotee-sub-houseclean",
+      "category": "Tab 1: Devotee Personal",
+      "level": 1,
+      "parent": "tab_devotee_personal",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "devotee_card_houseclean",
+      "name": "House Clean Purification Card",
+      "label": "House Clean Purification Card",
+      "type": "CARD",
+      "selector": "#devotee-sub-houseclean .card",
+      "category": "Tab 1: Devotee Personal",
+      "level": 2,
+      "parent": "devotee_sub_houseclean",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "btn_add_houseclean_record",
+      "name": "Add Level Record",
+      "label": "Add Level Record",
+      "type": "BUTTON",
+      "selector": "#btn-add-houseclean-record",
+      "category": "Tab 1: Devotee Personal",
+      "level": 2,
+      "parent": "devotee_sub_houseclean",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_reset_houseclean",
+      "name": "Reset All Levels",
+      "label": "Reset All Levels",
+      "type": "BUTTON",
+      "selector": "#btn-reset-houseclean",
+      "category": "Tab 1: Devotee Personal",
+      "level": 2,
+      "parent": "devotee_sub_houseclean",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "tab_seeker_purpose",
+      "name": "Tab 2: Seeker Purpose",
+      "label": "Tab 2: Seeker Purpose",
+      "type": "SCREEN",
+      "selector": "#tab-seeker-purpose",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 0,
+      "parent": null,
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "seeker_sub_purpose",
+      "name": "Spiritual Purpose & Goals Panel",
+      "label": "Spiritual Purpose & Goals Panel",
+      "type": "SUBTAB",
+      "selector": "#seeker-sub-purpose",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 1,
+      "parent": "tab_seeker_purpose",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "seeker_card_purpose_diagnostics",
+      "name": "Purpose & Diagnostics Card",
+      "label": "Purpose & Diagnostics Card",
+      "type": "CARD",
+      "selector": "#seeker-sub-purpose .card:first-child",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_purpose",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "seeker_card_remedies_catalog",
+      "name": "Prescribed Remedies Catalog Card",
+      "label": "Prescribed Remedies Catalog Card",
+      "type": "CARD",
+      "selector": "#seeker-sub-purpose .card:nth-child(2)",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_purpose",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "seeker_remedy_filter_toolbar",
+      "name": "Remedy Search & Filter Toolbar",
+      "label": "Remedy Search & Filter Toolbar",
+      "type": "SECTION",
+      "selector": ".remedy-filter-toolbar",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_purpose",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "seeker_remedy_category_1",
+      "name": "Divine Remedies & Fire Havans",
+      "label": "Divine Remedies & Fire Havans",
+      "type": "SECTION",
+      "selector": "#seeker-sub-purpose .remedy-category-group:first-child",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_purpose",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "seeker_remedy_category_2",
+      "name": "Energy Cleansing & Karmic Healing",
+      "label": "Energy Cleansing & Karmic Healing",
+      "type": "SECTION",
+      "selector": "#seeker-sub-purpose .remedy-category-group:nth-child(2)",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_purpose",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "btn_add_purpose_goal",
+      "name": "Add Purpose Goal",
+      "label": "Add Purpose Goal",
+      "type": "BUTTON",
+      "selector": "#btn-add-purpose-goal",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_purpose",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_add_custom_remedy_purpose",
+      "name": "Add Custom Remedy",
+      "label": "Add Custom Remedy",
+      "type": "BUTTON",
+      "selector": "#btn-add-custom-remedy-purpose",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_purpose",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "seeker_sub_houseclean",
+      "name": "House Clean Verification Status Panel",
+      "label": "House Clean Verification Status Panel",
+      "type": "SUBTAB",
+      "selector": "#seeker-sub-houseclean",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 1,
+      "parent": "tab_seeker_purpose",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "seeker_card_houseclean_logs",
+      "name": "House Clean Verification Logs Card",
+      "label": "House Clean Verification Logs Card",
+      "type": "CARD",
+      "selector": "#seeker-sub-houseclean .card",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_houseclean",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "btn_add_seeker_clean_log",
+      "name": "Add Clean Log",
+      "label": "Add Clean Log",
+      "type": "BUTTON",
+      "selector": "#btn-add-seeker-clean-log",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_houseclean",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "seeker_sub_sadhanas",
+      "name": "Sadhanas Interested Panel",
+      "label": "Sadhanas Interested Panel",
+      "type": "SUBTAB",
+      "selector": "#seeker-sub-sadhanas",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 1,
+      "parent": "tab_seeker_purpose",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "seeker_card_sadhanas_catalog",
+      "name": "Interested Sadhanas Catalog Card",
+      "label": "Interested Sadhanas Catalog Card",
+      "type": "CARD",
+      "selector": "#seeker-sub-sadhanas .card",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_sadhanas",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "seeker_sadhana_listbox",
+      "name": "Sacred Sadhana Listbox",
+      "label": "Sacred Sadhana Listbox",
+      "type": "SECTION",
+      "selector": "#sadhana-listbox-wrap",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_sadhanas",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "btn_add_custom_sadhana",
+      "name": "Add Custom Sadhana",
+      "label": "Add Custom Sadhana",
+      "type": "BUTTON",
+      "selector": "#btn-add-custom-sadhana",
+      "category": "Tab 2: Seeker Purpose",
+      "level": 2,
+      "parent": "seeker_sub_sadhanas",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "tab_trainee_sadhak",
+      "name": "Tab 3: Trainee Sadhak",
+      "label": "Tab 3: Trainee Sadhak",
+      "type": "SCREEN",
+      "selector": "#tab-trainee-sadhak",
+      "category": "Tab 3: Trainee Sadhak",
+      "level": 0,
+      "parent": null,
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "trainee_card_dashboard",
+      "name": "In-Progress Dashboard Card",
+      "label": "In-Progress Dashboard Card",
+      "type": "CARD",
+      "selector": "#tab-trainee-sadhak .card",
+      "category": "Tab 3: Trainee Sadhak",
+      "level": 1,
+      "parent": "tab_trainee_sadhak",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "trainee_card_pair_status",
+      "name": "Mentor Pairing Status Card",
+      "label": "Mentor Pairing Status Card",
+      "type": "CARD",
+      "selector": "#trainee-mentor-status-card, .mentor-pairing-info-card",
+      "category": "Tab 3: Trainee Sadhak",
+      "level": 1,
+      "parent": "tab_trainee_sadhak",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "trainee_split_workspace",
+      "name": "Master-Detail Split Workspace",
+      "label": "Master-Detail Split Workspace",
+      "type": "PANEL",
+      "selector": ".trainee-split-workspace",
+      "category": "Tab 3: Trainee Sadhak",
+      "level": 1,
+      "parent": "tab_trainee_sadhak",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "trainee_left_panel",
+      "name": "Left Panel — Categorized Tiles",
+      "label": "Left Panel — Categorized Tiles",
+      "type": "PANEL",
+      "selector": ".trainee-left-panel",
+      "category": "Tab 3: Trainee Sadhak",
+      "level": 2,
+      "parent": "trainee_split_workspace",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "trainee_sadhanas_group",
+      "name": "Sacred Sadhanas In-Progress",
+      "label": "Sacred Sadhanas In-Progress",
+      "type": "SECTION",
+      "selector": "#trainee-sadhanas-group-sadhanas",
+      "category": "Tab 3: Trainee Sadhak",
+      "level": 2,
+      "parent": "trainee_left_panel",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "trainee_remedies_group",
+      "name": "Divine Remedies In-Progress",
+      "label": "Divine Remedies In-Progress",
+      "type": "SECTION",
+      "selector": "#trainee-sadhanas-group-remedies",
+      "category": "Tab 3: Trainee Sadhak",
+      "level": 2,
+      "parent": "trainee_left_panel",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "trainee_cleansing_group",
+      "name": "Energy Cleansing In-Progress",
+      "label": "Energy Cleansing In-Progress",
+      "type": "SECTION",
+      "selector": "#trainee-sadhanas-group-cleansing",
+      "category": "Tab 3: Trainee Sadhak",
+      "level": 2,
+      "parent": "trainee_left_panel",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "trainee_right_panel",
+      "name": "Right Panel — Progress Graphics",
+      "label": "Right Panel — Progress Graphics",
+      "type": "PANEL",
+      "selector": ".trainee-right-panel",
+      "category": "Tab 3: Trainee Sadhak",
+      "level": 2,
+      "parent": "trainee_split_workspace",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_add_trainee_sadhana",
+      "name": "Add In-Progress Sadhana",
+      "label": "Add In-Progress Sadhana",
+      "type": "BUTTON",
+      "selector": "#btn-add-trainee-sadhana",
+      "category": "Tab 3: Trainee Sadhak",
+      "level": 1,
+      "parent": "tab_trainee_sadhak",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_open_goli_gyan",
+      "name": "Goli Gyan Guide Button",
+      "label": "Goli Gyan Guide Button",
+      "type": "BUTTON",
+      "selector": "#btn-open-goli-gyan",
+      "category": "Tab 3: Trainee Sadhak",
+      "level": 1,
+      "parent": "tab_trainee_sadhak",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "tab_healer_connect",
+      "name": "Tab 4: Healer Connect",
+      "label": "Tab 4: Healer Connect",
+      "type": "SCREEN",
+      "selector": "#tab-healer-connect",
+      "category": "Tab 4: Healer Connect",
+      "level": 0,
+      "parent": null,
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "healer_hub_banner",
+      "name": "Multilevel Organization Hub Banner",
+      "label": "Multilevel Organization Hub Banner",
+      "type": "CARD",
+      "selector": ".healers-hub-banner-card",
+      "category": "Tab 4: Healer Connect",
+      "level": 1,
+      "parent": "tab_healer_connect",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "healer_metrics_strip",
+      "name": "Hub Metrics Strip",
+      "label": "Hub Metrics Strip",
+      "type": "SECTION",
+      "selector": ".healers-metrics-strip, #healers-hub-metrics-strip",
+      "category": "Tab 4: Healer Connect",
+      "level": 1,
+      "parent": "tab_healer_connect",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "healer_search_controls",
+      "name": "Search & Filter Controls",
+      "label": "Search & Filter Controls",
+      "type": "SECTION",
+      "selector": ".healers-hub-controls",
+      "category": "Tab 4: Healer Connect",
+      "level": 1,
+      "parent": "tab_healer_connect",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "healer_layout_toggle",
+      "name": "Directory Layout Toggle (Grid vs Table)",
+      "label": "Directory Layout Toggle (Grid vs Table)",
+      "type": "SECTION",
+      "selector": "#healers-layout-toggle-bar",
+      "category": "Tab 4: Healer Connect",
+      "level": 1,
+      "parent": "tab_healer_connect",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "healer_hub_cards",
+      "name": "Profile Cards Grid Container",
+      "label": "Profile Cards Grid Container",
+      "type": "PANEL",
+      "selector": "#healers-hub-cards-container",
+      "category": "Tab 4: Healer Connect",
+      "level": 1,
+      "parent": "tab_healer_connect",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "healer_hub_table",
+      "name": "Healers Hub Table Container",
+      "label": "Healers Hub Table Container",
+      "type": "PANEL",
+      "selector": "#healers-hub-table-container",
+      "category": "Tab 4: Healer Connect",
+      "level": 1,
+      "parent": "tab_healer_connect",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "healer_card_completed_sadhanas",
+      "name": "Completed Sadhanas & Certifications",
+      "label": "Completed Sadhanas & Certifications",
+      "type": "CARD",
+      "selector": "#tab-healer-connect .card:first-child",
+      "category": "Tab 4: Healer Connect",
+      "level": 1,
+      "parent": "tab_healer_connect",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "healer_card_mentorship_network",
+      "name": "Mentorship Network Card",
+      "label": "Mentorship Network Card",
+      "type": "CARD",
+      "selector": "#tab-healer-connect .card:nth-child(2)",
+      "category": "Tab 4: Healer Connect",
+      "level": 1,
+      "parent": "tab_healer_connect",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_add_completed_sadhana",
+      "name": "Add Completed Sadhana",
+      "label": "Add Completed Sadhana",
+      "type": "BUTTON",
+      "selector": "#btn-add-completed-sadhana",
+      "category": "Tab 4: Healer Connect",
+      "level": 1,
+      "parent": "tab_healer_connect",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_add_connected_devotee",
+      "name": "Link Devotee Button",
+      "label": "Link Devotee Button",
+      "type": "BUTTON",
+      "selector": "#btn-add-connected-devotee",
+      "category": "Tab 4: Healer Connect",
+      "level": 1,
+      "parent": "tab_healer_connect",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_open_healers_tree",
+      "name": "5-Level Tree Button",
+      "label": "5-Level Tree Button",
+      "type": "BUTTON",
+      "selector": "#btn-open-healers-tree",
+      "category": "Tab 4: Healer Connect",
+      "level": 1,
+      "parent": "tab_healer_connect",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "tab_genealogy_tree",
+      "name": "Tab 5: Genealogy Tree",
+      "label": "Tab 5: Genealogy Tree",
+      "type": "SCREEN",
+      "selector": "#tab-genealogy-tree",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 0,
+      "parent": null,
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "genealogy_card_hierarchy",
+      "name": "Organization Hierarchy Tree Card",
+      "label": "Organization Hierarchy Tree Card",
+      "type": "CARD",
+      "selector": "#tab-genealogy-tree .card",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 1,
+      "parent": "tab_genealogy_tree",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "genealogy_level_filter_chips",
+      "name": "Level Generation Filter Chips",
+      "label": "Level Generation Filter Chips",
+      "type": "SECTION",
+      "selector": "#hierarchy-level-filter-chips",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 1,
+      "parent": "tab_genealogy_tree",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_view_recursive",
+      "name": "5-Level List View Toggle",
+      "label": "5-Level List View Toggle",
+      "type": "BUTTON",
+      "selector": "#btn-view-recursive",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 1,
+      "parent": "tab_genealogy_tree",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_view_canvas",
+      "name": "Canvas View Toggle",
+      "label": "Canvas View Toggle",
+      "type": "BUTTON",
+      "selector": "#btn-view-canvas",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 1,
+      "parent": "tab_genealogy_tree",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "genealogy_recursive_tree",
+      "name": "5-Level Recursive Tree View",
+      "label": "5-Level Recursive Tree View",
+      "type": "PANEL",
+      "selector": "#hierarchy-recursive-tree-view",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 1,
+      "parent": "tab_genealogy_tree",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "genealogy_canvas_tree",
+      "name": "Spiderweb Canvas View",
+      "label": "Spiderweb Canvas View",
+      "type": "PANEL",
+      "selector": "#hierarchy-canvas-tree-view",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 1,
+      "parent": "tab_genealogy_tree",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "genealogy_tree_toolbar",
+      "name": "Canvas Toolbar",
+      "label": "Canvas Toolbar",
+      "type": "SECTION",
+      "selector": ".body-tree-toolbar",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 2,
+      "parent": "genealogy_canvas_tree",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_body_smart_fit",
+      "name": "Smart Fit Button",
+      "label": "Smart Fit Button",
+      "type": "BUTTON",
+      "selector": "#btn-body-smart-fit",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 2,
+      "parent": "genealogy_tree_toolbar",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_body_zoom_in",
+      "name": "Zoom In Button",
+      "label": "Zoom In Button",
+      "type": "BUTTON",
+      "selector": "#btn-body-zoom-in",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 2,
+      "parent": "genealogy_tree_toolbar",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_body_zoom_out",
+      "name": "Zoom Out Button",
+      "label": "Zoom Out Button",
+      "type": "BUTTON",
+      "selector": "#btn-body-zoom-out",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 2,
+      "parent": "genealogy_tree_toolbar",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_body_zoom_reset",
+      "name": "Reset Zoom Button",
+      "label": "Reset Zoom Button",
+      "type": "BUTTON",
+      "selector": "#btn-body-zoom-reset",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 2,
+      "parent": "genealogy_tree_toolbar",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "genealogy_tree_search",
+      "name": "Canvas Member Search Bar",
+      "label": "Canvas Member Search Bar",
+      "type": "SECTION",
+      "selector": ".tree-search-wrap",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 2,
+      "parent": "genealogy_canvas_tree",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "genealogy_tree_footer",
+      "name": "Canvas Footer Bar",
+      "label": "Canvas Footer Bar",
+      "type": "SECTION",
+      "selector": ".body-tree-footer-bar",
+      "category": "Tab 5: Genealogy Tree",
+      "level": 2,
+      "parent": "genealogy_canvas_tree",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "tab_firebase_data",
+      "name": "Tab 6: Firebase Data",
+      "label": "Tab 6: Firebase Data",
+      "type": "SCREEN",
+      "selector": "#tab-firebase-data",
+      "category": "Tab 6: Firebase Data",
+      "level": 0,
+      "parent": null,
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "firebase_hero_card",
+      "name": "Firebase Hero & Telemetry Card",
+      "label": "Firebase Hero & Telemetry Card",
+      "type": "CARD",
+      "selector": ".rtdb-hero-card",
+      "category": "Tab 6: Firebase Data",
+      "level": 1,
+      "parent": "tab_firebase_data",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "firebase_metrics_grid",
+      "name": "Database Stat Metrics Grid",
+      "label": "Database Stat Metrics Grid",
+      "type": "SECTION",
+      "selector": ".rtdb-metrics-grid",
+      "category": "Tab 6: Firebase Data",
+      "level": 1,
+      "parent": "tab_firebase_data",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "firebase_toolbar",
+      "name": "Interactive Toolbar",
+      "label": "Interactive Toolbar",
+      "type": "SECTION",
+      "selector": ".rtdb-toolbar-row",
+      "category": "Tab 6: Firebase Data",
+      "level": 1,
+      "parent": "tab_firebase_data",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_copy_rtdb_url",
+      "name": "Copy Firebase URL",
+      "label": "Copy Firebase URL",
+      "type": "BUTTON",
+      "selector": "#btn-copy-rtdb-url",
+      "category": "Tab 6: Firebase Data",
+      "level": 2,
+      "parent": "firebase_toolbar",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_rtdb_refresh",
+      "name": "Refresh RTDB",
+      "label": "Refresh RTDB",
+      "type": "BUTTON",
+      "selector": "#btn-rtdb-refresh",
+      "category": "Tab 6: Firebase Data",
+      "level": 2,
+      "parent": "firebase_toolbar",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_rtdb_add_node",
+      "name": "Add Node Button",
+      "label": "Add Node Button",
+      "type": "BUTTON",
+      "selector": "#btn-rtdb-add-node",
+      "category": "Tab 6: Firebase Data",
+      "level": 2,
+      "parent": "firebase_toolbar",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "btn_rtdb_export_json",
+      "name": "Export JSON Button",
+      "label": "Export JSON Button",
+      "type": "BUTTON",
+      "selector": "#btn-rtdb-export-json",
+      "category": "Tab 6: Firebase Data",
+      "level": 2,
+      "parent": "firebase_toolbar",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "firebase_filter_chips",
+      "name": "Root Collection Filter Chips",
+      "label": "Root Collection Filter Chips",
+      "type": "SECTION",
+      "selector": ".rtdb-filter-chips-bar",
+      "category": "Tab 6: Firebase Data",
+      "level": 1,
+      "parent": "tab_firebase_data",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "firebase_breadcrumbs",
+      "name": "Breadcrumb Navigation",
+      "label": "Breadcrumb Navigation",
+      "type": "SECTION",
+      "selector": ".rtdb-breadcrumbs-bar",
+      "category": "Tab 6: Firebase Data",
+      "level": 1,
+      "parent": "tab_firebase_data",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "firebase_drilldown_table",
+      "name": "Drill-Down Table Container",
+      "label": "Drill-Down Table Container",
+      "type": "PANEL",
+      "selector": "#rtdb-drilldown-table",
+      "category": "Tab 6: Firebase Data",
+      "level": 1,
+      "parent": "tab_firebase_data",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "header_division",
+      "name": "Global: Header Division",
+      "label": "Global: Header Division",
+      "type": "SCREEN",
+      "selector": ".admin-topbar, .site-header",
+      "category": "Global: Header",
+      "level": 0,
+      "parent": null,
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "header_brand",
+      "name": "Header Brand & Logo",
+      "label": "Header Brand & Logo",
+      "type": "SECTION",
+      "selector": ".topbar-brand-group",
+      "category": "Global: Header",
+      "level": 1,
+      "parent": "header_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "header_status_pill",
+      "name": "Live Cloud Sync Status Pill",
+      "label": "Live Cloud Sync Status Pill",
+      "type": "SECTION",
+      "selector": "#header-cloud-status",
+      "category": "Global: Header",
+      "level": 1,
+      "parent": "header_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "header_payment_stamp",
+      "name": "Payment Status Stamp",
+      "label": "Payment Status Stamp",
+      "type": "SECTION",
+      "selector": "#header-payment-stamp",
+      "category": "Global: Header",
+      "level": 1,
+      "parent": "header_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "header_theme_toggle",
+      "name": "Theme Toggle Button",
+      "label": "Theme Toggle Button",
+      "type": "BUTTON",
+      "selector": "#btn-theme-toggle",
+      "category": "Global: Header",
+      "level": 1,
+      "parent": "header_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "header_goli_gyan",
+      "name": "Goli Gyan Button",
+      "label": "Goli Gyan Button",
+      "type": "BUTTON",
+      "selector": "#btn-quick-goli-gyan",
+      "category": "Global: Header",
+      "level": 1,
+      "parent": "header_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "header_download_app",
+      "name": "Download App Link",
+      "label": "Download App Link",
+      "type": "BUTTON",
+      "selector": "#btn-header-download-app",
+      "category": "Global: Header",
+      "level": 1,
+      "parent": "header_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "btn_header_pending_approvals",
+      "name": "Pending Approvals Button & Notification",
+      "label": "Pending Approvals Button & Notification",
+      "type": "BUTTON",
+      "selector": "#main-tab-approval-btn, #pending-approval-notification-banner",
+      "category": "Global: Header",
+      "level": 1,
+      "parent": "header_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "header_profile_box_1",
+      "name": "Master Header Profile Card (Profile Box 1)",
+      "label": "Master Header Profile Card (Profile Box 1)",
+      "type": "CARD",
+      "selector": "#main-profile-box-1",
+      "category": "Global: Header",
+      "level": 1,
+      "parent": "header_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "devotee_card_flipper",
+      "name": "Hero 3D Profile Card Flipper & QR Pairing",
+      "label": "Hero 3D Profile Card Flipper & QR Pairing",
+      "type": "CARD",
+      "selector": "#profile-card-flipper-wrapper",
+      "category": "Global: Header",
+      "level": 2,
+      "parent": "header_profile_box_1",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "admin_hierarchy_metrics_strip",
+      "name": "Admin Master Live Metrics Strip (3 Tiles)",
+      "label": "Admin Master Live Metrics Strip (3 Tiles)",
+      "type": "SECTION",
+      "selector": "#admin-hierarchy-metrics-strip",
+      "category": "Global: Header",
+      "level": 1,
+      "parent": "header_division",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "tier_profiles_panel",
+      "name": "Hierarchy Tier Ribbon & Flyout Panel",
+      "label": "Hierarchy Tier Ribbon & Flyout Panel",
+      "type": "PANEL",
+      "selector": "#tier-profiles-panel",
+      "category": "Global: Header",
+      "level": 1,
+      "parent": "header_division",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "selected_member_profile_card",
+      "name": "Selected Member Profile Card (Profile Box 2)",
+      "label": "Selected Member Profile Card (Profile Box 2)",
+      "type": "CARD",
+      "selector": "#selected-member-profile-card",
+      "category": "Global: Header",
+      "level": 1,
+      "parent": "header_division",
+      "MASTER": false,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": false,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "sidebar_division",
+      "name": "Global: Sidebar Division",
+      "label": "Global: Sidebar Division",
+      "type": "SCREEN",
+      "selector": "#admin-sidebar, .admin-sidebar",
+      "category": "Global: Sidebar",
+      "level": 0,
+      "parent": null,
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "sidebar_btn_create_profile",
+      "name": "Create New Profile Button",
+      "label": "Create New Profile Button",
+      "type": "BUTTON",
+      "selector": "#sidebar-btn-create-profile, #btn-create-profile",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "sidebar_share_pairing",
+      "name": "Share & Pair Invite Button",
+      "label": "Share & Pair Invite Button",
+      "type": "BUTTON",
+      "selector": "#sidebar-btn-share-pairing",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "sidebar_access_matrix",
+      "name": "RBAC Access Matrix Button",
+      "label": "RBAC Access Matrix Button",
+      "type": "BUTTON",
+      "selector": "#sidebar-btn-rbac-matrix",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "sidebar_modify_auth_matrix",
+      "name": "Modify Auth Matrix Button",
+      "label": "Modify Auth Matrix Button",
+      "type": "BUTTON",
+      "selector": "#sidebar-btn-modify-auth-matrix",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "sidebar_copy_ref_code",
+      "name": "Copy Ref Code Button",
+      "label": "Copy Ref Code Button",
+      "type": "BUTTON",
+      "selector": "#sidebar-btn-copy-ref-code",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "sidebar_gen_ref_code",
+      "name": "Generate Ref Code Button",
+      "label": "Generate Ref Code Button",
+      "type": "BUTTON",
+      "selector": "#sidebar-btn-gen-ref-code",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "sidebar_toggle_json_drawer",
+      "name": "View JSON Payload Button",
+      "label": "View JSON Payload Button",
+      "type": "BUTTON",
+      "selector": "#sidebar-btn-toggle-json-drawer",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "sidebar_open_rtdb",
+      "name": "Open RTDB Table Button",
+      "label": "Open RTDB Table Button",
+      "type": "BUTTON",
+      "selector": "#sidebar-btn-sidebar-open-rtdb",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "sidebar_architecture_mindmap",
+      "name": "Architecture Mind Map Link",
+      "label": "Architecture Mind Map Link",
+      "type": "BUTTON",
+      "selector": "#sidebar-btn-mindmap, a[href*=\"holistic-mind-map\"]",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "sidebar_sub_portals",
+      "name": "Sub-Portal Navigation Links",
+      "label": "Sub-Portal Navigation Links",
+      "type": "SECTION",
+      "selector": "#sidebar-dedicated-portals",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "sidebar_hierarchy_legend",
+      "name": "Hierarchy Tier Legend Container",
+      "label": "Hierarchy Tier Legend Container",
+      "type": "SECTION",
+      "selector": "#hierarchy-legend-container",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "sidebar_tools_section",
+      "name": "System Tools & Actions Section",
+      "label": "System Tools & Actions Section",
+      "type": "SECTION",
+      "selector": "#sidebar-tools-section",
+      "category": "Global: Sidebar",
+      "level": 1,
+      "parent": "sidebar_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "drawers_modals_division",
+      "name": "Global: Drawers & Modals Division",
+      "label": "Global: Drawers & Modals Division",
+      "type": "SCREEN",
+      "selector": "body",
+      "category": "Global: Drawers & Modals",
+      "level": 0,
+      "parent": null,
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "sadhana_drawer",
+      "name": "Sadhana Detail Drawer",
+      "label": "Sadhana Detail Drawer",
+      "type": "DRAWER",
+      "selector": "#sadhana-drawer",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "json_drawer",
+      "name": "JSON Payload Drawer",
+      "label": "JSON Payload Drawer",
+      "type": "DRAWER",
+      "selector": "#json-drawer",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "pending_approval_drawer",
+      "name": "Right Slide-Out Pending Approvals Drawer",
+      "label": "Right Slide-Out Pending Approvals Drawer",
+      "type": "DRAWER",
+      "selector": "#pending-approval-drawer",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "tree_profile_drawer",
+      "name": "Tree Profile Details Drawer",
+      "label": "Tree Profile Details Drawer",
+      "type": "DRAWER",
+      "selector": "#tree-profile-drawer",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "import_modal",
+      "name": "Import Mobile Profile JSON Modal",
+      "label": "Import Mobile Profile JSON Modal",
+      "type": "MODAL",
+      "selector": "#import-modal",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "goli_gyan_modal",
+      "name": "Goli Gyan Quick Wisdom Modal",
+      "label": "Goli Gyan Quick Wisdom Modal",
+      "type": "MODAL",
+      "selector": "#goli-gyan-modal",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "admin_settings_modal",
+      "name": "Admin Settings Modal",
+      "label": "Admin Settings Modal",
+      "type": "MODAL",
+      "selector": "#admin-settings-modal",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "rbac_matrix_modal",
+      "name": "4-Tier RBAC Access Matrix Modal",
+      "label": "4-Tier RBAC Access Matrix Modal",
+      "type": "MODAL",
+      "selector": "#rbac-access-matrix-modal",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "share_pairing_modal",
+      "name": "Share & Pairing Invite Modal",
+      "label": "Share & Pairing Invite Modal",
+      "type": "MODAL",
+      "selector": "#share-pairing-modal",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "create_profile_modal",
+      "name": "Create Custom Profile Modal",
+      "label": "Create Custom Profile Modal",
+      "type": "MODAL",
+      "selector": "#create-profile-modal",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "modal_mentor_decision_dialog",
+      "name": "Mentor Decision Dialog Modal",
+      "label": "Mentor Decision Dialog Modal",
+      "type": "MODAL",
+      "selector": "#modal-mentor-decision-dialog",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "modal_document_preview",
+      "name": "Document Preview Modal",
+      "label": "Document Preview Modal",
+      "type": "MODAL",
+      "selector": "#modal-document-preview",
+      "category": "Global: Drawers & Modals",
+      "level": 1,
+      "parent": "drawers_modals_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "footer_division",
+      "name": "Global: Footer Division",
+      "label": "Global: Footer Division",
+      "type": "SCREEN",
+      "selector": "footer, .admin-footer-bar",
+      "category": "Global: Footer",
+      "level": 0,
+      "parent": null,
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "footer_save_status",
+      "name": "Save Status Indicator",
+      "label": "Save Status Indicator",
+      "type": "SECTION",
+      "selector": "#save-status-indicator",
+      "category": "Global: Footer",
+      "level": 1,
+      "parent": "footer_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    },
+    {
+      "id": "footer_delete_profile",
+      "name": "Delete Profile Button",
+      "label": "Delete Profile Button",
+      "type": "BUTTON",
+      "selector": "#btn-delete-profile",
+      "category": "Global: Footer",
+      "level": 1,
+      "parent": "footer_division",
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": false,
+      "DEVOTEE": false,
+      "SEEKER": false,
+      "portalVisible": {
+        "masters": true,
+        "healers": false,
+        "trainee": false,
+        "devotee": false,
+        "seeker": false
+      }
+    },
+    {
+      "id": "footer_save_sync",
+      "name": "Save & Sync Button",
+      "label": "Save & Sync Button",
+      "type": "BUTTON",
+      "selector": "#profile-admin-form button[type=\"submit\"], #btn-save-profile",
+      "category": "Global: Footer",
+      "level": 1,
+      "parent": "footer_division",
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true,
+      "SEEKER": true,
+      "portalVisible": {
+        "masters": true,
+        "healers": true,
+        "trainee": true,
+        "devotee": true,
+        "seeker": true
+      }
+    }
+  ],
+  "last_matrix_update": 1789306890938
 }

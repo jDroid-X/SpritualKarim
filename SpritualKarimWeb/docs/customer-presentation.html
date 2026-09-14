@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Architecture &amp; Customer Presentation • Shree Spritual Karim Sansthan</title>
+<meta name="description" content="High-level executive architecture presentation for Shree Spritual Karim Sansthan - 4 Tiers, 11 Relational Collections, 5 Sacred Pillars, and Interactive Hierarchy Tree.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="framework/tree-reorder.css">
+<style>
+:root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --txt: #0f172a;
+  --txt-muted: #64748b;
+  --gold: #b8960c;
+  --gold-light: #fef9c3;
+  --gold-border: #fde047;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --amber: #d97706;
+  --amber-light: #fffbeb;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 14px -2px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  line-height: 1.5;
+  padding-bottom: 4rem;
+}
+
+/* BRAND HEADER - LIGHT LUXURY THEME */
+.header {
+  background: #ffffff;
+  border-bottom: 2px solid var(--gold-border);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.header-emblem { font-size: 2rem; margin-bottom: 0.25rem; }
+.header-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: 0.5px;
+}
+.header-subtitle {
+  font-size: 0.92rem;
+  color: var(--txt-muted);
+  margin-top: 0.35rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.header-tags {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.htag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid;
+}
+.htag-gold { background: var(--gold-light); color: #854d0e; border-color: var(--gold-border); }
+.htag-blue { background: var(--blue-light); color: var(--blue); border-color: #bfdbfe; }
+.htag-green { background: var(--green-light); color: var(--green); border-color: #a7f3d0; }
+.htag-purple { background: var(--purple-light); color: var(--purple); border-color: #ddd6fe; }
+
+/* SUITE NAV */
+.nav-bar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  padding: 0.65rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.nav-link {
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.45rem;
+  text-decoration: none;
+  background: #f1f5f9;
+  color: var(--txt-muted);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.nav-link:hover { background: #e2e8f0; color: var(--txt); }
+.nav-link.active {
+  background: var(--gold-light);
+  color: #854d0e;
+  border-color: var(--gold-border);
+  font-weight: 700;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1280px;
+  margin: 1.5rem auto 0;
+  padding: 0 1.25rem;
+}
+
+/* PRESENTATION SECTIONS */
+.pres-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 0.85rem;
+  padding: 1.5rem;
+  margin-bottom: 1.75rem;
+  box-shadow: var(--shadow-sm);
+}
+.pres-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1.5px solid #f1f5f9;
+  padding-bottom: 0.85rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.pres-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.pres-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.35rem;
+  background: #f1f5f9;
+  color: var(--txt-muted);
+  text-transform: uppercase;
+}
+
+/* 4 TIERS SHOWCASE */
+.tiers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.tier-box {
+  border: 1.5px solid var(--border);
+  border-radius: 0.65rem;
+  padding: 1.15rem;
+  background: #ffffff;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.tier-box:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.tier-t1 { border-top: 4px solid var(--purple); }
+.tier-t2 { border-top: 4px solid var(--green); }
+.tier-t3 { border-top: 4px solid var(--amber); }
+.tier-t4 { border-top: 4px solid var(--blue); }
+.tier-icon-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.tier-num {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+}
+.tier-t1 .tier-num { background: var(--purple-light); color: var(--purple); }
+.tier-t2 .tier-num { background: var(--green-light); color: var(--green); }
+.tier-t3 .tier-num { background: var(--amber-light); color: var(--amber); }
+.tier-t4 .tier-num { background: var(--blue-light); color: var(--blue); }
+.tier-name { font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+.tier-desc { font-size: 0.78rem; color: var(--txt-muted); margin-bottom: 0.75rem; line-height: 1.45; }
+.tier-list { list-style: none; font-size: 0.74rem; color: #334155; }
+.tier-list li { margin-bottom: 0.35rem; display: flex; align-items: flex-start; gap: 0.35rem; }
+.tier-list li::before { content: '✓'; color: var(--green); font-weight: bold; }
+
+/* 5 PILLARS */
+.pillars-flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.p-step {
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  padding: 1rem;
+  background: #f8fafc;
+  position: relative;
+}
+.p-num {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--blue);
+  background: var(--blue-light);
+  border: 1px solid #bfdbfe;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  display: inline-block;
+  margin-bottom: 0.4rem;
+}
+.p-title { font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.35rem; }
+.p-desc { font-size: 0.74rem; color: var(--txt-muted); line-height: 1.4; }
+
+/* 11 COLLECTIONS TABLE */
+.schema-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.74rem;
+  text-align: left;
+}
+.schema-table th {
+  background: #f8fafc;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid var(--border);
+  color: #334155;
+  font-weight: 700;
+}
+.schema-table td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+.schema-table tr:hover { background: #f8fafc; }
+.schema-table code {
+  font-family: 'JetBrains Mono', monospace;
+  background: #f1f5f9;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  color: #2563eb;
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-emblem">☸️</div>
+  <h1 class="header-title">SHREE SPRITUAL KARIM SANSTHAN</h1>
+  <p class="header-subtitle">
+    Enterprise Spiritual Platform Architecture &bull; Executive Presentation for Stakeholders &amp; Customers
+  </p>
+  <div class="header-tags">
+    <span class="htag htag-gold">4-Tier Strict Hierarchy</span>
+    <span class="htag htag-blue">11 Realtime Collections</span>
+    <span class="htag htag-green">5-Pillar Join Portal</span>
+    <span class="htag htag-purple">Pure White / Light Theme</span>
+  </div>
+
+<!-- Universal Navigation Bar (Preserves Existing Design) -->
+<div class="docs-universal-nav" style="display: flex; justify-content: center; gap: 0.6rem; margin: 0.75rem auto; font-size: 0.8rem; flex-wrap: wrap; max-width: 900px; padding: 0 1rem;">
+  <a href="../index.html" style="color: #d4af37; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(212,175,55,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">🏠 Live App Portal</a>
+  <a href="holistic-mind-map.html" style="color: #a855f7; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(168,85,247,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">🧠 Mind Map</a>
+  <a href="platform-overview.html" style="color: #38bdf8; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(56,189,248,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">📋 Platform</a>
+  <a href="devotee-registration-workflow.html" style="color: #34d399; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(52,211,153,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">🤝 Registration</a>
+  <a href="core-operations-workflow.html" style="color: #f59e0b; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(245,158,11,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">⚙️ Operations</a>
+  <a href="data-structure-workflow.html" style="color: #ec4899; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(236,72,153,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">📊 Data Structures</a>
+</div>
+
+</header>
+
+<div class="nav-bar">
+  <span style="font-size:0.72rem; font-weight:700; color:var(--txt-muted); margin-right:0.25rem;">ARCHITECTURE SUITE:</span>
+  <a href="platform-overview.html" class="nav-link">① Platform Overview</a>
+  <a href="workflow-architecture.html" class="nav-link">② Business Objects</a>
+  <a href="transaction-lifecycle.html" class="nav-link">③ Universal Lifecycle</a>
+  <a href="devotee-registration-workflow.html" class="nav-link">④ Devotee Flowchart (HITL)</a>
+  <a href="devotee-registration-workflow1.html" class="nav-link">⑤ Devotee Stages (Original)</a>
+  <a href="data-structure-workflow.html" class="nav-link">⑥ Data Structure &amp; Hierarchy</a>
+  <a href="core-operations-workflow.html" class="nav-link">⑦ Core Operations</a>
+  <a href="customer-presentation.html" class="nav-link active">✨ Executive Presentation</a>
+</div>
+
+<div class="container">
+
+  <!-- SECTION 1: INTERACTIVE TREE RE-ARRANGER -->
+  <div class="pres-card">
+    <div class="pres-hdr">
+      <div class="pres-title">
+        <span>🌳</span> Interactive Encapsulation Hierarchy (Drag &amp; Click Re-Arranger)
+      </div>
+      <span class="pres-badge">Level 0 to Level 4 Cascade</span>
+    </div>
+    <p style="font-size:0.8rem; color:var(--txt-muted); margin-bottom:1rem;">
+      Use the <strong>☰ hamburger handles</strong> or directional buttons to re-arrange levels dynamically.
+      This mirrors the platform's Group-by Higher-to-Lower Encapsulation standard.
+    </p>
+    <div id="interactive-tree-reorder-container"></div>
+  </div>
+
+  <!-- SECTION 2: THE 4 ROLES & PERSONA MATRIX -->
+  <div class="pres-card">
+    <div class="pres-hdr">
+      <div class="pres-title">
+        <span>👑</span> 4-Tier Persona Role &amp; Authorization Model
+      </div>
+      <span class="pres-badge">Strict Role-Based Access</span>
+    </div>
+    <div class="tiers-grid">
+      <div class="tier-box tier-t1">
+        <div class="tier-icon-wrap">
+          <span style="font-size:1.3rem;">👑</span>
+          <span class="tier-num">Tier 1</span>
+        </div>
+        <div class="tier-name">Master Founder Scope</div>
+        <p class="tier-desc">Root administrator (Karim Ji). Global authority across all downstream nodes.</p>
+        <ul class="tier-list">
+          <li>11 Live Firebase Tables Drill-down</li>
+          <li>System parameters &amp; emergency lock</li>
+          <li>Global pairing approvals &amp; overrides</li>
+          <li>Unrestricted genealogy tree inspection</li>
+        </ul>
+      </div>
+
+      <div class="tier-box tier-t2">
+        <div class="tier-icon-wrap">
+          <span style="font-size:1.3rem;">🌿</span>
+          <span class="tier-num">Tier 2</span>
+        </div>
+        <div class="tier-name">Healer Mentor Scope</div>
+        <p class="tier-desc">Certified spiritual guide conducting onboarding audits and ritual oversight.</p>
+        <ul class="tier-list">
+          <li>Mentee evaluation &amp; pairing verification</li>
+          <li>3-Level House Cleanliness inspections</li>
+          <li>Multi-option Decision Modal actions</li>
+          <li>Sadhana progression monitoring</li>
+        </ul>
+      </div>
+
+      <div class="tier-box tier-t3">
+        <div class="tier-icon-wrap">
+          <span style="font-size:1.3rem;">🧘</span>
+          <span class="tier-num">Tier 3</span>
+        </div>
+        <div class="tier-name">Trainee Sadhak Scope</div>
+        <p class="tier-desc">Ascendant disciple undergoing disciplined daily sadhana practice.</p>
+        <ul class="tier-list">
+          <li>Downline lineage tree exploration</li>
+          <li>Goli Gyan wisdom &amp; audio modules</li>
+          <li>11 Malas / 108 Japa daily counter</li>
+          <li>Three Diya check-in synchronization</li>
+        </ul>
+      </div>
+
+      <div class="tier-box tier-t4">
+        <div class="tier-icon-wrap">
+          <span style="font-size:1.3rem;">🔱</span>
+          <span class="tier-num">Tier 4</span>
+        </div>
+        <div class="tier-name">Devotee Seeker Scope</div>
+        <p class="tier-desc">Terminal seeker accessing the 5-Pillar Join Portal and sanctum identity.</p>
+        <ul class="tier-list">
+          <li>16-digit Reference Code &amp; Dynamic QR</li>
+          <li>3D Flipper Identity Card</li>
+          <li>3-Gen Pitru Karma lineage registration</li>
+          <li>Sanctum self-audit &amp; mentor pairing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: DASHBOARD INNOVATIONS -->
+  <div class="pres-card">
+    <div class="pres-hdr">
+      <div class="pres-title">
+        <span>🎴</span> Live Website Dashboard Innovations
+      </div>
+      <span class="pres-badge">Latest Website Developments</span>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:1rem;">
+      <div style="border:1px solid var(--border); border-radius:0.6rem; padding:1.15rem; background:#f8fafc;">
+        <div style="font-weight:700; font-size:0.9rem; margin-bottom:0.35rem; color:#1e293b;">
+          1. Dual Profile Card Architecture
+        </div>
+        <p style="font-size:0.76rem; color:var(--txt-muted); line-height:1.45;">
+          The main workspace displays two specialized cards simultaneously:
+          <br>&bull; <strong>Main Profile Box 1</strong>: The logged-in active devotee's live status, tier badge, and reference code.
+          <br>&bull; <strong>Selected Member Box 2</strong>: The currently selected mentee, downline disciple, or paired mentor card with 3D flipper toggle and action triggers.
+        </p>
+      </div>
+
+      <div style="border:1px solid var(--border); border-radius:0.6rem; padding:1.15rem; background:#f8fafc;">
+        <div style="font-weight:700; font-size:0.9rem; margin-bottom:0.35rem; color:#1e293b;">
+          2. Stretched 1-Row Tier Ribbon
+        </div>
+        <p style="font-size:0.76rem; color:var(--txt-muted); line-height:1.45;">
+          Directly underneath Profile Box 1, an ultra-compact single-row ribbon (<code>.tier-ribbon-row-1</code>) provides instant real-time telemetry counters for <strong>Healers</strong>, <strong>Trainees</strong>, and <strong>Devotees</strong>, enabling zero-latency filtering without clutter.
+        </p>
+      </div>
+
+      <div style="border:1px solid var(--border); border-radius:0.6rem; padding:1.15rem; background:#f8fafc;">
+        <div style="font-weight:700; font-size:0.9rem; margin-bottom:0.35rem; color:#1e293b;">
+          3. Multi-Option Mentor Decision Modal
+        </div>
+        <p style="font-size:0.76rem; color:var(--txt-muted); line-height:1.45;">
+          When evaluating induction applications, mentors have 5 distinct closed-loop pathways:
+          <strong>Approve</strong>, <strong>Reject</strong>, <strong>Hold for Audit</strong>, <strong>Request Info</strong>, and <strong>Reassign Specialist</strong>, with mandatory SHA-256 telemetry logging.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: 5-PILLAR ONBOARDING JOURNEY -->
+  <div class="pres-card">
+    <div class="pres-hdr">
+      <div class="pres-title">
+        <span>🪔</span> The 5 Sacred Pillars of Devotee Induction
+      </div>
+      <span class="pres-badge">join.html Flow</span>
+    </div>
+    <div class="pillars-flow">
+      <div class="p-step">
+        <span class="p-num">Pillar 1</span>
+        <div class="p-title">Demographics &amp; Aadhaar</div>
+        <div class="p-desc">Legal name, mobile number, SMS OTP verification, and secure Aadhaar e-KYC validation.</div>
+      </div>
+      <div class="p-step">
+        <span class="p-num">Pillar 2</span>
+        <div class="p-title">3-Gen Pitru Karma Lineage</div>
+        <div class="p-desc">Paternal &amp; maternal ancestry recording: Father, Grandfather, and Great-grandfather clans.</div>
+      </div>
+      <div class="p-step">
+        <span class="p-num">Pillar 3</span>
+        <div class="p-title">Seeker Purpose &amp; Vow</div>
+        <div class="p-desc">Declaration of spiritual motivation, karmic healing intentions, and pledge of daily discipline.</div>
+      </div>
+      <div class="p-step">
+        <span class="p-num">Pillar 4</span>
+        <div class="p-title">3-Tier Living Sanctum</div>
+        <div class="p-desc">Level 1 Basic, Level 2 Deep, and Level 3 Sacred Altar domestic house cleanliness checklist.</div>
+      </div>
+      <div class="p-step">
+        <span class="p-num">Pillar 5</span>
+        <div class="p-title">Mentor Crucible Pairing</div>
+        <div class="p-desc">Sponsor PIN matching, 24-hour SLA invite generation, and certified mentor review.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: 11 RELATIONAL COLLECTIONS -->
+  <div class="pres-card">
+    <div class="pres-hdr">
+      <div class="pres-title">
+        <span>🗄️</span> 11 Relational Database Collections
+      </div>
+      <span class="pres-badge">Backend/database/schema.json</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="schema-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Collection Name</th>
+            <th>Primary Key</th>
+            <th>Storage Engine</th>
+            <th>Purpose &amp; Integrity Rule</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><code>profiles</code></td>
+            <td><code>devotee_id</code></td>
+            <td>Firebase RTDB &amp; LocalStorage</td>
+            <td>Universal profile records with role, 16-digit code, and tier metadata.</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><code>pairing_invites</code></td>
+            <td><code>ticket_id</code></td>
+            <td>Firebase RTDB</td>
+            <td>Sponsor invitations, 6-digit PINs, and 24-hour SLA expiry timers.</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><code>sadhana_catalog</code></td>
+            <td><code>sadhana_id</code></td>
+            <td>Firebase RTDB</td>
+            <td>Curated mantras, audio files, japa targets (108), and mala counts (11).</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><code>device_telemetry</code></td>
+            <td><code>session_id</code></td>
+            <td>Firebase RTDB</td>
+            <td>Realtime device health, GPS spoof detection, developer mode check.</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><code>system_config</code></td>
+            <td><code>config_key</code></td>
+            <td>Firebase RTDB</td>
+            <td>Global platform settings, maintenance toggles, and feature flags.</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td><code>lineage_graph</code></td>
+            <td><code>edge_id</code></td>
+            <td>Firebase RTDB</td>
+            <td>3-Gen Pitru Karma ancestry and MLM tree sponsor edges.</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td><code>house_clean_logs</code></td>
+            <td><code>log_id</code></td>
+            <td>Firebase RTDB</td>
+            <td>3-Tier Sanctum cleanliness inspection audits with mentor e-signatures.</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td><code>daily_diya_logs</code></td>
+            <td><code>checkin_id</code></td>
+            <td>IndexedDB &amp; Firebase Sync</td>
+            <td>Consecutive daily 3-Diya checkins and streak counters.</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td><code>audit_logs</code></td>
+            <td><code>audit_id</code></td>
+            <td>Firebase RTDB</td>
+            <td>Append-only cryptographic event logs with SHA-256 signatures.</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td><code>appeals</code></td>
+            <td><code>appeal_id</code></td>
+            <td>Firebase RTDB</td>
+            <td>Devotee appeal submissions and mentor re-evaluation workflows.</td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td><code>authorisedNodes</code></td>
+            <td><code>node_id</code></td>
+            <td>Firebase RTDB</td>
+            <td>Zero-trust authorized hardware MAC/device hashes whitelist.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- LOAD INTERACTIVE TREE REORDER ENGINE -->
+<script src="framework/tree-reorder-engine.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.initTreeReorderEngine) {
+    window.initTreeReorderEngine('interactive-tree-reorder-container');
+  }
+});
+</script>
+</body>
+</html>

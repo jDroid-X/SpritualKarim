@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,109 +14,352 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1789192088399">
+  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1789391093077">
+  <style id="sk-critical-header-styles">
+    /* Single-Row Permanent Fit Across All Browsers & Devices */
+    .admin-topbar,
+    header.admin-topbar {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      height: 44px !important;
+      min-height: 44px !important;
+      max-height: 44px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border-bottom: 1.5px solid rgba(212, 175, 55, 0.3) !important;
+      background: var(--bg-card, #ffffff) !important;
+      box-sizing: border-box !important;
+      width: 100% !important;
+      overflow: hidden !important;
+      z-index: 1000 !important;
+    }
+
+    .topbar-row-primary {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+      height: 44px !important;
+      min-height: 44px !important;
+      max-height: 44px !important;
+      padding: 0 12px !important;
+      gap: 8px !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+    }
+
+    .topbar-col1 {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+    }
+
+    .admin-brand {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+
+    .admin-logo {
+      width: 30px !important;
+      height: 30px !important;
+      min-width: 30px !important;
+      min-height: 30px !important;
+      border-radius: 50% !important;
+      border: 1.5px solid #d4af37 !important;
+      box-shadow: 0 0 6px rgba(212, 175, 55, 0.25) !important;
+      object-fit: cover !important;
+      flex-shrink: 0 !important;
+    }
+
+    .admin-title {
+      font-family: "Cinzel", Georgia, serif !important;
+      font-size: 0.92rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.5px !important;
+      color: #a17c18 !important;
+      white-space: nowrap !important;
+      text-transform: uppercase !important;
+      line-height: 1 !important;
+    }
+
+    .header-portal-badge {
+      font-size: 0.68rem !important;
+      font-weight: 700 !important;
+      padding: 2px 9px !important;
+      border-radius: 999px !important;
+      background: rgba(212, 175, 55, 0.1) !important;
+      border: 1.5px solid #d4af37 !important;
+      color: #b8960c !important;
+      white-space: nowrap !important;
+      text-transform: uppercase !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+    }
+
+    .topbar-col2 {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+    }
+
+    .header-user-role-pill {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      height: 30px !important;
+      box-sizing: border-box !important;
+      border-radius: 999px !important;
+      border: 1.5px solid rgba(212, 175, 55, 0.35) !important;
+      background: #ffffff !important;
+      padding: 0 14px !important;
+      white-space: nowrap !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+      position: relative !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .header-user-role-pill:hover {
+      border-color: #d4af37 !important;
+      box-shadow: 0 2px 6px rgba(212, 175, 55, 0.25) !important;
+    }
+
+    .pill-person-icon { font-size: 0.85rem !important; color: #6366f1 !important; }
+    .pill-user-name { font-weight: 700 !important; font-size: 0.8rem !important; color: #854d0e !important; white-space: nowrap !important; }
+    .pill-dot { color: #94a3b8 !important; font-size: 0.75rem !important; }
+    .pill-shield-icon { font-size: 0.82rem !important; color: #3b82f6 !important; }
+    .pill-role-prefix { font-size: 0.76rem !important; font-weight: 600 !important; color: #64748b !important; }
+    .pill-role-name { font-size: 0.78rem !important; font-weight: 700 !important; color: #1e293b !important; letter-spacing: 0.02em !important; }
+    .pill-dropdown-caret { font-size: 0.62rem !important; color: #64748b !important; margin-left: 2px !important; }
+
+    .pill-role-select-overlay {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      opacity: 0 !important;
+      cursor: pointer !important;
+      z-index: 10 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      background: transparent !important;
+      -webkit-appearance: none !important;
+      appearance: none !important;
+    }
+
+    .topbar-col3 {
+      display: flex !important;
+      align-items: center !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+    }
+
+    .topbar-right-group {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      white-space: nowrap !important;
+    }
+
+    .btn-compact-header {
+      height: 28px !important;
+      min-height: 28px !important;
+      max-height: 28px !important;
+      padding: 0 10px !important;
+      font-size: 0.74rem !important;
+      font-weight: 700 !important;
+      border-radius: 6px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 4px !important;
+      white-space: nowrap !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+      text-decoration: none !important;
+      box-sizing: border-box !important;
+      line-height: 1 !important;
+    }
+
+    .header-status-pill {
+      height: 28px !important;
+      min-height: 28px !important;
+      max-height: 28px !important;
+      padding: 0 10px !important;
+      font-size: 0.74rem !important;
+      font-weight: 700 !important;
+      border-radius: 6px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 5px !important;
+      border: 1.5px solid rgba(16, 185, 129, 0.4) !important;
+      background: rgba(16, 185, 129, 0.08) !important;
+      color: #059669 !important;
+      box-sizing: border-box !important;
+      white-space: nowrap !important;
+    }
+
+    .status-indicator-dot {
+      width: 6px !important;
+      height: 6px !important;
+      border-radius: 50% !important;
+      background-color: #10b981 !important;
+      box-shadow: 0 0 5px #10b981 !important;
+      display: inline-block !important;
+    }
+
+    .btn-header-new-profile {
+      background: #fffdf9 !important;
+      border: 1.5px solid rgba(212, 175, 55, 0.4) !important;
+      color: #854d0e !important;
+    }
+    .btn-header-new-profile:hover {
+      background: rgba(212, 175, 55, 0.12) !important;
+      border-color: #d4af37 !important;
+    }
+
+    .btn-header-theme {
+      background: #fffdf9 !important;
+      border: 1.5px solid rgba(212, 175, 55, 0.4) !important;
+      color: #1e293b !important;
+    }
+    .btn-header-theme:hover {
+      border-color: #d4af37 !important;
+      color: #a17c18 !important;
+    }
+
+    .btn-compact-gold,
+    .btn-header-save {
+      background: linear-gradient(135deg, #c59b27 0%, #9e7811 100%) !important;
+      border: 1.5px solid #9e7811 !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 2px 5px rgba(197, 155, 39, 0.35) !important;
+    }
+    .btn-compact-gold:hover,
+    .btn-header-save:hover {
+      filter: brightness(1.06) !important;
+    }
+
+    .btn-header-app {
+      background: #fffdf9 !important;
+      border: 1.5px solid rgba(212, 175, 55, 0.4) !important;
+      color: #854d0e !important;
+    }
+    .btn-header-app:hover {
+      background: rgba(212, 175, 55, 0.12) !important;
+      border-color: #d4af37 !important;
+    }
+
+    /* Dark Mode Critical Overrides */
+    html[data-theme="dark"] .admin-topbar,
+    html[data-theme="dark"] header.admin-topbar {
+      background: #161124 !important;
+      border-bottom: 1.5px solid rgba(212, 175, 55, 0.3) !important;
+    }
+    html[data-theme="dark"] .admin-title { color: #d4af37 !important; }
+    html[data-theme="dark"] .header-portal-badge { background: rgba(212, 175, 55, 0.15) !important; color: #d4af37 !important; }
+    html[data-theme="dark"] .header-user-role-pill { background: #221a36 !important; border-color: rgba(212, 175, 55, 0.45) !important; }
+    html[data-theme="dark"] .pill-user-name { color: #fef08a !important; }
+    html[data-theme="dark"] .pill-role-prefix { color: #94a3b8 !important; }
+    html[data-theme="dark"] .pill-role-name { color: #ffffff !important; }
+    html[data-theme="dark"] .btn-header-new-profile,
+    html[data-theme="dark"] .btn-header-theme,
+    html[data-theme="dark"] .btn-header-app {
+      background: rgba(255, 255, 255, 0.06) !important;
+      border-color: rgba(212, 175, 55, 0.35) !important;
+      color: #f1f5f9 !important;
+    }
+  </style>
 </head>
 <body data-portal-role="TRAINEE" class="portal-trainee">
-  <!-- Top Admin Control Header (2-Row Smart Fit Layout) -->
-  <header class="admin-topbar multi-row-header">
-    <!-- Row 1: Brand, Status, Global Tools & Theme Switcher -->
+  <!-- Top Admin Control Header (Design System Matches User Spec Image Exactly) -->
+  <header class="admin-topbar">
     <div class="topbar-row-primary">
-      <div class="topbar-brand-group">
-        <button type="button" id="btn-mobile-sidebar-toggle" class="mobile-sidebar-toggle" aria-label="Toggle Directory Sidebar">
+      <!-- Col 1: Brand & Master Control Pill Badge -->
+      <div class="topbar-col1">
+        <button type="button" id="btn-mobile-sidebar-toggle" class="mobile-sidebar-toggle" aria-label="Toggle Directory Sidebar" style="display: none;">
           <span class="hamburger-bar"></span>
           <span class="hamburger-bar"></span>
           <span class="hamburger-bar"></span>
         </button>
         <div class="admin-brand">
           <img src="../Logo.png" alt="Logo" class="admin-logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'36\' height=\'36\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23d4af37\'/><text x=\'50\' y=\'65\' font-size=\'40\' text-anchor=\'middle\' fill=\'%230b0714\'>ॐ</text></svg>'">
-          <div class="brand-text-block">
-            <div class="brand-title-wrap">
-              <span class="admin-title">SPIRITUAL KARIM ADMIN</span>
-              <span class="header-portal-badge badge-trainee">📿 TRAINEE SADHAK</span>
-            </div>
-            <span class="admin-subtitle">Mobile App Control &bull; 4-Tier User Management</span>
-          </div>
-        </div>
-
-        <!-- Header 1 Session Authority User Pill (In sync with Header 2 Body Box 1) -->
-        <div class="topbar-session-user-pill" id="topbar-session-user-pill" style="display: flex; align-items: center; gap: 0.65rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); padding: 0.25rem 0.75rem; border-radius: 999px; margin-left: 1.25rem;">
-          <div class="avatar-circle" id="topbar-session-avatar" style="width: 28px; height: 28px; font-size: 0.72rem; border: 1.5px solid var(--gold-400); background: #8b5cf6;">SK</div>
-          <div style="display: flex; flex-direction: column; line-height: 1.15;">
-            <div style="display: flex; align-items: center; gap: 0.35rem;">
-              <span id="topbar-session-name" style="font-weight: 700; font-size: 0.82rem; color: #fff;">Spiritual Karim Khan</span>
-              <span class="role-badge" id="topbar-session-role" style="font-size: 0.6rem; padding: 0.05rem 0.35rem; background: #8b5cf6;">ADMIN MASTER</span>
-            </div>
-            <span id="topbar-session-subtitle" style="font-size: 0.65rem; color: var(--gold-400);">👑 Founder Master Control</span>
-          </div>
+          <span class="admin-title">SPIRITUAL KARIM</span>
+          <span class="header-portal-badge badge-admin">👑 MASTER FOUNDER</span>
         </div>
       </div>
 
-      <div class="topbar-global-actions">
-        <!-- Live Sync Status Indicator -->
-        <div class="header-status-pill" id="header-cloud-status" title="Real-time Synchronization Active">
-          <span class="status-indicator-dot"></span>
-          <span class="status-pill-text">Live Sync</span>
-        </div>
+      <!-- Col 2: Center Unified User & Role Dropdown Pill -->
+      <div class="topbar-col2">
+        <div class="header-user-role-pill" id="topbar-session-user-pill" title="Current Authority: Spiritual Karim Khan • Click to switch role">
+          <span class="pill-person-icon">👤</span>
+          <span class="pill-user-name" id="topbar-session-name">Spiritual Karim Khan</span>
+          <span class="pill-dot">&bull;</span>
+          <span class="pill-shield-icon">🛡️</span>
+          <span class="pill-role-prefix">Role:</span>
+          <span class="pill-role-name" id="topbar-session-role">👑 ADMIN MASTER</span>
+          <span class="pill-dropdown-caret">▼</span>
 
-        <!-- Active Profile Stamp Indicator -->
-        <div class="header-payment-stamp" id="header-payment-stamp" title="Selected Profile Membership Status">
-          <span class="stamp-badge stamp-paid" id="header-stamp-badge">🟢 PAID</span>
-        </div>
-
-        <!-- Light / Dark / Auto Theme Toggle Switcher -->
-        <div class="theme-switch-container">
-          <button type="button" id="btn-theme-toggle" class="theme-toggle-btn" title="Theme Mode: Auto (Device OS) | Click to Toggle Dark/Light/Auto" aria-label="Toggle Theme Mode">
-            <span class="theme-icon" id="theme-icon">💻</span>
-            <span class="theme-label" id="theme-label">Auto</span>
-          </button>
-        </div>
-
-        <!-- Goli Gyan Quick Modal Trigger -->
-        <button type="button" id="btn-quick-goli-gyan" class="btn btn-sm btn-outline header-quick-btn" title="Open Goli Gyan Wisdom Guide">
-          <span>📜</span> <span class="btn-text-desktop">Goli Gyan</span>
-        </button>
-
-        <!-- Mobile App Download Quick Button -->
-        <a href="https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk" id="btn-header-download-app" class="btn btn-sm btn-gold header-quick-btn" title="Download Spiritual Karim Android Mobile App (APK)" download="SpiritualKarim.apk" target="_blank">
-          <span>📱</span> <span class="btn-text-desktop">Download App</span>
-        </a>
-      </div>
-    </div>
-
-    <!-- Row 2: Operational & Role Navigation Bar -->
-    <div class="topbar-row-secondary">
-      <div class="topbar-selector-group">
-        <div class="role-selector-pill">
-          <span class="selector-icon">🛡️</span>
-          <label for="select-role-mode" class="switch-label">Role:</label>
-          <select id="select-role-mode" class="role-mode-dropdown" title="Switch Access View & Permissions">
-            <option value="MASTER" selected>👑 Master (Full Control)</option>
-            <option value="HEALER" >🛡️ Healer (Self &amp; Team)</option>
-            <option value="TRAINEE" >📿 Trainee (Self &amp; Devotees)</option>
-            <option value="DEVOTEE" >🌟 Devotee (Personal Only)</option>
+          <!-- Full interactive overlay for immediate role selection -->
+          <select id="select-role-mode" class="pill-role-select-overlay" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; margin: 0; padding: 0; border: none; background: transparent; -webkit-appearance: none; appearance: none;" title="Switch Access View & Permissions">
+            <option value="MASTER" selected>👑 Admin Master (Full Control)</option>
+            <option value="HEALER">🛡️ Healer Connect</option>
+            <option value="TRAINEE">📿 Trainee Sadhak</option>
+            <option value="DEVOTEE">🌟 Devotee Personal Space</option>
           </select>
-        </div>
-
-        <div class="profile-selector-pill">
-          <span class="selector-icon">👤</span>
-          <label for="select-active-profile" class="switch-label">Profile:</label>
-          <select id="select-active-profile" class="profile-dropdown" title="Select Active Profile"></select>
+          
+          <!-- Hidden compatibility elements for zero-exception script updates -->
+          <span id="topbar-session-avatar" style="display:none;" aria-hidden="true">SK</span>
+          <span id="topbar-session-subtitle" style="display:none;" aria-hidden="true">👑 Founder Master Control</span>
         </div>
       </div>
 
-      <div class="topbar-action-group">
-        <button type="button" id="btn-create-profile" class="btn btn-sm btn-outline" title="Create New End User Profile">
-          <span>➕</span> <span class="btn-text-responsive">New Profile</span>
-        </button>
-        <button type="button" id="btn-import-json" class="btn btn-sm btn-outline" title="Import JSON payload from Android App">
-          <span>📥</span> <span class="btn-text-responsive">Import</span>
-        </button>
-        <button type="button" id="btn-export-json" class="btn btn-sm btn-outline" title="Export Profile JSON for Mobile App">
-          <span>📤</span> <span class="btn-text-responsive">Export</span>
-        </button>
-        <button type="button" id="btn-save-profile" class="btn btn-sm btn-gold btn-save-pulse" title="Save & Sync to App State">
-          <span>💾</span> <span class="btn-text-responsive">Save &amp; Sync</span>
-        </button>
+      <!-- Col 3: Right Global Action Buttons (Exact 5 items matching image) -->
+      <div class="topbar-col3">
+        <div class="topbar-right-group">
+          <!-- 1. Live Sync -->
+          <div class="header-status-pill" id="header-cloud-status" title="Real-time Synchronization Active">
+            <span class="status-indicator-dot"></span>
+            <span class="status-pill-text">Live Sync</span>
+          </div>
+
+          <!-- 2. New Profile -->
+          <button type="button" id="btn-create-profile" class="btn-compact-header btn-header-new-profile" title="Create New Spiritual Profile">
+            <span class="btn-icon-plus" style="color: #8b5cf6; font-weight: 800; font-size: 0.9rem;">➕</span>
+            <span class="btn-text">New Profile</span>
+          </button>
+
+          <!-- 3. Light / Dark Theme Mode -->
+          <button type="button" id="btn-theme-toggle" class="btn-compact-header btn-header-theme" title="Toggle Light/Dark/Auto Mode" aria-label="Toggle Theme Mode">
+            <span class="theme-icon" id="theme-icon">☀️</span>
+            <span class="theme-label" id="theme-label">Light</span>
+          </button>
+
+          <!-- 4. Save & Sync -->
+          <button type="button" id="btn-save-profile" class="btn-compact-header btn-compact-gold btn-header-save" title="Save & Sync Profile Changes">
+            <span class="btn-icon-save">💾</span>
+            <span class="btn-text">Save & Sync</span>
+          </button>
+
+          <!-- 5. Get App -->
+          <a href="https://github.com/jDroid-X/SpritualKarim/raw/main/apk/release/app-release.apk" id="btn-header-download-app" class="btn-compact-header btn-header-app" title="Download Spiritual Karim Android Mobile App (APK)" download="SpiritualKarim.apk" target="_blank">
+            <span class="btn-icon-app">📱</span>
+            <span class="btn-text">Get App</span>
+          </a>
+        </div>
       </div>
     </div>
   </header>
@@ -231,7 +474,7 @@
       </div>
 
       <!-- Enterprise Drawer Section 5: Firebase RTDB Quick Drill-Down -->
-      <div class="sidebar-section">
+      <div class="sidebar-section" id="sidebar-rtdb-section">
         <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
           <span>🔥 Firebase Realtime DB</span>
           <span class="badge-live-pulse" title="Connected to spritualkarim-7b5fd">🟢 Live</span>
@@ -266,194 +509,195 @@
           </div>
         </div>
       </div>
+
+      <!-- Enterprise Drawer Section: Authenticated Session Profile & Logout (Bottom-Left) -->
+      <div class="sidebar-user-footer" id="sidebar-user-footer">
+        <div class="sidebar-user-info">
+          <div class="avatar-circle-sm" id="sidebar-user-avatar">SK</div>
+          <div class="sidebar-user-details">
+            <div class="sidebar-user-name" id="sidebar-user-name">Spiritual Karim Khan</div>
+            <div class="sidebar-user-role" id="sidebar-user-role">👑 Admin Master</div>
+          </div>
+        </div>
+        <button type="button" class="btn-sidebar-logout" id="btn-sidebar-logout" title="Sign Out of Session">
+          <span>🚪</span> <span>Logout</span>
+        </button>
+      </div>
     </aside>
 
     <!-- Main Canvas Area -->
     <main class="admin-canvas">
       <div class="profile-form-container">
-        
-        <!-- 1st Box: Master Profile Identity Card (Slim, Compact 1-Row Architecture) -->
-        <div class="card profile-header-card header-card-slim" id="main-profile-box-1">
-          <div class="card-flipper-3d-wrapper" id="profile-card-flipper-wrapper">
-            <div class="card-flipper-inner" id="profile-card-flipper-inner">
-              <!-- FRONT FACE -->
-              <div class="card-flipper-front header-card-front-slim" style="padding: 0.85rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-lg);">
-                <div class="card-header-flex header-row-slim" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.85rem;">
-                  <!-- 1st Column: Avatar & Profile Title -->
-                  <div class="user-avatar-block" style="display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0;">
-                    <div class="avatar-circle" id="profile-avatar-initials">SK</div>
-                    <div>
-                      <h2 class="profile-name-title" id="display-profile-name" style="margin: 0 0 0.25rem 0; font-size: 1.22rem;">Spiritual Karim Khan</h2>
-                      <div class="profile-role-badge-row" style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
-                        <span class="role-badge" id="display-role-badge">ADMIN MASTER &bull; LEVEL 1</span>
-                        <span class="status-pill active" id="display-status-pill">Active Member</span>
-                        <span class="stamp-indicator stamp-paid" id="display-payment-stamp" title="Click to toggle Paid (Green) / Free (Red)">PAID</span>
-                      </div>
-                      <div id="pending-approval-notification-banner" class="approval-notification-pill" style="display:none;" title="Click to review and approve pending Devotee applicants">
-                        <span class="notification-bell">🔔</span>
-                        <span id="approval-notification-text">New Devotee Application Pending</span>
-                        <span class="badge-count" id="approval-notification-count">0</span>
-                      </div>
-                    </div>
-                  </div>
 
-                  <!-- 2nd Column (Center Meta): Date of Joining & Current Role -->
-                  <div class="header-card-center-meta" id="header-card-center-meta" title="Master Founder Membership Information">
-                    <span class="meta-item-joined" id="display-master-join-date">📅 Joined: 2024-01-01</span>
-                    <span class="meta-item-current-role" id="display-master-current-role">👑 Role: Admin Master (Founder)</span>
-                  </div>
-
-                  <!-- 3rd Column: Reference Meta & Flip Trigger (Optional) -->
-                  <div class="header-card-actions-row" style="display: none;">
-                    <button type="button" class="btn btn-xs btn-outline" id="btn-copy-header-ref-code" title="Copy 16-Digit Code" style="font-family: monospace; font-size: 0.78rem;">
-                      📋 <span id="header-ref-code-text"><span id="display-ref-code">SKHM-ADM1-7788-9900</span></span><span id="display-sponsor-code" style="display:none;">ROOT-0000-0000-0000</span>
-                    </button>
-                    <button type="button" class="btn-flip-card-trigger" id="btn-flip-to-back" title="Flip to 24h Pairing &amp; Node Telemetry">
-                      🔄 QR &amp; Telemetry
-                    </button>
-                  </div>
-
-                  <!-- Right Column: Genealogy Tab Button & Pending Approval Tab Button in Smart 1-Row Fit -->
-                  <div class="header-right-tabs-stack" style="display: flex; flex-direction: row; gap: 0.5rem; align-items: center; margin-left: auto; flex-shrink: 0;">
-                    <!-- Genealogy Tree Tab Button -->
-                    <button type="button" class="main-tab-btn header-genealogy-tab-btn" data-main-tab="tab-genealogy-tree" id="main-tab-tree-btn" title="Open Organization Hierarchy &amp; Genealogy Spiderweb Tree" style="min-width: 175px; padding: 0.45rem 0.85rem; justify-content: flex-start;">
-                      <span class="tab-icon">🌳</span>
-                      <div class="tab-label-wrap">
-                        <span class="tab-main-title" style="font-size: 0.85rem;">Genealogy Tree</span>
-                        <span class="tab-sub-title" style="font-size: 0.68rem;">Visual MLM Canvas</span>
-                      </div>
-                    </button>
-
-                    <!-- Pending Approval Tab Button with Dynamic Count -->
-                    <button type="button" class="main-tab-btn header-approval-tab-btn" data-main-tab="tab-pending-approvals" id="main-tab-approval-btn" title="Review &amp; Approve Pending Devotee Applicants" style="min-width: 175px; padding: 0.45rem 0.85rem; justify-content: flex-start;">
-                      <span class="tab-icon">⏳</span>
-                      <div class="tab-label-wrap" style="width: 100%;">
-                        <div class="tab-main-title" style="display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 0.85rem;">
-                          <span>Pending Approval</span>
-                          <span class="badge-count" id="header-pending-approval-count" style="display: inline-block; background: #eab308; color: #000; font-weight: 800; border-radius: 999px; padding: 0.1rem 0.45rem; font-size: 0.72rem; margin-left: 0.35rem;">0</span>
-                        </div>
-                        <span class="tab-sub-title" style="font-size: 0.68rem;">Seeker Queue &bull; 24h</span>
-                      </div>
-                    </button>
-                  </div>
-                </div>
+        <!-- ============================================================
+             ADMIN MASTER LIVE METRICS STRIP (5 Unified Sized Compact Tiles)
+             ============================================================ -->
+        <div id="admin-hierarchy-metrics-strip" class="admin-metrics-tiles-row" style="display: none;" role="region" aria-label="Hierarchy Summary Metrics">
+          <!-- Tile 1: Admin Master -->
+          <div class="admin-metric-tile-card tile-master" data-tier-filter="MASTER" role="button" tabindex="0" title="Click to view Admin Master list & profile metadata">
+            <div class="metric-tile-line-top">
+              <div class="metric-title-lead">
+                <span class="metric-tile-icon">👑</span>
+                <span class="metric-tile-title">Admin Master</span>
               </div>
+              <span class="metric-tile-badge badge-master">Level 0</span>
+            </div>
+            <div class="metric-tile-line-middle">
+              <span class="metric-tile-subtext">Root Authority &bull; System Governance</span>
+            </div>
+            <div class="metric-tile-line-bottom">
+              <span class="count-value" id="metric-masters-active-total"><span class="val-active">1</span> / <span class="val-total">1</span></span>
+              <span class="badge-new-joined" id="metric-masters-new-joined">Root Active</span>
+            </div>
+          </div>
 
-              <!-- BACK FACE -->
-              <div class="card-flipper-back flipper-back-content">
-                <div class="flipper-back-header">
-                  <div class="flipper-back-title">
-                    <span>📡</span> Node Telemetry &amp; 24h Device Pairing
-                  </div>
-                  <button type="button" class="btn-flip-card-trigger" id="btn-flip-to-front" title="Flip back to Profile Card">
-                    🔄 View Profile
-                  </button>
-                </div>
-                <div class="telemetry-grid">
-                  <div class="telemetry-item">
-                    <div class="telemetry-item-label">Node Reference</div>
-                    <div class="telemetry-item-val" id="telemetry-ref-code">SKHM-ADM1-7788-9900</div>
-                  </div>
-                  <div class="telemetry-item">
-                    <div class="telemetry-item-label">Upline Sponsor</div>
-                    <div class="telemetry-item-val" id="telemetry-sponsor-code">ROOT-0000-0000-0000</div>
-                  </div>
-                  <div class="telemetry-item">
-                    <div class="telemetry-item-label">Daily Diya Check-ins</div>
-                    <div class="telemetry-item-val" id="telemetry-diya-count" style="color: #10b981;">0 Days</div>
-                  </div>
-                  <div class="telemetry-item">
-                    <div class="telemetry-item-label">House Clean Logs</div>
-                    <div class="telemetry-item-val" id="telemetry-clean-count" style="color: var(--gold-400);">0 Records</div>
-                  </div>
-                  <div class="telemetry-item">
-                    <div class="telemetry-item-label">Active Sadhanas</div>
-                    <div class="telemetry-item-val" id="telemetry-sadhanas-count" style="color: #60a5fa;">0 Active</div>
-                  </div>
-                  <div class="telemetry-item">
-                    <div class="telemetry-item-label">Cloud Telemetry</div>
-                    <div class="telemetry-item-val" style="color: #10b981;">🟢 RTDB CONNECTED</div>
-                  </div>
-                </div>
-                <div class="telemetry-qr-section">
-                  <div class="telemetry-qr-box">
-                    <svg viewBox="0 0 100 100" width="60" height="60">
-                      <rect width="100" height="100" fill="white"/>
-                      <path d="M10 10h30v30h-30z M60 10h30v30h-30z M10 60h30v30h-30z M20 20h10v10h-10z M70 20h10v10h-10z M20 70h10v10h-10z M50 20h5v15h-5z M50 50h30v5h-30z M60 65h10v10h-10z M80 75h10v15h-10z" fill="#1e1b4b"/>
-                    </svg>
-                  </div>
-                  <div class="telemetry-qr-text">
-                    <strong>24-Hour QR Device Pairing Protocol</strong><br/>
-                    Scan from Spiritual Karim Android App to link this node securely to your hierarchy downline.
-                  </div>
-                </div>
+          <!-- Tile 2: Healers -->
+          <div class="admin-metric-tile-card tile-healers" data-tier-filter="HEALER" role="button" tabindex="0" title="Click to view Healers list & profile metadata">
+            <div class="metric-tile-line-top">
+              <div class="metric-title-lead">
+                <span class="metric-tile-icon">🌿</span>
+                <span class="metric-tile-title">Healers</span>
               </div>
+              <span class="metric-tile-badge badge-healers">Level 1</span>
+            </div>
+            <div class="metric-tile-line-middle">
+              <span class="metric-tile-subtext">Certified Mentors &bull; Spiritual Guidance</span>
+            </div>
+            <div class="metric-tile-line-bottom">
+              <span class="count-value" id="metric-healers-active-total"><span class="val-active">2</span> / <span class="val-total">2</span></span>
+              <span class="badge-new-joined" id="metric-healers-new-joined">Mentors Hub</span>
+            </div>
+          </div>
+
+          <!-- Tile 3: Trainee / Sadhak -->
+          <div class="admin-metric-tile-card tile-trainees" data-tier-filter="TRAINEE" role="button" tabindex="0" title="Click to view Trainees list & profile metadata">
+            <div class="metric-tile-line-top">
+              <div class="metric-title-lead">
+                <span class="metric-tile-icon">🔥</span>
+                <span class="metric-tile-title">Trainee</span>
+              </div>
+              <span class="metric-tile-badge badge-trainees">Level 2</span>
+            </div>
+            <div class="metric-tile-line-middle">
+              <span class="metric-tile-subtext">Active Sadhaks &bull; Practical Sadhana</span>
+            </div>
+            <div class="metric-tile-line-bottom">
+              <span class="count-value" id="metric-trainees-active-total"><span class="val-active">4</span> / <span class="val-total">4</span></span>
+              <span class="badge-new-joined" id="metric-trainees-new-joined">In Sadhana</span>
+            </div>
+          </div>
+
+          <!-- Tile 4: Devotee / Seeker -->
+          <div class="admin-metric-tile-card tile-devotees" data-tier-filter="DEVOTEE" role="button" tabindex="0" title="Click to view Devotees list & profile metadata">
+            <div class="metric-tile-line-top">
+              <div class="metric-title-lead">
+                <span class="metric-tile-icon">🙏</span>
+                <span class="metric-tile-title">Devotee</span>
+              </div>
+              <span class="metric-tile-badge badge-devotees">Level 3</span>
+            </div>
+            <div class="metric-tile-line-middle">
+              <span class="metric-tile-subtext">Sacred Sangha &bull; Personal Sanctum</span>
+            </div>
+            <div class="metric-tile-line-bottom">
+              <span class="count-value" id="metric-devotees-active-total"><span class="val-active">5</span> / <span class="val-total">5</span></span>
+              <span class="badge-new-joined" id="metric-devotees-new-joined">Enrolled</span>
+            </div>
+          </div>
+
+          <!-- Tile 5: Dual Composite Card (Genealogy + Approvals) -->
+          <div class="admin-metric-tile-card tile-composite-card" id="metric-tile-composite" role="region" aria-label="Genealogy and Approvals Quick Summary">
+            <!-- UP: Genealogy Metadata -->
+            <div class="tile-composite-subrow tile-composite-up" id="metric-tile-genealogy" role="button" tabindex="0" title="Click to open Visual MLM Lineage & Hierarchy Tree">
+              <div class="subrow-left">
+                <span class="subrow-icon">🌳</span>
+                <span class="subrow-title">Genealogy</span>
+              </div>
+              <span class="badge-tree-pill" id="metric-tree-total-nodes">15 Nodes</span>
+            </div>
+            <div class="tile-subrow-divider"></div>
+            <!-- DOWN: Pending Approval Metadata -->
+            <div class="tile-composite-subrow tile-composite-down" id="metric-tile-approvals" role="button" tabindex="0" title="Click to open Seeker Pending Applications Queue">
+              <div class="subrow-left">
+                <span class="subrow-icon">⏳</span>
+                <span class="subrow-title">Approvals</span>
+              </div>
+              <span class="badge-pending-pill" id="metric-tile-pending-count">0 Pending</span>
             </div>
           </div>
         </div>
 
-        <!-- In-Body Stretched Tier Profiles Ribbon (Compact 1-Row Smart Fit Directly Under Profile Box 1) -->
+        <!-- In-Body Stretched Tier Profiles Ribbon (Compact 2-Row Split Layout: Left List, Right Metadata) -->
         <div id="tier-profiles-panel" class="tier-profiles-flyout-panel tier-panel-stretched-row" role="region" aria-label="Hierarchy Tier Profiles">
-          <!-- 1. Tier Meta Badge (Icon + Title + Count) -->
-          <div class="tier-panel-header">
-            <div class="tier-panel-title-wrap">
-              <span class="tier-panel-icon" id="tier-panel-icon">👑</span>
-              <div class="tier-panel-title-text-group">
-                <h3 class="tier-panel-title" id="tier-panel-title">Admin Master Profiles</h3>
-                <span class="tier-panel-count-badge" id="tier-panel-count">1 Member</span>
+          <!-- Row 1: Ribbon Header (Title, Search, Filters, Close) -->
+          <div class="tier-ribbon-row-1">
+            <div class="tier-panel-header">
+              <div class="tier-panel-title-wrap">
+                <span class="tier-panel-icon" id="tier-panel-icon">👑</span>
+                <div class="tier-panel-title-text-group">
+                  <h3 class="tier-panel-title" id="tier-panel-title">Admin Master Profiles</h3>
+                  <span class="tier-panel-count-badge" id="tier-panel-count">1 Member</span>
+                </div>
               </div>
+            </div>
+
+            <div class="tier-panel-search-wrap">
+              <input type="search" id="input-tier-panel-search" class="form-control form-control-sm" placeholder="🔍 Search...">
+              <button type="button" id="btn-clear-tier-search" class="tier-panel-search-clear-btn" title="Clear Search" style="display: none;">✕</button>
+            </div>
+
+            <div class="tier-panel-filters-wrap" id="tier-panel-filter-chips">
+              <button type="button" class="tier-filter-chip active" data-filter="ALL">All</button>
+              <button type="button" class="tier-filter-chip" data-filter="ACTIVE">Active</button>
+              <button type="button" class="tier-filter-chip" data-filter="PAID">Paid</button>
+              <button type="button" class="tier-filter-chip" data-filter="FREE">Free</button>
+            </div>
+
+            <div class="tier-panel-actions-wrap">
+              <button type="button" class="tier-panel-close-btn" id="btn-collapse-tier-panel" title="Collapse Panel" style="display: none;">◂</button>
+              <button type="button" class="tier-panel-close-btn" id="btn-close-tier-panel" title="Close Tier Ribbon">&times;</button>
             </div>
           </div>
 
-          <!-- 2. Search Box (Compact) -->
-          <div class="tier-panel-search-wrap">
-            <input type="search" id="input-tier-panel-search" class="form-control form-control-sm" placeholder="🔍 Search...">
-            <button type="button" id="btn-clear-tier-search" class="tier-panel-search-clear-btn" title="Clear Search" style="display: none;">✕</button>
-          </div>
+          <!-- Row 2: Split 2 Columns (Left Pane: Names List, Right Pane: Corresponding Profile Metadata) -->
+          <div class="tier-content-row-2">
+            <!-- Left Column: Member Names List (Max 5 visible, vertical scroll) -->
+            <div class="tier-left-member-list">
+              <div id="tier-panel-profiles-list" class="tier-panel-profiles-list">
+                <!-- Rendered dynamically as .tier-member-row-item -->
+              </div>
+            </div>
 
-          <!-- 3. Filter Chips -->
-          <div class="tier-panel-filters-wrap" id="tier-panel-filter-chips">
-            <button type="button" class="tier-filter-chip active" data-filter="ALL">All</button>
-            <button type="button" class="tier-filter-chip" data-filter="ACTIVE">Active</button>
-            <button type="button" class="tier-filter-chip" data-filter="PAID">Paid</button>
-            <button type="button" class="tier-filter-chip" data-filter="FREE">Free</button>
-          </div>
-
-          <!-- 4. Member Profile Tiles Strip (Horizontally Scrollable) -->
-          <div id="tier-panel-profiles-list" class="tier-panel-profiles-list">
-            <!-- Rendered dynamically as horizontal compact cards -->
-          </div>
-
-          <!-- 5. Actions / Close Button -->
-          <div class="tier-panel-actions-wrap">
-            <button type="button" class="tier-panel-close-btn" id="btn-collapse-tier-panel" title="Collapse Panel" style="display: none;">◂</button>
-            <button type="button" class="tier-panel-close-btn" id="btn-close-tier-panel" title="Close Tier Ribbon">&times;</button>
+            <!-- Right Column: Relevant / Corresponding Selected Member Data -->
+            <div id="tier-right-profile-details" class="tier-right-profile-details">
+              <!-- Rendered dynamically by renderTierProfileDetails(prof) -->
+            </div>
           </div>
         </div>
 
-        <!-- 2nd Box: Selected Member Profile Card (Active upon Left Panel / Directory Selection) -->
-        <div class="card selected-member-profile-card" id="selected-member-profile-card" style="display: none;" role="region" aria-label="Selected Member Profile">
+        <!-- 2nd Box: Selected Member Profile Card (Only shown when a downline member is selected from the tier ribbon) -->
+        <div class="card selected-member-profile-card" id="selected-member-profile-card" style="display: none !important;" role="region" aria-label="Selected Member Profile">
           <div class="selected-member-card-inner">
             <!-- Left Column: Selected Member Avatar & Identity -->
             <div class="user-avatar-block" style="display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0;">
-              <div class="avatar-circle selected-member-avatar" id="selected-member-avatar">AS</div>
+              <div class="avatar-circle selected-member-avatar" id="selected-member-avatar">--</div>
               <div>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                  <h2 class="profile-name-title" id="selected-member-name" style="margin: 0; font-size: 1.2rem;">Ananya Sharma</h2>
-                  <span class="role-badge" id="selected-member-role-badge">DEVOTEE &bull; LEVEL 4</span>
+                  <h2 class="profile-name-title" id="selected-member-name" style="margin: 0; font-size: 1.2rem;"></h2>
+                  <span class="role-badge" id="selected-member-role-badge"></span>
                 </div>
                 <div class="profile-role-badge-row" style="display: flex; align-items: center; gap: 0.45rem; margin-top: 0.25rem; flex-wrap: wrap;">
                   <span class="status-pill active" id="selected-member-status-pill">Active Member</span>
                   <span class="stamp-indicator stamp-paid" id="selected-member-payment-stamp">PAID</span>
-                  <span class="ref-code-chip" id="selected-member-ref-code" style="font-family: monospace; font-size: 0.75rem; padding: 0.15rem 0.45rem; background: rgba(255,255,255,0.06); border-radius: 4px; border: 1px solid var(--border-card);">SKHM-DEV4-1234-5678</span>
+                  <span class="ref-code-chip" id="selected-member-ref-code" style="font-family: monospace; font-size: 0.75rem; padding: 0.15rem 0.45rem; background: rgba(255,255,255,0.06); border-radius: 4px; border: 1px solid var(--border-card);"></span>
                 </div>
               </div>
             </div>
 
             <!-- Center Column (Center Meta): Joining Date & Current Role -->
             <div class="header-card-center-meta selected-member-center-meta" id="selected-member-center-meta" title="Selected Member Downline Status">
-              <span class="meta-item-joined" id="selected-member-join-date">📅 Joined: 2024-06-15</span>
-              <span class="meta-item-current-role" id="selected-member-current-role">Current Role: Devotee</span>
+              <span class="meta-item-joined" id="selected-member-join-date">📅 Joined: --</span>
+              <span class="meta-item-current-role" id="selected-member-current-role">Current Role: --</span>
             </div>
 
             <!-- Right Column: Member Actions (Copy Ref Code, Flip to QR, Close/Clear Member View - NO APPROVAL BUTTON) -->
@@ -504,22 +748,6 @@
             <div class="tab-label-wrap">
               <span class="tab-main-title">4. Healer Connect</span>
               <span class="tab-sub-title">Siddhi Completed &bull; Seekers Guided</span>
-            </div>
-          </button>
-
-          <button type="button" class="main-tab-btn" data-main-tab="tab-genealogy-tree">
-            <span class="tab-icon">🌳</span>
-            <div class="tab-label-wrap">
-              <span class="tab-main-title">5. Genealogy Tree</span>
-              <span class="tab-sub-title">Visual MLM &bull; Spiderweb Canvas</span>
-            </div>
-          </button>
-
-          <button type="button" class="main-tab-btn" data-main-tab="tab-firebase-data" id="main-tab-firebase-btn" title="Open Firebase Realtime Database Structured Table Drill-down">
-            <span class="tab-icon">🔥</span>
-            <div class="tab-label-wrap">
-              <span class="tab-main-title">6. Firebase Data</span>
-              <span class="tab-sub-title">Realtime DB &bull; Table Drill-down</span>
             </div>
           </button>
         </div>
@@ -599,15 +827,15 @@
                   <div class="form-group">
                     <label class="form-label" for="input-profile-type">Role Tier *</label>
                     <select id="input-profile-type" class="form-control" required>
-                      <option value="ADMIN">Admin Master (Level 1)</option>
-                      <option value="HEALER">Spiritual Healer (Level 2)</option>
-                      <option value="TRAINEE">Mentorship Trainee (Level 4)</option>
-                      <option value="DEVOTEE">Devotee Seeker (Level 5)</option>
+                      <option value="ADMIN">👑 Admin Master (Level 1)</option>
+                      <option value="HEALER">🛡️ Spiritual Healer (Level 2)</option>
+                      <option value="TRAINEE">📿 Mentorship Trainee (Level 3)</option>
+                      <option value="DEVOTEE">🌟 Devotee Seeker (Level 4)</option>
                     </select>
                   </div>
                   <div class="form-group">
                     <label class="form-label" for="input-level">Organization Level *</label>
-                    <input type="number" id="input-level" class="form-control" min="1" max="10" value="1" required>
+                    <input type="number" id="input-level" class="form-control" min="1" max="10" value="4" required>
                   </div>
                   <div class="form-group">
                     <label class="form-label" for="input-category-tag">Functional Category Tag</label>
@@ -618,15 +846,47 @@
                 <div class="form-grid-3 mt-3">
                   <div class="form-group">
                     <label class="form-label" for="input-ref-code">16-Digit Reference Code *</label>
-                    <input type="text" id="input-ref-code" class="form-control font-mono" placeholder="SKHM-XXXX-XXXX-XXXX" required>
+                    <input type="text" id="input-ref-code" class="form-control font-mono" placeholder="SKDV-XXXX-XXXX-XXXX" required>
                   </div>
                   <div class="form-group">
                     <label class="form-label" for="input-sponsor-code">Sponsor / Upline Code *</label>
-                    <input type="text" id="input-sponsor-code" class="form-control font-mono" placeholder="ROOT-0000-0000-0000" required>
+                    <input type="text" id="input-sponsor-code" class="form-control font-mono" placeholder="SKHM-ADM1-7788-9900" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-mentor-name">Guiding Mentor / Sponsor Name</label>
+                    <input type="text" id="input-mentor-name" class="form-control" placeholder="Spiritual Karim Khan">
+                  </div>
+                </div>
+
+                <div class="form-grid-3 mt-3">
+                  <div class="form-group">
+                    <label class="form-label" for="input-pairing-pin">24-Hour Pairing PIN / Token</label>
+                    <div style="display: flex; gap: 0.35rem;">
+                      <input type="text" id="input-pairing-pin" class="form-control font-mono" placeholder="140610" maxlength="8">
+                      <button type="button" class="btn btn-xs btn-outline" id="btn-copy-pairing-pin-field" title="Copy PIN" style="white-space: nowrap; padding: 0 0.5rem;">📋</button>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-device-model">Hardware Nonce / Device Model</label>
+                    <input type="text" id="input-device-model" class="form-control font-mono" placeholder="e.g. Android 14 (SM-G998B)">
                   </div>
                   <div class="form-group">
                     <label class="form-label" for="input-transfer-code">Transfer / Reassignment History Code</label>
                     <input type="text" id="input-transfer-code" class="form-control font-mono" placeholder="Optional Transfer Code">
+                  </div>
+                </div>
+
+                <div class="form-grid-3 mt-3">
+                  <div class="form-group" style="grid-column: span 2;">
+                    <label class="form-label" for="input-dedicated-portal-url">Dedicated Member Website URL</label>
+                    <div style="display: flex; gap: 0.35rem;">
+                      <input type="text" id="input-dedicated-portal-url" class="form-control font-mono" readonly placeholder="http://localhost:8085/Devotee/index.html?profileId=..." style="font-size: 0.78rem;">
+                      <button type="button" class="btn btn-xs btn-gold" id="btn-copy-portal-url-field" title="Copy Website Link" style="white-space: nowrap; padding: 0 0.6rem; font-weight: 700;">Copy Link ↗</button>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="input-join-date">Member Join Date</label>
+                    <input type="date" id="input-join-date" class="form-control">
                   </div>
                 </div>
 
@@ -646,8 +906,8 @@
                     </select>
                   </div>
                   <div class="form-group">
-                    <label class="form-label" for="input-join-date">Member Join Date</label>
-                    <input type="date" id="input-join-date" class="form-control">
+                    <label class="form-label" for="input-induction-status">Sansthan Induction Status</label>
+                    <input type="text" id="input-induction-status" class="form-control font-mono" readonly value="LINKED &amp; ACTIVE" style="color: #10b981; font-weight: 700;">
                   </div>
                 </div>
               </div>
@@ -2105,16 +2365,22 @@
           <!-- AUTH MATRIX SETTINGS -->
           <div class="settings-section" id="section-auth-matrix" style="display: none;">
             <div class="auth-matrix-container" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
                 <div>
-                  <h4 style="margin: 0; font-size: 0.9rem; color: var(--text-primary);">Dynamic Role Authorization Matrix</h4>
-                  <p style="margin: 0.25rem 0 0; font-size: 0.75rem; color: var(--text-muted);">Tick = Display | Untick = Hide | Changes auto-save</p>
-                  <span class="badge badge-info" style="font-size: 0.65rem; margin-top: 0.25rem;">📋 Grouped by Screen / Element</span>
+                  <h4 style="margin: 0; font-size: 0.9rem; color: var(--text-primary); font-weight: 700;">Dynamic Role Authorization Matrix</h4>
+                  <p style="margin: 0.2rem 0 0; font-size: 0.73rem; color: var(--text-muted);">Tick = Display | Untick = Hide | Real-time cross-portal sync</p>
+                  <span class="badge badge-info" style="font-size: 0.65rem; margin-top: 0.25rem;">📋 Grouped by Screen / Element (3-Level Tree)</span>
                 </div>
-                <div style="display: flex; gap: 0.5rem;">
-                  <button type="button" class="btn btn-sm btn-outline" id="btn-reset-auth-matrix-modal">🔄 Reset</button>
-                  <button type="button" class="btn btn-sm btn-gold" id="btn-save-auth-matrix-modal">💾 Save</button>
+                <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
+                  <button type="button" class="btn btn-xs btn-outline" id="btn-add-auth-matrix-modal" title="Add New Screen Element">➕ Add Element</button>
+                  <button type="button" class="btn btn-xs btn-outline" id="btn-scan-auth-matrix-modal" title="Auto-Scan DOM for New Elements">🔄 Auto-Scan DOM</button>
+                  <button type="button" class="btn btn-xs btn-outline" id="btn-reset-auth-matrix-modal" title="Reset to Canonical Defaults">🔄 Reset</button>
+                  <button type="button" class="btn btn-xs btn-gold" id="btn-save-auth-matrix-modal" title="Save & Sync All Portals">💾 Save &amp; Sync</button>
                 </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                <select id="auth-matrix-modal-category-filter" class="form-control" style="font-size: 0.75rem; padding: 0.3rem 0.5rem; flex: 1; min-width: 180px; max-width: 320px; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 4px;"></select>
+                <input type="text" id="auth-matrix-modal-search" class="form-control" placeholder="🔍 Search screens, cards, buttons..." style="font-size: 0.75rem; padding: 0.3rem 0.6rem; flex: 1; min-width: 160px; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 4px;">
               </div>
               <div style="overflow-x: auto;">
                 <table class="auth-matrix-table" id="auth-matrix-modal-table" style="width: 100%; font-size: 0.75rem; border-collapse: collapse;">
@@ -2133,51 +2399,291 @@
             </div>
           </div>
 
-          <!-- RBAC ROLES SETTINGS -->
+                    <!-- RBAC ROLES SETTINGS -->
           <div class="settings-section" id="section-rbac" style="display: none;">
-            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
-              <h4 style="margin: 0 0 1rem; font-size: 0.9rem; color: var(--text-primary);">Role-Based Access Control (RBAC) Configuration</h4>
-              
-              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                <div class="settings-card" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.3);">
-                  <div style="font-size: 0.8rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.75rem;">👑 Master (Tier 1)</div>
-                  <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
-                    <p>• Full system control & admin access</p>
-                    <p>• Can manage all roles & permissions</p>
-                    <p>• Access to Firebase RTDB console</p>
-                    <p>• Genealogy tree full view</p>
-                  </div>
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1.1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-glass-gold, rgba(212,175,55,0.25)); padding-bottom: 0.75rem;">
+                <div>
+                  <h4 style="margin: 0; font-size: 0.95rem; color: var(--gold-400); font-weight: 800; font-family: var(--font-heading);">
+                    🛡️ Dynamic Role-Based Access Control (RBAC) Matrix
+                  </h4>
+                  <p style="margin: 0.25rem 0 0; font-size: 0.75rem; color: var(--text-muted);">
+                    Configure capability permissions per tier. Ticked features are granted; unticked features are strictly restricted.
+                  </p>
                 </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                  <button type="button" id="btn-rbac-select-all-master" class="btn btn-xs btn-outline" style="font-weight: 700;">👑 All Master</button>
+                  <button type="button" id="btn-rbac-reset-defaults" class="btn btn-xs btn-outline" style="color: #f59e0b; border-color: #f59e0b; font-weight: 700;">🔄 Reset Defaults</button>
+                  <button type="button" id="btn-save-rbac-roles" class="btn btn-xs btn-gold" style="font-weight: 800;">💾 Save &amp; Sync RBAC</button>
+                </div>
+              </div>
 
-                <div class="settings-card" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
-                  <div style="font-size: 0.8rem; font-weight: 700; color: #10b981; margin-bottom: 0.75rem;">🌿 Healer (Tier 2)</div>
-                  <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
-                    <p>• View & manage team members</p>
-                    <p>• Issue completion seals</p>
-                    <p>• Access to trainees & devotees</p>
-                    <p>• Healers Hub dashboard</p>
-                  </div>
-                </div>
+              <!-- Search filter -->
+              <div style="margin-bottom: 0.85rem;">
+                <input type="text" id="input-search-rbac-roles" class="form-control" placeholder="🔍 Search RBAC capabilities, portals, or screens..." style="width: 100%; box-sizing: border-box; font-size: 0.8rem; padding: 0.45rem 0.75rem; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass-gold, rgba(212,175,55,0.3)); border-radius: 6px; color: #fff;">
+              </div>
 
-                <div class="settings-card" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3);">
-                  <div style="font-size: 0.8rem; font-weight: 700; color: #f59e0b; margin-bottom: 0.75rem;">📿 Trainee (Tier 3)</div>
-                  <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
-                    <p>• Track own sadhana progress</p>
-                    <p>• View assigned remedies</p>
-                    <p>• Goli Gyan access</p>
-                    <p>• Self-profile management</p>
-                  </div>
-                </div>
+              <!-- Interactive RBAC Table -->
+              <div class="table-responsive" style="max-height: 480px; overflow-y: auto; border: 1px solid var(--border-subtle); border-radius: 6px;">
+                <table class="table matrix-table" id="table-rbac-roles" style="width: 100%; border-collapse: collapse; font-size: 0.78rem;">
+                  <thead>
+                    <tr style="background: rgba(18,11,30,0.95); position: sticky; top: 0; z-index: 5; border-bottom: 2px solid var(--border-glass-gold, rgba(212,175,55,0.4));">
+                      <th style="padding: 0.65rem 0.9rem; text-align: left; color: var(--text-primary); font-weight: 800;">Feature / Platform Capability</th>
+                      <th style="padding: 0.65rem 0.5rem; text-align: center; color: #a855f7; font-weight: 800; min-width: 90px;">👑 Master</th>
+                      <th style="padding: 0.65rem 0.5rem; text-align: center; color: #38bdf8; font-weight: 800; min-width: 90px;">🛡️ Healer</th>
+                      <th style="padding: 0.65rem 0.5rem; text-align: center; color: #f59e0b; font-weight: 800; min-width: 90px;">📿 Trainee</th>
+                      <th style="padding: 0.65rem 0.5rem; text-align: center; color: #10b981; font-weight: 800; min-width: 90px;">🌟 Devotee</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-rbac-matrix-rows">
+                    <!-- Category 1: Navigation & Portals -->
+                    <tr class="rbac-category-header" style="background: rgba(168,85,247,0.12); font-weight: 800; color: #c084fc;">
+                      <td colspan="5" style="padding: 0.5rem 0.9rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">🌐 1. Navigation &amp; Dedicated Subportals</td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="header_user_role_dropdown">
+                      <td style="padding: 0.5rem 0.9rem;"><strong>Header Role Switcher Dropdown</strong> <span style="color:var(--text-muted); font-size:0.7rem;">(#select-role-mode)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="header_user_role_dropdown" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="header_user_role_dropdown" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="header_user_role_dropdown" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="header_user_role_dropdown" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="portal_masters">
+                      <td style="padding: 0.5rem 0.9rem;"><strong>Master Admin Control Portal</strong> <span style="color:var(--text-muted); font-size:0.7rem;">(/Masters/index.html)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_masters" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_masters" data-role="HEALER"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_masters" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_masters" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="portal_healers">
+                      <td style="padding: 0.5rem 0.9rem;"><strong>Certified Healers Hub Portal</strong> <span style="color:var(--text-muted); font-size:0.7rem;">(/Healers/index.html)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_healers" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_healers" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_healers" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_healers" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="portal_trainee">
+                      <td style="padding: 0.5rem 0.9rem;"><strong>Trainee Sadhak Portal</strong> <span style="color:var(--text-muted); font-size:0.7rem;">(/Trainee/index.html)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_trainee" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_trainee" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_trainee" data-role="TRAINEE" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_trainee" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="portal_devotee">
+                      <td style="padding: 0.5rem 0.9rem;"><strong>Devotee Sangha Portal</strong> <span style="color:var(--text-muted); font-size:0.7rem;">(/Devotee/index.html)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_devotee" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_devotee" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_devotee" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_devotee" data-role="DEVOTEE" checked></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="portal_join">
+                      <td style="padding: 0.5rem 0.9rem;"><strong>Direct Pairing &amp; Join Form</strong> <span style="color:var(--text-muted); font-size:0.7rem;">(/join.html)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_join" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_join" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_join" data-role="TRAINEE" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="portal_join" data-role="DEVOTEE" checked></td>
+                    </tr>
 
-                <div class="settings-card" style="background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);">
-                  <div style="font-size: 0.8rem; font-weight: 700; color: #3b82f6; margin-bottom: 0.75rem;">🌟 Devotee (Tier 4)</div>
-                  <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
-                    <p>• Personal profile only</p>
-                    <p>• House clean tracking</p>
-                    <p>• 24h QR pairing protocol</p>
-                    <p>• Limited sadhana access</p>
-                  </div>
-                </div>
+                    <!-- Category 2: Dashboard Metric Tiles -->
+                    <tr class="rbac-category-header" style="background: rgba(56,189,248,0.12); font-weight: 800; color: #38bdf8;">
+                      <td colspan="5" style="padding: 0.5rem 0.9rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">📊 2. Dashboard Metric Strip &amp; Individual Tiles</td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="admin_hierarchy_metrics_strip">
+                      <td style="padding: 0.5rem 0.9rem;"><strong>Top Hierarchy Metrics Strip</strong> <span style="color:var(--text-muted); font-size:0.7rem;">(#admin-hierarchy-metrics-strip)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="admin_hierarchy_metrics_strip" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="admin_hierarchy_metrics_strip" data-role="HEALER"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="admin_hierarchy_metrics_strip" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="admin_hierarchy_metrics_strip" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="metric_tile_master">
+                      <td style="padding: 0.5rem 0.9rem;">Metric Tile: 👑 Master Overview <span style="color:var(--text-muted); font-size:0.7rem;">(#metric-tile-master)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_master" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_master" data-role="HEALER"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_master" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_master" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="metric_tile_healers">
+                      <td style="padding: 0.5rem 0.9rem;">Metric Tile: 🛡️ Healer Network <span style="color:var(--text-muted); font-size:0.7rem;">(#metric-tile-healers)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_healers" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_healers" data-role="HEALER"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_healers" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_healers" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="metric_tile_trainees">
+                      <td style="padding: 0.5rem 0.9rem;">Metric Tile: 📿 Trainee Sadhaks <span style="color:var(--text-muted); font-size:0.7rem;">(#metric-tile-trainees)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_trainees" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_trainees" data-role="HEALER"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_trainees" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_trainees" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="metric_tile_devotees">
+                      <td style="padding: 0.5rem 0.9rem;">Metric Tile: 🌟 Devotee Sangha <span style="color:var(--text-muted); font-size:0.7rem;">(#metric-tile-devotees)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_devotees" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_devotees" data-role="HEALER"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_devotees" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_devotees" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="metric_tile_composite">
+                      <td style="padding: 0.5rem 0.9rem;">Metric Tile: 📈 Composite Sadhana Score <span style="color:var(--text-muted); font-size:0.7rem;">(#metric-tile-composite)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_composite" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_composite" data-role="HEALER"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_composite" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_composite" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="metric_tile_genealogy">
+                      <td style="padding: 0.5rem 0.9rem;">Metric Tile: 🌳 Lineage Genealogy <span style="color:var(--text-muted); font-size:0.7rem;">(#metric-tile-genealogy)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_genealogy" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_genealogy" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_genealogy" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_genealogy" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="metric_tile_approvals">
+                      <td style="padding: 0.5rem 0.9rem;">Metric Tile: ⏳ Pending Approvals Badge <span style="color:var(--text-muted); font-size:0.7rem;">(#metric-tile-approvals)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_approvals" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_approvals" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_approvals" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="metric_tile_approvals" data-role="DEVOTEE"></td>
+                    </tr>
+
+                    <!-- Category 3: Lineage & Genealogy -->
+                    <tr class="rbac-category-header" style="background: rgba(245,158,11,0.12); font-weight: 800; color: #f59e0b;">
+                      <td colspan="5" style="padding: 0.5rem 0.9rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">🌳 3. Ancestral Lineage &amp; Genealogy Operations</td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="tab_tree_hierarchy">
+                      <td style="padding: 0.5rem 0.9rem;"><strong>4-Tier Interactive Genealogy Tree</strong> <span style="color:var(--text-muted); font-size:0.7rem;">(#tab-tree-hierarchy)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tab_tree_hierarchy" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tab_tree_hierarchy" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tab_tree_hierarchy" data-role="TRAINEE" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tab_tree_hierarchy" data-role="DEVOTEE" checked></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="tree_expand_branches">
+                      <td style="padding: 0.5rem 0.9rem;">Expand / Collapse Downline Tree Branches</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_expand_branches" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_expand_branches" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_expand_branches" data-role="TRAINEE" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_expand_branches" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="tree_node_jump">
+                      <td style="padding: 0.5rem 0.9rem;">Jump to Any Node Profile Dossier</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_node_jump" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_node_jump" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_node_jump" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_node_jump" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="tree_circular_prevention">
+                      <td style="padding: 0.5rem 0.9rem;">Sponsor Circular Recursion Validation Gate</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_circular_prevention" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_circular_prevention" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_circular_prevention" data-role="TRAINEE" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="tree_circular_prevention" data-role="DEVOTEE" checked></td>
+                    </tr>
+
+                    <!-- Category 4: Intake & Approvals -->
+                    <tr class="rbac-category-header" style="background: rgba(244,63,94,0.12); font-weight: 800; color: #f43f5e;">
+                      <td colspan="5" style="padding: 0.5rem 0.9rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">⏳ 4. Intake, 24h Pairing &amp; Slide-Out Approvals Drawer</td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="pending_approval_drawer">
+                      <td style="padding: 0.5rem 0.9rem;"><strong>Slide-Out Pending Approvals Drawer</strong> <span style="color:var(--text-muted); font-size:0.7rem;">(#pending-approval-drawer)</span></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="pending_approval_drawer" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="pending_approval_drawer" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="pending_approval_drawer" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="pending_approval_drawer" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="direct_role_assignment">
+                      <td style="padding: 0.5rem 0.9rem;">Direct Dynamic Role Assignment on Induction</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="direct_role_assignment" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="direct_role_assignment" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="direct_role_assignment" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="direct_role_assignment" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="share_pairing_modal">
+                      <td style="padding: 0.5rem 0.9rem;">Generate 24h Share &amp; Pair QR Invitation Modal</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="share_pairing_modal" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="share_pairing_modal" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="share_pairing_modal" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="share_pairing_modal" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="kyc_doc_preview">
+                      <td style="padding: 0.5rem 0.9rem;">Digital Attestation KYC Document Preview</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="kyc_doc_preview" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="kyc_doc_preview" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="kyc_doc_preview" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="kyc_doc_preview" data-role="DEVOTEE"></td>
+                    </tr>
+
+                    <!-- Category 5: Sadhana, Japa & Remedies -->
+                    <tr class="rbac-category-header" style="background: rgba(16,185,129,0.12); font-weight: 800; color: #10b981;">
+                      <td colspan="5" style="padding: 0.5rem 0.9rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">📿 5. Sadhana Daily Practice, Three Diya &amp; Remedies</td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="checklist_three_diya">
+                      <td style="padding: 0.5rem 0.9rem;">Three Diya Evening Window Checklist</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="checklist_three_diya" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="checklist_three_diya" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="checklist_three_diya" data-role="TRAINEE" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="checklist_three_diya" data-role="DEVOTEE" checked></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="mala_target_tracker">
+                      <td style="padding: 0.5rem 0.9rem;">Daily Japa Mala Target &amp; Counter Tracker</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="mala_target_tracker" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="mala_target_tracker" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="mala_target_tracker" data-role="TRAINEE" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="mala_target_tracker" data-role="DEVOTEE" checked></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="house_clean_matrix">
+                      <td style="padding: 0.5rem 0.9rem;">House Clean Affliction Matrix &amp; Remedies</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="house_clean_matrix" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="house_clean_matrix" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="house_clean_matrix" data-role="TRAINEE" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="house_clean_matrix" data-role="DEVOTEE" checked></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="modal_goli_gyan">
+                      <td style="padding: 0.5rem 0.9rem;">Goli Gyan Quick Reference Knowledge Modal</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="modal_goli_gyan" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="modal_goli_gyan" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="modal_goli_gyan" data-role="TRAINEE" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="modal_goli_gyan" data-role="DEVOTEE" checked></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="sadhana_activity_drawer">
+                      <td style="padding: 0.5rem 0.9rem;">Trainee Sadhana Activity Drawer Logging</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="sadhana_activity_drawer" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="sadhana_activity_drawer" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="sadhana_activity_drawer" data-role="TRAINEE" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="sadhana_activity_drawer" data-role="DEVOTEE"></td>
+                    </tr>
+
+                    <!-- Category 6: Cloud DB & Admin -->
+                    <tr class="rbac-category-header" style="background: rgba(239,68,68,0.12); font-weight: 800; color: #ef4444;">
+                      <td colspan="5" style="padding: 0.5rem 0.9rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">⚡ 6. Realtime DB Console &amp; System Administration</td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="sidebar_rtdb_section">
+                      <td style="padding: 0.5rem 0.9rem;"><strong>Firebase RTDB Live Sync &amp; Tree Inspector</strong></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="sidebar_rtdb_section" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="sidebar_rtdb_section" data-role="HEALER"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="sidebar_rtdb_section" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="sidebar_rtdb_section" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="section_auth_matrix">
+                      <td style="padding: 0.5rem 0.9rem;">Dynamic Screen Authorization Matrix Configurator</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="section_auth_matrix" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="section_auth_matrix" data-role="HEALER"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="section_auth_matrix" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="section_auth_matrix" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="btn_export_json">
+                      <td style="padding: 0.5rem 0.9rem;">Profile JSON Export &amp; Lineage Backup Download</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="btn_export_json" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="btn_export_json" data-role="HEALER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="btn_export_json" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="btn_export_json" data-role="DEVOTEE"></td>
+                    </tr>
+                    <tr class="rbac-row" data-feature="btn_delete_profile">
+                      <td style="padding: 0.5rem 0.9rem;">Cascade Profile Deletion Action Privilege</td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="btn_delete_profile" data-role="MASTER" checked></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="btn_delete_profile" data-role="HEALER"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="btn_delete_profile" data-role="TRAINEE"></td>
+                      <td style="text-align:center;"><input type="checkbox" class="rbac-chk" data-item="btn_delete_profile" data-role="DEVOTEE"></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -2753,17 +3259,17 @@
   </div>
 
   <!-- External Vendor & Core Logic Scripts -->
-  <script src="../js/profile-admin-header.js?v=sk_v5_1789192088399"></script>
-  <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789192088399"></script>
-  <script src="../js/models/ProfileModel.js?v=sk_v5_1789192088399"></script>
-  <script src="../js/config/appConfig.js?v=sk_v5_remediated_2026"></script>
-  <script src="../js/models/FirebaseSyncEngine.js?v=sk_v5_1789192088399"></script>
-  <script src="../js/views/ProfileView.js?v=sk_v5_1789192088399"></script>
-  <script src="../js/views/ProfileView2.js?v=sk_v5_1789192088399"></script>
-  <script src="../js/controllers/ProfileController.js?v=sk_v5_1789192088399"></script>
-  <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789192088399"></script>
-  <script src="../js/controllers/SettingsModalController.js?v=sk_v5_1789192088399"></script>
-  <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789192088399"></script>
+  <script src="../js/profile-admin-header.js?v=sk_v5_1789391093077"></script>
+  <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789391093077"></script>
+  <script src="../js/models/ProfileModel.js?v=sk_v5_1789391093077"></script>
+  <script src="../js/config/appConfig.js?v=sk_v5_1789391093077"></script>
+  <script src="../js/models/FirebaseSyncEngine.js?v=sk_v5_1789391093077"></script>
+  <script src="../js/views/ProfileView.js?v=sk_v5_1789391093077"></script>
+  <script src="../js/views/ProfileView2.js?v=sk_v5_1789391093077"></script>
+  <script src="../js/controllers/ProfileController.js?v=sk_v5_1789391093077"></script>
+  <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789391093077"></script>
+  <script src="../js/controllers/SettingsModalController.js?v=sk_v5_1789391093077"></script>
+  <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789391093077"></script>
 
   <!-- ==============================================================
        SLIDE-IN NOTIFICATIONS STACK & CUSTOM DIALOG BACKDROP
@@ -2842,12 +3348,18 @@
                 <p class="auth-matrix-subtitle">Master Role Portal Configuration: Tick to display, Untick to hide for each role.</p>
               </div>
             </div>
-            <div class="auth-matrix-actions-row" style="margin-top: 0;">
+            <div class="auth-matrix-actions-row" style="margin-top: 0; display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
+              <button type="button" class="btn btn-xs btn-outline" id="btn-add-auth-matrix" title="Add New Screen Element">➕ Add Element</button>
+              <button type="button" class="btn btn-xs btn-outline" id="btn-scan-auth-matrix" title="Auto-Scan DOM for New Elements">🔄 Auto-Scan DOM</button>
               <button type="button" class="btn btn-xs btn-outline" id="btn-reset-auth-matrix" title="Reset to Default Permissions">🔄 Reset Default</button>
-              <button type="button" class="btn btn-xs btn-gold" id="btn-save-auth-matrix" title="Save &amp; Apply Matrix Across All Portals">💾 Save &amp; Apply</button>
+              <button type="button" class="btn btn-xs btn-gold" id="btn-save-auth-matrix" title="Save &amp; Sync Matrix Across All Portals">💾 Save &amp; Sync</button>
             </div>
           </div>
 
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+            <select id="auth-matrix-category-filter" class="form-control" style="font-size: 0.75rem; padding: 0.35rem 0.6rem; flex: 1; min-width: 180px; max-width: 320px; background: var(--bg-hover, rgba(255,255,255,0.06)); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 4px;"></select>
+            <input type="text" id="auth-matrix-search-input" class="form-control" placeholder="🔍 Search screens, cards, buttons..." style="font-size: 0.75rem; padding: 0.35rem 0.6rem; flex: 1; min-width: 160px; background: var(--bg-hover, rgba(255,255,255,0.06)); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 4px;">
+          </div>
           <div class="auth-matrix-table-wrap">
             <table class="auth-matrix-table" id="auth-matrix-table">
               <thead>
@@ -2926,6 +3438,27 @@
 
   <!-- Hidden Bridge for Dual-ID & Backward Compatibility -->
   <div style="display:none;" aria-hidden="true">
+    <select id="select-active-profile"></select>
+    <button type="button" id="btn-import-json"></button>
+    <button type="button" id="btn-export-json"></button>
+    <span id="profile-avatar-initials"></span>
+    <span id="display-profile-name"></span>
+    <span id="display-role-badge"></span>
+    <span id="display-status-pill"></span>
+    <span id="display-payment-stamp"></span>
+    <span id="display-master-join-date"></span>
+    <span id="display-master-current-role"></span>
+    <span id="display-ref-code"></span>
+    <span id="display-sponsor-code"></span>
+    <button type="button" id="main-tab-tree-btn"></button>
+    <button type="button" id="main-tab-approval-btn"></button>
+    <span id="header-pending-approval-count"></span>
+    <span id="approval-notification-count"></span>
+    <span id="telemetry-ref-code"></span>
+    <span id="telemetry-sponsor-code"></span>
+    <span id="telemetry-diya-count"></span>
+    <span id="telemetry-clean-count"></span>
+    <span id="telemetry-sadhanas-count"></span>
     <button type="button" id="btn-close-admin-settings"></button>
     <input type="hidden" id="input-directory-search">
     <div id="profile-directory-list" style="display:none;"></div>
@@ -2967,6 +3500,30 @@
       </div>
     </div>
   </div>
+
+  <!-- ==============================================================
+       DRAWER: RIGHT SLIDE-OUT PENDING SEEKER APPROVALS QUEUE
+       ============================================================== -->
+  <div id="pending-approval-drawer-backdrop" class="drawer-backdrop" style="display: none;"></div>
+  <aside id="pending-approval-drawer" class="pending-approval-drawer" aria-hidden="true">
+    <div class="pending-drawer-header" style="padding: 1.15rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); flex-shrink: 0;">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span style="font-size: 1.6rem;">⏳</span>
+        <div>
+          <h3 style="margin: 0; font-family: var(--font-heading); color: var(--gold-400); font-size: 1.2rem;">Pending Seeker Approvals</h3>
+          <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">24-Hour Verification Protocol</span>
+        </div>
+      </div>
+      <button type="button" id="btn-close-pending-approval-drawer" class="icon-btn" aria-label="Close Drawer" style="font-size: 1.4rem; color: var(--text-muted); cursor: pointer; background: transparent; border: none;">&times;</button>
+    </div>
+    <div id="pending-approval-drawer-body" class="pending-drawer-body" style="padding: 1.25rem; overflow-y: auto; flex-grow: 1;">
+      <!-- Populated dynamically by ProfileView.openPendingApprovalsDrawer -->
+    </div>
+    <div class="pending-drawer-footer" style="padding: 0.85rem 1.25rem; border-top: 1px solid var(--border-glass-gold); display: flex; justify-content: space-between; align-items: center; background: rgba(14, 10, 22, 0.95); flex-shrink: 0;">
+      <button type="button" class="btn btn-outline btn-xs" id="btn-drawer-refresh-invites">🔄 Refresh List</button>
+      <button type="button" class="btn btn-gold btn-xs" id="btn-drawer-open-share-modal">📲 Share &amp; Pair New Seeker</button>
+    </div>
+  </aside>
 
 </body>
 </html>

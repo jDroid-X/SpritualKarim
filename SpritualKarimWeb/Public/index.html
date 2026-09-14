@@ -20,11 +20,13 @@
       rel="stylesheet"
     />
 
-    <link
+    <link rel="stylesheet" href="../css/theme.css">
+  <link
       rel="stylesheet"
-      href="../css/profile-admin.css?v=sk_v5_1789192088399"
+      href="../css/profile-admin.css?v=sk_v5_1789391093077"
     />
-  </head>
+    <script src="../js/utils/ThemeEngine.js"></script>
+</head>
   <body data-portal-role="PUBLIC" class="portal-public">
     <header class="admin-topbar multi-row-header">
       <div class="topbar-row-primary">
@@ -75,13 +77,31 @@
       </div>
     </main>
 
+    <!-- ============================================================
+         SITE FOOTER WITH DYNAMIC PERSISTENT COPYRIGHT MARQUEE
+         ============================================================ -->
+    <footer class="site-footer" id="site-footer" role="contentinfo" aria-label="Site Footer">
+      <div class="footer-inner">
+        <div class="footer-marquee-wrap">
+          <marquee id="footer-marquee-element" scrollamount="6" behavior="scroll" direction="left" class="footer-marquee-scroller" onmouseover="this.stop();" onmouseout="this.start();">
+            <span id="footer-marquee-text" class="footer-marquee-content">
+              © 2024-2026 Shree Spritual Karim Sansthan • All Sacred Lineage Rights Reserved • Certified ISO/IEC 27001 Secure Node Telemetry • Guided under the divine vision of Spiritual Karim Khan • Real-time Lineage Synchronization Active
+            </span>
+          </marquee>
+        </div>
+      </div>
+    </footer>
+
     <script src="../js/config/appConfig.js"></script>
-    <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789192088399"></script>
-    <script src="../js/models/ProfileModel.js?v=sk_v5_1789192088399"></script>
-    <script src="../js/views/ProfileView.js?v=sk_v5_1789192088399"></script>
-    <script src="../js/views/ProfileView2.js?v=sk_v5_1789192088399"></script>
-    <script src="../js/controllers/ProfileController.js?v=sk_v5_1789192088399"></script>
-    <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789192088399"></script>
-    <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789192088399"></script>
+    <script src="../js/utils/sanitizer.js"></script>
+    <script src="../js/utils/FormValidator.js"></script>
+    <script src="../js/profile-admin-header.js"></script>
+    <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789391093077"></script>
+    <script src="../js/models/ProfileModel.js?v=sk_v5_1789391093077"></script>
+    <script src="../js/views/ProfileView.js?v=sk_v5_1789391093077"></script>
+    <script src="../js/views/ProfileView2.js?v=sk_v5_1789391093077"></script>
+    <script src="../js/controllers/ProfileController.js?v=sk_v5_1789391093077"></script>
+    <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789391093077"></script>
+    <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789391093077"></script>
   </body>
 </html>

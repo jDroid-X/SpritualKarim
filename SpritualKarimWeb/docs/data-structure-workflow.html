@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Data Structure Workflow Architecture • Shree Spritual Karim Sansthan</title>
-<meta name="description" content="Encapsulation, Group-by Hierarchy (Higher to Lower Level), Waterfall Method of Dataflow & Filter, Tree View, and Roles & Authorization Matrix">
+<title>Data Structure Workflow Architecture • Profile → RBAC → Auth Matrix → Portal Display • Shree Spritual Karim Sansthan</title>
+<meta name="description" content="Profile → RBAC → Auth Matrix → Portal Display Flow Chain. Encapsulation, Group-by Hierarchy (Higher to Lower Level), Waterfall Method of Dataflow & Filter, Tree View, and Roles & Authorization Matrix">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cinzel:wght@700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="framework/tree-reorder.css">
 <style>
 :root {
   --bg: #f8fafc;
@@ -558,14 +559,25 @@ body {
 <header class="brand-header">
   <div class="brand-emblem">☸️</div>
   <h1 class="brand-title">SHREE SPRITUAL KARIM SANSTHAN</h1>
-  <p class="brand-subtitle">Data Structure Workflow Architecture &bull; Encapsulation, Hierarchy, Waterfall Cascade &amp; Authorization</p>
+  <p class="brand-subtitle">Data Structure Workflow Architecture &bull; Profile &rarr; RBAC &rarr; Auth Matrix &rarr; Portal Display &bull; Encapsulation, Hierarchy, Waterfall Cascade &amp; Authorization</p>
   <div class="brand-tags">
     <span class="btag btag-gold">Higher-to-Lower Encapsulation</span>
     <span class="btag btag-blue">Waterfall Method</span>
     <span class="btag btag-green">Tree View &bull; Roles &amp; Auth Matrix</span>
     <span class="btag btag-purple">4-Tier Strict RBAC</span>
-    <span class="btag btag-cyan">Pure White Theme</span>
+    <span class="btag btag-cyan">Profile &rarr; RBAC &rarr; Auth Matrix &rarr; Portal Display</span>
   </div>
+
+<!-- Universal Navigation Bar (Preserves Existing Design) -->
+<div class="docs-universal-nav" style="display: flex; justify-content: center; gap: 0.6rem; margin: 0.75rem auto; font-size: 0.8rem; flex-wrap: wrap; max-width: 900px; padding: 0 1rem;">
+  <a href="../index.html" style="color: #d4af37; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(212,175,55,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">🏠 Live App Portal</a>
+  <a href="holistic-mind-map.html" style="color: #a855f7; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(168,85,247,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">🧠 Mind Map</a>
+  <a href="platform-overview.html" style="color: #38bdf8; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(56,189,248,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">📋 Platform</a>
+  <a href="devotee-registration-workflow.html" style="color: #34d399; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(52,211,153,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">🤝 Registration</a>
+  <a href="core-operations-workflow.html" style="color: #f59e0b; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(245,158,11,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">⚙️ Operations</a>
+  <a href="data-structure-workflow.html" style="color: #ec4899; text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid rgba(236,72,153,0.4); border-radius: 4px; background: rgba(0,0,0,0.25);">📊 Data Structures</a>
+</div>
+
 </header>
 
 <!-- CONTROLS & ARCHITECTURE SUITE NAVIGATION BAR -->
@@ -579,6 +591,7 @@ body {
     <a href="devotee-registration-workflow1.html" class="doc-link-btn">⑤ Devotee Stages (Original)</a>
     <a href="data-structure-workflow.html" class="doc-link-btn active">⑥ Data Structure &amp; Hierarchy</a>
     <a href="core-operations-workflow.html" class="doc-link-btn">⑦ Core Operations &amp; Workflows</a>
+    <a href="customer-presentation.html" class="doc-link-btn" style="background:#fef9c3;color:#854d0e;border-color:#fde047;">✨ Executive Presentation</a>
   </div>
   <div class="action-btns">
     <button class="btn-action" onclick="toggleAllTreeNodes()">
@@ -622,7 +635,8 @@ body {
         <span>🌳</span> Encapsulation Architecture: Group By Higher-to-Lower Level Hierarchy
       </div>
       <p class="intro-desc">
-        Demonstrates the strict structural encapsulation across the Spiritual Karim platform.
+        Demonstrates the strict structural encapsulation across the Spiritual Karim platform following the canonical chain:
+        <strong style="color: var(--gold); letter-spacing: 0.02em;">Profile &rarr; RBAC &rarr; Auth Matrix &rarr; Portal Display</strong>.
         Every data entity flows downward from <strong>Level 0 (System Root)</strong> to <strong>Level 1 (Role Tier Scope)</strong>,
         <strong>Level 2 (Screen / Tab Scope)</strong>, <strong>Level 3 (Component &amp; Card Scope)</strong>, down to <strong>Level 4 (Atomic Fields &amp; Actions)</strong>.
         Use the role filter toolbar below to observe how the tree dynamically filters and encapsulates visibility to prevent scope leakage.
@@ -665,6 +679,9 @@ body {
         </div>
       </div>
 
+      <!-- INTERACTIVE TREE HIERARCHY RE-ORDER ENGINE WIDGET -->
+      <div id="interactive-tree-reorder-container" style="margin-top: 1rem; margin-bottom: 1.5rem;"></div>
+
       <!-- ROOT LEVEL 0 CARD -->
       <div class="tree-node-group">
         <div id="tc-root-card" class="tree-card tc-root">
@@ -676,7 +693,7 @@ body {
             <span class="tc-type-tag tt-root">SYSTEM ROOT</span>
           </div>
           <p class="tc-desc">
-            The master system encapsulation container. Houses runtime system configuration, Firebase RTDB connection, offline queue management, telemetry stream listener, and AES-256 local encrypted storage.
+            The master system encapsulation container. Governs the canonical chain: <strong>Profile &rarr; RBAC &rarr; Auth Matrix &rarr; Portal Display</strong>. Houses runtime system configuration, Firebase RTDB connection, offline queue management, telemetry stream listener, and AES-256 local encrypted storage.
           </p>
           <div class="tc-meta-row">
             <span>OOPS Container: <code>ProfileModel.js</code> &bull; Storage Keys: <code>sk_admin_system_settings_v1</code>, <code>sk_join_wizard_draft</code></span>
@@ -1499,10 +1516,14 @@ body {
 
     <div class="intro-card">
       <div class="intro-title">
-        <span>🔐</span> Canonical Roles &amp; Authorization Matrix (74+ Screen Elements)
+        <span>🔐</span> Canonical Roles &amp; Authorization Matrix (74+ Screen Elements) &mdash; Profile &rarr; RBAC &rarr; Auth Matrix &rarr; Portal Display
       </div>
       <p class="intro-desc">
         Exact implementation of <code>ScreenAuthMatrix.js</code> and <code>rbac-admin.html</code>.
+        This is the enforcement layer of the canonical chain: <strong style="color: var(--gold);">Profile</strong> (user identity &amp; role assignment) &rarr;
+        <strong style="color: var(--purple);">RBAC</strong> (4-tier role hierarchy) &rarr;
+        <strong style="color: var(--blue);">Auth Matrix</strong> (74+ element visibility gate via <code>applyDynamicAuthMatrix()</code>) &rarr;
+        <strong style="color: var(--green);">Portal Display</strong> (role-specific UI rendered per <code>data-portal-role</code>).
         Specifies visibility and action gating across all 4 Role Modes (<code>MASTER</code>, <code>HEALER</code>, <code>TRAINEE</code>, <code>DEVOTEE</code>).
         Filter by category or search element names below.
       </p>
@@ -1608,7 +1629,7 @@ body {
   "expiresAtMs": 1789181223000, // +24 Hours Strict SLA
   "resendCount": 0,
   "lastResendTimestamp": 1789094823000,
-  "telegramLink": "https://t.me/SpiritualKarimBot•start=pair_...",
+  "telegramLink": "https://t.me/SpiritualKarimBot?start=pair_...",
   "tcVersion": "1.2.0"
 }</pre>
       </div>
@@ -1767,13 +1788,45 @@ body {
               <td style="padding:0.45rem 0.6rem;">Firebase: <code>/telemetry/notifications</code></td>
               <td style="padding:0.45rem 0.6rem;">Exponential backoff retry (3x)</td>
             </tr>
-            <tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
               <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>AuditTrails</code></td>
               <td style="padding:0.45rem 0.6rem;"><code>audit_id</code></td>
               <td style="padding:0.45rem 0.6rem;"><code>actor_id</code>, <code>target_id</code></td>
               <td style="padding:0.45rem 0.6rem;"><code>timestamp</code>, <code>event_type</code></td>
               <td style="padding:0.45rem 0.6rem;">Firebase: <code>/telemetry/audits</code></td>
               <td style="padding:0.45rem 0.6rem;">Append-only cryptographic hash lock</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>SadhanaCatalog</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>sadhana_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>creator_id &rarr; Devotees(id)</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>sadhana_code</code>, <code>level</code></td>
+              <td style="padding:0.45rem 0.6rem;">Firebase: <code>/sadhana_catalog</code></td>
+              <td style="padding:0.45rem 0.6rem;">Master curated 11 Malas / 108 Japa threshold</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>DeviceTelemetry</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>session_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>devotee_id &rarr; Devotees(id)</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>device_hash</code>, <code>timestamp</code></td>
+              <td style="padding:0.45rem 0.6rem;">Firebase: <code>/device_telemetry</code></td>
+              <td style="padding:0.45rem 0.6rem;">Anti-tamper developer mode &amp; GPS spoof check</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>Appeals</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>appeal_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>devotee_id</code>, <code>mentor_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>status</code>, <code>ticket_id</code></td>
+              <td style="padding:0.45rem 0.6rem;">Firebase: <code>/appeals</code></td>
+              <td style="padding:0.45rem 0.6rem;">Multi-option mentor decision resolution SLA</td>
+            </tr>
+            <tr>
+              <td style="padding:0.45rem 0.6rem; font-weight:700;"><code>AuthorisedNodes</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>node_id</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>devotee_id &rarr; Devotees(id)</code></td>
+              <td style="padding:0.45rem 0.6rem;"><code>mac_hash</code>, <code>registered_at</code></td>
+              <td style="padding:0.45rem 0.6rem;">Firebase: <code>/authorisedNodes</code></td>
+              <td style="padding:0.45rem 0.6rem;">Zero-trust hardware MAC whitelist check</td>
             </tr>
           </tbody>
         </table>
@@ -2059,10 +2112,10 @@ function renderRbacTable(items) {
       <td><strong>${item.label}</strong><br><span class="code-inline">${item.id}</span></td>
       <td><span class="tb-badge tb-info">${item.type}</span></td>
       <td><span class="code-inline">${item.sel}</span></td>
-      <td style="text-align:center;">${item.M • '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
-      <td style="text-align:center;">${item.H • '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
-      <td style="text-align:center;">${item.T • '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
-      <td style="text-align:center;">${item.D • '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
+      <td style="text-align:center;">${item.M ? '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
+      <td style="text-align:center;">${item.H ? '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
+      <td style="text-align:center;">${item.T ? '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
+      <td style="text-align:center;">${item.D ? '<span class="tb-badge tb-pass">✓</span>' : '<span class="tb-badge tb-fail">✕</span>'}</td>
     </tr>
   `).join('');
 
@@ -2213,16 +2266,27 @@ let treeExpanded = true;
 function toggleAllTreeNodes() {
   treeExpanded = !treeExpanded;
   document.querySelectorAll('.tree-branch').forEach(b => {
-    b.style.display = treeExpanded • 'flex' : 'none';
+    b.style.display = treeExpanded ? 'flex' : 'none';
   });
-  document.getElementById('toggle-tree-btn-lbl').textContent = treeExpanded • 'Collapse Tree' : 'Expand Tree';
+  document.getElementById('toggle-tree-btn-lbl').textContent = treeExpanded ? 'Collapse Tree' : 'Expand Tree';
 }
 
 // INITIALIZE ON LOAD
 document.addEventListener('DOMContentLoaded', () => {
   renderRbacTable(RBAC_DATA);
+  if (window.initTreeReorderEngine) {
+    window.initTreeReorderEngine('interactive-tree-reorder-container');
+  }
 });
 renderRbacTable(RBAC_DATA);
+</script>
+
+<!-- LOAD INTERACTIVE TREE HIERARCHY RE-ORDER ENGINE -->
+<script src="framework/tree-reorder-engine.js"></script>
+<script>
+if (window.initTreeReorderEngine && document.getElementById('interactive-tree-reorder-container')) {
+  window.initTreeReorderEngine('interactive-tree-reorder-container');
+}
 </script>
 
 </body>

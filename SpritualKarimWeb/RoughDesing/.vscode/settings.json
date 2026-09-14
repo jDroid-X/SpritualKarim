@@ -1,0 +1,29 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/build/**": true,
+    "**/node_modules/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true
+  },
+  "javascript.preferences.importModuleSpecifier": "short",
+  "typescript.preferences.importModuleSpecifier": "short",
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact"
+  },
+  "workbench.editor.enablePreview": false,
+  "explorer.confirmDelete": false,
+  "github.copilot.chat.codeGenerationInstructions": "Follow the development rules in CLAUDE.md and .vscode/framework/rules/DEV_RULES.md"
+}

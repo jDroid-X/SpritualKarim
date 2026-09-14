@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Spiritual Karim Master Relational Schema",
+  "description": "Unified 11-collection relational schema connecting Web Admin MVC with Android HealerProfile App.",
+  "type": "object",
+  "properties": {
+    "profiles": {
+      "type": "object",
+      "description": "4-Tier user profiles: ADMIN (1), HEALER (2), TRAINEE (4), DEVOTEE (5)",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "referenceCode", "name", "profileType", "level"],
+        "properties": {
+          "id": { "type": "string" },
+          "referenceCode": { "type": "string", "pattern": "^SK[A-Z0-9-]{10,25}$" },
+          "name": { "type": "string", "minLength": 2 },
+          "profileType": { "enum": ["ADMIN", "HEALER", "TRAINEE", "DEVOTEE"] },
+          "level": { "type": "integer", "minimum": 0, "maximum": 10 },
+          "referredByCode": { "type": "string" },
+          "phone": { "type": "string" },
+          "email": { "type": "string" },
+          "isActive": { "type": "boolean" },
+          "paymentStatus": { "enum": ["PAID", "FREE"] }
+        }
+      }
+    },
+    "pairing_invites": {
+      "type": "object",
+      "description": "24-hour cryptographic QR/PIN pairing tokens",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["token", "pin", "sponsorCode", "status", "expiresAt"]
+      }
+    },
+    "sadhana_catalog": {
+      "type": "object",
+      "description": "Sacred sadhana knowledge base and mantra instructions"
+    },
+    "device_telemetry": {
+      "type": "object",
+      "description": "Active Android mobile device heartbeats, battery %, and anti-spoof state"
+    },
+    "system_config": {
+      "type": "object",
+      "description": "Dynamic administrative configuration and thresholds"
+    },
+    "lineage_graph": {
+      "type": "object",
+      "description": "Visual MLM hierarchy mapping with parentCode and downline arrays"
+    },
+    "house_clean_logs": {
+      "type": "array",
+      "description": "House Clean audits requiring score >= 75 and mentor signature"
+    },
+    "daily_diya_logs": {
+      "type": "array",
+      "description": "Consecutive prayer check-in records with oil types and streak counts"
+    },
+    "audit_logs": {
+      "type": "array",
+      "description": "Administrative audit records"
+    },
+    "appeals": {
+      "type": "object",
+      "description": "Devotee induction rejection appeals"
+    },
+    "authorisedNodes": {
+      "type": "object",
+      "description": "Whitelisted nodes for hierarchy routing"
+    }
+  },
+  "required": [
+    "profiles",
+    "pairing_invites",
+    "sadhana_catalog",
+    "device_telemetry",
+    "system_config",
+    "lineage_graph",
+    "house_clean_logs",
+    "daily_diya_logs",
+    "audit_logs",
+    "appeals",
+    "authorisedNodes"
+  ]
+}

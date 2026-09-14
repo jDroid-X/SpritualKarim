@@ -9,6 +9,9 @@ let indexHtml = fs.readFileSync(path.join(webRoot, 'index.html'), 'utf8');
 
 // Ensure proper cache-busting query parameter (?v=...)
 indexHtml = indexHtml.replace(/href="css\/profile-admin\.css[•?][^"]*"/g, `href="css/profile-admin.css?v=sk_v5_${timestamp}"`);
+indexHtml = indexHtml.replace(/src="js\/config\/appConfig\.js[•?][^"]*"/g, `src="js/config/appConfig.js?v=sk_v5_${timestamp}"`);
+indexHtml = indexHtml.replace(/src="js\/utils\/sanitizer\.js[•?][^"]*"/g, `src="js/utils/sanitizer.js?v=sk_v5_${timestamp}"`);
+indexHtml = indexHtml.replace(/src="js\/utils\/FormValidator\.js[•?][^"]*"/g, `src="js/utils/FormValidator.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/profile-admin-header\.js[•?][^"]*"/g, `src="js/profile-admin-header.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/models\/ScreenAuthMatrix\.js[•?][^"]*"/g, `src="js/models/ScreenAuthMatrix.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/models\/ProfileModel\.js[•?][^"]*"/g, `src="js/models/ProfileModel.js?v=sk_v5_${timestamp}"`);
@@ -28,7 +31,8 @@ const portals = [
   { dir: 'Masters', role: 'ADMIN', title: 'Master Admin Portal', badgeClass: 'badge-admin', badgeText: '👑 MASTER FOUNDER' },
   { dir: 'Healers', role: 'HEALER', title: 'Healers Portal', badgeClass: 'badge-healer', badgeText: '🛡️ CERTIFIED HEALER' },
   { dir: 'Trainee', role: 'TRAINEE', title: 'Trainee Sadhak Portal', badgeClass: 'badge-trainee', badgeText: '📿 TRAINEE SADHAK' },
-  { dir: 'Devotee', role: 'DEVOTEE', title: 'Devotee Portal', badgeClass: 'badge-devotee', badgeText: '🌟 DEVOTEE / SEEKER' }
+  { dir: 'Devotee', role: 'DEVOTEE', title: 'Devotee Portal', badgeClass: 'badge-devotee', badgeText: '🌟 DEVOTEE / SEEKER' },
+  { dir: 'Seeker', role: 'DEVOTEE', title: 'Seeker Portal', badgeClass: 'badge-devotee', badgeText: '🌟 DEVOTEE / SEEKER' }
 ];
 
 portals.forEach(p => {
@@ -50,6 +54,7 @@ portals.forEach(p => {
   subHtml = subHtml.replace(/href="Healers\/index\.html"/g, 'href="../Healers/index.html"');
   subHtml = subHtml.replace(/href="Trainee\/index\.html"/g, 'href="../Trainee/index.html"');
   subHtml = subHtml.replace(/href="Devotee\/index\.html"/g, 'href="../Devotee/index.html"');
+  subHtml = subHtml.replace(/href="Seeker\/index\.html"/g, 'href="../Seeker/index.html"');
   subHtml = subHtml.replace(/src="GOLI_GYAN_FOR_SEEKERS\.html"/g, 'src="../GOLI_GYAN_FOR_SEEKERS.html"');
   subHtml = subHtml.replace(/href="GOLI_GYAN_FOR_SEEKERS\.html"/g, 'href="../GOLI_GYAN_FOR_SEEKERS.html"');
 
@@ -70,8 +75,8 @@ portals.forEach(p => {
   console.log(`✅ Synchronized portal: ${p.dir}/index.html (${p.role})`);
 });
 
-// Also update Seeker and Public if they exist
-['Seeker', 'Public'].forEach(portalDir => {
+// Also update Public if it exists
+['Public'].forEach(portalDir => {
   const pFile = path.join(webRoot, portalDir, 'index.html');
   if (fs.existsSync(pFile)) {
     let pHtml = fs.readFileSync(pFile, 'utf8');
@@ -89,5 +94,65 @@ portals.forEach(p => {
   }
 });
 
-console.log('🎉 All portals built and synchronized successfully!');
+// Also mirror to Frontend directory
+const frontendDir = path.join(webRoot, 'Frontend');
+if (fs.existsSync(frontendDir)) {
+  // Mirror index.html
+  fs.copyFileSync(path.join(webRoot, 'index.html'), path.join(frontendDir, 'index.html'));
+  
+  // Mirror css/profile-admin.css
+  const fCssDir = path.join(frontendDir, 'css');
+  if (!fs.existsSync(fCssDir)) fs.mkdirSync(fCssDir, { recursive: true });
+  fs.copyFileSync(path.join(webRoot, 'css', 'profile-admin.css'), path.join(fCssDir, 'profile-admin.css'));
+  
+  // Mirror js directory files
+  function copyDirRecursive(src, dest) {
+    if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+    const entries = fs.readdirSync(src, { withFileTypes: true });
+    for (const entry of entries) {
+      const srcPath = path.join(src, entry.name);
+      const destPath = path.join(dest, entry.name);
+      if (entry.isDirectory()) {
+        copyDirRecursive(srcPath, destPath);
+      } else {
+        fs.copyFileSync(srcPath, destPath);
+      }
+    }
+  }
+  copyDirRecursive(path.join(webRoot, 'js'), path.join(frontendDir, 'js'));
+
+  // Mirror sub-portals
+  portals.concat([{ dir: 'Public' }]).forEach(p => {
+    const srcPortal = path.join(webRoot, p.dir, 'index.html');
+    const destPortalDir = path.join(frontendDir, p.dir);
+    if (fs.existsSync(srcPortal)) {
+      if (!fs.existsSync(destPortalDir)) fs.mkdirSync(destPortalDir, { recursive: true });
+      fs.copyFileSync(srcPortal, path.join(destPortalDir, 'index.html'));
+    }
+  });
+
+  // Mirror login.html, logout.html, join.html to Frontend
+  ['login.html', 'logout.html', 'join.html'].forEach(file => {
+    const src = path.join(webRoot, file);
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, path.join(frontendDir, file));
+    }
+  });
+
+  console.log('✅ Synchronized Frontend directory with latest root, portals, login, logout, and join');
+}
+
+// Mirror login.html, logout.html, join.html to portal subdirectories
+portals.forEach(p => {
+  ['login.html', 'logout.html', 'join.html'].forEach(file => {
+    const src = path.join(webRoot, file);
+    const dest = path.join(webRoot, p.dir, file);
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, dest);
+    }
+  });
+});
+
+console.log('🎉 All portals, login/logout actions, and joining steps built and synchronized successfully!');
+
 

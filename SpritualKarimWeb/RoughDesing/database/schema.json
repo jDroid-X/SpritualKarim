@@ -1,0 +1,15 @@
+{
+  "database": {
+    "project": "spritualkarim-7b5fd",
+    "type": "Firebase Realtime Database",
+    "collections": {
+      "profiles": "4-Tier user profiles mapped directly to Kotlin Android HealerProfile data classes",
+      "pairing_invites": "24-hour cryptographic invitation tokens and pairing verification queue",
+      "sadhana_catalog": "Sacred sadhana knowledge dictionary, mantras, timings, and steps",
+      "device_telemetry": "Active IoT node heartbeats, battery, OS version, GPS spoof detection",
+      "system_config": "Dynamic administrative configuration, URLs, and RBAC thresholds",
+      "lineage_graph": "5-Level visual MLM parallel and sequential genealogical node mapping",
+      "audit_logs": "Immutable administrative audit trail of profile modifications and logins"
+    }
+  }
+}

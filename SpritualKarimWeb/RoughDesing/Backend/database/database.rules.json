@@ -1,0 +1,99 @@
+{
+  "rules": {
+    "profiles": {
+      ".read": "auth != null || true",
+      ".write": "auth != null",
+      "$deviceId": {
+        ".indexOn": [
+          "referenceCode",
+          "referredByCode",
+          "profileType",
+          "level",
+          "mentor_id"
+        ]
+      }
+    },
+    "pairing_invites": {
+      ".read": "auth != null || true",
+      ".write": "auth != null || true",
+      "$queueId": {
+        ".indexOn": [
+          "sponsorCode",
+          "status",
+          "expiresAt",
+          "hardwareNonce"
+        ]
+      }
+    },
+    "house_clean_logs": {
+      ".read": "auth != null || true",
+      ".write": "auth != null || true",
+      "$auditId": {
+        ".indexOn": [
+          "devoteeId",
+          "level",
+          "score",
+          "status",
+          "timestamp"
+        ]
+      }
+    },
+    "daily_diya_logs": {
+      ".read": "auth != null || true",
+      ".write": "auth != null || true",
+      "$logId": {
+        ".indexOn": [
+          "devoteeId",
+          "checkinDate",
+          "streak"
+        ]
+      }
+    },
+    "telemetry": {
+      "notifications": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "$notifId": {
+          ".indexOn": [
+            "recipient_id",
+            "status",
+            "channel",
+            "timestamp"
+          ]
+        }
+      },
+      "audits": {
+        ".read": "auth != null && auth.token.admin == true",
+        ".write": "auth != null",
+        "$auditId": {
+          ".indexOn": [
+            "actor_id",
+            "target_id",
+            "timestamp",
+            "event_type"
+          ]
+        }
+      }
+    },
+    "sadhana_catalog": {
+      ".read": true,
+      ".write": "auth != null && auth.token.admin == true"
+    },
+    "device_telemetry": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "system_config": {
+      ".read": true,
+      ".write": "auth != null && auth.token.admin == true"
+    },
+    "lineage_graph": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "audit_logs": {
+      ".read": "auth != null && auth.token.admin == true",
+      ".write": "auth != null"
+    }
+  }
+}

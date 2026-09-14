@@ -9,7 +9,9 @@
       "device_telemetry": "Active IoT node heartbeats, battery, OS version, GPS spoof detection",
       "system_config": "Dynamic administrative configuration, URLs, and RBAC thresholds",
       "lineage_graph": "5-Level visual MLM parallel and sequential genealogical node mapping",
-      "audit_logs": "Immutable administrative audit trail of profile modifications and logins"
+      "audit_logs": "Immutable administrative audit trail of profile modifications and logins",
+      "component_states": "Interactive UI component states, switch toggles, active segmented views, and UI preferences",
+      "auth_matrix": "121-item 3-level screen authorization matrix across 5 canonical role tiers"
     }
   }
 }

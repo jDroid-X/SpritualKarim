@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In • Shree Spritual Karim Sansthan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../../js/utils/ThemeEngine.js"></script>
+  <script>
+    // Immediate pre-render theme enforcement (zero flicker)
+    (function() {
+      try {
+        const pref = localStorage.getItem('sk_theme_preference') || 'light';
+        document.documentElement.setAttribute('data-theme', pref === 'dark' ? 'dark' : 'light');
+      } catch(e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <style>
+    /* ============================================================
+       1. MODERN EXECUTIVE DESIGN TOKENS & RESET
+       ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-heading: 'Cinzel', Georgia, serif;
+      --gold-grad: linear-gradient(135deg, #d4af37 0%, #f59e0b 50%, #b45309 100%);
+    }
+
+    /* Light Theme (Default) */
+    html[data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-radial: radial-gradient(circle at 50% 0%, #fffbeb 0%, #f1f5f9 60%, #e2e8f0 100%);
+      --card-bg: #ffffff;
+      --card-border: rgba(212, 175, 55, 0.4);
+      --card-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(212, 175, 55, 0.2);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-heading: #1e293b;
+      --input-bg: #ffffff;
+      --input-border: #cbd5e1;
+      --input-text: #0f172a;
+      --input-placeholder: #94a3b8;
+      --input-focus-border: #d97706;
+      --input-focus-ring: rgba(217, 119, 6, 0.2);
+      --hero-bg: linear-gradient(145deg, #090e17 0%, #111a2e 50%, #0d1527 100%);
+      --hero-text: #ffffff;
+      --hero-subtext: #cbd5e1;
+      --footer-border: #e2e8f0;
+    }
+
+    /* Dark Theme */
+    html[data-theme="dark"] {
+      --bg-page: #07090e;
+      --bg-radial: radial-gradient(circle at 50% 0%, #111a2e 0%, #090d15 60%, #04060a 100%);
+      --card-bg: #0f172a;
+      --card-border: rgba(212, 175, 55, 0.45);
+      --card-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(212, 175, 55, 0.3);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-heading: #f1f5f9;
+      --input-bg: #1e293b;
+      --input-border: rgba(212, 175, 55, 0.35);
+      --input-text: #f8fafc;
+      --input-placeholder: #64748b;
+      --input-focus-border: #f59e0b;
+      --input-focus-ring: rgba(245, 158, 11, 0.3);
+      --hero-bg: linear-gradient(145deg, #05070c 0%, #0a0f1c 50%, #04070e 100%);
+      --hero-text: #ffffff;
+      --hero-subtext: #94a3b8;
+      --footer-border: rgba(255, 255, 255, 0.08);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-radial);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 1.25rem;
+      box-sizing: border-box;
+      transition: background 0.3s ease, color 0.3s ease;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ============================================================
+       2. MASTER SPLIT-CONTAINER (EXECUTIVE MLM ARCHITECTURE)
+       ============================================================ */
+    .portal-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 920px;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ============================================================
+       3. LEFT SHOWCASE PANEL (PRESTIGE & BRANDING)
+       ============================================================ */
+    .brand-showcase {
+      background: var(--hero-bg);
+      color: var(--hero-text);
+      padding: 2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      border-right: 1px solid rgba(212, 175, 55, 0.25);
+    }
+
+    .brand-showcase::after {
+      content: "ॐ";
+      position: absolute;
+      right: -25px;
+      bottom: -40px;
+      font-size: 16rem;
+      color: rgba(212, 175, 55, 0.04);
+      font-family: var(--font-heading);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .brand-emblem {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 2px solid #d4af37;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+      flex-shrink: 0;
+    }
+
+    .brand-title-group h2 {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #ffffff 30%, #fde047 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .brand-title-group p {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 0.2rem;
+      font-weight: 600;
+    }
+
+    .brand-mission {
+      margin: 0.75rem 0;
+    }
+
+    .brand-mission h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: #f8fafc;
+      margin-bottom: 0.4rem;
+    }
+
+    .brand-mission h3 span {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-mission p {
+      font-size: 0.82rem;
+      color: var(--hero-subtext);
+      line-height: 1.45;
+    }
+
+    /* 4-Tier Hierarchy Cards */
+    .hierarchy-strip {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin: 1rem 0;
+    }
+
+    .tier-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.8rem;
+      border-radius: 0.65rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.2s ease;
+    }
+
+    .tier-badge-row:hover {
+      background: rgba(212, 175, 55, 0.08);
+      border-color: rgba(212, 175, 55, 0.35);
+      transform: translateX(4px);
+    }
+
+    .tier-badge-icon {
+      font-size: 1.2rem;
+      width: 28px;
+      text-align: center;
+    }
+
+    .tier-badge-info h4 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: 0.2px;
+    }
+
+    .tier-badge-info p {
+      font-size: 0.72rem;
+      color: #94a3b8;
+    }
+
+    .brand-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.85rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.72rem;
+      color: #94a3b8;
+    }
+
+    .brand-footer .cert {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: #fbbf24;
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       4. RIGHT AUTHENTICATION PANEL (SIMPLE, PURE & PROFESSIONAL)
+       ============================================================ */
+    .auth-panel {
+      padding: 2rem 2.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: var(--card-bg);
+      position: relative;
+    }
+
+    /* Top Bar with Minimal Theme Toggle */
+    .auth-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 0.85rem;
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--footer-border);
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle-btn:hover {
+      color: var(--text-main);
+      border-color: rgba(212, 175, 55, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .auth-heading {
+      margin-bottom: 1.15rem;
+    }
+
+    .auth-heading h1 {
+      font-family: var(--font-heading);
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      letter-spacing: -0.3px;
+    }
+
+    .auth-heading p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Logout Alert Banner */
+    .logout-alert {
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #059669;
+      padding: 0.65rem 0.95rem;
+      border-radius: 0.55rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      animation: fadeIn 0.3s ease;
+    }
+    .logout-alert.show {
+      display: flex;
+    }
+
+    /* Error Alert */
+    .error-alert {
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #dc2626;
+      padding: 0.55rem 0.85rem;
+      border-radius: 0.55rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .error-alert.show {
+      display: flex;
+    }
+
+    /* ============================================================
+       5. THE INLINE FORM (LABEL & TEXTBOX STRICTLY SAME LINE)
+       ============================================================ */
+    .executive-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    /* LOCKED SAME-LINE ROW USING PRECISE GRID */
+    .form-row {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .form-label {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      text-align: right;
+      letter-spacing: -0.1px;
+      user-select: none;
+    }
+
+    .input-field-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .field-icon {
+      position: absolute;
+      left: 0.9rem;
+      font-size: 0.95rem;
+      color: #94a3b8;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      padding: 0.58rem 0.85rem 0.58rem 2.35rem;
+      border-radius: 0.55rem;
+      border: 1.5px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--input-text);
+      font-size: 0.92rem;
+      font-family: inherit;
+      font-weight: 500;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .form-input::placeholder {
+      color: var(--input-placeholder);
+      opacity: 1;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      border-color: var(--input-focus-border) !important;
+      box-shadow: 0 0 0 3px var(--input-focus-ring) !important;
+      background: var(--card-bg) !important;
+    }
+
+    /* Password visibility eye toggle */
+    .toggle-password-btn {
+      position: absolute;
+      right: 0.85rem;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      transition: color 0.15s ease;
+    }
+    .toggle-password-btn:hover {
+      color: var(--text-heading);
+    }
+
+    /* Autofill fix */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: var(--input-text) !important;
+      -webkit-box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    /* Form Options Row */
+    .form-options-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-top: 0.15rem;
+      padding-left: 104px;
+    }
+
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .remember-label input[type="checkbox"] {
+      accent-color: #d97706;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    /* Submit Button (Executive Golden Sheen) */
+    .submit-button-wrap {
+      padding-left: 104px;
+      margin-top: 0.35rem;
+    }
+
+    .btn-submit-workspace {
+      width: 100%;
+      padding: 0.72rem 1.15rem;
+      background: var(--gold-grad);
+      color: #0b0f19;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: inherit;
+      border: none;
+      border-radius: 0.65rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-submit-workspace:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(217, 119, 6, 0.45);
+      filter: brightness(1.05);
+    }
+
+    .btn-submit-workspace:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 10px rgba(217, 119, 6, 0.3);
+    }
+
+    .btn-submit-workspace:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Bottom Nav Links */
+    .auth-footer-nav {
+      margin-top: 1.15rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--footer-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+    }
+
+    .auth-footer-nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .auth-footer-nav a:hover {
+      color: #d97706;
+    }
+
+    /* ============================================================
+       6. RESPONSIVE DESIGN
+       ============================================================ */
+    @media (max-width: 960px) {
+      .portal-wrapper {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+      }
+      .brand-showcase {
+        padding: 2.25rem 2rem;
+        border-right: none;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+      }
+      .auth-panel {
+        padding: 2.25rem 2rem;
+      }
+      .brand-showcase::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 560px) {
+      body {
+        padding: 1rem 0.75rem;
+      }
+      .brand-showcase {
+        padding: 1.75rem 1.25rem;
+      }
+      .auth-panel {
+        padding: 1.75rem 1.25rem;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+      }
+      .form-label {
+        text-align: left;
+      }
+      .form-options-row,
+      .submit-button-wrap {
+        padding-left: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MASTER SPLIT-CONTAINER -->
+  <div class="portal-wrapper">
+
+    <!-- ============================================================
+         LEFT SHOWCASE PANEL (PRESTIGE, BRANDING & NETWORK TIERS)
+         ============================================================ -->
+    <aside class="brand-showcase">
+      <div>
+        <div class="brand-header">
+          <div class="brand-emblem">ॐ</div>
+          <div class="brand-title-group">
+            <h2>Shree Spritual Karim</h2>
+            <p>Sansthan Portal</p>
+          </div>
+        </div>
+
+        <div class="brand-mission">
+          <h3>Empowering Sacred Lineage &amp; <span>Spiritual Sadhana</span></h3>
+          <p>
+            Welcome to the centralized governance portal for genealogy verification, 
+            ancestral purification, house-cleansing milestones, and upline mentorship.
+          </p>
+        </div>
+
+        <!-- 4-Tier Network Hierarchy Showcase -->
+        <div class="hierarchy-strip">
+          <div class="tier-badge-row">
+            <span class="tier-badge-icon">👑</span>
+            <div class="tier-badge-info">
+              <h4>Master Admin Level</h4>
+              <p>Supreme governance, audit trail &amp; multi-branch approvals</p>
+            </div>
+          </div>
+
+          <div class="tier-badge-row">
+            <span class="tier-badge-icon">🛡️</span>
+            <div class="tier-badge-info">
+              <h4>Healers Downline</h4>
+              <p>Certified spiritual diagnostics &amp; remedy recommendations</p>
+            </div>
+          </div>
+
+          <div class="tier-badge-row">
+            <span class="tier-badge-icon">📿</span>
+            <div class="tier-badge-info">
+              <h4>Trainee Sadhaks</h4>
+              <p>3-Diya dusk discipline, mantra Diksha &amp; level cleansing</p>
+            </div>
+          </div>
+
+          <div class="tier-badge-row">
+            <span class="tier-badge-icon">🌟</span>
+            <div class="tier-badge-info">
+              <h4>Devotee Members</h4>
+              <p>Ancestral lineage tree, daily 108 japa &amp; sacred remedies</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-footer">
+        <span>ISO / Vedic Sansthan Standard</span>
+        <span class="cert">🔒 256-Bit SSL Encrypted</span>
+      </div>
+    </aside>
+
+    <!-- ============================================================
+         RIGHT AUTHENTICATION PANEL (CLEAN, SIMPLE & STREAMLINED)
+         ============================================================ -->
+    <main class="auth-panel">
+      <div>
+        <!-- Minimal Theme Switcher -->
+        <div class="auth-top-bar">
+          <button type="button" class="theme-toggle-btn" id="loginThemeToggle" aria-label="Toggle Portal Theme">
+            <span id="themeToggleIcon">☀️</span>
+            <span id="themeToggleText">Light Mode</span>
+          </button>
+        </div>
+
+        <!-- Clean Heading -->
+        <div class="auth-heading">
+          <h1>Sign In</h1>
+          <p>Enter your credentials to access your workspace</p>
+        </div>
+
+        <!-- Logout Banner -->
+        <div class="logout-alert" id="logoutBanner">
+          <span>✅</span> You have been securely logged out.
+        </div>
+
+        <!-- Error Banner -->
+        <div class="error-alert" id="loginError"></div>
+
+        <!-- ============================================================
+             LOCKED SAME-LINE FORM (CLEAN & SIMPLE)
+             ============================================================ -->
+        <form class="executive-form" id="loginForm" novalidate>
+          
+          <!-- ROW 1: USERNAME (LABEL + TEXTBOX SAME LINE) -->
+          <div class="form-row">
+            <label class="form-label" for="username">Username</label>
+            <div class="input-field-wrapper">
+              <span class="field-icon">👤</span>
+              <input
+                type="text"
+                id="username"
+                class="form-input"
+                placeholder="Username"
+                required
+                autocomplete="username"
+              />
+            </div>
+          </div>
+
+          <!-- ROW 2: PASSWORD (LABEL + TEXTBOX SAME LINE) -->
+          <div class="form-row">
+            <label class="form-label" for="password">Password</label>
+            <div class="input-field-wrapper">
+              <span class="field-icon">🔑</span>
+              <input
+                type="password"
+                id="password"
+                class="form-input"
+                placeholder="Password"
+                required
+                autocomplete="current-password"
+              />
+              <button type="button" class="toggle-password-btn" id="togglePasswordBtn" title="Show / Hide Password">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <!-- ROW 3: PORTAL TIER (LABEL + DROPDOWN SAME LINE) -->
+          <div class="form-row">
+            <label class="form-label" for="role">Portal Tier</label>
+            <div class="input-field-wrapper">
+              <span class="field-icon">🏛️</span>
+              <select id="role" class="form-select">
+                <option value="trainee">📿 Trainee Sadhak</option>
+                <option value="devotee">🌟 Devotee</option>
+                <option value="healer">🛡️ Healer</option>
+                <option value="master">👑 Admin Master</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- REMEMBER ME -->
+          <div class="form-options-row">
+            <label class="remember-label">
+              <input type="checkbox" id="rememberMe" checked />
+              <span>Remember session</span>
+            </label>
+          </div>
+
+          <!-- SUBMIT BUTTON -->
+          <div class="submit-button-wrap">
+            <button type="submit" class="btn-submit-workspace" id="loginBtn">
+              <span>Sign In</span>
+              <span>→</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- REGISTRATION SECTION (COLLAPSIBLE) -->
+        <div id="registerSection" style="display: none; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--footer-border);">
+          <div class="error-alert" id="regError"></div>
+          <form class="executive-form" id="registerForm" novalidate>
+            <div class="form-row">
+              <label class="form-label" for="regUsername">Username</label>
+              <div class="input-field-wrapper">
+                <span class="field-icon">👤</span>
+                <input type="text" id="regUsername" class="form-input" placeholder="Choose Username" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="regPassword">Password</label>
+              <div class="input-field-wrapper">
+                <span class="field-icon">🔑</span>
+                <input type="password" id="regPassword" class="form-input" placeholder="Choose Password" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="regRole">Register As</label>
+              <div class="input-field-wrapper">
+                <span class="field-icon">🏛️</span>
+                <select id="regRole" class="form-select">
+                  <option value="trainee">📿 Trainee Sadhak</option>
+                  <option value="devotee">🌟 Devotee</option>
+                  <option value="healer">🛡️ Healer</option>
+                  <option value="master">👑 Admin Master</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="submit-button-wrap">
+              <button type="submit" class="btn-submit-workspace" id="regBtn">
+                <span>Create Account</span>
+                <span>→</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- FOOTER LINKS -->
+      <footer class="auth-footer-nav">
+        <a href="#" id="showRegister">Create an account</a>
+        <a href="../../index.html">Back to Home Portal ↗</a>
+      </footer>
+    </main>
+  </div>
+
+  <!-- CORE INTEGRATION & CONTROLLER SCRIPT -->
+  <script src="../../js/onboarding.js"></script>
+  <script>
+    // ===== THEME CONTROLLER =====
+    function updateThemeUI(theme) {
+      const iconEl = document.getElementById("themeToggleIcon");
+      const textEl = document.getElementById("themeToggleText");
+      if (iconEl && textEl) {
+        if (theme === "dark") {
+          iconEl.textContent = "🌙";
+          textEl.textContent = "Dark Mode";
+        } else {
+          iconEl.textContent = "☀️";
+          textEl.textContent = "Light Mode";
+        }
+      }
+    }
+
+    const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+    updateThemeUI(currentTheme);
+
+    const themeToggleBtn = document.getElementById("loginThemeToggle");
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener("click", () => {
+        const active = document.documentElement.getAttribute("data-theme") || "light";
+        const next = active === "light" ? "dark" : "light";
+        if (window.ThemeEngine && typeof window.ThemeEngine.applyTheme === "function") {
+          window.ThemeEngine.applyTheme(next);
+        } else {
+          document.documentElement.setAttribute("data-theme", next);
+          localStorage.setItem("sk_theme_preference", next);
+        }
+        updateThemeUI(next);
+      });
+    }
+
+    // Password visibility toggle
+    const togglePassBtn = document.getElementById("togglePasswordBtn");
+    const passInput = document.getElementById("password");
+    if (togglePassBtn && passInput) {
+      togglePassBtn.addEventListener("click", () => {
+        const isPass = passInput.type === "password";
+        passInput.type = isPass ? "text" : "password";
+        togglePassBtn.textContent = isPass ? "🔒" : "👁️";
+      });
+    }
+
+    // Check for logged_out query
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("logged_out") === "1") {
+      const banner = document.getElementById("logoutBanner");
+      if (banner) banner.classList.add("show");
+    }
+
+    // Form submission
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      const role = document.getElementById("role").value;
+      const errorEl = document.getElementById("loginError");
+      const btn = document.getElementById("loginBtn");
+
+      errorEl.classList.remove("show");
+      errorEl.textContent = "";
+      btn.disabled = true;
+      btn.innerHTML = '<span>Verifying...</span>';
+
+      setTimeout(() => {
+        const result = DemoAuth.login(username, password);
+        if (result.success) {
+          if (role && !result.session.profileId && result.session.role !== role) {
+            result.session.role = role;
+            sessionStorage.setItem("sk_auth_sessions", JSON.stringify(result.session));
+          }
+          if (window.DemoAudit && typeof DemoAudit.log === "function") {
+            DemoAudit.log("LOGIN", { username, role: result.session.role, profileId: result.session.profileId }, username);
+          }
+
+          const roleSlug = (result.session.role === "master" || result.session.role === "admin") ? "admin" : result.session.role;
+          const pid = result.session.profileId ? encodeURIComponent(result.session.profileId) : "";
+          const target = "index.html?role=" + roleSlug + (pid ? "&profileId=" + pid : "") + "#" + roleSlug;
+          window.location.href = target;
+        } else {
+          errorEl.textContent = result.reason || "Authentication failed. Please verify your credentials.";
+          errorEl.classList.add("show");
+          btn.disabled = false;
+          btn.innerHTML = '<span>Sign In</span><span>→</span>';
+        }
+      }, 350);
+    });
+
+    // Register section toggle
+    document.getElementById("showRegister").addEventListener("click", function(e) {
+      e.preventDefault();
+      const reg = document.getElementById("registerSection");
+      const isHidden = reg.style.display === "none";
+      reg.style.display = isHidden ? "block" : "none";
+      this.textContent = isHidden ? "← Back to Sign In" : "Create an account";
+      if (isHidden) {
+        reg.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    });
+
+    // Register submission
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const username = document.getElementById("regUsername").value.trim();
+      const password = document.getElementById("regPassword").value;
+      const role = document.getElementById("regRole").value;
+      const errorEl = document.getElementById("regError");
+      const btn = document.getElementById("regBtn");
+
+      errorEl.classList.remove("show");
+      btn.disabled = true;
+      btn.innerHTML = '<span>Creating...</span>';
+
+      setTimeout(() => {
+        const result = DemoAuth.register(username, password, role);
+        if (result.success) {
+          if (window.DemoAudit) DemoAudit.log("REGISTER", { username, role }, username);
+          alert("Account created successfully! You can now log in.");
+          document.getElementById("registerSection").style.display = "none";
+          document.getElementById("showRegister").textContent = "Create an account";
+          document.getElementById("username").value = username;
+          document.getElementById("password").focus();
+        } else {
+          errorEl.textContent = result.reason || "Registration failed.";
+          errorEl.classList.add("show");
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<span>Create Account</span><span>→</span>';
+      }, 500);
+    });
+  </script>
+</body>
+</html>

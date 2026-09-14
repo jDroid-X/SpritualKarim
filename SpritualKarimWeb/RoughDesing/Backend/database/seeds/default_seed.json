@@ -1,0 +1,1905 @@
+{
+  "profiles": {
+    "prof-admin-01": {
+      "id": "prof-admin-01",
+      "referenceCode": "SKHM-ADM1-7788-9900",
+      "referredByCode": "ROOT-0000-0000-0000",
+      "transferredCode": "",
+      "name": "Spiritual Karim Khan",
+      "phone": "+91 98765 43210",
+      "email": "karim.master@spiritualkarim.org",
+      "profileType": "ADMIN",
+      "level": 1,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Spiritual illumination, Kundalini awakening, cosmic balance, and global guidance.",
+      "selectedRemedies": [
+        "sri_yantra",
+        "kalashtami",
+        "navratri",
+        "diwali",
+        "three_diya",
+        "negativity",
+        "healing"
+      ],
+      "address": "Spiritual Karim Central Sanctuary",
+      "city": "Mumbai, Maharashtra",
+      "joinDate": "2024-01-01",
+      "isActive": true,
+      "notes": "Master Head of Organization. Direct lineage origin. Supreme Spiritual Guide of the Sanctuary.",
+      "categoryTag": "Master Guide & Supreme Cleansing",
+      "seekerDiagnostics": {
+        "afflictionDuration": "N/A (Master Guide)",
+        "kuldeviIssues": "Kuldevi Blessings Activated",
+        "targetOutcome": "Universal sadhana transmission & supreme house purification"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "sri_yantra",
+          "name": "Sri Yantra Sadhana",
+          "category": "Sacred Sadhana",
+          "priority": "High",
+          "status": "Enrolled"
+        },
+        {
+          "id": "kalashtami",
+          "name": "Kalashtami Bhairav Sadhana",
+          "category": "Sacred Sadhana",
+          "priority": "High",
+          "status": "Enrolled"
+        },
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Sanctum Sanctorum daily purification.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Spiritual Karim Khan",
+          "mentorRemarks": "Direct master lineage purity verified 100%.",
+          "approvalDate": "Today ? Dawn"
+        },
+        {
+          "id": "hc-2",
+          "levelNumber": 2,
+          "levelTitle": "Level 2 — Parents House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Ancestral Haveli purified with traditional copper havan kund.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Spiritual Karim Khan",
+          "mentorRemarks": "Ancestral peace established.",
+          "approvalDate": "Yesterday"
+        },
+        {
+          "id": "hc-3",
+          "levelNumber": 3,
+          "levelTitle": "Level 3 — Relative House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Extended family residences blessed and purified with 3-diya process.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Spiritual Karim Khan",
+          "mentorRemarks": "Complete 3-level clan purification certified.",
+          "approvalDate": "2 days ago"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-1",
+          "sadhanaKey": "sri_yantra",
+          "title": "Sri Yantra Sadhana",
+          "categoryDomain": "sadhanas",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 4 — Master Attunement",
+          "dailyTarget": "21 Malas Daily + Havan",
+          "currentStreak": "108 Days Continuous",
+          "progressPercent": 100,
+          "status": "Master Siddhi",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "diaryNotes": "Golden geometry visualization stabilized at Ajna Chakra."
+        },
+        {
+          "id": "ts-2",
+          "sadhanaKey": "three_diya",
+          "title": "Three Diya Process",
+          "categoryDomain": "remedies",
+          "isPaid": false,
+          "paymentStatus": "FREE",
+          "level": "Level 3 — Havan & Energy Transmission",
+          "dailyTarget": "3 Diyas at Sunset",
+          "currentStreak": "21 Days Completed",
+          "progressPercent": 100,
+          "status": "Completed",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "diaryNotes": "Heavy astral smoke clearing certified."
+        }
+      ],
+      "healerCompletedSadhanas": [
+        {
+          "id": "hcs-1",
+          "title": "Master Sri Yantra Siddhi",
+          "levelCompleted": "Level 4 — Master Guru",
+          "completionDate": "2023-11-15",
+          "status": "Certified Master & Guru",
+          "seekersGuidedCount": 1450,
+          "authorizedToGuide": true,
+          "sealCode": "SKHM-SEAL-MASTER-001"
+        }
+      ],
+      "healerNetwork": [
+        {
+          "id": "net-1",
+          "name": "Acharya Devendra",
+          "refCode": "SKHM-HLR2-3344-5566",
+          "role": "Healer (Level 2)",
+          "activeCases": 12
+        },
+        {
+          "id": "net-2",
+          "name": "Maa Anandita Devi",
+          "refCode": "SKHM-HLR2-5566-7788",
+          "role": "Healer (Level 2)",
+          "activeCases": 8
+        }
+      ],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Spiritual Karim Khan",
+          "selfTitle": "Founder & Master Guide",
+          "spouseName": "Fatima Karim Khan",
+          "children": [
+            {
+              "id": "c1",
+              "name": "Zaid Karim Khan",
+              "gender": "Son",
+              "ageOrNote": "Elder Son"
+            },
+            {
+              "id": "c2",
+              "name": "Ayesha Karim Khan",
+              "gender": "Daughter",
+              "ageOrNote": "Daughter"
+            }
+          ],
+          "siblings": [
+            {
+              "id": "s1",
+              "name": "Tariq Karim Khan",
+              "relation": "Brother",
+              "spouseName": "Shabnam Khan",
+              "childrenSummary": "2 Sons",
+              "isMarried": true,
+              "notes": "Senior Ashram Coordinator"
+            },
+            {
+              "id": "s2",
+              "name": "Zubaida Begum",
+              "relation": "Sister",
+              "spouseName": "Rashid Ahmed",
+              "childrenSummary": "1 Son, 1 Daughter",
+              "isMarried": true,
+              "notes": "Lucknow Branch Trustee"
+            }
+          ]
+        },
+        "husbandAncestral": {
+          "fatherName": "Late Master Father",
+          "motherName": "Late Divine Mother",
+          "paternalGrandfather": "Grandfather Senior",
+          "paternalGrandmother": "Grandmother Senior",
+          "maternalGrandfather": "Nana Ji Senior",
+          "maternalGrandmother": "Nani Ji Senior",
+          "siblings": [],
+          "address": "Ancestral Lineage Roots"
+        },
+        "wifeAncestral": {
+          "fatherName": "Late Father-in-law",
+          "motherName": "Mother-in-law",
+          "paternalGrandfather": "Dada Ji",
+          "paternalGrandmother": "Dadi Ji",
+          "maternalGrandfather": "Nana Ji",
+          "maternalGrandmother": "Nani Ji",
+          "siblings": [],
+          "address": "Wife Ancestral Village"
+        }
+      }
+    },
+    "prof-healer-02": {
+      "id": "prof-healer-02",
+      "referenceCode": "SKHM-HLR2-3344-5566",
+      "referredByCode": "SKHM-ADM1-7788-9900",
+      "transferredCode": "",
+      "name": "Acharya Devendra",
+      "phone": "+91 98220 11223",
+      "email": "devendra.healer@spiritualkarim.org",
+      "profileType": "HEALER",
+      "level": 2,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Energy healing, aura purification, and house negativity cleansing.",
+      "selectedRemedies": [
+        "three_diya",
+        "negativity",
+        "healing",
+        "court_cases"
+      ],
+      "address": "42 Sacred Grove Road",
+      "city": "Pune, Maharashtra",
+      "joinDate": "2024-06-15",
+      "isActive": true,
+      "notes": "Specialist in Three Diya remedies and Pitru Dosha diagnostics.",
+      "categoryTag": "Cleansing & Guidance",
+      "seekerDiagnostics": {
+        "afflictionDuration": "Overcome in 2021",
+        "kuldeviIssues": "Kuldevi Shanti Puja Performed",
+        "targetOutcome": "Guide 100+ families"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-4",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Purified residence in Pune with sea-salt water, loban & camphor.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Karim Ji (Founder)",
+          "mentorRemarks": "High vibrational field observed.",
+          "approvalDate": "2024-06-20"
+        },
+        {
+          "id": "hc-5",
+          "levelNumber": 2,
+          "levelTitle": "Level 2 — Parents House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 95,
+          "cleanedDetails": "Parents ancestral home cleaned.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Karim Ji (Founder)",
+          "mentorRemarks": "Ancestral blessings restored.",
+          "approvalDate": "2024-07-02"
+        },
+        {
+          "id": "hc-6",
+          "levelNumber": 3,
+          "levelTitle": "Level 3 — Relative House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 65,
+          "cleanedDetails": "Cleansing maternal uncle residence.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Karim Ji (Founder)",
+          "mentorRemarks": "Under supervision.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-3",
+          "sadhanaKey": "three_diya",
+          "title": "Three Diya Process",
+          "categoryDomain": "remedies",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 3 — Havan Transmission",
+          "dailyTarget": "3 Diyas at Dusk",
+          "currentStreak": "18 Days",
+          "progressPercent": 85,
+          "status": "In Progress",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "diaryNotes": "Smoke clearance observed."
+        }
+      ],
+      "healerCompletedSadhanas": [
+        {
+          "id": "hcs-2",
+          "title": "Three Diya Master Certification",
+          "levelCompleted": "Level 3 — Healer Acharya",
+          "completionDate": "2024-05-10",
+          "status": "Certified Master",
+          "seekersGuidedCount": 340,
+          "authorizedToGuide": true,
+          "sealCode": "SKHM-SEAL-DIYA-301"
+        }
+      ],
+      "healerNetwork": [
+        {
+          "id": "net-3",
+          "name": "Amitabh Sen",
+          "refCode": "SKHM-TRN3-1122-3344",
+          "role": "Trainee (Level 3)",
+          "activeCases": 6
+        },
+        {
+          "id": "net-4",
+          "name": "Rajeshwari Joshi",
+          "refCode": "SKHM-TRN3-2233-4455",
+          "role": "Trainee (Level 3)",
+          "activeCases": 4
+        }
+      ],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Acharya Devendra",
+          "selfTitle": "Senior Spiritual Healer",
+          "spouseName": "Sunita Sharma",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Ramprasad Sharma",
+          "motherName": "Kaushalya Devi",
+          "paternalGrandfather": "Pt. Badri Prasad",
+          "paternalGrandmother": "Sita Devi",
+          "maternalGrandfather": "Govind Ram",
+          "maternalGrandmother": "Radha Devi",
+          "siblings": [],
+          "address": "Varanasi, UP"
+        },
+        "wifeAncestral": {
+          "fatherName": "Mukesh Trivedi",
+          "motherName": "Shanti Trivedi",
+          "paternalGrandfather": "Hiralal Trivedi",
+          "paternalGrandmother": "Kamala Trivedi",
+          "maternalGrandfather": "Din Dayal",
+          "maternalGrandmother": "Uma Devi",
+          "siblings": [],
+          "address": "Nashik, Maharashtra"
+        }
+      }
+    },
+    "prof-healer-03": {
+      "id": "prof-healer-03",
+      "referenceCode": "SKHM-HLR2-5566-7788",
+      "referredByCode": "SKHM-ADM1-7788-9900",
+      "transferredCode": "",
+      "name": "Maa Anandita Devi",
+      "phone": "+91 98330 44556",
+      "email": "anandita.healer@spiritualkarim.org",
+      "profileType": "HEALER",
+      "level": 2,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Maa Chamunda Navratri Sadhana, Kundalini awakening, and ancestral Pitru Dosha clearance.",
+      "selectedRemedies": [
+        "navratri",
+        "kundalini",
+        "material_benefits",
+        "aura_strengthening"
+      ],
+      "address": "88 Ganga Ghat Sanctuary",
+      "city": "Varanasi, UP",
+      "joinDate": "2024-05-20",
+      "isActive": true,
+      "notes": "Specialist in Chamunda Shakti Anushthan and Kundalini energy flows.",
+      "categoryTag": "Kundalini & Aura Shield",
+      "seekerDiagnostics": {
+        "afflictionDuration": "Transmuted in 2020",
+        "kuldeviIssues": "Kuldevi Temple Established",
+        "targetOutcome": "Guide 50+ seekers to diksha"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "navratri",
+          "name": "Navratri Chamunda Sadhana",
+          "category": "Sacred Sadhana",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-h3-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Ganga water purification with daily Akhand Jyoti.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Karim Ji (Founder)",
+          "mentorRemarks": "Divine grace awakened.",
+          "approvalDate": "2024-05-25"
+        },
+        {
+          "id": "hc-h3-2",
+          "levelNumber": 2,
+          "levelTitle": "Level 2 — Parents House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Varanasi ancestral sanctuary purified.",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "mentorName": "Karim Ji (Founder)",
+          "mentorRemarks": "Ancestral blessings flowing.",
+          "approvalDate": "2024-06-10"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-h3-1",
+          "sadhanaKey": "navratri",
+          "title": "Navratri Chamunda Sadhana",
+          "categoryDomain": "sadhanas",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 4 — Master Attunement",
+          "dailyTarget": "108 Malas + Havan",
+          "currentStreak": "45 Days",
+          "progressPercent": 100,
+          "status": "Master Siddhi",
+          "mentorCode": "SKHM-ADM1-7788-9900",
+          "diaryNotes": "Navarna mantra Siddhi complete."
+        }
+      ],
+      "healerCompletedSadhanas": [
+        {
+          "id": "hcs-3",
+          "title": "Navarna Shakti Master Certification",
+          "levelCompleted": "Level 3 — Healer Acharya",
+          "completionDate": "2024-04-15",
+          "status": "Certified Master",
+          "seekersGuidedCount": 210,
+          "authorizedToGuide": true,
+          "sealCode": "SKHM-SEAL-SHAKTI-402"
+        }
+      ],
+      "healerNetwork": [
+        {
+          "id": "net-5",
+          "name": "Rohan Verma",
+          "refCode": "SKHM-TRN3-6677-8899",
+          "role": "Trainee (Level 3)",
+          "activeCases": 5
+        },
+        {
+          "id": "net-6",
+          "name": "Priya Sharma",
+          "refCode": "SKHM-TRN3-7788-9900",
+          "role": "Trainee (Level 3)",
+          "activeCases": 3
+        }
+      ],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Maa Anandita Devi",
+          "selfTitle": "Acharya Yogini",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "Pt. Vidyadhar Shastri",
+          "motherName": "Gayatri Devi",
+          "paternalGrandfather": "Pt. Ishwar Das",
+          "paternalGrandmother": "Saraswati Devi",
+          "maternalGrandfather": "Harishchandra",
+          "maternalGrandmother": "Gauri Devi",
+          "siblings": [],
+          "address": "Varanasi, UP"
+        }
+      }
+    },
+    "prof-trainee-04": {
+      "id": "prof-trainee-04",
+      "referenceCode": "SKHM-TRN3-1122-3344",
+      "referredByCode": "SKHM-HLR2-3344-5566",
+      "transferredCode": "",
+      "name": "Amitabh Sen",
+      "phone": "+91 98450 77889",
+      "email": "amitabh.sen@trainee.org",
+      "profileType": "TRAINEE",
+      "level": 3,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Mastering 3 Diya fire cleansing and Sri Yantra geometry.",
+      "selectedRemedies": [
+        "three_diya",
+        "sri_yantra"
+      ],
+      "address": "12 Temple Street",
+      "city": "Kolkata, West Bengal",
+      "joinDate": "2024-07-10",
+      "isActive": true,
+      "notes": "Advanced trainee under Acharya Devendra.",
+      "categoryTag": "Trainee Sadhak",
+      "seekerDiagnostics": {
+        "afflictionDuration": "2 Years",
+        "kuldeviIssues": "Purification active",
+        "targetOutcome": "Advance to Level 3 Havan"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-t4-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 100,
+          "cleanedDetails": "Doorway threshold purified daily.",
+          "mentorCode": "SKHM-HLR2-3344-5566",
+          "mentorName": "Acharya Devendra",
+          "mentorRemarks": "Purity certified.",
+          "approvalDate": "2024-07-18"
+        },
+        {
+          "id": "hc-t4-2",
+          "levelNumber": 2,
+          "levelTitle": "Level 2 — Parents House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 60,
+          "cleanedDetails": "Cleansing ancestral flat in Kolkata.",
+          "mentorCode": "SKHM-HLR2-3344-5566",
+          "mentorName": "Acharya Devendra",
+          "mentorRemarks": "In Progress.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-t4-1",
+          "sadhanaKey": "three_diya",
+          "title": "Three Diya Process",
+          "categoryDomain": "remedies",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 2 — Mantra Diksha",
+          "dailyTarget": "3 Diyas at Dusk",
+          "currentStreak": "14 Days",
+          "progressPercent": 75,
+          "status": "In Progress",
+          "mentorCode": "SKHM-HLR2-3344-5566",
+          "diaryNotes": "Threshold cleared."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Amitabh Sen",
+          "selfTitle": "Trainee Sadhak",
+          "spouseName": "Rupali Sen",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Birendra Sen",
+          "motherName": "Suniti Sen",
+          "paternalGrandfather": "Kalyan Sen",
+          "paternalGrandmother": "Asha Sen",
+          "maternalGrandfather": "S. K. Roy",
+          "maternalGrandmother": "Manju Roy",
+          "siblings": [],
+          "address": "Kolkata, WB"
+        },
+        "wifeAncestral": {
+          "fatherName": "Subhas Bose",
+          "motherName": "Ila Bose",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-trainee-05": {
+      "id": "prof-trainee-05",
+      "referenceCode": "SKHM-TRN3-2233-4455",
+      "referredByCode": "SKHM-HLR2-3344-5566",
+      "transferredCode": "",
+      "name": "Rajeshwari Joshi",
+      "phone": "+91 98560 88990",
+      "email": "rajeshwari.j@trainee.org",
+      "profileType": "TRAINEE",
+      "level": 3,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Negativity fumigation and Pitru Rin Mukti fire rituals.",
+      "selectedRemedies": [
+        "negativity",
+        "karmic_debts"
+      ],
+      "address": "24 Navrangpura",
+      "city": "Ahmedabad, Gujarat",
+      "joinDate": "2024-07-22",
+      "isActive": true,
+      "notes": "Specializing in Bakhoor cleansing.",
+      "categoryTag": "Trainee Sadhak",
+      "seekerDiagnostics": {
+        "afflictionDuration": "1 Year",
+        "kuldeviIssues": "Blessings restored",
+        "targetOutcome": "Level 2 Sadhana completion"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "negativity",
+          "name": "Negativity Cleansing",
+          "category": "Cleansing & Healing",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-t5-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 90,
+          "cleanedDetails": "Full fumigation with pure Loban & Bakhoor.",
+          "mentorCode": "SKHM-HLR2-3344-5566",
+          "mentorName": "Acharya Devendra",
+          "mentorRemarks": "Good energetic shift.",
+          "approvalDate": "2024-08-01"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-t5-1",
+          "sadhanaKey": "negativity",
+          "title": "Negativity Cleansing (Bakhoor)",
+          "categoryDomain": "cleansing",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 2 — Mantra Diksha",
+          "dailyTarget": "Dusk Fumigation",
+          "currentStreak": "12 Days",
+          "progressPercent": 70,
+          "status": "In Progress",
+          "mentorCode": "SKHM-HLR2-3344-5566",
+          "diaryNotes": "Atmosphere purified."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Rajeshwari Joshi",
+          "selfTitle": "Trainee Sadhak",
+          "spouseName": "Manish Joshi",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Kirit Joshi",
+          "motherName": "Bhavana Joshi",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Ahmedabad"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-trainee-06": {
+      "id": "prof-trainee-06",
+      "referenceCode": "SKHM-TRN3-6677-8899",
+      "referredByCode": "SKHM-HLR2-5566-7788",
+      "transferredCode": "",
+      "name": "Rohan Verma",
+      "phone": "+91 98670 99001",
+      "email": "rohan.verma@trainee.org",
+      "profileType": "TRAINEE",
+      "level": 3,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Kaal Bhairav protection and family aura fortification.",
+      "selectedRemedies": [
+        "kalashtami",
+        "nazar_suraksha"
+      ],
+      "address": "55 Gomti Nagar",
+      "city": "Lucknow, UP",
+      "joinDate": "2024-08-05",
+      "isActive": true,
+      "notes": "Trainee guided by Maa Anandita Devi.",
+      "categoryTag": "Trainee Sadhak",
+      "seekerDiagnostics": {
+        "afflictionDuration": "3 Years",
+        "kuldeviIssues": "Puja scheduled",
+        "targetOutcome": "Astral shield mastery"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "kalashtami",
+          "name": "Kalashtami Bhairav Sadhana",
+          "category": "Sacred Sadhana",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-t6-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 85,
+          "cleanedDetails": "4-wick mustard lamp protection established.",
+          "mentorCode": "SKHM-HLR2-5566-7788",
+          "mentorName": "Maa Anandita Devi",
+          "mentorRemarks": "Protection seal active.",
+          "approvalDate": "2024-08-10"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-t6-1",
+          "sadhanaKey": "kalashtami",
+          "title": "Kalashtami Bhairav Sadhana",
+          "categoryDomain": "sadhanas",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 2 — Mantra Diksha",
+          "dailyTarget": "11 Malas Night Sandhya",
+          "currentStreak": "9 Days",
+          "progressPercent": 60,
+          "status": "In Progress",
+          "mentorCode": "SKHM-HLR2-5566-7788",
+          "diaryNotes": "Fear banished."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Rohan Verma",
+          "selfTitle": "Trainee Sadhak",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Dr. S. K. Verma",
+          "motherName": "Rekha Verma",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Lucknow"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-trainee-07": {
+      "id": "prof-trainee-07",
+      "referenceCode": "SKHM-TRN3-7788-9900",
+      "referredByCode": "SKHM-HLR2-5566-7788",
+      "transferredCode": "",
+      "name": "Priya Sharma",
+      "phone": "+91 98780 11223",
+      "email": "priya.sharma@trainee.org",
+      "profileType": "TRAINEE",
+      "level": 3,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "Aura strengthening and business obstacle removal.",
+      "selectedRemedies": [
+        "aura_strengthening",
+        "business_money"
+      ],
+      "address": "19 Vasant Vihar",
+      "city": "New Delhi",
+      "joinDate": "2024-08-12",
+      "isActive": true,
+      "notes": "Dedicated sadhak in crystal and Gayatri practices.",
+      "categoryTag": "Trainee Sadhak",
+      "seekerDiagnostics": {
+        "afflictionDuration": "6 Months",
+        "kuldeviIssues": "None",
+        "targetOutcome": "Aura energy stabilization"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "aura_strengthening",
+          "name": "Aura Strengthening",
+          "category": "Cleansing & Healing",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-t7-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "APPROVED",
+          "cleanPercentage": 80,
+          "cleanedDetails": "Sphatik crystal water harmonization.",
+          "mentorCode": "SKHM-HLR2-5566-7788",
+          "mentorName": "Maa Anandita Devi",
+          "mentorRemarks": "Good progress.",
+          "approvalDate": "2024-08-16"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-t7-1",
+          "sadhanaKey": "aura_strengthening",
+          "title": "Aura Strengthening & Psychic Shield",
+          "categoryDomain": "cleansing",
+          "isPaid": false,
+          "paymentStatus": "FREE",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "24 Gayatri Chants",
+          "currentStreak": "6 Days",
+          "progressPercent": 50,
+          "status": "In Progress",
+          "mentorCode": "SKHM-HLR2-5566-7788",
+          "diaryNotes": "Calm mind felt."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Priya Sharma",
+          "selfTitle": "Trainee Sadhak",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "V. K. Sharma",
+          "motherName": "Saroj Sharma",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Delhi"
+        }
+      }
+    },
+    "prof-devotee-08": {
+      "id": "prof-devotee-08",
+      "referenceCode": "SKHM-DEV4-9988-1122",
+      "referredByCode": "SKHM-TRN3-1122-3344",
+      "transferredCode": "",
+      "name": "Sunita Mehra",
+      "phone": "+91 97110 55443",
+      "email": "sunita.mehra@devotee.org",
+      "profileType": "DEVOTEE",
+      "level": 4,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "Overcoming household stress, learning 3 Diya process, and purifying ancestral karma.",
+      "selectedRemedies": [
+        "three_diya",
+        "negativity"
+      ],
+      "address": "108 Shanti Niketan",
+      "city": "Jaipur, Rajasthan",
+      "joinDate": "2024-08-01",
+      "isActive": true,
+      "notes": "Dedicated devotee initiated into Level 1 House Clean.",
+      "categoryTag": "Devotee Seeker",
+      "seekerDiagnostics": {
+        "afflictionDuration": "3 Years",
+        "kuldeviIssues": "Kuldevi Puja pending",
+        "targetOutcome": "Peace of mind and family health"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-d8-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 50,
+          "cleanedDetails": "Purifying main doorway and altar daily.",
+          "mentorCode": "SKHM-TRN3-1122-3344",
+          "mentorName": "Amitabh Sen",
+          "mentorRemarks": "Good progress.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-d8-1",
+          "sadhanaKey": "three_diya",
+          "title": "Three Diya Process",
+          "categoryDomain": "remedies",
+          "isPaid": false,
+          "paymentStatus": "FREE",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "3 Diyas at Dusk",
+          "currentStreak": "7 Days",
+          "progressPercent": 35,
+          "status": "In Progress",
+          "mentorCode": "SKHM-TRN3-1122-3344",
+          "diaryNotes": "Noticed positive shift in home."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Sunita Mehra",
+          "selfTitle": "Devotee Seeker",
+          "spouseName": "Ramesh Mehra",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Om Prakash Mehra",
+          "motherName": "Kanti Mehra",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Jaipur, Rajasthan"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-seeker-09": {
+      "id": "prof-seeker-09",
+      "referenceCode": "SKDV-SEEK-3322-1100",
+      "referredByCode": "SKHM-DEV4-9988-1122",
+      "transferredCode": "",
+      "name": "Deepak Saxena",
+      "phone": "+91 97220 66554",
+      "email": "deepak.saxena@seeker.org",
+      "profileType": "SEEKER",
+      "level": 5,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Business growth, stuck payments recovery, and Sri Yantra worship.",
+      "selectedRemedies": [
+        "business_money",
+        "sri_yantra"
+      ],
+      "address": "77 Arera Colony",
+      "city": "Bhopal, MP",
+      "joinDate": "2024-08-15",
+      "isActive": true,
+      "notes": "Level 5 Seeker in 24h verification window paired 1:1 with Devotee Sunita Mehra and Trainee Amitabh Sen.",
+      "categoryTag": "Seeker Intake (24h Window)",
+      "seekerDiagnostics": {
+        "afflictionDuration": "1.5 Years",
+        "kuldeviIssues": "Kuldevi Puja Done",
+        "targetOutcome": "Clear business debt"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "business_money",
+          "name": "Business & Wealth Upaya",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-d9-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 40,
+          "cleanedDetails": "Clearing commercial shop cash altar.",
+          "mentorCode": "SKHM-DEV4-9988-1122",
+          "mentorName": "Sunita Mehra",
+          "mentorRemarks": "Under guidance.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-d9-1",
+          "sadhanaKey": "business_money",
+          "title": "Business & Wealth Upaya",
+          "categoryDomain": "remedies",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "Friday Silver Diya",
+          "currentStreak": "4 Days",
+          "progressPercent": 30,
+          "status": "In Progress",
+          "mentorCode": "SKHM-DEV4-9988-1122",
+          "diaryNotes": "Payments started unlocking."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Deepak Saxena",
+          "selfTitle": "Seeker Applicant",
+          "spouseName": "Neelam Saxena",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "J. P. Saxena",
+          "motherName": "Maya Saxena",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Bhopal"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-devotee-10": {
+      "id": "prof-devotee-10",
+      "referenceCode": "SKHM-DEV4-4433-2211",
+      "referredByCode": "SKHM-TRN3-2233-4455",
+      "transferredCode": "",
+      "name": "Aarohi Patel",
+      "phone": "+91 97330 77665",
+      "email": "aarohi.patel@devotee.org",
+      "profileType": "DEVOTEE",
+      "level": 4,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "House Clean Level 1 and family peace.",
+      "selectedRemedies": [
+        "three_diya",
+        "healing"
+      ],
+      "address": "33 Ring Road",
+      "city": "Surat, Gujarat",
+      "joinDate": "2024-08-20",
+      "isActive": true,
+      "notes": "Devotee practicing daily sunset 3-diya purification.",
+      "categoryTag": "Devotee Seeker",
+      "seekerDiagnostics": {
+        "afflictionDuration": "8 Months",
+        "kuldeviIssues": "Pending",
+        "targetOutcome": "Calm household environment"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-d10-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 30,
+          "cleanedDetails": "Purifying main entryway with sea salt.",
+          "mentorCode": "SKHM-TRN3-2233-4455",
+          "mentorName": "Rajeshwari Joshi",
+          "mentorRemarks": "Under review.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-d10-1",
+          "sadhanaKey": "three_diya",
+          "title": "Three Diya Process",
+          "categoryDomain": "remedies",
+          "isPaid": false,
+          "paymentStatus": "FREE",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "3 Diyas at Sunset",
+          "currentStreak": "5 Days",
+          "progressPercent": 25,
+          "status": "In Progress",
+          "mentorCode": "SKHM-TRN3-2233-4455",
+          "diaryNotes": "Peace observed."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Aarohi Patel",
+          "selfTitle": "Devotee Seeker",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "Nitin Patel",
+          "motherName": "Geeta Patel",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Surat"
+        }
+      }
+    },
+    "prof-devotee-11": {
+      "id": "prof-devotee-11",
+      "referenceCode": "SKHM-DEV4-5544-3322",
+      "referredByCode": "SKHM-TRN3-6677-8899",
+      "transferredCode": "",
+      "name": "Meera Nair",
+      "phone": "+91 97440 88776",
+      "email": "meera.nair@devotee.org",
+      "profileType": "DEVOTEE",
+      "level": 4,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Spiritual protection, evil eye shielding, and aura fortification.",
+      "selectedRemedies": [
+        "nazar_suraksha",
+        "aura_strengthening"
+      ],
+      "address": "5 Marine Drive",
+      "city": "Kochi, Kerala",
+      "joinDate": "2024-08-22",
+      "isActive": true,
+      "notes": "Devotee practicing daily Nazar Suraksha rituals.",
+      "categoryTag": "Devotee Seeker",
+      "seekerDiagnostics": {
+        "afflictionDuration": "2 Years",
+        "kuldeviIssues": "Done",
+        "targetOutcome": "Dissolve physical exhaustion"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "nazar_suraksha",
+          "name": "Nazar Suraksha & Evil Eye Shield",
+          "category": "Cleansing & Healing",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-d11-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 45,
+          "cleanedDetails": "Rai and salt cleansing twice weekly.",
+          "mentorCode": "SKHM-TRN3-6677-8899",
+          "mentorName": "Rohan Verma",
+          "mentorRemarks": "Good energetic clearance.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-d11-1",
+          "sadhanaKey": "nazar_suraksha",
+          "title": "Nazar Suraksha & Evil Eye Shield",
+          "categoryDomain": "cleansing",
+          "isPaid": true,
+          "paymentStatus": "PAID",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "Tuesday & Saturday Godhuli Bela",
+          "currentStreak": "6 Days",
+          "progressPercent": 40,
+          "status": "In Progress",
+          "mentorCode": "SKHM-TRN3-6677-8899",
+          "diaryNotes": "Headaches relieved."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Meera Nair",
+          "selfTitle": "Devotee Seeker",
+          "spouseName": "Ajay Nair",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Madhavan Nair",
+          "motherName": "Lalitha Nair",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Kochi"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-devotee-12": {
+      "id": "prof-devotee-12",
+      "referenceCode": "SKHM-DEV4-6655-4433",
+      "referredByCode": "SKHM-TRN3-7788-9900",
+      "transferredCode": "",
+      "name": "Suresh Rao",
+      "phone": "+91 97550 99887",
+      "email": "suresh.rao@devotee.org",
+      "profileType": "DEVOTEE",
+      "level": 4,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "Ancestral Rin Mukti and positive vibration in home.",
+      "selectedRemedies": [
+        "karmic_debts",
+        "three_diya"
+      ],
+      "address": "101 Indiranagar",
+      "city": "Bengaluru, Karnataka",
+      "joinDate": "2024-08-25",
+      "isActive": true,
+      "notes": "Devotee initiated by Priya Sharma.",
+      "categoryTag": "Devotee Seeker",
+      "seekerDiagnostics": {
+        "afflictionDuration": "1 Year",
+        "kuldeviIssues": "Under consultation",
+        "targetOutcome": "Debt settlement and harmony"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "karmic_debts",
+          "name": "Karmic Debts Fire Cleansing",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [
+        {
+          "id": "hc-d12-1",
+          "levelNumber": 1,
+          "levelTitle": "Level 1 — Self House Clean",
+          "status": "IN_PROGRESS",
+          "cleanPercentage": 20,
+          "cleanedDetails": "Commencing Rin Mukteshwar havan.",
+          "mentorCode": "SKHM-TRN3-7788-9900",
+          "mentorName": "Priya Sharma",
+          "mentorRemarks": "First cycle active.",
+          "approvalDate": "Pending"
+        }
+      ],
+      "traineeSadhanas": [
+        {
+          "id": "ts-d12-1",
+          "sadhanaKey": "karmic_debts",
+          "title": "Karmic Debts Fire Cleansing",
+          "categoryDomain": "remedies",
+          "isPaid": false,
+          "paymentStatus": "FREE",
+          "level": "Level 1 — Initiation",
+          "dailyTarget": "Tuesday Havan",
+          "currentStreak": "2 Days",
+          "progressPercent": 20,
+          "status": "In Progress",
+          "mentorCode": "SKHM-TRN3-7788-9900",
+          "diaryNotes": "Red lentils offering done."
+        }
+      ],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Suresh Rao",
+          "selfTitle": "Devotee Seeker",
+          "spouseName": "Shalini Rao",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "Venkatesh Rao",
+          "motherName": "Padma Rao",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": "Bengaluru"
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-seeker-10": {
+      "id": "prof-seeker-10",
+      "referenceCode": "SKDV-SEEK-4433-2211",
+      "referredByCode": "SKHM-DEV4-4433-2211",
+      "transferredCode": "",
+      "name": "Kavita Rao",
+      "phone": "+91 97660 11223",
+      "email": "kavita.rao@seeker.org",
+      "profileType": "SEEKER",
+      "level": 5,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "Sadhana initiation and 3-Diya house purification.",
+      "selectedRemedies": [
+        "three_diya",
+        "healing"
+      ],
+      "address": "44 Ring Road",
+      "city": "Surat, Gujarat",
+      "joinDate": "2024-08-26",
+      "isActive": true,
+      "notes": "Level 5 Seeker in 24h verification window paired 1:1 with Devotee Aarohi Patel and Trainee Rajeshwari Joshi.",
+      "categoryTag": "Seeker Intake (24h Window)",
+      "seekerDiagnostics": {
+        "afflictionDuration": "5 Months",
+        "kuldeviIssues": "Consultation in progress",
+        "targetOutcome": "Household harmony"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "three_diya",
+          "name": "Three Diya Process",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [],
+      "traineeSadhanas": [],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Kavita Rao",
+          "selfTitle": "Seeker Applicant",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-seeker-11": {
+      "id": "prof-seeker-11",
+      "referenceCode": "SKDV-SEEK-5544-3322",
+      "referredByCode": "SKHM-DEV4-5544-3322",
+      "transferredCode": "",
+      "name": "Rahul Sen",
+      "phone": "+91 97770 22334",
+      "email": "rahul.sen@seeker.org",
+      "profileType": "SEEKER",
+      "level": 5,
+      "isPaid": true,
+      "paymentStatus": "PAID",
+      "objective": "Protection against negative energies and evil eye.",
+      "selectedRemedies": [
+        "nazar_suraksha"
+      ],
+      "address": "12 Beach Road",
+      "city": "Kochi, Kerala",
+      "joinDate": "2024-08-28",
+      "isActive": true,
+      "notes": "Level 5 Seeker in 24h verification window paired 1:1 with Devotee Meera Nair and Trainee Rohan Verma.",
+      "categoryTag": "Seeker Intake (24h Window)",
+      "seekerDiagnostics": {
+        "afflictionDuration": "1 Year",
+        "kuldeviIssues": "Blessings requested",
+        "targetOutcome": "Astral protection"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "nazar_suraksha",
+          "name": "Nazar Suraksha Shield",
+          "category": "Cleansing & Healing",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [],
+      "traineeSadhanas": [],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Rahul Sen",
+          "selfTitle": "Seeker Applicant",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    },
+    "prof-seeker-12": {
+      "id": "prof-seeker-12",
+      "referenceCode": "SKDV-SEEK-6655-4433",
+      "referredByCode": "SKHM-DEV4-6655-4433",
+      "transferredCode": "",
+      "name": "Manish Joshi",
+      "phone": "+91 97880 33445",
+      "email": "manish.joshi@seeker.org",
+      "profileType": "SEEKER",
+      "level": 5,
+      "isPaid": false,
+      "paymentStatus": "FREE",
+      "objective": "Karmic clearance and financial breakthrough.",
+      "selectedRemedies": [
+        "karmic_debts"
+      ],
+      "address": "88 Gandhi Bazaar",
+      "city": "Bengaluru, Karnataka",
+      "joinDate": "2024-08-30",
+      "isActive": true,
+      "notes": "Level 5 Seeker in 24h verification window paired 1:1 with Devotee Suresh Rao and Trainee Priya Sharma.",
+      "categoryTag": "Seeker Intake (24h Window)",
+      "seekerDiagnostics": {
+        "afflictionDuration": "2 Years",
+        "kuldeviIssues": "Consultation booked",
+        "targetOutcome": "Peace and abundance"
+      },
+      "interestedSadhanas": [
+        {
+          "id": "karmic_debts",
+          "name": "Karmic Debts Remedy",
+          "category": "Divine Remedy",
+          "priority": "High",
+          "status": "Enrolled"
+        }
+      ],
+      "houseCleanLevels": [],
+      "traineeSadhanas": [],
+      "healerCompletedSadhanas": [],
+      "healerNetwork": [],
+      "lineage": {
+        "currentFamily": {
+          "selfName": "Manish Joshi",
+          "selfTitle": "Seeker Applicant",
+          "spouseName": "",
+          "children": [],
+          "siblings": []
+        },
+        "husbandAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        },
+        "wifeAncestral": {
+          "fatherName": "",
+          "motherName": "",
+          "paternalGrandfather": "",
+          "paternalGrandmother": "",
+          "maternalGrandfather": "",
+          "maternalGrandmother": "",
+          "siblings": [],
+          "address": ""
+        }
+      }
+    }
+  },
+  "pairing_invites": [
+    {
+      "id": "inv-01",
+      "sponsorCode": "SKHM-ADM1-7788-9900",
+      "seekerName": "Ananya Sharma",
+      "seekerPhone": "+91 98112 33445",
+      "seekerDeviceModel": "Samsung Galaxy SM-G998B",
+      "hardwareNonce": "HW-FPRINT-8891-9921",
+      "telegramLink": "https://t.me/SpiritualKarimBot?start=pair_SKHMADM177889900",
+      "apkDownloadUrl": "https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk",
+      "createdAtMs": 1789238779125,
+      "expiresAtMs": 1789325179125,
+      "status": "PENDING",
+      "resendCount": 0,
+      "lastResendTimestamp": 1789238779125,
+      "formattedCreatedTime": "Today • 1h ago"
+    },
+    {
+      "id": "inv-02",
+      "sponsorCode": "SKHM-ADM1-7788-9900",
+      "seekerName": "Vikram Aditya",
+      "seekerPhone": "+91 98223 44556",
+      "seekerDeviceModel": "OnePlus 11 5G",
+      "hardwareNonce": "HW-FPRINT-1122-3344",
+      "telegramLink": "https://t.me/SpiritualKarimBot?start=pair_SKHMADM177889900",
+      "apkDownloadUrl": "https://github.com/jDroid-X/SpritualKarim/releases/latest/download/app-release.apk",
+      "createdAtMs": 1789155979125,
+      "expiresAtMs": 1789242378125,
+      "status": "EXPIRED",
+      "resendCount": 1,
+      "lastResendTimestamp": 1789155979125,
+      "formattedCreatedTime": "Yesterday"
+    }
+  ],
+  "sadhana_catalog": {
+    "sri_yantra": {
+      "id": "sri_yantra",
+      "icon": "🔯",
+      "title": "Sri Yantra Maha Sadhana",
+      "category": "Prosperity & Harmony",
+      "levelScope": "Universal (All Tiers)",
+      "targetDays": 41,
+      "timing": "Brahma Muhurta (04:00 – 06:00 AM)",
+      "aasanDirection": "East / North Facing (Yellow Silk Aasan)",
+      "ingredients": "Cow Ghee Diya, Lotus Seed Mala, Pure Gangajal",
+      "benefits": "Purification of home vastu, abundance, inner peace",
+      "mantra": "ॐ श्रीं ह्रीं क्लीं ग्लौं गं गणपतये वर वरद सर्वजनं मे वशमानय स्वाहा ॥"
+    },
+    "maha_mrityunjaya": {
+      "id": "maha_mrityunjaya",
+      "icon": "🔱",
+      "title": "Maha Mrityunjaya Anushthan",
+      "category": "Health & Vitality Protection",
+      "levelScope": "Healers & Trainees",
+      "targetDays": 21,
+      "timing": "Pradosh Sandhya (06:00 – 07:30 PM)",
+      "aasanDirection": "North Facing (Kusha Aasan)",
+      "ingredients": "Rudraksha Mala, Bilva Leaves, Vibhuti",
+      "benefits": "Protection from afflictions, vital longevity",
+      "mantra": "ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् । उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात् ॥"
+    },
+    "navarna_chandi": {
+      "id": "navarna_chandi",
+      "icon": "⚔️",
+      "title": "Navarna Chandi Kavach",
+      "category": "Spiritual Shield & Cleansing",
+      "levelScope": "Healers & Masters",
+      "targetDays": 9,
+      "timing": "Midnight Sandhya (11:30 PM – 01:00 AM)",
+      "aasanDirection": "North-East (Red Wool Aasan)",
+      "ingredients": "Chandi Yantra, Red Sandalwood Mala, Kumkum",
+      "benefits": "Total psychic shield, removal of negative astral cords",
+      "mantra": "ॐ ऐं ह्रीं क्लीं चामुण्डायै विच्चे ॥"
+    }
+  },
+  "device_telemetry": {
+    "node_tele_001": {
+      "deviceId": "node_tele_001",
+      "profileId": "prof_master_karim",
+      "nodeReference": "SKHM-ADM1-7788-9900",
+      "heartbeat": 1789128000000,
+      "batteryLevel": 98,
+      "osVersion": "Android 14 (API 34)",
+      "gpsSpoofDetected": false,
+      "airplaneModeDetected": false,
+      "cloudSyncState": "SYNCED"
+    },
+    "deviceId": "test-device-01",
+    "battery": 94,
+    "isSecure": true
+  },
+  "system_config": {
+    "appName": "Spiritual Karim Admin",
+    "orgName": "Shree Spritual Karim Sansthan",
+    "firebaseUrl": "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/",
+    "defaultMentorCode": "SKHM-ADM1-7788-9900",
+    "defaultMentorName": "Spiritual Karim Khan (Founder)",
+    "rootSponsorCode": "ROOT-0000-0000-0000",
+    "cleanMinApprovalPercent": 75,
+    "pairingInviteTimeoutHours": 24,
+    "maxUploadSizeBytes": 5242880,
+    "otpCooldownSeconds": 60,
+    "otpMaxAttempts": 3,
+    "autoSaveMode": "INSTANT",
+    "defaultRoleMode": "MASTER",
+    "speechLang": "en-US",
+    "defaultTargetMalas": 21
+  },
+  "lineage_graph": {
+    "SKHM-ADM1-7788-9900": {
+      "code": "SKHM-ADM1-7788-9900",
+      "name": "Spiritual Karim Khan (Founder)",
+      "parentCode": "ROOT",
+      "depth": 1,
+      "downline": [
+        "SKHM-HLR2-1122-3344"
+      ]
+    },
+    "SKHM-HLR2-1122-3344": {
+      "code": "SKHM-HLR2-1122-3344",
+      "name": "Anand Mohan Sharma",
+      "parentCode": "SKHM-ADM1-7788-9900",
+      "depth": 2,
+      "downline": [
+        "SKHM-TRN4-5566-7788"
+      ]
+    },
+    "SKHM-TRN4-5566-7788": {
+      "code": "SKHM-TRN4-5566-7788",
+      "name": "Radha Devi",
+      "parentCode": "SKHM-HLR2-1122-3344",
+      "depth": 3,
+      "downline": [
+        "SKHM-DEV5-9988-1122"
+      ]
+    },
+    "SKHM-DEV5-9988-1122": {
+      "code": "SKHM-DEV5-9988-1122",
+      "name": "Suresh Patel",
+      "parentCode": "SKHM-TRN4-5566-7788",
+      "depth": 4,
+      "downline": []
+    }
+  },
+  "house_clean_logs": [
+    {
+      "auditId": "hcl_init_001",
+      "devoteeId": "prof_master_karim",
+      "level": 1,
+      "score": 95,
+      "mentorSignature": "SKHM-ADM1-7788-9900",
+      "timestamp": 1704067200000,
+      "notes": "Verified initial baseline spiritual purification."
+    }
+  ],
+  "daily_diya_logs": [
+    {
+      "logId": "ddl_init_001",
+      "devoteeId": "prof_master_karim",
+      "date": "2026-09-11",
+      "streakCount": 254,
+      "oilTypes": [
+        "Cow Ghee"
+      ],
+      "timestamp": 1789128000000
+    }
+  ],
+  "audit_logs": [
+    {
+      "id": "log-mtysgtpm",
+      "timestamp": 1789241962090,
+      "isoTime": "2026-09-12T19:39:22.090Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyrtlys",
+      "timestamp": 1789240878964,
+      "isoTime": "2026-09-12T19:21:18.964Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyrc5yl",
+      "timestamp": 1789240065069,
+      "isoTime": "2026-09-12T19:07:45.069Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyi2tpa",
+      "timestamp": 1789224512734,
+      "isoTime": "2026-09-12T14:48:32.734Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyhd36c",
+      "timestamp": 1789223311956,
+      "isoTime": "2026-09-12T14:28:31.956Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtygpys5",
+      "timestamp": 1789222233173,
+      "isoTime": "2026-09-12T14:10:33.173Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtygbmk0",
+      "timestamp": 1789221564144,
+      "isoTime": "2026-09-12T13:59:24.144Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyfxj8k",
+      "timestamp": 1789220906660,
+      "isoTime": "2026-09-12T13:48:26.660Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyfkazm",
+      "timestamp": 1789220289442,
+      "isoTime": "2026-09-12T13:38:09.442Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "id": "log-mtyfijzj",
+      "timestamp": 1789220207791,
+      "isoTime": "2026-09-12T13:36:47.791Z",
+      "action": "TEST_AUDIT",
+      "user": "Admin"
+    },
+    {
+      "auditId": "aud_001",
+      "action": "SYSTEM_INITIALIZATION",
+      "actorId": "prof_master_karim",
+      "targetId": "system_config",
+      "timestamp": 1789128000000,
+      "isoTime": "2026-09-11T12:00:00Z"
+    }
+  ],
+  "appeals": {},
+  "authorisedNodes": {
+    "SKHM-ADM1-7788-9900": {
+      "nodeCode": "SKHM-ADM1-7788-9900",
+      "role": "ADMIN",
+      "active": true
+    },
+    "SKHM-HLR2-1122-3344": {
+      "nodeCode": "SKHM-HLR2-1122-3344",
+      "role": "HEALER",
+      "active": true
+    },
+    "SKHM-TRN4-5566-7788": {
+      "nodeCode": "SKHM-TRN4-5566-7788",
+      "role": "TRAINEE",
+      "active": true
+    },
+    "SKHM-DEV5-9988-1122": {
+      "nodeCode": "SKHM-DEV5-9988-1122",
+      "role": "DEVOTEE",
+      "active": true
+    }
+  }
+}
