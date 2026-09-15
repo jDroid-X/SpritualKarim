@@ -13,8 +13,12 @@ const SETTINGS_SECTIONS = {
     title: "Permissions Configuration",
     icon: "🔐",
   },
+  "role-matrix": {
+    title: "Role Matrix Hub (Profiles, RBAC & Screens)",
+    icon: "👥",
+  },
   "auth-matrix": {
-    title: "Authorization Matrix",
+    title: "Screen Authorization Matrix",
     icon: "🛡️",
   },
   rbac: {
@@ -32,6 +36,7 @@ class SettingsModalController {
   constructor(controller) {
     this.controller = controller;
     this.currentSection = "general";
+    this.currentRoleSubtab = "profile-roles";
     this.init();
   }
 
@@ -47,6 +52,14 @@ class SettingsModalController {
       item.addEventListener("click", (e) => {
         const section = e.currentTarget.getAttribute("data-section");
         this._switchSection(section);
+      });
+    });
+
+    // Role Matrix Sub-tabs
+    document.querySelectorAll(".role-matrix-subnav .btn-subtab").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const subtab = e.currentTarget.getAttribute("data-subtab");
+        this._switchRoleMatrixSubtab(subtab);
       });
     });
   }
@@ -223,6 +236,7 @@ class SettingsModalController {
 
     // RBAC Section Actions
     this._bindRbacActions();
+    this._bindProfileRoleActions();
   }
 
   _bindRbacActions() {
@@ -318,6 +332,16 @@ class SettingsModalController {
   }
 
   _switchSection(section) {
+    // Legacy redirect support: If legacy 'auth-matrix' or 'rbac' is requested, redirect to 'role-matrix' and switch subtab
+    let targetSubtab = null;
+    if (section === "auth-matrix") {
+      section = "role-matrix";
+      targetSubtab = "screen-auth";
+    } else if (section === "rbac") {
+      section = "role-matrix";
+      targetSubtab = "rbac-roles";
+    }
+
     // Hide all sections
     document.querySelectorAll(".settings-section").forEach((el) => {
       el.style.display = "none";
@@ -352,12 +376,174 @@ class SettingsModalController {
     }
 
     // Load section-specific data
-    this._loadSectionData(section);
+    if (section === "role-matrix") {
+      this._switchRoleMatrixSubtab(targetSubtab || this.currentRoleSubtab || "profile-roles");
+    } else {
+      this._loadSectionData(section);
+    }
     this.currentSection = section;
+  }
+
+  _switchRoleMatrixSubtab(subtab) {
+    this.currentRoleSubtab = subtab;
+    // Update subtab buttons
+    document.querySelectorAll(".role-matrix-subnav .btn-subtab").forEach((btn) => {
+      const isTarget = btn.getAttribute("data-subtab") === subtab;
+      if (isTarget) {
+        btn.classList.add("active");
+        btn.style.background = "var(--gold-500)";
+        btn.style.color = "#000";
+        btn.style.borderColor = "var(--gold-500)";
+        btn.style.fontWeight = "600";
+      } else {
+        btn.classList.remove("active");
+        btn.style.background = "rgba(255,255,255,0.05)";
+        btn.style.color = "#ccc";
+        btn.style.borderColor = "#444";
+        btn.style.fontWeight = "normal";
+      }
+    });
+
+    // Toggle panes
+    document.querySelectorAll(".role-matrix-subtab-pane").forEach((pane) => {
+      pane.style.display = "none";
+    });
+    const targetPane = document.getElementById(`subtab-pane-${subtab}`);
+    if (targetPane) {
+      targetPane.style.display = "block";
+    }
+
+    // Trigger data load
+    if (subtab === "profile-roles") {
+      this._loadProfileRoleMatrix();
+    } else if (subtab === "rbac-roles") {
+      this._loadRbacState();
+    } else if (subtab === "screen-auth") {
+      this._loadAuthMatrix();
+    }
+  }
+
+  _bindProfileRoleActions() {
+    const profileSelect = document.getElementById("select-role-matrix-target-profile");
+    if (profileSelect) {
+      profileSelect.addEventListener("change", () => {
+        const targetId = profileSelect.value;
+        this._populateProfileRoleAssignment(targetId);
+      });
+    }
+
+    const btnSaveAssignment = document.getElementById("btn-save-profile-role-assignment");
+    if (btnSaveAssignment) {
+      btnSaveAssignment.addEventListener("click", () => {
+        const targetId = profileSelect ? profileSelect.value : "";
+        if (!targetId) {
+          alert("Please select a target profile to assign roles/permissions.");
+          return;
+        }
+
+        const permissions = {
+          canReadDownline: document.getElementById("delegated-perm-read-downline")?.checked || false,
+          canEditProfile: document.getElementById("delegated-perm-edit-profile")?.checked || false,
+          canUpdateSadhana: document.getElementById("delegated-perm-update-sadhana")?.checked || false,
+          canCertifySadhana: document.getElementById("delegated-perm-certify")?.checked || false,
+          canApproveIntake: document.getElementById("delegated-perm-approve-intake")?.checked || false,
+          canExportData: document.getElementById("delegated-perm-export-data")?.checked || false,
+        };
+
+        const activeProfile = (this.controller && this.controller.model && this.controller.model.getActiveProfile)
+          ? this.controller.model.getActiveProfile()
+          : null;
+        const assignedBy = activeProfile ? (activeProfile.uniqueProfileId || activeProfile.id || "MASTER") : "MASTER";
+
+        if (this.controller && this.controller.model && this.controller.model.saveProfileRoleAssignment) {
+          this.controller.model.saveProfileRoleAssignment(targetId, permissions, assignedBy);
+          this._showToast(`✓ Delegated permissions saved for ${targetId}`);
+        }
+      });
+    }
+
+    const btnResetAssignment = document.getElementById("btn-reset-profile-role-assignment");
+    if (btnResetAssignment) {
+      btnResetAssignment.addEventListener("click", () => {
+        ["delegated-perm-read-downline", "delegated-perm-edit-profile", "delegated-perm-update-sadhana", "delegated-perm-certify", "delegated-perm-approve-intake", "delegated-perm-export-data"].forEach(id => {
+          const chk = document.getElementById(id);
+          if (chk) chk.checked = false;
+        });
+
+        const targetId = profileSelect ? profileSelect.value : "";
+        if (targetId && this.controller && this.controller.model && this.controller.model.saveProfileRoleAssignment) {
+          const activeProfile = this.controller.model.getActiveProfile ? this.controller.model.getActiveProfile() : null;
+          const assignedBy = activeProfile ? (activeProfile.uniqueProfileId || activeProfile.id || "MASTER") : "MASTER";
+          this.controller.model.saveProfileRoleAssignment(targetId, {}, assignedBy);
+          this._showToast(`🔄 Delegated permissions cleared for ${targetId}`);
+        }
+      });
+    }
+  }
+
+  _loadProfileRoleMatrix() {
+    const selectEl = document.getElementById("select-role-matrix-target-profile");
+    if (!selectEl) return;
+
+    const currentVal = selectEl.value;
+    const profiles = (this.controller && this.controller.model && this.controller.model.profiles) ? this.controller.model.profiles : [];
+
+    const roleOrder = { MASTER: 1, HEALER: 2, TRAINEE: 3, DEVOTEE: 4, SEEKER: 5 };
+    const sorted = [...profiles].sort((a, b) => {
+      const orderA = roleOrder[a.role || "DEVOTEE"] || 99;
+      const orderB = roleOrder[b.role || "DEVOTEE"] || 99;
+      if (orderA !== orderB) return orderA - orderB;
+      return (a.fullName || a.name || "").localeCompare(b.fullName || b.name || "");
+    });
+
+    let options = '<option value="">-- Choose Profile to Assign Roles --</option>';
+    sorted.forEach((p) => {
+      const pid = p.uniqueProfileId || p.id;
+      const name = p.fullName || p.name || "Unnamed";
+      const role = p.role || "DEVOTEE";
+      const mentor = p.sponsorId || p.mentorId || p.parentReferralCode || "Direct";
+      options += `<option value="${pid}">${name} [${pid}] — Tier: ${role} (Sponsor: ${mentor})</option>`;
+    });
+
+    selectEl.innerHTML = options;
+    if (currentVal && sorted.some(p => (p.uniqueProfileId || p.id) === currentVal)) {
+      selectEl.value = currentVal;
+      this._populateProfileRoleAssignment(currentVal);
+    }
+  }
+
+  _populateProfileRoleAssignment(targetId) {
+    if (!targetId) {
+      ["delegated-perm-read-downline", "delegated-perm-edit-profile", "delegated-perm-update-sadhana", "delegated-perm-certify", "delegated-perm-approve-intake", "delegated-perm-export-data"].forEach(id => {
+        const chk = document.getElementById(id);
+        if (chk) chk.checked = false;
+      });
+      return;
+    }
+
+    if (this.controller && this.controller.model && this.controller.model.getProfileRoleAssignment) {
+      const assignment = this.controller.model.getProfileRoleAssignment(targetId);
+      const perms = assignment.permissions || {};
+
+      const setCheck = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.checked = !!val;
+      };
+
+      setCheck("delegated-perm-read-downline", perms.canReadDownline);
+      setCheck("delegated-perm-edit-profile", perms.canEditProfile);
+      setCheck("delegated-perm-update-sadhana", perms.canUpdateSadhana);
+      setCheck("delegated-perm-certify", perms.canCertifySadhana);
+      setCheck("delegated-perm-approve-intake", perms.canApproveIntake);
+      setCheck("delegated-perm-export-data", perms.canExportData);
+    }
   }
 
   _loadSectionData(section) {
     switch (section) {
+      case "role-matrix":
+        this._switchRoleMatrixSubtab(this.currentRoleSubtab || "profile-roles");
+        break;
       case "auth-matrix":
         this._loadAuthMatrix();
         break;

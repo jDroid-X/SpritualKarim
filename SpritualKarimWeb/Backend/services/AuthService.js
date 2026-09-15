@@ -16,6 +16,8 @@ class AuthService {
   static normalizeRole(roleString) {
     if (!roleString) return 'DEVOTEE';
     const upper = String(roleString).toUpperCase().trim();
+    if (upper === 'SADHAK') return 'TRAINEE';
+    if (upper === 'SEEKER') return 'DEVOTEE';
     return this.ROLES[upper] ? upper : 'DEVOTEE';
   }
 

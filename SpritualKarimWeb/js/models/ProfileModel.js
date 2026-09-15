@@ -8,59 +8,75 @@ class ProfileModel {
     this.profiles = this._loadProfiles();
     this.settings = this._loadSettings();
 
-    // Determine initial roleMode respecting explicit URL param, session, localStorage, and portal tags
-    let detectedRole = "MASTER";
-    try {
-      const pathName = window.location.pathname.toLowerCase();
-      const portalModeTag = document.body.getAttribute("data-portal-mode");
-      const portalRoleTag = document.body.getAttribute("data-portal-role");
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlRole = urlParams.get("role") || urlParams.get("portalRole");
+    this.profileRoleMatrixKey = "sk_profile_role_matrix_v1";
 
-      // 1. Explicit URL parameter has top priority for portal viewing/switching
-      if (urlRole) {
-        const ur = urlRole.toUpperCase();
-        if (["ADMIN", "MASTER"].includes(ur)) detectedRole = "MASTER";
-        else if (["HEALER", "HEALERS"].includes(ur)) detectedRole = "HEALER";
-        else if (["TRAINEE", "SADHAK"].includes(ur)) detectedRole = "TRAINEE";
-        else if (["DEVOTEE", "SEEKER"].includes(ur)) detectedRole = "DEVOTEE";
-      }
-      // 2. Active Authenticated Session from login.html
-      else if (typeof sessionStorage !== "undefined" && sessionStorage.getItem("sk_auth_sessions")) {
+    // Determine initial roleMode respecting authenticated session, URL param, and portal tags
+    // Enforcing International MLM security: unauthenticated or invalid roles default to DEVOTEE
+    let detectedRole = "DEVOTEE";
+    let sessionRole = null;
+
+    try {
+      // 1. Authenticated Session from login.html is Ground Truth
+      if (typeof sessionStorage !== "undefined" && sessionStorage.getItem("sk_auth_sessions")) {
         try {
           const s = JSON.parse(sessionStorage.getItem("sk_auth_sessions"));
           if (s && s.role) {
             const sr = s.role.toUpperCase();
-            if (["ADMIN", "MASTER"].includes(sr)) detectedRole = "MASTER";
-            else if (["HEALER", "HEALERS"].includes(sr)) detectedRole = "HEALER";
-            else if (["TRAINEE", "SADHAK"].includes(sr)) detectedRole = "TRAINEE";
-            else if (["DEVOTEE", "SEEKER"].includes(sr)) detectedRole = "DEVOTEE";
+            if (["ADMIN", "MASTER"].includes(sr)) sessionRole = "MASTER";
+            else if (["HEALER", "HEALERS"].includes(sr)) sessionRole = "HEALER";
+            else if (["TRAINEE", "SADHAK"].includes(sr)) sessionRole = "TRAINEE";
+            else if (["DEVOTEE", "SEEKER"].includes(sr)) sessionRole = "DEVOTEE";
           }
         } catch(e) {}
       }
-      // 3. Subportal pathname detection
-      else if (pathName.includes("/devotee") || pathName.endsWith("devotee.html")) {
-        detectedRole = "DEVOTEE";
-      } else if (pathName.includes("/trainee") || pathName.endsWith("trainee.html")) {
-        detectedRole = "TRAINEE";
-      } else if (pathName.includes("/healers") || pathName.endsWith("healers.html")) {
-        detectedRole = "HEALER";
-      } else if (pathName.includes("/masters") || pathName.endsWith("masters.html")) {
-        detectedRole = "MASTER";
-      }
-      // 4. Portal role tag if not generic admin
-      else if (portalRoleTag && !["ADMIN", "MASTER"].includes(portalRoleTag.toUpperCase())) {
-        const rp = portalRoleTag.toUpperCase();
-        if (["HEALER", "HEALERS"].includes(rp)) detectedRole = "HEALER";
-        else if (["TRAINEE", "SADHAK"].includes(rp)) detectedRole = "TRAINEE";
-        else if (["DEVOTEE", "SEEKER"].includes(rp)) detectedRole = "DEVOTEE";
-      } else if (portalModeTag) {
-        detectedRole = portalModeTag.toUpperCase();
+
+      const pathName = typeof window !== "undefined" ? window.location.pathname.toLowerCase() : "";
+      const portalModeTag = typeof document !== "undefined" && document.body ? document.body.getAttribute("data-portal-mode") : null;
+      const portalRoleTag = typeof document !== "undefined" && document.body ? document.body.getAttribute("data-portal-role") : null;
+      const urlParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams();
+      const urlRole = urlParams.get("role") || urlParams.get("portalRole");
+
+      const roleRanks = { MASTER: 1, HEALER: 2, TRAINEE: 3, DEVOTEE: 4 };
+
+      if (sessionRole) {
+        // User is authenticated: Allow viewing equivalent or lower rank via query param, block escalation
+        if (urlRole) {
+          let candidate = "DEVOTEE";
+          const ur = urlRole.toUpperCase();
+          if (["ADMIN", "MASTER"].includes(ur)) candidate = "MASTER";
+          else if (["HEALER", "HEALERS"].includes(ur)) candidate = "HEALER";
+          else if (["TRAINEE", "SADHAK"].includes(ur)) candidate = "TRAINEE";
+          else if (["DEVOTEE", "SEEKER"].includes(ur)) candidate = "DEVOTEE";
+
+          if (roleRanks[candidate] >= roleRanks[sessionRole]) {
+            detectedRole = candidate; // Permitted down-scoping for portal preview
+          } else {
+            console.warn(`[RBAC] Blocked role escalation attempt to ${candidate}. Enforcing authenticated session role: ${sessionRole}`);
+            detectedRole = sessionRole;
+          }
+        } else {
+          detectedRole = sessionRole;
+        }
       } else {
-        detectedRole = localStorage.getItem(this.roleModeKey) || "MASTER";
+        // Not authenticated in session: infer from sub-portal path or tag, otherwise least privilege DEVOTEE
+        if (pathName.includes("/masters") || pathName.endsWith("masters.html")) {
+          detectedRole = "MASTER";
+        } else if (pathName.includes("/healers") || pathName.endsWith("healers.html")) {
+          detectedRole = "HEALER";
+        } else if (pathName.includes("/trainee") || pathName.endsWith("trainee.html")) {
+          detectedRole = "TRAINEE";
+        } else if (pathName.includes("/devotee") || pathName.endsWith("devotee.html")) {
+          detectedRole = "DEVOTEE";
+        } else if (portalRoleTag && ["HEALER", "TRAINEE", "DEVOTEE"].includes(portalRoleTag.toUpperCase())) {
+          detectedRole = portalRoleTag.toUpperCase();
+        } else if (portalModeTag) {
+          detectedRole = portalModeTag.toUpperCase();
+        } else {
+          detectedRole = localStorage.getItem(this.roleModeKey) || "DEVOTEE";
+        }
       }
     } catch (e) {
-      detectedRole = "MASTER";
+      detectedRole = "DEVOTEE";
     }
     this.roleMode = detectedRole;
 
@@ -446,33 +462,156 @@ class ProfileModel {
     return this.profiles || [];
   }
 
-  getVisibleProfiles() {
-    const mode = this.roleMode || "MASTER";
+  /**
+   * Recursive downline tree traversal conforming to International MLM standards.
+   * Returns Set of all reference codes belonging to the downline of rootCode.
+   */
+  getDownlineCodesForProfile(rootCode) {
+    if (!rootCode) return new Set();
+    const codes = new Set([rootCode]);
+    let added = true;
+    let iterations = 0;
+    while (added && iterations < 50) {
+      added = false;
+      iterations++;
+      (this.profiles || []).forEach(p => {
+        const ref = p.referenceCode;
+        const sponsor = p.referredByCode || p.sponsorCode;
+        if (ref && sponsor && codes.has(sponsor) && !codes.has(ref)) {
+          codes.add(ref);
+          added = true;
+        }
+      });
+    }
+    return codes;
+  }
+
+  /**
+   * International MLM Downline Scoping:
+   * - Top (Master) sees every detail of all profiles.
+   * - Healer sees only direct/indirect downline team members + self.
+   * - Bottom (Trainee/Devotee) sees only their own details + direct sponsor,
+   *   unless delegated extra roles (e.g. canReadDownline) in the Profile Role Matrix.
+   */
+  getScopedDownlineProfiles(activeProfile = null, roleMode = null) {
+    const mode = (roleMode || this.roleMode || "DEVOTEE").toUpperCase();
+    const currentActive = activeProfile || this.getActiveProfile();
 
     if (mode === "MASTER" || mode === "ADMIN") {
-      return this.profiles;
+      return this.profiles || [];
     }
 
+    if (!currentActive) {
+      return (this.profiles || []).filter(p => p.profileType === "DEVOTEE");
+    }
+
+    const currentProfileId = currentActive.id;
+    const delegated = this.getProfileRoleAssignment(currentProfileId);
+
+    // Healer tier scoping
     if (mode === "HEALER") {
-      // Healer downline: sees Healers, Trainees, and Devotees (Admin Master excluded)
-      return this.profiles.filter(
-        (p) => p.profileType !== "ADMIN" && p.level !== 0 && p.id !== "prof-admin-01",
-      );
+      const downlineCodes = this.getDownlineCodesForProfile(currentActive.referenceCode);
+      return (this.profiles || []).filter(p => {
+        if (p.id === currentProfileId) return true;
+        if (p.profileType === "ADMIN") return false; // Admin hidden from Healer downline
+        return downlineCodes.has(p.referenceCode) || p.referredByCode === currentActive.referenceCode;
+      });
     }
 
-    if (mode === "TRAINEE") {
-      // Trainee downline: sees Trainees and Devotees (Admin and Healers excluded)
-      return this.profiles.filter(
-        (p) => p.profileType === "TRAINEE" || p.profileType === "DEVOTEE",
-      );
+    // Trainee & Devotee tier scoping
+    if (mode === "TRAINEE" || mode === "DEVOTEE") {
+      // If higher level has assigned extra role "canReadDownline", allow downline visibility
+      if (delegated && (delegated.canReadDownline === true || delegated.canViewTeam === true)) {
+        const downlineCodes = this.getDownlineCodesForProfile(currentActive.referenceCode);
+        return (this.profiles || []).filter(p => {
+          if (p.id === currentProfileId) return true;
+          return downlineCodes.has(p.referenceCode);
+        });
+      }
+
+      // Default International MLM rule: Bottom level sees ONLY self
+      return (this.profiles || []).filter(p => p.id === currentProfileId);
     }
 
-    if (mode === "DEVOTEE") {
-      // Devotees: sees Devotees only
-      return this.profiles.filter((p) => p.profileType === "DEVOTEE");
-    }
+    return [currentActive];
+  }
 
-    return this.profiles;
+  getVisibleProfiles() {
+    return this.getScopedDownlineProfiles(this.getActiveProfile(), this.roleMode);
+  }
+
+  // ============================================================
+  // PROFILE ROLE MATRIX (Profile-Level Delegation Engine)
+  // Higher level can assign Read, Edit, Update privileges to lower level
+  // ============================================================
+
+  getProfileRoleAssignments() {
+    try {
+      if (typeof localStorage !== "undefined") {
+        const raw = localStorage.getItem(this.profileRoleMatrixKey);
+        if (raw) return JSON.parse(raw);
+      }
+    } catch (e) {
+      console.warn("[ProfileModel] Error loading profile role assignments", e);
+    }
+    return {};
+  }
+
+  getProfileRoleAssignment(profileId) {
+    if (!profileId) return null;
+    const all = this.getProfileRoleAssignments();
+    return all[profileId] || null;
+  }
+
+  saveProfileRoleAssignment(targetProfileId, permissions, assignedByProfileId = "ADMIN") {
+    if (!targetProfileId || !permissions) return false;
+    try {
+      const all = this.getProfileRoleAssignments();
+      const existing = all[targetProfileId] || {};
+
+      all[targetProfileId] = {
+        ...existing,
+        targetProfileId,
+        permissions: {
+          read: permissions.read !== false,
+          edit: permissions.edit === true,
+          update: permissions.update === true,
+          canReadDownline: permissions.canReadDownline === true,
+          canCertify: permissions.canCertify === true,
+          canApproveIntake: permissions.canApproveIntake === true,
+          canExportData: permissions.canExportData === true
+        },
+        read: permissions.read !== false,
+        edit: permissions.edit === true,
+        update: permissions.update === true,
+        canReadDownline: permissions.canReadDownline === true,
+        canCertify: permissions.canCertify === true,
+        canApproveIntake: permissions.canApproveIntake === true,
+        canExportData: permissions.canExportData === true,
+        assignedBy: assignedByProfileId,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem(this.profileRoleMatrixKey, JSON.stringify(all));
+        localStorage.setItem("sk_last_write_ts", String(Date.now()));
+
+        // Dual-write to Firebase Realtime Database
+        if (typeof window !== "undefined" && window.FirebaseSyncEngine && typeof window.FirebaseSyncEngine.writeNode === "function") {
+          window.FirebaseSyncEngine.writeNode("profile_role_matrix", all);
+        }
+        return true;
+      }
+    } catch (e) {
+      console.error("[ProfileModel] saveProfileRoleAssignment error", e);
+    }
+    return false;
+  }
+
+  hasDelegatedPermission(profileId, permissionKey) {
+    const record = this.getProfileRoleAssignment(profileId);
+    if (!record) return false;
+    return Boolean(record[permissionKey] || (record.permissions && record.permissions[permissionKey]));
   }
 
   _getDefaultProfiles() {
@@ -3677,6 +3816,97 @@ class ProfileModel {
       }
     }
     return true;
+  }
+
+  getProfiles() {
+    return Array.isArray(this.profiles) ? this.profiles : [];
+  }
+
+  getAllProfiles() {
+    return this.getProfiles();
+  }
+
+  // ==============================================================
+  // INTERACTIVE COMPONENT STATES (Switches, Toggles, Preferences)
+  // ==============================================================
+  getComponentStates() {
+    try {
+      const raw = localStorage.getItem("sk_component_states_v1");
+      if (raw) return JSON.parse(raw);
+    } catch (e) {
+      console.warn("Error reading sk_component_states_v1:", e);
+    }
+    return {
+      telemetrySync: true,
+      directoryViewMode: "cards",
+      backgroundSync: true,
+      audioFeedback: false
+    };
+  }
+
+  saveComponentState(key, value) {
+    if (!key) return;
+    const states = this.getComponentStates();
+    states[key] = value;
+    states.lastUpdated = Date.now();
+
+    try {
+      localStorage.setItem("sk_component_states_v1", JSON.stringify(states));
+    } catch (e) {
+      console.error("Error saving sk_component_states_v1:", e);
+    }
+
+    // Cross-tab broadcast notification
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const bc = new BroadcastChannel("spiritual_karim_sync");
+        bc.postMessage({ type: "COMPONENT_STATE_UPDATED", key, value, states });
+      } catch (e) {}
+    }
+
+    // Cloud dual-write via REST API or FirebaseSyncEngine
+    if (typeof fetch !== "undefined") {
+      fetch("/api/component-state", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(states)
+      }).catch(() => {});
+    }
+
+    if (typeof FirebaseSyncEngine !== "undefined" && FirebaseSyncEngine.pushNode) {
+      FirebaseSyncEngine.pushNode("component_states", states);
+    }
+
+    return states;
+  }
+
+  saveComponentStates(newStates) {
+    if (!newStates || typeof newStates !== "object") return;
+    const current = this.getComponentStates();
+    const merged = Object.assign({}, current, newStates, { lastUpdated: Date.now() });
+
+    try {
+      localStorage.setItem("sk_component_states_v1", JSON.stringify(merged));
+    } catch (e) {
+      console.error("Error saving sk_component_states_v1:", e);
+    }
+
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const bc = new BroadcastChannel("spiritual_karim_sync");
+        bc.postMessage({ type: "COMPONENT_STATE_UPDATED", states: merged });
+      } catch (e) {}
+    }
+
+    if (typeof fetch !== "undefined") {
+      fetch("/api/component-state", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(merged)
+      }).catch(() => {});
+    }
+
+    return merged;
   }
 
   // NOTE: View and Controller layers are in separate files:

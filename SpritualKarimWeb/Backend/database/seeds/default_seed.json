@@ -1904,9 +1904,11 @@
   },
   "component_states": {
     "activeToggle": "right",
-    "darkSwitch": false
+    "darkSwitch": false,
+    "telemetrySync": true,
+    "directoryViewMode": "cards"
   },
-  "last_component_state_update": 1789299859922,
+  "last_component_state_update": 1789457700365,
   "auth_matrix": [
     {
       "id": "tab_devotee_personal",

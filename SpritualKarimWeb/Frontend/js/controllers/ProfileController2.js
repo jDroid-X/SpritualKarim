@@ -2633,6 +2633,49 @@ ProfileController.prototype.initInteractiveComponentShowcase = function() {
     };
   }
 
+  const btnWarn = document.getElementById("btn-demo-toast-warning");
+  if (btnWarn && this.view && typeof this.view.showSlideToast === "function") {
+    btnWarn.onclick = () => {
+      this.view.showSlideToast(
+        "Sadhana Milestone Alert",
+        "⚠️ Evening Sandhya Aarti starts in 15 minutes. Prepare ghee lamp.",
+        "warning",
+        4500
+      );
+    };
+  }
+
+  const btnError = document.getElementById("btn-demo-toast-error");
+  if (btnError && this.view && typeof this.view.showSlideToast === "function") {
+    btnError.onclick = () => {
+      this.view.showSlideToast(
+        "Lineage Synchronization Error",
+        "❌ Offline timeout: Retrying connection to sacred telemetry node.",
+        "error",
+        5000
+      );
+    };
+  }
+
+  const btnStateful = document.getElementById("btn-demo-stateful-action");
+  if (btnStateful) {
+    btnStateful.onclick = () => {
+      const origText = btnStateful.innerHTML;
+      btnStateful.disabled = true;
+      btnStateful.innerHTML = `<span>⏳</span> <span>Synchronizing Node...</span>`;
+      setTimeout(() => {
+        btnStateful.innerHTML = `<span>✓</span> <span>Synchronized!</span>`;
+        if (this.view && typeof this.view.showSlideToast === "function") {
+          this.view.showSlideToast("Stateful Action", "Node telemetry handshake acknowledged by Sansthan cloud.", "success", 3000);
+        }
+        setTimeout(() => {
+          btnStateful.innerHTML = origText;
+          btnStateful.disabled = false;
+        }, 2000);
+      }, 1200);
+    };
+  }
+
   const btnMultiDialog = document.getElementById("btn-demo-dialog-multi");
   if (btnMultiDialog && this.view && typeof this.view.openCustomDialog === "function") {
     btnMultiDialog.onclick = () => {
@@ -2668,25 +2711,56 @@ ProfileController.prototype.initInteractiveComponentShowcase = function() {
   }
 
   const btnFlipCard = document.getElementById("btn-demo-flip-card");
-  if (btnFlipCard && this.view && typeof this.view.toggleCardFlipper === "function") {
-    btnFlipCard.onclick = () => {
+  const flipperCardWrapper = document.getElementById("profile-card-flipper-wrapper");
+
+  const doFlip = () => {
+    if (this.view && typeof this.view.toggleCardFlipper === "function") {
       const isFlipped = this.view.toggleCardFlipper();
       if (this.view.showSlideToast) {
         this.view.showSlideToast(
           "Card Flipped",
           `🔄 3D Profile Card flipped to: ${isFlipped ? "QR Telemetry (Back)" : "Devotee ID (Front)"}`,
           "info",
-          3000
+          2500
         );
       }
+    }
+  };
+
+  if (btnFlipCard) {
+    btnFlipCard.onclick = (e) => {
+      e.stopPropagation();
+      doFlip();
     };
   }
 
-  // 5. Textbox live validation demo
+  if (flipperCardWrapper) {
+    flipperCardWrapper.onclick = (e) => {
+      if (e.target.closest('#btn-demo-flip-card')) return;
+      doFlip();
+    };
+  }
+
+  // Bind active profile to card flipper dynamically
+  if (this.view && typeof this.view.updateProfileCardFlipper === "function") {
+    const activeProfile = (this.model && typeof this.model.getActiveProfile === "function")
+      ? this.model.getActiveProfile()
+      : (this.model && this.model.profiles ? this.model.profiles[0] : null);
+    if (activeProfile) {
+      this.view.updateProfileCardFlipper(activeProfile);
+    }
+  }
+
+  // 5. Textbox live validation demo & clear trigger
   const txtValidation = document.getElementById("demo-textbox-validation");
+  const btnClearTxt = document.getElementById("btn-clear-demo-textbox");
   if (txtValidation && this.view && typeof this.view.setValidationStatus === "function") {
-    txtValidation.oninput = (e) => {
-      const val = e.target.value.trim();
+    const validateFn = () => {
+      const val = txtValidation.value.trim();
+      if (!val) {
+        this.view.setValidationStatus(txtValidation, false, "⚠️ Reference code is required");
+        return;
+      }
       const isValid = /^SK[A-Z0-9\-]{2,15}$/i.test(val);
       this.view.setValidationStatus(
         txtValidation,
@@ -2694,5 +2768,13 @@ ProfileController.prototype.initInteractiveComponentShowcase = function() {
         isValid ? "✓ Valid Sansthan Reference Format" : "⚠️ Must start with SK- and contain alphanumeric characters"
       );
     };
+    txtValidation.oninput = validateFn;
+    if (btnClearTxt) {
+      btnClearTxt.onclick = () => {
+        txtValidation.value = "";
+        validateFn();
+        txtValidation.focus();
+      };
+    }
   }
 };

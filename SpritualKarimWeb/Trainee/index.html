@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1789412630827">
+  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1789462697941">
   <style id="sk-critical-header-styles">
     /* Single-Row Permanent Fit Across All Browsers & Devices */
     .admin-topbar,
@@ -439,16 +439,51 @@
           <a href="../Masters/index.html" class="sub-portal-link" data-portal-tier="1" title="Open Master Portal">
             <span>👑</span> Masters Portal
           </a>
-          <a href="../Healers/index.html" class="sub-portal-link " data-portal-tier="2" title="Open Healer Portal">
+          <a href="../Healers/index.html" class="sub-portal-link" data-portal-tier="2" title="Open Healer Portal">
             <span>🛡️</span> Healers Portal
           </a>
-          <a href="../Trainee/index.html" class="sub-portal-link " data-portal-tier="3" title="Open Trainee Sadhak Portal">
+          <a href="../Trainee/index.html" class="sub-portal-link active" data-portal-tier="3" title="Open Trainee Sadhak Portal">
             <span>📿</span> Trainee Sadhak Portal
           </a>
-          <a href="../Devotee/index.html" class="sub-portal-link " data-portal-tier="4" title="Open Devotee Portal">
+          <a href="../Devotee/index.html" class="sub-portal-link" data-portal-tier="4" title="Open Devotee Portal">
             <span>🌟</span> Devotee Portal
           </a>
+          <a href="../Seeker/index.html" class="sub-portal-link" data-portal-tier="4" title="Open Seeker Portal">
+            <span>🌟</span> Seeker Portal
+          </a>
+          <a href="../Public/index.html" class="sub-portal-link" data-portal-tier="5" title="Open Public Intake Portal">
+            <span>🚪</span> Public Portal
+          </a>
         </div>
+      </div>
+
+      <!-- Enterprise Drawer Section: Architecture & Lifecycle Documentation -->
+      <div class="sidebar-section">
+        <div class="sidebar-heading">Architecture &amp; Docs</div>
+        <div class="sub-portal-links">
+          <a href="../docs/online-offline-sync-lifecycle.html" class="sub-portal-link" target="_blank" title="Open Online/Offline Synchronization Lifecycle Architecture">
+            <span>🔄</span> Online/Offline Lifecycle
+          </a>
+          <a href="../docs/data-structure-workflow.html" class="sub-portal-link" target="_blank" title="Open Database &amp; Schema Data Structure Workflow">
+            <span>📊</span> Data Structure Workflow
+          </a>
+          <a href="../docs/platform-overview.html" class="sub-portal-link" target="_blank" title="Open Complete Platform System Overview">
+            <span>🏛️</span> Platform Overview
+          </a>
+        </div>
+      </div>
+
+      <!-- Enterprise Drawer Section: Sacred Knowledge & Upay -->
+      <div class="sidebar-section" id="sidebar-sacred-catalogs-section">
+        <div class="sidebar-heading">Sacred Knowledge &amp; Upay</div>
+        <button type="button" id="sidebar-btn-sadhana-explorer" class="btn btn-sm btn-gold w-100 mb-2" style="display: flex; align-items: center; justify-content: space-between;" title="Open Sadhana Explorer (Catalog &amp; Guided Practices)">
+          <span style="display: flex; align-items: center; gap: 0.4rem;"><span>📿</span> <strong>Sadhana Explorer</strong></span>
+          <span class="badge" style="background: rgba(0,0,0,0.3); font-size: 0.65rem; padding: 0.1rem 0.45rem; border-radius: 4px; border: 1px solid rgba(212,175,55,0.4);">Catalog</span>
+        </button>
+        <button type="button" id="sidebar-btn-remedy-hub" class="btn btn-sm btn-gold w-100 mb-2" style="display: flex; align-items: center; justify-content: space-between;" title="Open Remedy &amp; Upay Hub (Afflictions &amp; Sacred Solutions)">
+          <span style="display: flex; align-items: center; gap: 0.4rem;"><span>🌿</span> <strong>Remedy &amp; Upay</strong></span>
+          <span class="badge" style="background: rgba(0,0,0,0.3); font-size: 0.65rem; padding: 0.1rem 0.45rem; border-radius: 4px; border: 1px solid rgba(212,175,55,0.4);">Upay Hub</span>
+        </button>
       </div>
 
       <!-- Enterprise Drawer Section 4: System Tools & Actions -->
@@ -721,6 +756,96 @@
               <button type="button" class="btn btn-sm btn-outline" id="btn-close-selected-member-card" title="Close Member View &amp; Return to Master" style="color: var(--text-muted); border-color: rgba(255,255,255,0.2);">
                 ✕ Return to Master
               </button>
+            </div>
+          </div>
+        <!-- ==============================================================
+             INTERACTIVE UI/UX COMPONENT SUITE (Showcase & Controls)
+             Buttons, Textbox, Switch, Toggle, Flipper, Listbox, Dialog & Toasts
+             ============================================================== -->
+        <div id="interactive-component-showcase" class="interactive-component-showcase card mb-3" style="border: 1.5px solid var(--border-color); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; background: var(--bg-card, #161124);">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: rgba(212, 175, 55, 0.08); border-bottom: 1px solid var(--border-color); cursor: pointer;" onclick="const el = document.getElementById('showcase-content-grid'); el.style.display = el.style.display === 'none' ? 'grid' : 'none';">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.1rem;">🎛️</span>
+              <strong style="font-size: 0.85rem; color: var(--gold-500, #d4af37);">Interactive UI/UX Controls &amp; Component Suite</strong>
+              <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; font-size: 0.65rem; border: 1px solid rgba(59, 130, 246, 0.4); padding: 0.1rem 0.4rem; border-radius: 4px;">Live Controls</span>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">&#9662; Toggle Controls</span>
+          </div>
+          
+          <div id="showcase-content-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; padding: 1rem;">
+            <!-- Column 1: Switch (On/Off) & Segmented Toggle (Left/Right) -->
+            <div class="showcase-col" style="display: flex; flex-direction: column; gap: 0.75rem; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--gold-500); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.35rem;">
+                ⚙️ Switches &amp; Segmented Toggles
+              </div>
+              <div id="demo-switch-container"></div>
+              <div style="margin-top: 0.25rem;">
+                <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Directory Layout Toggle (Left / Right):</label>
+                <div id="demo-segmented-toggle-container"></div>
+              </div>
+            </div>
+
+            <!-- Column 2: 3D Profile Card Flipper -->
+            <div class="showcase-col" style="display: flex; flex-direction: column; gap: 0.75rem; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.35rem;">
+                <span style="font-size: 0.75rem; font-weight: 700; color: var(--gold-500); text-transform: uppercase; letter-spacing: 0.05em;">🔄 3D Card Flipper</span>
+                <button type="button" id="btn-demo-flip-card" class="btn btn-xs btn-gold" style="font-size: 0.65rem; padding: 0.15rem 0.5rem;">Flip Card ↻</button>
+              </div>
+              <!-- Card Flipper Wrapper -->
+              <div class="card-flipper-3d-wrapper" id="profile-card-flipper-wrapper" style="perspective: 1000px; height: 130px; position: relative; cursor: pointer;" title="Click card to flip">
+                <div class="card-flipper-3d-inner" style="position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d;">
+                  <!-- Front Face: Devotee Profile -->
+                  <div class="flipper-face flipper-face-front" style="position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 6px; padding: 0.65rem; background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(22,17,36,0.9) 100%); border: 1px solid rgba(212,175,55,0.3); display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="avatar-circle-md" id="profile-avatar-initials" style="width: 48px; height: 48px; border-radius: 50%; background: var(--gold-500); color: #000; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">SK</div>
+                    <div style="flex: 1; min-width: 0;">
+                      <div id="flipper-profile-name" style="font-weight: 700; font-size: 0.82rem; color: #fff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Spiritual Karim Khan</div>
+                      <div id="flipper-profile-role" style="font-size: 0.68rem; color: var(--gold-500);">👑 Master Founder (Level 0)</div>
+                      <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem; font-family: monospace;">Ref: <span id="telemetry-ref-code">SKHM-ADM1-7788-9900</span></div>
+                    </div>
+                  </div>
+                  <!-- Back Face: Telemetry & QR -->
+                  <div class="flipper-face flipper-face-back" style="position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg); border-radius: 6px; padding: 0.65rem; background: linear-gradient(135deg, rgba(37,99,235,0.15) 0%, rgba(15,23,42,0.95) 100%); border: 1px solid rgba(59,130,246,0.3); display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                      <div style="font-size: 0.65rem; color: #60a5fa; font-weight: 700; text-transform: uppercase;">📡 Telemetry QR Link</div>
+                      <div style="font-size: 0.62rem; color: #94a3b8; margin-top: 0.15rem;">Sponsor: <span id="telemetry-sponsor-code" style="color:#e2e8f0; font-family:monospace;">ROOT-0000</span></div>
+                      <div style="font-size: 0.62rem; color: #94a3b8;">Diya: <span id="telemetry-diya-count" style="color:#4ade80; font-weight:700;">21 Days</span> | Clean: <span id="telemetry-clean-count" style="color:#facc15; font-weight:700;">3 Records</span></div>
+                      <div style="font-size: 0.62rem; color: #94a3b8;">Sadhana: <span id="telemetry-sadhanas-count" style="color:#a855f7; font-weight:700;">1 Active</span></div>
+                    </div>
+                    <div style="background: #fff; padding: 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                      <span style="font-size: 1.8rem;">📱</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 3: Rich Listbox with Details Dropdown -->
+            <div class="showcase-col" style="display: flex; flex-direction: column; gap: 0.75rem; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--gold-500); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.35rem;">
+                📋 List Box with Detail Dropdown
+              </div>
+              <div id="demo-rich-listbox-container"></div>
+            </div>
+
+            <!-- Column 4: Textbox Validation & Buttons Suite & Dialog Triggers -->
+            <div class="showcase-col" style="display: flex; flex-direction: column; gap: 0.75rem; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--gold-500); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.35rem;">
+                📝 Validations &amp; Dialog / Toasts
+              </div>
+              <div class="form-group" style="margin-bottom: 0.25rem;">
+                <label class="form-label" style="font-size: 0.7rem; display: flex; justify-content: space-between;">
+                  <span>Live Reference Validator:</span>
+                  <button type="button" id="btn-clear-demo-textbox" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.65rem;">Clear</button>
+                </label>
+                <input type="text" id="demo-textbox-validation" class="form-control form-control-sm" placeholder="e.g. SK-2026-01" value="SK-2026-01">
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                <button type="button" id="btn-demo-dialog-multi" class="btn btn-xs btn-gold" title="Open Dialog with Multiple Options">⚖️ Multi Dialog</button>
+                <button type="button" id="btn-demo-stateful-action" class="btn btn-xs btn-outline" title="Button with Loading and Success state">⚡ Stateful Btn</button>
+                <button type="button" id="btn-demo-toast-success" class="btn btn-xs" style="background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.4);">✓ Toast</button>
+                <button type="button" id="btn-demo-toast-warning" class="btn btn-xs" style="background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.4);">⚠️ Alert</button>
+                <button type="button" id="btn-demo-toast-error" class="btn btn-xs" style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4);">❌ Error</button>
+              </div>
             </div>
           </div>
         </div>
@@ -2167,13 +2292,9 @@
             <span>🔐</span>
             <span>Permissions</span>
           </button>
-          <button class="settings-nav-item" data-section="auth-matrix" style="width: 100%; padding: 0.6rem 0.75rem; margin-bottom: 0.25rem; border: none; background: transparent; border-radius: 6px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); transition: all 0.2s;">
-            <span>🛡️</span>
-            <span>Auth Matrix</span>
-          </button>
-          <button class="settings-nav-item" data-section="rbac" style="width: 100%; padding: 0.6rem 0.75rem; margin-bottom: 0.25rem; border: none; background: transparent; border-radius: 6px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); transition: all 0.2s;">
+          <button class="settings-nav-item" data-section="role-matrix" style="width: 100%; padding: 0.6rem 0.75rem; margin-bottom: 0.25rem; border: none; background: transparent; border-radius: 6px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); transition: all 0.2s;">
             <span>👥</span>
-            <span>RBAC Roles</span>
+            <span>Role Matrix</span>
           </button>
           <button class="settings-nav-item" data-section="register-devotee" style="width: 100%; padding: 0.6rem 0.75rem; margin-bottom: 0.25rem; border: none; background: transparent; border-radius: 6px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); transition: all 0.2s;">
             <span>📝</span>
@@ -2372,8 +2493,84 @@
             </div>
           </div>
 
-          <!-- AUTH MATRIX SETTINGS -->
-          <div class="settings-section" id="section-auth-matrix" style="display: none;">
+          <!-- ==============================================================
+               ROLE MATRIX MASTER HUB (Profile Role Matrix, Screen Auth, RBAC)
+               ============================================================== -->
+          <div class="settings-section" id="section-role-matrix" style="display: none;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                  <h4 style="margin: 0; font-size: 0.95rem; color: var(--gold-400); font-weight: 800; font-family: var(--font-heading);">
+                    👥 Unified Role Matrix Hub
+                  </h4>
+                  <p style="margin: 0.2rem 0 0; font-size: 0.73rem; color: var(--text-muted);">
+                    Unified Governance: Profile Role Delegation, Screen Authorization Matrix &amp; RBAC Access Controls
+                  </p>
+                </div>
+              </div>
+
+              <!-- Role Matrix Sub-navigation Pills -->
+              <div class="role-matrix-subnav" style="display: flex; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem; flex-wrap: wrap;">
+                <button type="button" class="btn btn-sm btn-subtab active" data-subtab="profile-roles" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-radius: 4px; border: 1px solid var(--gold-500); background: var(--gold-500); color: #000; font-weight: 600; cursor: pointer;">👤 Profile Roles &amp; Delegation</button>
+                <button type="button" class="btn btn-sm btn-subtab" data-subtab="screen-auth" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-radius: 4px; border: 1px solid #444; background: rgba(255,255,255,0.05); color: #ccc; cursor: pointer;">🛡️ Screen Auth Matrix</button>
+                <button type="button" class="btn btn-sm btn-subtab" data-subtab="rbac-roles" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-radius: 4px; border: 1px solid #444; background: rgba(255,255,255,0.05); color: #ccc; cursor: pointer;">👥 RBAC Role Governance</button>
+              </div>
+
+
+            <!-- Subtab 1: Profile Roles & Delegated Permissions (International MLM Standard) -->
+            <div class="role-matrix-subtab-pane" id="subtab-pane-profile-roles" style="display: block;">
+              <div style="background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.25); border-radius: 6px; padding: 0.85rem; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                  <div>
+                    <h5 style="margin: 0; font-size: 0.85rem; color: var(--gold-400); font-weight: 700;">👤 Downline Profile Role &amp; Delegation Matrix</h5>
+                    <p style="margin: 0.2rem 0 0; font-size: 0.72rem; color: var(--text-muted);">
+                      International MLM Principle: Top masters see all downline team details. Higher levels can assign extra delegated roles and privileges to lower levels.
+                    </p>
+                  </div>
+                  <div style="display: flex; gap: 0.4rem;">
+                    <button type="button" class="btn btn-xs btn-outline" id="btn-reset-profile-role-assignment" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">🔄 Clear Permissions</button>
+                    <button type="button" class="btn btn-xs btn-gold" id="btn-save-profile-role-assignment" style="font-size: 0.7rem; padding: 0.25rem 0.6rem;">💾 Save &amp; Assign</button>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0.85rem;">
+                  <label class="form-label" style="font-size: 0.75rem; font-weight: 600; margin-bottom: 0.3rem;">Select Target Devotee Profile:</label>
+                  <select id="select-role-matrix-target-profile" class="form-control" style="font-size: 0.78rem; padding: 0.4rem 0.6rem; max-width: 500px; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 4px;">
+                    <option value="">-- Choose Profile to Assign Roles --</option>
+                  </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.65rem; background: rgba(0,0,0,0.25); padding: 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="delegated-perm-read-downline">
+                    <span>👁️ Read Downline Team Details</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="delegated-perm-edit-profile">
+                    <span>✏️ Edit Assigned Profiles</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="delegated-perm-update-sadhana">
+                    <span>📿 Update Sadhana Logs</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="delegated-perm-certify">
+                    <span>🛡️ Issue Completion Seals</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="delegated-perm-approve-intake">
+                    <span>✅ Approve Pending Intakes</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="delegated-perm-export-data">
+                    <span>📥 Export Team Telemetry</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subtab 2: Screen Auth Matrix -->
+            <div class="role-matrix-subtab-pane" id="subtab-pane-screen-auth" style="display: none;">
             <div class="auth-matrix-container" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
                 <div>
@@ -2409,8 +2606,10 @@
             </div>
           </div>
 
-                    <!-- RBAC ROLES SETTINGS -->
-          <div class="settings-section" id="section-rbac" style="display: none;">
+            </div>
+
+            <!-- Subtab 3: RBAC Roles Governance -->
+            <div class="role-matrix-subtab-pane" id="subtab-pane-rbac-roles" style="display: none;">
             <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1.1rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-glass-gold, rgba(212,175,55,0.25)); padding-bottom: 0.75rem;">
                 <div>
@@ -2695,6 +2894,11 @@
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+
+            </div>
+
             </div>
           </div>
 
@@ -3269,17 +3473,17 @@
   </div>
 
   <!-- External Vendor & Core Logic Scripts -->
-  <script src="../js/profile-admin-header.js?v=sk_v5_1789412630827"></script>
-  <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789412630827"></script>
-  <script src="../js/models/ProfileModel.js?v=sk_v5_1789412630827"></script>
-  <script src="../js/config/appConfig.js?v=sk_v5_1789412630827"></script>
-  <script src="../js/models/FirebaseSyncEngine.js?v=sk_v5_1789412630827"></script>
-  <script src="../js/views/ProfileView.js?v=sk_v5_1789412630827"></script>
-  <script src="../js/views/ProfileView2.js?v=sk_v5_1789412630827"></script>
-  <script src="../js/controllers/ProfileController.js?v=sk_v5_1789412630827"></script>
-  <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789412630827"></script>
-  <script src="../js/controllers/SettingsModalController.js?v=sk_v5_1789412630827"></script>
-  <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789412630827"></script>
+  <script src="../js/profile-admin-header.js?v=sk_v5_1789462697941"></script>
+  <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789462697941"></script>
+  <script src="../js/models/ProfileModel.js?v=sk_v5_1789462697941"></script>
+  <script src="../js/config/appConfig.js?v=sk_v5_1789462697941"></script>
+  <script src="../js/models/FirebaseSyncEngine.js?v=sk_v5_1789462697941"></script>
+  <script src="../js/views/ProfileView.js?v=sk_v5_1789462697941"></script>
+  <script src="../js/views/ProfileView2.js?v=sk_v5_1789462697941"></script>
+  <script src="../js/controllers/ProfileController.js?v=sk_v5_1789462697941"></script>
+  <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789462697941"></script>
+  <script src="../js/controllers/SettingsModalController.js?v=sk_v5_1789462697941"></script>
+  <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789462697941"></script>
 
   <!-- ==============================================================
        SLIDE-IN NOTIFICATIONS STACK & CUSTOM DIALOG BACKDROP
@@ -3533,7 +3737,88 @@
       <button type="button" class="btn btn-outline btn-xs" id="btn-drawer-refresh-invites">🔄 Refresh List</button>
       <button type="button" class="btn btn-gold btn-xs" id="btn-drawer-open-share-modal">📲 Share &amp; Pair New Seeker</button>
     </div>
-  </aside>
+  <!-- ==============================================================
+       SPLIT-VIEW MODAL: 1. SADHANA EXPLORER (Catalog & Details)
+       ============================================================== -->
+  <div id="modal-sadhana-explorer" class="split-explorer-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="split-explorer-dialog">
+      <div class="split-explorer-header">
+        <div class="split-explorer-title-wrap">
+          <span style="font-size: 1.5rem;">📿</span>
+          <div>
+            <h3 class="split-explorer-title">Sacred Sadhana Explorer</h3>
+            <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Vedic Curriculum &amp; Anushthan Practices</span>
+          </div>
+        </div>
+        <button type="button" id="btn-close-sadhana-explorer" class="icon-btn" style="background: transparent; border: none; color: #ffffff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <div class="split-explorer-body">
+        <!-- Left Panel: List of Sadhanas -->
+        <div class="split-explorer-list-panel">
+          <div class="split-explorer-search-wrap">
+            <input type="text" id="search-sadhana-explorer" class="form-control" placeholder="🔍 Search sadhanas..." style="font-size: 0.78rem; padding: 0.4rem 0.65rem;">
+            <div class="split-explorer-filter-pills" id="filter-pills-sadhana">
+              <button type="button" class="split-explorer-pill active" data-filter="ALL">All</button>
+              <button type="button" class="split-explorer-pill" data-filter="Level 1–4">Master</button>
+              <button type="button" class="split-explorer-pill" data-filter="Level 1–3">Healer</button>
+              <button type="button" class="split-explorer-pill" data-filter="Sacred Sadhana">Sacred</button>
+              <button type="button" class="split-explorer-pill" data-filter="Cleansing">Cleansing</button>
+            </div>
+          </div>
+          <div class="split-explorer-cards-scroll" id="sadhana-explorer-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+        <!-- Right Panel: Selected Sadhana Detail -->
+        <div class="split-explorer-detail-panel" id="sadhana-explorer-detail">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       SPLIT-VIEW MODAL: 2. REMEDY & UPAY HUB (Afflictions & Details)
+       ============================================================== -->
+  <div id="modal-remedy-upay-hub" class="split-explorer-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="split-explorer-dialog">
+      <div class="split-explorer-header">
+        <div class="split-explorer-title-wrap">
+          <span style="font-size: 1.5rem;">🌿</span>
+          <div>
+            <h3 class="split-explorer-title">Remedy &amp; Upay Hub</h3>
+            <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Karmic Afflictions &amp; Prescribed Vidhis</span>
+          </div>
+        </div>
+        <button type="button" id="btn-close-remedy-hub" class="icon-btn" style="background: transparent; border: none; color: #ffffff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <div class="split-explorer-body">
+        <!-- Left Panel: List of Remedies -->
+        <div class="split-explorer-list-panel">
+          <div class="split-explorer-search-wrap">
+            <input type="text" id="search-remedy-hub" class="form-control" placeholder="🔍 Search remedies or afflictions..." style="font-size: 0.78rem; padding: 0.4rem 0.65rem;">
+            <div class="split-explorer-filter-pills" id="filter-pills-remedy">
+              <button type="button" class="split-explorer-pill active" data-filter="ALL">All Upay</button>
+              <button type="button" class="split-explorer-pill" data-filter="remedies">Divine Remedies</button>
+              <button type="button" class="split-explorer-pill" data-filter="cleansing">House Cleansing</button>
+              <button type="button" class="split-explorer-pill" data-filter="Havan">Havan</button>
+              <button type="button" class="split-explorer-pill" data-filter="Wealth">Wealth</button>
+            </div>
+          </div>
+          <div class="split-explorer-cards-scroll" id="remedy-hub-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+        <!-- Right Panel: Selected Remedy Detail -->
+        <div class="split-explorer-detail-panel" id="remedy-hub-detail">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Slide-In Toast Notification Stack (Bottom-Right) -->
+  <div id="slide-in-toast-stack" class="slide-in-toast-stack" role="region" aria-label="Notifications" style="position: fixed; bottom: 20px; right: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;"></div>
 
 </body>
 </html>

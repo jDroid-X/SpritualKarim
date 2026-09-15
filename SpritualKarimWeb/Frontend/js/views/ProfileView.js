@@ -2867,17 +2867,21 @@ class ProfileView {
   }
 
   toggleSettingsModal(forceState) {
-    if (!this.adminSettingsModal) return;
+    const modal =
+      this.adminSettingsModal ||
+      document.getElementById("admin-settings-modal");
+    if (!modal) return;
+    this.adminSettingsModal = modal;
     const isOpen =
       typeof forceState === "boolean"
         ? forceState
-        : !this.adminSettingsModal.classList.contains("open");
+        : !modal.classList.contains("open");
     if (isOpen) {
-      this.adminSettingsModal.classList.add("open");
-      this.adminSettingsModal.setAttribute("aria-hidden", "false");
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
     } else {
-      this.adminSettingsModal.classList.remove("open");
-      this.adminSettingsModal.setAttribute("aria-hidden", "true");
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
     }
   }
 
@@ -3831,7 +3835,7 @@ Installation & Activation Steps:
     }
 
     // 2. Prune Dedicated Portals (Hierarchy Scoping)
-    const portalCards = document.querySelectorAll("#dedicated-portals-container .sub-portal-nav-card");
+    const portalCards = document.querySelectorAll("#sidebar-dedicated-portals .sub-portal-link, #dedicated-portals-container .sub-portal-nav-card");
     const allowedPortals = {
       MASTER: [1, 2, 3, 4, 5],
       HEALER: [2, 3, 4, 5],

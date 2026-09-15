@@ -1,4 +1,6 @@
-# Spiritual Karim 🕊️✨
+# Spiritual Karim 🕊️✨ &nbsp; [![Open Login Portal](https://img.shields.io/badge/🔑_Open_Login_Page-Live_Portal-d4af37?style=for-the-badge&logo=googlechrome&logoColor=white)](https://jdroid-x.github.io/SpritualKarim/SpritualKarimWeb/login.html) [![Open Master Admin Directly](https://img.shields.io/badge/👑_Master_Admin_Portal-Direct_Access-ff6b00?style=for-the-badge)](https://jdroid-x.github.io/SpritualKarim/SpritualKarimWeb/Masters/index.html?role=admin#admin)
+
+> 🚀 **Direct Web Portal Access**: [Open Login Page](https://jdroid-x.github.io/SpritualKarim/SpritualKarimWeb/login.html) | [Direct Master Admin Portal](https://jdroid-x.github.io/SpritualKarim/SpritualKarimWeb/Masters/index.html?role=admin#admin)
 ### Enterprise Multi-Tier Spiritual Lineage, Sadhana & House Clean Governance Platform
 
 [![Android](https://img.shields.io/badge/Platform-Android%20Native%20(Jetpack%20Compose)-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/jDroid-X/SpritualKarim)

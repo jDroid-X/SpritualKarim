@@ -364,10 +364,22 @@ ProfileView.prototype.toggleCardFlipper = function(targetEl, forceState) {
 ProfileView.prototype.updateProfileCardFlipper = function(profile) {
     const p = profile || {};
 
+    const flipperName = document.getElementById('flipper-profile-name');
+    if (flipperName) {
+      flipperName.textContent = p.name || p.fullName || 'Spiritual Devotee';
+    }
+
+    const flipperRole = document.getElementById('flipper-profile-role');
+    if (flipperRole) {
+      const roleText = p.roleTitle || p.role || (p.roleLevel !== undefined ? `Level ${p.roleLevel}` : 'Devotee');
+      const icon = (p.roleLevel === 0 || p.role === 'Master') ? '👑' : (p.role === 'Healer' ? '🌿' : (p.role === 'Trainee' ? '🌱' : '🌟'));
+      flipperRole.textContent = `${icon} ${roleText}`;
+    }
+
     const avatarInitialsEl = document.getElementById('profile-avatar-initials');
     if (avatarInitialsEl) {
-      const initials = (p.name || 'SK').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-      avatarInitialsEl.textContent = initials;
+      const initials = (p.name || p.fullName || 'SK').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+      avatarInitialsEl.textContent = initials || 'SK';
     }
 
     const teleRef = document.getElementById('telemetry-ref-code');
@@ -680,14 +692,16 @@ ProfileView.prototype.toggleImportModal = function(forceState) {
 };
 
 ProfileView.prototype.toggleSettingsModal = function(forceState) {
-    if (!this.adminSettingsModal) return;
-    const isOpen = typeof forceState === 'boolean' ? forceState : !this.adminSettingsModal.classList.contains('open');
+    const modal = this.adminSettingsModal || document.getElementById('admin-settings-modal');
+    if (!modal) return;
+    this.adminSettingsModal = modal;
+    const isOpen = typeof forceState === 'boolean' ? forceState : !modal.classList.contains('open');
     if (isOpen) {
-      this.adminSettingsModal.classList.add('open');
-      this.adminSettingsModal.setAttribute('aria-hidden', 'false');
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
     } else {
-      this.adminSettingsModal.classList.remove('open');
-      this.adminSettingsModal.setAttribute('aria-hidden', 'true');
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
     }
 };
 
@@ -2248,3 +2262,356 @@ ProfileView.prototype.renderRichListBox = function(containerId, config = {}) {
     container.appendChild(listboxWrap);
     return listboxWrap;
 };
+
+ProfileView.prototype.openSadhanaExplorerModal = function(initialKey) {
+  const modal = document.getElementById('modal-sadhana-explorer');
+  if (!modal) return;
+  modal.classList.add('is-active', 'open');
+  modal.setAttribute('aria-hidden', 'false');
+
+  const catalog = (typeof SADHANA_CATALOG !== 'undefined') ? SADHANA_CATALOG : {};
+  const sadhanas = Object.values(catalog).filter(item => item.domain === 'sadhanas' || (item.category && item.category.includes('Sadhana')));
+  
+  let activeFilter = 'ALL';
+  let searchQuery = '';
+  let selectedKey = initialKey || (sadhanas[0] ? sadhanas[0].id : 'sri_yantra');
+
+  const listContainer = document.getElementById('sadhana-explorer-list');
+  const detailContainer = document.getElementById('sadhana-explorer-detail');
+  const searchInput = document.getElementById('search-sadhana-explorer');
+  const pills = document.querySelectorAll('#filter-pills-sadhana .split-explorer-pill');
+
+  const renderDetail = (key) => {
+    const item = catalog[key] || sadhanas[0];
+    if (!item || !detailContainer) return;
+    detailContainer.innerHTML = `
+      <div class="split-detail-banner">
+        <div class="split-detail-header-left">
+          <div class="split-detail-header-icon">${item.icon || '📿'}</div>
+          <div>
+            <h2 class="split-detail-title">${item.title}</h2>
+            <div class="split-detail-meta">
+              <span><strong>Category:</strong> ${item.category || 'Sacred Sadhana'}</span>
+              <span>&bull;</span>
+              <span><strong>Scope:</strong> ${item.levelScope || 'Level 1–4'}</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <button type="button" class="btn btn-gold btn-sm btn-enroll-sadhana-action" data-sadhana-id="${item.id}">📿 Enroll in Sadhana</button>
+        </div>
+      </div>
+
+      <div class="split-detail-section">
+        <div class="split-detail-section-title"><span>🌟</span> Spiritual Essence &amp; Overview</div>
+        <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin: 0;">${item.summary || 'Sacred sadhana curriculum authorized by Spiritual Karim.'}</p>
+      </div>
+
+      ${item.mantra ? `
+      <div class="split-detail-section">
+        <div class="split-detail-section-title"><span>🕉️</span> Sacred Beej Mantra &amp; Vibrational Jaap</div>
+        <div class="split-detail-mantra-box">
+          <div class="split-detail-mantra-text">${item.mantra}</div>
+          <button type="button" class="btn btn-sm btn-outline btn-copy-mantra-text" data-mantra="${encodeURIComponent(item.mantra)}" title="Copy Mantra">📋 Copy</button>
+        </div>
+      </div>
+      ` : ''}
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+        <div class="split-detail-section" style="margin-bottom: 0;">
+          <div class="split-detail-section-title"><span>⏱️</span> Auspicious Timing &amp; Direction</div>
+          <p style="font-size: 0.84rem; color: var(--text-secondary); margin: 0 0 0.4rem 0;"><strong>Timing:</strong> ${item.timing || 'Brahma Muhurta'}</p>
+          <p style="font-size: 0.84rem; color: var(--text-secondary); margin: 0;"><strong>Aasan &amp; Direction:</strong> ${item.aasanDirection || 'East Facing'}</p>
+        </div>
+
+        <div class="split-detail-section" style="margin-bottom: 0;">
+          <div class="split-detail-section-title"><span>🌿</span> Essential Samagri</div>
+          <p style="font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">${item.ingredients || 'Pure Cow Ghee Diya, Ganga Jal, Consecrated Mala.'}</p>
+        </div>
+      </div>
+
+      ${Array.isArray(item.steps) && item.steps.length > 0 ? `
+      <div class="split-detail-section">
+        <div class="split-detail-section-title"><span>📜</span> Step-by-Step Ritual Protocol</div>
+        <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.7;">
+          ${item.steps.map(st => `<li style="margin-bottom: 0.35rem;">${st}</li>`).join('')}
+        </ol>
+      </div>
+      ` : ''}
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+        <div class="split-detail-section" style="margin-bottom: 0;">
+          <div class="split-detail-section-title" style="color: #34d399;"><span>🛡️</span> Key Benefits &amp; Astral Shield</div>
+          <p style="font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">${item.benefits || 'Elevation of spiritual aura, purification of karmic debts.'}</p>
+        </div>
+
+        <div class="split-detail-section" style="margin-bottom: 0;">
+          <div class="split-detail-section-title" style="color: #f87171;"><span>⚠️</span> Rules &amp; Strict Cautions</div>
+          <p style="font-size: 0.84rem; color: #fca5a5; line-height: 1.5; margin: 0;">${item.cautions || 'Maintain complete mental purity and satvik discipline during sadhana.'}</p>
+        </div>
+      </div>
+    `;
+
+    const copyBtn = detailContainer.querySelector('.btn-copy-mantra-text');
+    if (copyBtn) {
+      copyBtn.onclick = () => {
+        const m = decodeURIComponent(copyBtn.getAttribute('data-mantra'));
+        if (navigator.clipboard) navigator.clipboard.writeText(m);
+        if (this.showSlideToast) this.showSlideToast("Mantra Copied", "📋 Sacred Mantra copied to clipboard", "success", 2500);
+      };
+    }
+
+    const enrollBtn = detailContainer.querySelector('.btn-enroll-sadhana-action');
+    if (enrollBtn) {
+      enrollBtn.onclick = () => {
+        if (this.showSlideToast) this.showSlideToast("Sadhana Enrolled", `📿 Active Devotee successfully enrolled in: ${item.title}`, "success", 3500);
+      };
+    }
+  };
+
+  const renderList = () => {
+    if (!listContainer) return;
+    const q = searchQuery.toLowerCase().trim();
+    const filtered = sadhanas.filter(item => {
+      const matchFilter = activeFilter === 'ALL' || (item.levelScope && item.levelScope.includes(activeFilter)) || (item.category && item.category.includes(activeFilter));
+      const matchSearch = !q || (item.title && item.title.toLowerCase().includes(q)) || (item.summary && item.summary.toLowerCase().includes(q));
+      return matchFilter && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      listContainer.innerHTML = `<div style="text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 0.8rem;">🔍 No sadhanas match your search.</div>`;
+      return;
+    }
+
+    listContainer.innerHTML = filtered.map(item => `
+      <div class="split-catalog-card ${item.id === selectedKey ? 'active' : ''}" data-sadhana-id="${item.id}">
+        <div class="split-catalog-icon">${item.icon || '📿'}</div>
+        <div class="split-catalog-meta">
+          <div class="split-catalog-name">${item.title}</div>
+          <div class="split-catalog-desc">${item.summary || ''}</div>
+          <span class="split-catalog-tag">${item.levelScope || item.category}</span>
+        </div>
+      </div>
+    `).join('');
+
+    listContainer.querySelectorAll('.split-catalog-card').forEach(card => {
+      card.onclick = () => {
+        selectedKey = card.getAttribute('data-sadhana-id');
+        listContainer.querySelectorAll('.split-catalog-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        renderDetail(selectedKey);
+      };
+    });
+  };
+
+  if (searchInput) {
+    searchInput.oninput = () => {
+      searchQuery = searchInput.value;
+      renderList();
+    };
+  }
+
+  pills.forEach(pill => {
+    pill.onclick = () => {
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeFilter = pill.getAttribute('data-filter');
+      renderList();
+    };
+  });
+
+  const closeBtn = document.getElementById('btn-close-sadhana-explorer');
+  if (closeBtn) {
+    closeBtn.onclick = () => {
+      modal.classList.remove('is-active', 'open');
+      modal.setAttribute('aria-hidden', 'true');
+    };
+  }
+
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('is-active', 'open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+  };
+
+  renderList();
+  renderDetail(selectedKey);
+};
+
+ProfileView.prototype.openRemedyHubModal = function(initialKey) {
+  const modal = document.getElementById('modal-remedy-upay-hub');
+  if (!modal) return;
+  modal.classList.add('is-active', 'open');
+  modal.setAttribute('aria-hidden', 'false');
+
+  const catalog = (typeof SADHANA_CATALOG !== 'undefined') ? SADHANA_CATALOG : {};
+  const remedies = Object.values(catalog).filter(item => item.domain === 'remedies' || item.domain === 'cleansing' || (item.category && (item.category.includes('Remedy') || item.category.includes('Cleansing'))));
+  
+  let activeFilter = 'ALL';
+  let searchQuery = '';
+  let selectedKey = initialKey || (remedies[0] ? remedies[0].id : 'three_diya');
+
+  const listContainer = document.getElementById('remedy-hub-list');
+  const detailContainer = document.getElementById('remedy-hub-detail');
+  const searchInput = document.getElementById('search-remedy-hub');
+  const pills = document.querySelectorAll('#filter-pills-remedy .split-explorer-pill');
+
+  const renderDetail = (key) => {
+    const item = catalog[key] || remedies[0];
+    if (!item || !detailContainer) return;
+    detailContainer.innerHTML = `
+      <div class="split-detail-banner">
+        <div class="split-detail-header-left">
+          <div class="split-detail-header-icon">${item.icon || '🌿'}</div>
+          <div>
+            <h2 class="split-detail-title">${item.title}</h2>
+            <div class="split-detail-meta">
+              <span><strong>Category:</strong> ${item.category || 'Divine Remedy'}</span>
+              <span>&bull;</span>
+              <span><strong>Scope:</strong> ${item.levelScope || 'All Seekers'}</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <button type="button" class="btn btn-gold btn-sm btn-prescribe-remedy-action" data-remedy-id="${item.id}">🌿 Prescribe to Devotee</button>
+        </div>
+      </div>
+
+      <div class="split-detail-section">
+        <div class="split-detail-section-title"><span>🎯</span> Target Affliction &amp; Purpose</div>
+        <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin: 0;">${item.summary || 'Sacred remedy prescribed by Spiritual Karim to cleanse spiritual obstacles.'}</p>
+      </div>
+
+      ${item.mantra ? `
+      <div class="split-detail-section">
+        <div class="split-detail-section-title"><span>🕉️</span> Remedial Mantra &amp; Sankalp</div>
+        <div class="split-detail-mantra-box">
+          <div class="split-detail-mantra-text">${item.mantra}</div>
+          <button type="button" class="btn btn-sm btn-outline btn-copy-remedy-mantra" data-mantra="${encodeURIComponent(item.mantra)}" title="Copy Mantra">📋 Copy</button>
+        </div>
+      </div>
+      ` : ''}
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+        <div class="split-detail-section" style="margin-bottom: 0;">
+          <div class="split-detail-section-title"><span>⏱️</span> Auspicious Timing &amp; Placement</div>
+          <p style="font-size: 0.84rem; color: var(--text-secondary); margin: 0 0 0.4rem 0;"><strong>Timing:</strong> ${item.timing || 'Twilight / Dusk (Godhuli Bela)'}</p>
+          <p style="font-size: 0.84rem; color: var(--text-secondary); margin: 0;"><strong>Direction:</strong> ${item.aasanDirection || 'Main Entrance / Threshold'}</p>
+        </div>
+
+        <div class="split-detail-section" style="margin-bottom: 0;">
+          <div class="split-detail-section-title"><span>🌿</span> Required Samagri (Ingredients)</div>
+          <p style="font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">${item.ingredients || 'Earthen Lamps, Pure Mustard Oil, Sea Salt.'}</p>
+        </div>
+      </div>
+
+      ${Array.isArray(item.steps) && item.steps.length > 0 ? `
+      <div class="split-detail-section">
+        <div class="split-detail-section-title"><span>📜</span> Step-by-Step Vidhi Procedure</div>
+        <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.7;">
+          ${item.steps.map(st => `<li style="margin-bottom: 0.35rem;">${st}</li>`).join('')}
+        </ol>
+      </div>
+      ` : ''}
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+        <div class="split-detail-section" style="margin-bottom: 0;">
+          <div class="split-detail-section-title" style="color: #34d399;"><span>🛡️</span> Expected Remedial Relief</div>
+          <p style="font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">${item.benefits || 'Clearing of negative energies and restoration of peace.'}</p>
+        </div>
+
+        <div class="split-detail-section" style="margin-bottom: 0;">
+          <div class="split-detail-section-title" style="color: #f87171;"><span>⚠️</span> Precautionary Rules</div>
+          <p style="font-size: 0.84rem; color: #fca5a5; line-height: 1.5; margin: 0;">${item.cautions || 'Follow exact sequence without breaking consecutive day count.'}</p>
+        </div>
+      </div>
+    `;
+
+    const copyBtn = detailContainer.querySelector('.btn-copy-remedy-mantra');
+    if (copyBtn) {
+      copyBtn.onclick = () => {
+        const m = decodeURIComponent(copyBtn.getAttribute('data-mantra'));
+        if (navigator.clipboard) navigator.clipboard.writeText(m);
+        if (this.showSlideToast) this.showSlideToast("Mantra Copied", "📋 Remedial Mantra copied to clipboard", "success", 2500);
+      };
+    }
+
+    const prescribeBtn = detailContainer.querySelector('.btn-prescribe-remedy-action');
+    if (prescribeBtn) {
+      prescribeBtn.onclick = () => {
+        if (this.showSlideToast) this.showSlideToast("Remedy Prescribed", `🌿 Successfully prescribed "${item.title}" to active devotee!`, "success", 3500);
+      };
+    }
+  };
+
+  const renderList = () => {
+    if (!listContainer) return;
+    const q = searchQuery.toLowerCase().trim();
+    const filtered = remedies.filter(item => {
+      const matchFilter = activeFilter === 'ALL' || (item.domain && item.domain.includes(activeFilter)) || (item.category && item.category.includes(activeFilter)) || (item.title && item.title.toLowerCase().includes(activeFilter.toLowerCase()));
+      const matchSearch = !q || (item.title && item.title.toLowerCase().includes(q)) || (item.summary && item.summary.toLowerCase().includes(q)) || (item.category && item.category.toLowerCase().includes(q));
+      return matchFilter && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      listContainer.innerHTML = `<div style="text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 0.8rem;">🔍 No remedies match your search.</div>`;
+      return;
+    }
+
+    listContainer.innerHTML = filtered.map(item => `
+      <div class="split-catalog-card ${item.id === selectedKey ? 'active' : ''}" data-remedy-id="${item.id}">
+        <div class="split-catalog-icon">${item.icon || '🌿'}</div>
+        <div class="split-catalog-meta">
+          <div class="split-catalog-name">${item.title}</div>
+          <div class="split-catalog-desc">${item.summary || ''}</div>
+          <span class="split-catalog-tag">${item.category || 'Divine Upay'}</span>
+        </div>
+      </div>
+    `).join('');
+
+    listContainer.querySelectorAll('.split-catalog-card').forEach(card => {
+      card.onclick = () => {
+        selectedKey = card.getAttribute('data-remedy-id');
+        listContainer.querySelectorAll('.split-catalog-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        renderDetail(selectedKey);
+      };
+    });
+  };
+
+  if (searchInput) {
+    searchInput.oninput = () => {
+      searchQuery = searchInput.value;
+      renderList();
+    };
+  }
+
+  pills.forEach(pill => {
+    pill.onclick = () => {
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeFilter = pill.getAttribute('data-filter');
+      renderList();
+    };
+  });
+
+  const closeBtn = document.getElementById('btn-close-remedy-hub');
+  if (closeBtn) {
+    closeBtn.onclick = () => {
+      modal.classList.remove('is-active', 'open');
+      modal.setAttribute('aria-hidden', 'true');
+    };
+  }
+
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('is-active', 'open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+  };
+
+  renderList();
+  renderDetail(selectedKey);
+};
+

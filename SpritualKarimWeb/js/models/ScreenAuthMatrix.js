@@ -3802,16 +3802,31 @@ class ScreenAuthMatrix {
   }
 
   static getStorageKey() {
-    return 'sk_screen_auth_matrix_v4';
+    if (typeof window !== 'undefined' && window.appConfig && window.appConfig.authMatrixKey) {
+      return window.appConfig.authMatrixKey;
+    }
+    return 'sk_auth_matrix_v5';
   }
 
   /**
-   * Retrieves active auth matrix merging persistent changes with canonical 3-level tree definitions.
+   * Retrieves active Screen Auth Matrix merging persistent changes with canonical 3-level tree definitions.
    */
   static getAuthMatrix() {
     try {
       if (typeof localStorage !== 'undefined') {
-        const raw = localStorage.getItem(this.getStorageKey());
+        const currentKey = this.getStorageKey();
+        let raw = localStorage.getItem(currentKey);
+        
+        // Automatic legacy migration from v4 to v5
+        if (!raw) {
+          const legacyV4 = localStorage.getItem('sk_screen_auth_matrix_v4');
+          if (legacyV4) {
+            raw = legacyV4;
+            localStorage.setItem(currentKey, legacyV4);
+            console.log('[ScreenAuthMatrix] Migrated legacy sk_screen_auth_matrix_v4 to', currentKey);
+          }
+        }
+
         if (raw) {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed) && parsed.length > 0) {
@@ -3863,19 +3878,31 @@ class ScreenAuthMatrix {
   }
 
   /**
-   * Saves updated auth matrix and triggers real-time portal synchronization.
+   * Saves updated Screen Auth Matrix and triggers real-time portal synchronization & cloud dual-write.
    */
   static saveAuthMatrix(matrix) {
     try {
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(this.getStorageKey(), JSON.stringify(matrix));
+        const key = this.getStorageKey();
+        localStorage.setItem(key, JSON.stringify(matrix));
+        localStorage.setItem('sk_last_write_ts', String(Date.now()));
+
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('sk-auth-matrix-updated', { detail: { matrix } }));
+          
+          // Realtime multi-portal broadcast
           try {
             if (typeof BroadcastChannel !== 'undefined') {
               const bc = new BroadcastChannel('sk_matrix_channel');
-              bc.postMessage({ type: 'AUTH_MATRIX_UPDATED', timestamp: Date.now() });
+              bc.postMessage({ type: 'AUTH_MATRIX_UPDATED', matrix, timestamp: Date.now() });
               bc.close();
+            }
+          } catch (e) {}
+
+          // Dual-write to cloud sync engine if active
+          try {
+            if (window.FirebaseSyncEngine && typeof window.FirebaseSyncEngine.syncAuthMatrix === 'function') {
+              window.FirebaseSyncEngine.syncAuthMatrix(matrix);
             }
           } catch (e) {}
         }

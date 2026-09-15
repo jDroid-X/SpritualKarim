@@ -18,6 +18,9 @@ class ProfileController {
     this._setupPowerLossDetection();
     this._setupSessionManagement();
     this._setupCrossTabSync();
+    if (typeof this.initInteractiveComponentShowcase === "function") {
+      this.initInteractiveComponentShowcase();
+    }
 
     window.addEventListener("online", () => {
       this.model.flushOfflineSyncQueue();
@@ -28,13 +31,29 @@ class ProfileController {
   _setupCrossTabSync() {
     if (typeof BroadcastChannel !== "undefined") {
       try {
-        const syncChan = new BroadcastChannel("spiritual_karim_sync");
-        syncChan.onmessage = (event) => {
+        const handleMatrixUpdate = (event) => {
           if (event.data && event.data.type === "AUTH_MATRIX_UPDATED") {
             const freshMatrix = event.data.matrix || this.model.getAuthMatrix();
             const currentRole = this.model.getRoleMode();
             this.view.applyDynamicAuthMatrix(freshMatrix, currentRole);
-            this.view.renderAuthMatrixInSettings(freshMatrix, currentRole);
+            if (typeof this.view.renderAuthMatrixInSettings === "function") {
+              this.view.renderAuthMatrixInSettings(freshMatrix, currentRole);
+            }
+          }
+        };
+
+        // Channel for Screen Auth Matrix updates
+        const matrixChan = new BroadcastChannel("sk_matrix_channel");
+        matrixChan.onmessage = handleMatrixUpdate;
+
+        // Channel for General Application events & Invites
+        const syncChan = new BroadcastChannel("spiritual_karim_sync");
+        syncChan.onmessage = (event) => {
+          handleMatrixUpdate(event);
+          if (event.data && event.data.type === "COMPONENT_STATE_UPDATED") {
+            if (typeof this.initInteractiveComponentShowcase === "function") {
+              this.initInteractiveComponentShowcase();
+            }
           }
           if (event.data && event.data.type === "INVITE_SUBMITTED") {
             const freshInvites = this.model.getPairingInvites();
@@ -206,9 +225,10 @@ class ProfileController {
     const active = this.model.getActiveProfile();
     const visibleProfiles = this.model.getVisibleProfiles();
     const roleMode = this.model.getRoleMode();
-    const settings = this.model.settings;
-    this.view.allProfiles = this.model.profiles;
-    this.view.render(active, visibleProfiles, roleMode, settings, anchor);
+    const scopedProfiles = this.model.getScopedDownlineProfiles(active, roleMode);
+    const settings = this.model.settings || (typeof this.model.getSettings === "function" ? this.model.getSettings() : {});
+    this.view.allProfiles = (roleMode === "MASTER" || roleMode === "ADMIN") ? this.model.profiles : scopedProfiles;
+    this.view.render(active, scopedProfiles, roleMode, settings, anchor);
     const operatorProfile = typeof this.model.getOperatorProfile === "function" ? this.model.getOperatorProfile() : anchor;
     if (typeof this.view.renderProfileDisplayBox === "function") {
       this.view.renderProfileDisplayBox(operatorProfile, roleMode);
@@ -1700,6 +1720,27 @@ class ProfileController {
       }
     });
 
+    // 5.5 Enterprise Sacred Knowledge & Upay (Sadhana Explorer & Remedy Hub)
+    const btnSadhanaExp = document.getElementById("sidebar-btn-sadhana-explorer");
+    if (btnSadhanaExp) {
+      btnSadhanaExp.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (typeof this.view.openSadhanaExplorerModal === "function") {
+          this.view.openSadhanaExplorerModal();
+        }
+      });
+    }
+
+    const btnRemedyHub = document.getElementById("sidebar-btn-remedy-hub");
+    if (btnRemedyHub) {
+      btnRemedyHub.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (typeof this.view.openRemedyHubModal === "function") {
+          this.view.openRemedyHubModal();
+        }
+      });
+    }
+
     // 6. Admin System Settings Modal Listeners
     ["btn-admin-settings", "sidebar-btn-admin-settings"].forEach((id) => {
       const btn = document.getElementById(id);
@@ -2173,6 +2214,26 @@ class ProfileController {
       }
       if (e.target && e.target.id === "share-pairing-modal") {
         this.view.toggleSharePairingModal(false);
+        return;
+      }
+
+      // Open Sadhana Explorer Modal
+      const btnOpenSadhana = e.target.closest("#sidebar-btn-sadhana-explorer, .btn-open-sadhana-explorer");
+      if (btnOpenSadhana) {
+        e.preventDefault();
+        if (typeof this.view.openSadhanaExplorerModal === "function") {
+          this.view.openSadhanaExplorerModal();
+        }
+        return;
+      }
+
+      // Open Remedy & Upay Hub Modal
+      const btnOpenRemedy = e.target.closest("#sidebar-btn-remedy-hub, .btn-open-remedy-hub");
+      if (btnOpenRemedy) {
+        e.preventDefault();
+        if (typeof this.view.openRemedyHubModal === "function") {
+          this.view.openRemedyHubModal();
+        }
         return;
       }
 

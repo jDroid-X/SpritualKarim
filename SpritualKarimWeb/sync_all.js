@@ -55,6 +55,8 @@ portals.forEach(p => {
   subHtml = subHtml.replace(/href="Trainee\/index\.html"/g, 'href="../Trainee/index.html"');
   subHtml = subHtml.replace(/href="Devotee\/index\.html"/g, 'href="../Devotee/index.html"');
   subHtml = subHtml.replace(/href="Seeker\/index\.html"/g, 'href="../Seeker/index.html"');
+  subHtml = subHtml.replace(/href="Public\/index\.html"/g, 'href="../Public/index.html"');
+  subHtml = subHtml.replace(/href="docs\//g, 'href="../docs/');
   subHtml = subHtml.replace(/src="GOLI_GYAN_FOR_SEEKERS\.html"/g, 'src="../GOLI_GYAN_FOR_SEEKERS.html"');
   subHtml = subHtml.replace(/href="GOLI_GYAN_FOR_SEEKERS\.html"/g, 'href="../GOLI_GYAN_FOR_SEEKERS.html"');
 

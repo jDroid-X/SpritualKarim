@@ -54,7 +54,7 @@ function handleApiRequest(req, res, pathname, queryParams) {
     }
   }
 
-  // 3. Auth Matrix (Dual-Write Persistence)
+  // 3. Screen Auth Matrix (Dual-Write Persistence)
   if (pathname === '/api/auth-matrix') {
     if (req.method === 'POST') {
       let body = '';
@@ -75,6 +75,33 @@ function handleApiRequest(req, res, pathname, queryParams) {
       const matrix = fb.getAuthMatrix();
       res.writeHead(200);
       res.end(JSON.stringify({ success: true, data: matrix }));
+      return true;
+    }
+  }
+
+  // 3b. Profile Role Matrix (Profile Delegated Permissions)
+  if (pathname === '/api/profile-roles') {
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => { body += chunk; });
+      req.on('end', () => {
+        try {
+          const roleMatrix = JSON.parse(body);
+          if (typeof fb.saveProfileRoleMatrix === 'function') {
+            fb.saveProfileRoleMatrix(roleMatrix);
+          }
+          res.writeHead(200);
+          res.end(JSON.stringify({ success: true, message: 'Profile role matrix updated in database' }));
+        } catch (e) {
+          res.writeHead(400);
+          res.end(JSON.stringify({ success: false, error: e.message }));
+        }
+      });
+      return true;
+    } else {
+      const data = typeof fb.getProfileRoleMatrix === 'function' ? fb.getProfileRoleMatrix() : {};
+      res.writeHead(200);
+      res.end(JSON.stringify({ success: true, data: data || {} }));
       return true;
     }
   }
@@ -232,7 +259,7 @@ function handleApiRequest(req, res, pathname, queryParams) {
     }
   }
 
-  // 10. DB Export
+  // 11. DB Export
   if (pathname === '/api/db/export') {
     res.writeHead(200);
     res.end(JSON.stringify(fb.getLocalData(), null, 2));

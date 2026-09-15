@@ -1,7 +1,7 @@
 {
   "rules": {
     "profiles": {
-      ".read": "auth != null || true",
+      ".read": true,
       ".write": "auth != null",
       "$deviceId": {
         ".indexOn": [
@@ -14,8 +14,8 @@
       }
     },
     "pairing_invites": {
-      ".read": "auth != null || true",
-      ".write": "auth != null || true",
+      ".read": true,
+      ".write": "auth != null",
       "$queueId": {
         ".indexOn": [
           "sponsorCode",
@@ -26,8 +26,8 @@
       }
     },
     "house_clean_logs": {
-      ".read": "auth != null || true",
-      ".write": "auth != null || true",
+      ".read": true,
+      ".write": "auth != null",
       "$auditId": {
         ".indexOn": [
           "devoteeId",
@@ -39,8 +39,8 @@
       }
     },
     "daily_diya_logs": {
-      ".read": "auth != null || true",
-      ".write": "auth != null || true",
+      ".read": true,
+      ".write": "auth != null",
       "$logId": {
         ".indexOn": [
           "devoteeId",
@@ -78,6 +78,18 @@
     "sadhana_catalog": {
       ".read": true,
       ".write": "auth != null && auth.token.admin == true"
+    },
+    "auth_matrix": {
+      ".read": true,
+      ".write": "auth != null && auth.token.admin == true"
+    },
+    "profile_role_matrix": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "component_states": {
+      ".read": true,
+      ".write": "auth != null"
     },
     "device_telemetry": {
       ".read": "auth != null",

@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Shree Spritual Karim Sansthan - Online Offline Sync Lifecycle
+    </title>
+    <meta
+      name="description"
+      content="Online Offline Sync Lifecycle - Unified Business Object Architecture & Universal High-Frequency Synchronization Engine with MLM Lineage Scoping."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cinzel:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-main: #f8fafc;
+        --bg-card: #ffffff;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+        --border-focus: #3b82f6;
+        --gold-500: #d4af37;
+        --gold-600: #b8860b;
+        --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f59e0b 50%, #b8860b 100%);
+        --primary: #2563eb;
+        --primary-dark: #1e40af;
+        --primary-light: #eff6ff;
+        --success: #059669;
+        --success-light: #ecfdf5;
+        --warning: #d97706;
+        --warning-light: #fffbeb;
+        --danger: #dc2626;
+        --danger-light: #fef2f2;
+        --purple: #7c3aed;
+        --purple-light: #f5f3ff;
+        --teal: #0d9488;
+        --teal-light: #f0fdfa;
+        --code-bg: #1e293b;
+        --code-text: #f8fafc;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg-main);
+        color: var(--text-main);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ── HEADER ── */
+      .hdr {
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #172554 100%);
+        color: #fff;
+        text-align: center;
+        padding: 1.35rem 1.5rem 1.1rem;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      }
+      .hdr::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gold-gradient);
+      }
+      .hdr-om {
+        font-size: 1.8rem;
+        color: var(--gold-500);
+        margin-bottom: 0.15rem;
+        filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.4));
+      }
+      .hdr-org {
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(240, 235, 224, 0.8);
+        margin-bottom: 0.25rem;
+      }
+      .hdr-title {
+        font-family: "Cinzel", serif;
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #f8fafc;
+        letter-spacing: 0.5px;
+      }
+      .hdr-tag {
+        font-size: 0.85rem;
+        color: #cbd5e1;
+        margin-top: 0.25rem;
+        font-weight: 500;
+      }
+      .hdr-sub {
+        font-size: 0.7rem;
+        color: rgba(203, 213, 225, 0.7);
+        margin-top: 0.2rem;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ── NAVIGATION CONTROLS BAR ── */
+      .controls-bar {
+        background: #ffffff;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.65rem 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      }
+      .doc-links {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.35rem;
+      }
+      .doc-link-btn {
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 0.32rem 0.65rem;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid var(--border-color);
+        transition: all 0.15s ease;
+      }
+      .doc-link-btn:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+      }
+      .doc-link-btn.active {
+        background: #eff6ff;
+        color: var(--primary);
+        border-color: #93c5fd;
+        font-weight: 700;
+      }
+      .action-btns {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn-action {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.35rem 0.85rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--border-color);
+        background: #fff;
+        color: #334155;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.15s ease;
+      }
+      .btn-action:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--primary-dark);
+      }
+      .btn-primary:hover {
+        background: var(--primary-dark);
+        color: #fff;
+      }
+
+      /* ── HERO BANNER ── */
+      .hero-section {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        color: #f8fafc;
+        padding: 1.75rem 1.5rem;
+        border-bottom: 1px solid #334155;
+      }
+      .hero-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1.8fr 1.2fr;
+        gap: 2rem;
+        align-items: center;
+      }
+      .hero-title {
+        font-family: "Cinzel", serif;
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #f8fafc;
+        margin-bottom: 0.5rem;
+      }
+      .hero-title span {
+        color: var(--gold-500);
+      }
+      .hero-desc {
+        color: #94a3b8;
+        font-size: 0.88rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+      .hero-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .hero-badge {
+        font-size: 0.72rem;
+        padding: 0.25rem 0.65rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+      .hb-gold { background: rgba(212, 175, 55, 0.15); color: #facc15; border: 1px solid rgba(212, 175, 55, 0.3); }
+      .hb-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+      .hb-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+      .hb-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+      /* Hero Stats Widget */
+      .hero-stats-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+      }
+      .stat-item {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+      }
+      .stat-val {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #38bdf8;
+      }
+      .stat-lbl {
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 0.15rem;
+      }
+
+      /* ── MAIN CONTENT CONTAINER ── */
+      .main-container {
+        max-width: 1400px;
+        margin: 1.5rem auto;
+        padding: 0 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      /* ── SECTION CARDS ── */
+      .section-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+      }
+      .section-hdr {
+        padding: 1rem 1.25rem;
+        background: #f8fafc;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .section-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .section-title-icon {
+        font-size: 1.2rem;
+      }
+      .section-body {
+        padding: 1.25rem;
+      }
+
+      /* ── 9-STAGE UNIVERSAL LIFECYCLE FLOW ── */
+      .lifecycle-flow {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+      .flow-step-card {
+        border: 1.5px solid var(--border-color);
+        border-radius: 0.65rem;
+        padding: 1rem;
+        background: #fff;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .flow-step-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+      }
+      .flow-step-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3.5px;
+      }
+      .fsc-p0::before { background: #64748b; }
+      .fsc-p1::before { background: #3b82f6; }
+      .fsc-p2::before { background: #06b6d4; }
+      .fsc-p3::before { background: #8b5cf6; }
+      .fsc-p4::before { background: #f59e0b; }
+      .fsc-p5::before { background: #10b981; }
+      .fsc-p6::before { background: #ec4899; }
+      .fsc-p7::before { background: #d4af37; }
+      .fsc-p8::before { background: #1e293b; }
+
+      .step-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+      .step-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.15rem 0.45rem;
+        border-radius: 0.25rem;
+        background: #f1f5f9;
+        color: #475569;
+      }
+      .step-name {
+        font-size: 0.88rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+      }
+      .step-desc {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin-bottom: 0.65rem;
+      }
+      .step-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+      .step-tag {
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 0.1rem 0.35rem;
+        border-radius: 0.2rem;
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        color: #475569;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ── BUSINESS OBJECTS & CLOUD NODES MATRIX TABLE ── */
+      .matrix-table-wrap {
+        overflow-x: auto;
+      }
+      .matrix-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+      }
+      .matrix-table th {
+        background: #f1f5f9;
+        color: #334155;
+        font-weight: 700;
+        text-align: left;
+        padding: 0.75rem 0.85rem;
+        border: 1px solid var(--border-color);
+        white-space: nowrap;
+      }
+      .matrix-table td {
+        padding: 0.65rem 0.85rem;
+        border: 1px solid var(--border-color);
+        vertical-align: top;
+      }
+      .matrix-table tr:hover {
+        background: #f8fafc;
+      }
+      .code-badge {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        padding: 0.15rem 0.4rem;
+        border-radius: 0.25rem;
+        background: #f1f5f9;
+        color: #0f172a;
+        border: 1px solid #e2e8f0;
+      }
+      .badge-online { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; font-weight: 600; padding: 0.1rem 0.4rem; border-radius: 0.25rem; font-size: 0.68rem; }
+      .badge-offline { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; font-weight: 600; padding: 0.1rem 0.4rem; border-radius: 0.25rem; font-size: 0.68rem; }
+      .badge-p2p { background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; font-weight: 600; padding: 0.1rem 0.4rem; border-radius: 0.25rem; font-size: 0.68rem; }
+
+      /* ── INTERACTIVE PLAYGROUND SIMULATOR ── */
+      .simulator-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 1.25rem;
+      }
+      .sim-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        padding: 1rem;
+      }
+      .sim-ctrl-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+      .sim-lbl {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #334155;
+      }
+      .sim-select, .sim-input {
+        padding: 0.45rem 0.65rem;
+        font-size: 0.8rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.35rem;
+        background: #fff;
+      }
+      .sim-toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.4rem 0;
+        border-bottom: 1px dashed var(--border-color);
+      }
+      .sim-console {
+        background: var(--code-bg);
+        color: var(--code-text);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        min-height: 280px;
+        max-height: 380px;
+        overflow-y: auto;
+      }
+      .console-line {
+        margin-bottom: 0.35rem;
+        line-height: 1.4;
+      }
+      .c-info { color: #38bdf8; }
+      .c-success { color: #4ade80; }
+      .c-warn { color: #facc15; }
+      .c-err { color: #f87171; }
+      .c-gold { color: #fde047; }
+
+      /* ── MLM HIERARCHY SCOPED VISIBILITY CARD ── */
+      .mlm-pyramid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .pyramid-tier {
+        border-radius: 0.5rem;
+        padding: 0.85rem 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1.5px solid;
+        transition: transform 0.15s ease;
+      }
+      .tier-master { background: #fffdf0; border-color: #d4af37; color: #78350f; }
+      .tier-healer { background: #eff6ff; border-color: #3b82f6; color: #1e3a8a; }
+      .tier-trainee { background: #f0fdf4; border-color: #22c55e; color: #14532d; }
+      .tier-devotee { background: #f8fafc; border-color: #94a3b8; color: #334155; }
+
+      /* ── FOOTER ── */
+      .ftr {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        border-top: 1px solid var(--border-color);
+        background: #fff;
+        margin-top: 2rem;
+      }
+      .ftr a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+
+      @media (max-width: 900px) {
+        .hero-container { grid-template-columns: 1fr; }
+        .simulator-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header class="hdr">
+      <div class="hdr-om">ॐ</div>
+      <div class="hdr-org">Shree Spritual Karim Sansthan • Web Platform</div>
+      <h1 class="hdr-title">Universal Online / Offline Sync Lifecycle</h1>
+      <div class="hdr-tag">
+        Multi-Device Ingestion • Monotonic Vector Timestamping • Scoped Lineage Sync • Conflict-Free Resolution
+      </div>
+      <div class="hdr-sub">
+        ENGINE: SK-SYNC-CORE-V5 • STORAGE: sk_auth_matrix_v5 | sk_profile_role_matrix_v1 | sk_sync_queue
+      </div>
+    </header>
+
+    <!-- CONTROLS & ARCHITECTURE SUITE NAVIGATION BAR -->
+    <div class="controls-bar">
+      <div class="doc-links">
+        <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin-right: 0.25rem;">ARCHITECTURE SUITE:</span>
+        <a href="platform-overview.html" class="doc-link-btn">① Platform Overview</a>
+        <a href="workflow-architecture.html" class="doc-link-btn">② Business Objects</a>
+        <a href="transaction-lifecycle.html" class="doc-link-btn">③ Universal Lifecycle</a>
+        <a href="devotee-registration-workflow.html" class="doc-link-btn">④ Devotee Flowchart (HITL)</a>
+        <a href="devotee-registration-workflow1.html" class="doc-link-btn">⑤ Devotee Stages</a>
+        <a href="data-structure-workflow.html" class="doc-link-btn">⑥ Data Structure &amp; Hierarchy</a>
+        <a href="core-operations-workflow.html" class="doc-link-btn">⑦ Core Operations &amp; Workflows</a>
+        <a href="online-offline-sync-lifecycle.html" class="doc-link-btn active">⑧ Online Offline Sync Lifecycle</a>
+        <a href="customer-presentation.html" class="doc-link-btn" style="background:#fef9c3;color:#854d0e;border-color:#fde047;">✨ Executive Presentation</a>
+      </div>
+      <div class="action-btns">
+        <button class="btn-action" onclick="runSimulationSequence()">
+          <span>⚡</span> <span>Run Sync Simulation</span>
+        </button>
+        <button class="btn-action btn-primary" onclick="window.print()">
+          <span>🖨️</span> Print / Save PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+      <div class="hero-container">
+        <div>
+          <div class="hero-title">
+            Offline-First <span>Dual-Write</span> Engine with MLM Lineage Scoping
+          </div>
+          <p class="hero-desc">
+            The Spiritual Karim Web ecosystem processes sacred spiritual activities (Daily Diya logs, Sadhana certifications, Mentorship pairings, and Screen Access rights) across devices that regularly transition between high-speed Wi-Fi, spotty mobile 4G, and completely offline retreat environments. This specification consolidates the <strong>Business Object Architecture</strong> and the <strong>Universal Transactional Lifecycle</strong> into a deterministic, closed-loop synchronization framework.
+          </p>
+          <div class="hero-badges">
+            <span class="hero-badge hb-gold">👑 International MLM Scoping</span>
+            <span class="hero-badge hb-blue">📡 Dual BroadcastChannel ('sk_matrix_channel' + 'spiritual_karim_sync')</span>
+            <span class="hero-badge hb-green">⚡ Monotonic Lamport Clock (LWW)</span>
+            <span class="hero-badge hb-purple">🛡️ 3-Tier Role Matrix Hub</span>
+          </div>
+        </div>
+        <div class="hero-stats-card">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-val" id="stat-latency">&lt; 15ms</div>
+              <div class="stat-lbl">Cross-Tab Propagation</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-val">100%</div>
+              <div class="stat-lbl">Offline Resilience</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-val">UUIDv5</div>
+              <div class="stat-lbl">Deterministic Idempotency</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-val" id="stat-nodes">12 RTDB Nodes</div>
+              <div class="stat-lbl">Cloud Dual-Write Target</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN CONTAINER -->
+    <main class="main-container">
+
+      <!-- SECTION 1: 9-STAGE UNIVERSAL TRANSACTIONAL & SYNC LIFECYCLE -->
+      <section class="section-card">
+        <div class="section-hdr">
+          <div class="section-title">
+            <span class="section-title-icon">🔄</span>
+            <span>The 9 Universal Transactional Lifecycle Stages</span>
+          </div>
+          <span class="code-badge">Closed-Loop Feedback • Zero Open Branches</span>
+        </div>
+        <div class="section-body">
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem;">
+            Every mutation—whether a mentor pairing invite, a sadhana log submission, or an admin screen authorization toggle—flows through these strict sequential phases ensuring data integrity before and after network connectivity is restored.
+          </p>
+          <div class="lifecycle-flow">
+            <!-- Stage 0 -->
+            <div class="flow-step-card fsc-p0">
+              <div class="step-header">
+                <span class="step-num">STAGE 0</span>
+                <span class="badge-offline">LOCAL</span>
+              </div>
+              <div class="step-name">Mutation Inception &amp; Nonce</div>
+              <div class="step-desc">
+                The user triggers an action (e.g. toggles Screen Auth Matrix checkbox or assigns downline role). System generates a hardware nonce, client timestamp, and UUIDv5 transaction hash.
+              </div>
+              <div class="step-tags">
+                <span class="step-tag">crypto.randomUUID()</span>
+                <span class="step-tag">hardwareNonce</span>
+                <span class="step-tag">L0 Client</span>
+              </div>
+            </div>
+
+            <!-- Stage 1 -->
+            <div class="flow-step-card fsc-p1">
+              <div class="step-header">
+                <span class="step-num">STAGE 1</span>
+                <span class="badge-offline">CLIENT</span>
+              </div>
+              <div class="step-name">Schema Sanitization &amp; Guard</div>
+              <div class="step-desc">
+                Input passes through <code>sanitizer.js</code> and <code>FormValidator.js</code>. Invalid types, script injections, or privilege escalations are trapped and rejected immediately.
+              </div>
+              <div class="step-tags">
+                <span class="step-tag">Sanitizer.cleanText()</span>
+                <span class="step-tag">XSS Guard</span>
+                <span class="step-tag">Schema L1</span>
+              </div>
+            </div>
+
+            <!-- Stage 2 -->
+            <div class="flow-step-card fsc-p2">
+              <div class="step-header">
+                <span class="step-num">STAGE 2</span>
+                <span class="badge-offline">OPTIMISTIC</span>
+              </div>
+              <div class="step-name">Optimistic Local Staging</div>
+              <div class="step-desc">
+                DOM UI updates immediately without waiting for server response. Mutation commits to <code>localStorage</code> (e.g. <code>sk_auth_matrix_v5</code> or <code>sk_profile_role_matrix_v1</code>).
+              </div>
+              <div class="step-tags">
+                <span class="step-tag">localStorage.setItem()</span>
+                <span class="step-tag">0ms UI Latency</span>
+                <span class="step-tag">Fast UX</span>
+              </div>
+            </div>
+
+            <!-- Stage 3 -->
+            <div class="flow-step-card fsc-p3">
+              <div class="step-header">
+                <span class="step-num">STAGE 3</span>
+                <span class="badge-p2p">BROADCAST</span>
+              </div>
+              <div class="step-name">Cross-Tab Peer Propagation</div>
+              <div class="step-desc">
+                A dual message is dispatched via <code>BroadcastChannel</code> across <code>'sk_matrix_channel'</code> and <code>'spiritual_karim_sync'</code> so open sibling tabs re-render dynamically.
+              </div>
+              <div class="step-tags">
+                <span class="step-tag">BroadcastChannel.postMessage</span>
+                <span class="step-tag">Cross-Tab L2</span>
+                <span class="step-tag">&lt; 15ms</span>
+              </div>
+            </div>
+
+            <!-- Stage 4 -->
+            <div class="flow-step-card fsc-p4">
+              <div class="step-header">
+                <span class="step-num">STAGE 4</span>
+                <span class="badge-offline">QUEUE</span>
+              </div>
+              <div class="step-name">Offline Staging Queue</div>
+              <div class="step-desc">
+                If network is offline or unacknowledged, transaction enqueues into <code>sk_sync_queue</code> with retry counters, exponential backoff (1s, 2s, 4s, 8s), and circuit breaker protection.
+              </div>
+              <div class="step-tags">
+                <span class="step-tag">sk_sync_queue</span>
+                <span class="step-tag">Exponential Backoff</span>
+                <span class="step-tag">Resilient</span>
+              </div>
+            </div>
+
+            <!-- Stage 5 -->
+            <div class="flow-step-card fsc-p5">
+              <div class="step-header">
+                <span class="step-num">STAGE 5</span>
+                <span class="badge-online">CLOUD DUAL-WRITE</span>
+              </div>
+              <div class="step-name">Firebase RTDB &amp; REST Ingestion</div>
+              <div class="step-desc">
+                <code>FirebaseSyncEngine</code> synchronously pushes to Firebase RTDB node (e.g. <code>/auth_matrix</code>, <code>/profile_role_matrix</code>) and dual-writes to Backend REST endpoints.
+              </div>
+              <div class="step-tags">
+                <span class="step-tag">FirebaseSyncEngine</span>
+                <span class="step-tag">POST /api/auth-matrix</span>
+                <span class="step-tag">Dual-Write</span>
+              </div>
+            </div>
+
+            <!-- Stage 6 -->
+            <div class="flow-step-card fsc-p6">
+              <div class="step-header">
+                <span class="step-num">STAGE 6</span>
+                <span class="badge-online">CONSENSUS</span>
+              </div>
+              <div class="step-name">Monotonic Conflict Resolution</div>
+              <div class="step-desc">
+                If multiple devices modified the same profile or permission simultaneously, the system uses Last-Write-Wins (LWW) with Lamport vector timestamp tie-breakers and hardware nonce deduplication.
+              </div>
+              <div class="step-tags">
+                <span class="step-tag">Lamport Monotonic Clock</span>
+                <span class="step-tag">LWW Consensus</span>
+                <span class="step-tag">Deduplicated</span>
+              </div>
+            </div>
+
+            <!-- Stage 7 -->
+            <div class="flow-step-card fsc-p7">
+              <div class="step-header">
+                <span class="step-num">STAGE 7</span>
+                <span class="badge-online">SCOPING</span>
+              </div>
+              <div class="step-name">MLM Downline Lineage Scoping</div>
+              <div class="step-desc">
+                Data reaches clients filtered by International MLM rules: Masters see the entire tree; Healers see downline members; Trainees &amp; Devotees see self-only unless granted extra roles.
+              </div>
+              <div class="step-tags">
+                <span class="step-tag">getScopedDownlineProfiles</span>
+                <span class="step-tag">Recursive Lineage</span>
+                <span class="step-tag">Least Privilege</span>
+              </div>
+            </div>
+
+            <!-- Stage 8 -->
+            <div class="flow-step-card fsc-p8">
+              <div class="step-header">
+                <span class="step-num">STAGE 8</span>
+                <span class="badge-online">AUDIT</span>
+              </div>
+              <div class="step-name">Immutable Audit Trail &amp; Ack</div>
+              <div class="step-desc">
+                Transaction receipt commits to <code>/telemetry/audits</code>. Queue record is pruned from <code>sk_sync_queue</code>, and client displays positive confirmation toast to user.
+              </div>
+              <div class="step-tags">
+                <span class="step-tag">Audit Immutability</span>
+                <span class="step-tag">Queue Ack / Prune</span>
+                <span class="step-tag">Closed Loop</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: BUSINESS ENTITIES TO STORAGE & CLOUD MAPPING -->
+      <section class="section-card">
+        <div class="section-hdr">
+          <div class="section-title">
+            <span class="section-title-icon">🏛️</span>
+            <span>Business Object Architecture &amp; Persistence Mapping</span>
+          </div>
+          <span class="code-badge">Local Storage ↔ Dual-Write Cloud Nodes</span>
+        </div>
+        <div class="section-body">
+          <div class="matrix-table-wrap">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th>Business Entity</th>
+                  <th>Primary Key / Nonce</th>
+                  <th>Local Storage Key</th>
+                  <th>Firebase RTDB Node</th>
+                  <th>Backend REST Route</th>
+                  <th>MLM Scoping Rule</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Screen Auth Matrix</strong></td>
+                  <td><code>elementId</code> (e.g. <code>screen-auth-matrix</code>)</td>
+                  <td><span class="code-badge">sk_auth_matrix_v5</span></td>
+                  <td><code>/auth_matrix</code></td>
+                  <td><code>POST /api/auth-matrix</code></td>
+                  <td>Global Master configurable; dynamically filters DOM per role</td>
+                </tr>
+                <tr>
+                  <td><strong>Profile Role Matrix</strong></td>
+                  <td><code>targetProfileId</code> (e.g. <code>prof-trainee-04</code>)</td>
+                  <td><span class="code-badge">sk_profile_role_matrix_v1</span></td>
+                  <td><code>/profile_role_matrix</code></td>
+                  <td><code>POST /api/profile-roles</code></td>
+                  <td>Higher tier delegates Read, Edit, Sadhana, Intake to downline</td>
+                </tr>
+                <tr>
+                  <td><strong>Member Profiles</strong></td>
+                  <td><code>uniqueProfileId</code> (e.g. <code>SK-2026-9482</code>)</td>
+                  <td><span class="code-badge">sk_admin_profiles_v3</span></td>
+                  <td><code>/profiles/{id}</code></td>
+                  <td><code>POST /api/profiles</code></td>
+                  <td>Master: All; Healer: Downline; Trainee/Devotee: Self only</td>
+                </tr>
+                <tr>
+                  <td><strong>Daily Diya Check-in</strong></td>
+                  <td><code>logId</code> (e.g. <code>diya_20260915_prof08</code>)</td>
+                  <td><span class="code-badge">sk_diya_logs_v1</span></td>
+                  <td><code>/daily_diya_logs</code></td>
+                  <td><code>POST /api/telemetry</code></td>
+                  <td>Self read/write; Mentor reviews downline streak compliance</td>
+                </tr>
+                <tr>
+                  <td><strong>House Clean Audit</strong></td>
+                  <td><code>auditId</code> (e.g. <code>hca_98412_01</code>)</td>
+                  <td><span class="code-badge">sk_house_clean_logs</span></td>
+                  <td><code>/house_clean_logs</code></td>
+                  <td><code>POST /api/telemetry</code></td>
+                  <td>Certified Healer audits devotee premises; Master reviews</td>
+                </tr>
+                <tr>
+                  <td><strong>Mentorship Pairing</strong></td>
+                  <td><code>queueId</code> / <code>hardwareNonce</code></td>
+                  <td><span class="code-badge">sk_pairing_invites</span></td>
+                  <td><code>/pairing_invites</code></td>
+                  <td><code>POST /api/pairing-invites</code></td>
+                  <td>Sponsor can invite up to 5 downline devotees into team</td>
+                </tr>
+                <tr>
+                  <td><strong>System Configuration</strong></td>
+                  <td><code>configKey</code> (e.g. <code>appConfig</code>)</td>
+                  <td><span class="code-badge">sk_system_config_v2</span></td>
+                  <td><code>/system_config</code></td>
+                  <td><code>POST /api/config</code></td>
+                  <td>Master only; defines offline sync interval, token TTL, version</td>
+                </tr>
+                <tr>
+                  <td><strong>Audit Trail</strong></td>
+                  <td><code>auditId</code> (monotonic sequence)</td>
+                  <td><span class="code-badge">sk_audit_logs</span></td>
+                  <td><code>/telemetry/audits</code></td>
+                  <td><code>POST /api/audit-logs</code></td>
+                  <td>Write-only append; Read restricted to Master Founders</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: INTERNATIONAL MLM PROGRAMMING STANDARDS & SCOPING HIERARCHY -->
+      <section class="section-card">
+        <div class="section-hdr">
+          <div class="section-title">
+            <span class="section-title-icon">👥</span>
+            <span>International MLM Hierarchy &amp; Scoped Visibility Governance</span>
+          </div>
+          <span class="code-badge">Top-Down Full Vision • Bottom-Up Scoped Privacy</span>
+        </div>
+        <div class="section-body">
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem;">
+            In accordance with International MLM and multi-tier organizational standards, data visibility strictly respects the organizational lineage tree:
+          </p>
+          <div class="mlm-pyramid">
+            <!-- Tier 1: Master -->
+            <div class="pyramid-tier tier-master">
+              <div>
+                <strong style="font-size:0.95rem;">👑 MASTER FOUNDER (Level 0)</strong>
+                <div style="font-size:0.75rem; opacity:0.85; margin-top:0.2rem;">
+                  Full organizational visibility. Unrestricted access to entire downline tree, global finances, system settings, RBAC definitions, and Screen Auth Matrix.
+                </div>
+              </div>
+              <span class="code-badge" style="background:#fef3c7; border-color:#f59e0b; color:#92400e; font-weight:700;">Full Access (All Trees)</span>
+            </div>
+
+            <!-- Tier 2: Healer -->
+            <div class="pyramid-tier tier-healer">
+              <div>
+                <strong style="font-size:0.95rem;">🛡️ CERTIFIED HEALER (Level 1)</strong>
+                <div style="font-size:0.75rem; opacity:0.85; margin-top:0.2rem;">
+                  Downline team vision only. Can see all Trainees and Devotees sponsored directly or indirectly within their lineage. Can certify sadhana, approve intake, and delegate roles.
+                </div>
+              </div>
+              <span class="code-badge" style="background:#dbeafe; border-color:#3b82f6; color:#1e40af; font-weight:700;">Subtree Lineage Only</span>
+            </div>
+
+            <!-- Tier 3: Trainee -->
+            <div class="pyramid-tier tier-trainee">
+              <div>
+                <strong style="font-size:0.95rem;">📿 TRAINEE SADHAK (Level 2)</strong>
+                <div style="font-size:0.75rem; opacity:0.85; margin-top:0.2rem;">
+                  Strict self-access by default (own profile, daily logs, assigned sadhana). Cannot view downline team members UNLESS explicitly delegated <code>canReadDownline</code> in Profile Role Matrix.
+                </div>
+              </div>
+              <span class="code-badge" style="background:#dcfce7; border-color:#22c55e; color:#166534; font-weight:700;">Self-Only (Delegable)</span>
+            </div>
+
+            <!-- Tier 4: Devotee -->
+            <div class="pyramid-tier tier-devotee">
+              <div>
+                <strong style="font-size:0.95rem;">🌟 DEVOTEE / SEEKER (Level 3)</strong>
+                <div style="font-size:0.75rem; opacity:0.85; margin-top:0.2rem;">
+                  Least-privilege endpoint. Can only view own devotional progress, diya streak, and direct mentor contact info. No access to other devotees or platform administrative consoles.
+                </div>
+              </div>
+              <span class="code-badge" style="background:#f1f5f9; border-color:#cbd5e1; color:#475569; font-weight:700;">Isolated Endpoint</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: INTERACTIVE SYNC SIMULATOR & PLAYGROUND -->
+      <section class="section-card">
+        <div class="section-hdr">
+          <div class="section-title">
+            <span class="section-title-icon">⚡</span>
+            <span>Interactive Multi-Device Sync Simulation Playground</span>
+          </div>
+          <span class="code-badge">Live Event-Loop State Machine</span>
+        </div>
+        <div class="section-body">
+          <div class="simulator-grid">
+            <div class="sim-controls">
+              <div class="sim-ctrl-group">
+                <label class="sim-lbl">1. Emulated Active Role</label>
+                <select id="sim-role-select" class="sim-select">
+                  <option value="MASTER">Master Founder (Karim Khan)</option>
+                  <option value="HEALER">Certified Healer (Acharya Devendra)</option>
+                  <option value="TRAINEE">Trainee Sadhak (Amitabh Sen)</option>
+                  <option value="DEVOTEE">Devotee (Sunita Mehra)</option>
+                </select>
+              </div>
+
+              <div class="sim-ctrl-group">
+                <label class="sim-lbl">2. Transaction Payload Type</label>
+                <select id="sim-trans-select" class="sim-select">
+                  <option value="AUTH_MATRIX_TOGGLE">Screen Auth Matrix: Toggle Button Visibility</option>
+                  <option value="ROLE_DELEGATION">Profile Role Matrix: Delegate 'canReadDownline'</option>
+                  <option value="DIYA_LOG">Devotee Daily Diya Check-in</option>
+                  <option value="PAIRING_ACCEPT">Healer Accepts Devotee Mentorship</option>
+                </select>
+              </div>
+
+              <div class="sim-toggle-row">
+                <span class="sim-lbl">Network State</span>
+                <button type="button" id="btn-toggle-sim-net" class="btn-action" style="padding:0.2rem 0.6rem; font-size:0.7rem; background:#ecfdf5; color:#059669; border-color:#a7f3d0;" onclick="toggleSimNetwork()">
+                  🟢 ONLINE
+                </button>
+              </div>
+
+              <div class="sim-toggle-row">
+                <span class="sim-lbl">Simulate Sibling Tabs</span>
+                <span style="font-size:0.75rem; color:#475569; font-weight:600;">2 Connected Tabs</span>
+              </div>
+
+              <button type="button" class="btn-action btn-primary" style="margin-top:0.5rem; justify-content:center;" onclick="executeSimTransaction()">
+                🚀 Fire Transaction
+              </button>
+              <button type="button" class="btn-action" style="justify-content:center;" onclick="clearSimConsole()">
+                🧹 Clear Console
+              </button>
+            </div>
+
+            <!-- Console Screen -->
+            <div class="sim-console" id="sim-console-output">
+              <div class="console-line c-info">[SYSTEM READY] Spiritual Karim High-Frequency Sync Engine initialized.</div>
+              <div class="console-line c-info">[CHANNEL] BroadcastChannel ('sk_matrix_channel' + 'spiritual_karim_sync') active.</div>
+              <div class="console-line c-success">[STORAGE] Local storage key unified to 'sk_auth_matrix_v5'.</div>
+              <div class="console-line c-gold">[MLM] Recursive downline tree indexed: 12 seed profiles mapped.</div>
+              <div class="console-line" style="color:#64748b;">Waiting for transaction simulation trigger...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="ftr">
+      <div>
+        <strong>Shree Spritual Karim Sansthan</strong> • Universal Online/Offline Transactional Lifecycle Engine V5
+      </div>
+      <div style="margin-top:0.35rem;">
+        Complies with 7-Stage Simple Waterfall (OOPS-based MVC) Closed-Loop Workflow &amp; International MLM Lineage Standards.
+      </div>
+    </footer>
+
+    <!-- INTERACTIVE ENGINE SCRIPT -->
+    <script>
+      let isSimOnline = true;
+
+      function toggleSimNetwork() {
+        isSimOnline = !isSimOnline;
+        const btn = document.getElementById("btn-toggle-sim-net");
+        if (isSimOnline) {
+          btn.textContent = "🟢 ONLINE";
+          btn.style.background = "#ecfdf5";
+          btn.style.color = "#059669";
+          btn.style.borderColor = "#a7f3d0";
+          logToConsole("[NETWORK] Connectivity restored. Flushing offline queue 'sk_sync_queue'...", "c-success");
+        } else {
+          btn.textContent = "🔴 OFFLINE";
+          btn.style.background = "#fef2f2";
+          btn.style.color = "#dc2626";
+          btn.style.borderColor = "#fecaca";
+          logToConsole("[NETWORK] Device entered offline retreat mode. Switched to high-frequency local staging queue.", "c-warn");
+        }
+      }
+
+      function logToConsole(text, cssClass = "") {
+        const consoleEl = document.getElementById("sim-console-output");
+        const line = document.createElement("div");
+        line.className = `console-line ${cssClass}`;
+        const ts = new Date().toISOString().substring(11, 23);
+        line.textContent = `[${ts}] ${text}`;
+        consoleEl.appendChild(line);
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+      }
+
+      function clearSimConsole() {
+        const consoleEl = document.getElementById("sim-console-output");
+        consoleEl.innerHTML = '<div class="console-line c-info">[CONSOLE CLEARED] Ready for next simulation.</div>';
+      }
+
+      function executeSimTransaction() {
+        const role = document.getElementById("sim-role-select").value;
+        const trans = document.getElementById("sim-trans-select").value;
+        const nonce = "NONCE-" + Math.random().toString(36).substring(2, 9).toUpperCase();
+        const lamportTs = Date.now();
+
+        logToConsole(`>>> STAGE 0: Inception: ${trans} initiated by ${role} (Nonce: ${nonce})`, "c-gold");
+        
+        setTimeout(() => {
+          logToConsole(`>>> STAGE 1: Sanitizing schema parameters & verifying XSS guards... PASS`, "c-info");
+        }, 120);
+
+        setTimeout(() => {
+          logToConsole(`>>> STAGE 2: Optimistically committed to localStorage (0ms DOM redraw)`, "c-success");
+        }, 240);
+
+        setTimeout(() => {
+          logToConsole(`>>> STAGE 3: Dispatched BroadcastChannel message across 'sk_matrix_channel' & 'spiritual_karim_sync'`, "c-info");
+        }, 360);
+
+        setTimeout(() => {
+          if (!isSimOnline) {
+            logToConsole(`>>> STAGE 4: Device is OFFLINE! Enqueued transaction into 'sk_sync_queue' with exponential backoff guard.`, "c-warn");
+            logToConsole(`[OFFLINE COMPLETE] Mutation preserved in browser sandbox. Will synchronize upon network connection.`, "c-gold");
+          } else {
+            logToConsole(`>>> STAGE 5: Cloud Dual-Write: Firebase RTDB node updated & REST API acknowledged HTTP 200`, "c-success");
+            setTimeout(() => {
+              logToConsole(`>>> STAGE 6: Monotonic clock consensus verified. No conflicting concurrent writes detected.`, "c-info");
+              logToConsole(`>>> STAGE 7: Downline scoping applied. Downline visibility tree pruned for role: ${role}`, "c-gold");
+              logToConsole(`>>> STAGE 8: Immutable audit log appended. Local sync queue entry pruned. DONE ✓`, "c-success");
+            }, 200);
+          }
+        }, 500);
+      }
+
+      function runSimulationSequence() {
+        clearSimConsole();
+        logToConsole("[SIMULATION] Starting automated multi-device offline-to-online cycle...", "c-gold");
+        // 1. Enter offline
+        if (isSimOnline) toggleSimNetwork();
+        setTimeout(() => {
+          executeSimTransaction();
+          // 2. Reconnect network after 2.5s
+          setTimeout(() => {
+            toggleSimNetwork();
+            setTimeout(() => {
+              executeSimTransaction();
+            }, 600);
+          }, 2500);
+        }, 300);
+      }
+    </script>
+  </body>
+</html>
