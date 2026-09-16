@@ -146,13 +146,37 @@ if (fs.existsSync(frontendDir)) {
   console.log('✅ Synchronized Frontend directory with latest root, portals, login, logout, and join');
 }
 
-// Mirror login.html, logout.html, join.html, rbac-admin.html to portal subdirectories
+// Helper to rewrite paths for files in sub-portal directories
+function rewriteSubportalHtml(html) {
+  let sub = html;
+  sub = sub.replace(/href="css\//g, 'href="../css/');
+  sub = sub.replace(/src="js\//g, 'src="../js/');
+  sub = sub.replace(/src="Logo\.png"/g, 'src="../Logo.png"');
+  sub = sub.replace(/href="Logo\.png"/g, 'href="../Logo.png"');
+  sub = sub.replace(/href="join\.html"/g, 'href="../join.html"');
+  sub = sub.replace(/href="login\.html"/g, 'href="../login.html"');
+  sub = sub.replace(/href="logout\.html"/g, 'href="../logout.html"');
+  sub = sub.replace(/href="index\.html"/g, 'href="../index.html"');
+  sub = sub.replace(/href="Masters\/index\.html"/g, 'href="../Masters/index.html"');
+  sub = sub.replace(/href="Healers\/index\.html"/g, 'href="../Healers/index.html"');
+  sub = sub.replace(/href="Trainee\/index\.html"/g, 'href="../Trainee/index.html"');
+  sub = sub.replace(/href="Devotee\/index\.html"/g, 'href="../Devotee/index.html"');
+  sub = sub.replace(/href="Seeker\/index\.html"/g, 'href="../Seeker/index.html"');
+  sub = sub.replace(/href="Public\/index\.html"/g, 'href="../Public/index.html"');
+  sub = sub.replace(/href="rbac-admin\.html"/g, 'href="../rbac-admin.html"');
+  sub = sub.replace(/src="rbac-admin\.html"/g, 'src="../rbac-admin.html"');
+  return sub;
+}
+
+// Mirror login.html, logout.html, join.html, rbac-admin.html to portal subdirectories with path rewriting
 portals.forEach(p => {
   ['login.html', 'logout.html', 'join.html', 'rbac-admin.html'].forEach(file => {
     const src = path.join(webRoot, file);
     const dest = path.join(webRoot, p.dir, file);
     if (fs.existsSync(src)) {
-      fs.copyFileSync(src, dest);
+      const rawHtml = fs.readFileSync(src, 'utf8');
+      const rewritten = rewriteSubportalHtml(rawHtml);
+      fs.writeFileSync(dest, rewritten, 'utf8');
     }
   });
 });
