@@ -3473,7 +3473,7 @@ class ScreenAuthMatrix {
     "id": "drawers_modals_division",
     "label": "Global: Drawers & Modals Division",
     "type": "SCREEN",
-    "selector": "body",
+    "selector": ".drawer, .modal, .modal-backdrop, .drawer-overlay",
     "category": "Global: Drawers & Modals",
     "level": 0,
     "roles": {

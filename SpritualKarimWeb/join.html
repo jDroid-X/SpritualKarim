@@ -2171,27 +2171,23 @@
             updateFieldUi("join-kuldevi", this.fieldConfig.kuldevi);
             updateFieldUi("join-village", this.fieldConfig.city);
 
-            // Check ScreenAuthMatrix for any element overrides
-            if (typeof ScreenAuthMatrix !== "undefined") {
-              const savedMatrix = JSON.parse(localStorage.getItem("sk_auth_matrix_v5") || "null") || 
-                (typeof ScreenAuthMatrix.getMatrixDefinition === "function" ? ScreenAuthMatrix.getMatrixDefinition() : []);
-              const activeRole = localStorage.getItem("sk_admin_active_role_mode_v1") || 
-                sessionStorage.getItem("portalRole") || "DEVOTEE";
-              const activePortal = (sessionStorage.getItem("portalRole") || "seeker").toLowerCase();
-
-              savedMatrix.forEach(item => {
-                if (!item.selector) return;
-                const isAllowed = (item.roles && item.roles[activeRole] !== false) &&
-                                  (!item.portals || item.portals[activePortal] !== false);
-                if (!isAllowed) {
-                  try {
-                    document.querySelectorAll(item.selector).forEach(el => {
-                      el.style.display = "none";
-                    });
-                  } catch (e) {}
-                }
-              });
+            // Ensure body and join container are never hidden
+            if (document.body && document.body.style.display === "none") {
+              document.body.style.removeProperty("display");
             }
+            const joinCont = document.querySelector(".join-container");
+            if (joinCont && joinCont.style.display === "none") {
+              joinCont.style.removeProperty("display");
+            }
+
+            // Sanitize sk_auth_matrix_v5 in localStorage if it contains legacy 'body' selector
+            try {
+              const rawMat = localStorage.getItem("sk_auth_matrix_v5");
+              if (rawMat && rawMat.includes('"selector":"body"')) {
+                const cleanMat = rawMat.replace(/"selector":"body"/g, '"selector":".drawer, .modal, .modal-backdrop, .drawer-overlay"');
+                localStorage.setItem("sk_auth_matrix_v5", cleanMat);
+              }
+            } catch (e) {}
           } catch (e) {
             console.warn("[Wizard] applyAuthMatrixAndConfig notice:", e);
           }
@@ -3386,7 +3382,7 @@
               );
 
               // Case 0: Unsubmitted Invitation Ticket (Devotee needs to fill the induction wizard)
-              if (!isSubmittedByDevotee && targetInvite.status === "PENDING") {
+              if (!isSubmittedByDevotee && targetInvite.status !== "APPROVED" && targetInvite.status !== "REJECTED" && targetInvite.status !== "INFO_REQUESTED") {
                 document.getElementById("section-intake-form").style.display = "block";
                 document.getElementById("section-waiting-approval").style.display = "none";
                 const approvedSec = document.getElementById("section-approved");
@@ -3696,27 +3692,36 @@
 
     <script>
       // Cross-Tab Communication Channel
-      window.__skBroadcast = new BroadcastChannel('spiritual_karim_sync');
-      // Listen for status updates
-      window.__skBroadcast.addEventListener('message', (event) => {
-        const { type, data } = event.data || {};
-        if (!data) return;
-        if (type === 'INVITE_APPROVED') {
-          if (typeof Wizard !== 'undefined' && typeof Wizard.showApprovalSuccess === 'function') {
-            Wizard.showApprovalSuccess(data.seekerName, data.referenceCode, data.invite || data);
-          } else if (typeof window.__showApprovalSuccess === 'function') {
-            window.__showApprovalSuccess(data.invite || data, data.referenceCode, data.seekerName);
-          }
+      try {
+        window.__skBroadcast = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('spiritual_karim_sync') : null;
+        if (window.__skBroadcast) {
+          window.__skBroadcast.addEventListener('message', (event) => {
+            const { type, data } = event.data || {};
+            if (!data) return;
+            if (type === 'INVITE_APPROVED') {
+              if (typeof Wizard !== 'undefined' && typeof Wizard.showApprovalSuccess === 'function') {
+                Wizard.showApprovalSuccess(data.seekerName, data.referenceCode, data.invite || data);
+              } else if (typeof window.__showApprovalSuccess === 'function') {
+                window.__showApprovalSuccess(data.invite || data, data.referenceCode, data.seekerName);
+              }
+            }
+            if (type === 'INVITE_REJECTED') {
+              if (typeof Wizard !== 'undefined' && typeof Wizard.showRejectionNotice === 'function') {
+                Wizard.showRejectionNotice();
+              }
+            }
+          });
         }
-        if (type === 'INVITE_REJECTED') {
-          if (typeof Wizard !== 'undefined' && typeof Wizard.showRejectionNotice === 'function') {
-            Wizard.showRejectionNotice();
-          }
-        }
-      });
+      } catch (e) {
+        console.warn("[Sync] BroadcastChannel init notice:", e);
+      }
       // Function to notify other tabs
       function __skNotify(type, payload) {
-        window.__skBroadcast.postMessage({ type, data: payload });
+        try {
+          if (window.__skBroadcast) {
+            window.__skBroadcast.postMessage({ type, data: payload });
+          }
+        } catch (e) {}
       }
     </script>
 
