@@ -14,7 +14,9 @@ const FIREBASE_CONFIG = {
   appId: "1:389274194021:web:9c847a29e1a8b3e"
 };
 
-window.appConfig = Object.assign(window.appConfig || {}, {
+const root = (typeof window !== "undefined") ? window : (typeof global !== "undefined" ? global : globalThis);
+
+root.appConfig = Object.assign(root.appConfig || {}, {
   // ── App Identity ────────────────────────────────────────────────
   appName: "Spiritual Karim Admin",
   appVersion: "3.0.0",
@@ -97,8 +99,8 @@ window.appConfig = Object.assign(window.appConfig || {}, {
   copyrightMarqueeText: '© 2024-2026 Shree Spritual Karim Sansthan • All Sacred Lineage Rights Reserved • Certified ISO/IEC 27001 Secure Node Telemetry • Guided under the divine vision of Spiritual Karim Khan • Real-time Lineage Synchronization Active',
 });
 
-var appConfig = window.appConfig;
+var appConfig = root.appConfig;
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = window.appConfig;
+  module.exports = root.appConfig;
 }

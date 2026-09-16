@@ -1,4 +1,9 @@
 // ProfileController2.js - Extended ProfileController prototype methods
+if (typeof ProfileController === "undefined") {
+  if (typeof require !== "undefined") {
+    global.ProfileController = require("./ProfileController");
+  }
+}
 ProfileController.prototype._bindEventsPart2 = function () {
   // Admin & RBAC Settings Modal Actions
   if (this.view.btnAdminSettings) {
@@ -2778,3 +2783,7 @@ ProfileController.prototype.initInteractiveComponentShowcase = function() {
     }
   }
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ProfileController;
+}

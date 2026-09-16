@@ -17,18 +17,30 @@ const SETTINGS_SECTIONS = {
     title: "Role Matrix Hub (Profiles, RBAC & Screens)",
     icon: "👥",
   },
+  "rbac-admin": {
+    title: "RBAC Access Matrix (rbac-admin.html)",
+    icon: "🛡️",
+  },
   "auth-matrix": {
     title: "Screen Authorization Matrix",
     icon: "🛡️",
   },
   rbac: {
     title: "Role-Based Access Control",
-    icon: "👥",
+    icon: "⚖️",
   },
   "register-devotee": {
-    title: "Registration Requirements",
+    title: "Register New Devotee",
     icon: "📝",
   },
+  "catalog-editor": {
+    title: "Sadhana & Remedy Catalog",
+    icon: "📖",
+  },
+  "ui-ux-controls": {
+    title: "Interactive UI/UX Component Suite",
+    icon: "🎛️",
+  }
 };
 
 // ProfileController Extensions
@@ -173,12 +185,14 @@ class SettingsModalController {
               chk.classList.remove("is-partial");
             });
           } else if (level === 1) {
-            const childChecks = tbody.querySelectorAll(`.auth-matrix-row[data-parent="${itemId}"] .matrix-role-check[data-role="${role}"]`);
-            childChecks.forEach((chk) => {
-              chk.checked = isChecked;
-              chk.indeterminate = false;
-              chk.classList.remove("is-partial");
-            });
+            if (itemId !== "admin_current_events_strip") {
+              const childChecks = tbody.querySelectorAll(`.auth-matrix-row[data-parent="${itemId}"] .matrix-role-check[data-role="${role}"]`);
+              childChecks.forEach((chk) => {
+                chk.checked = isChecked;
+                chk.indeterminate = false;
+                chk.classList.remove("is-partial");
+              });
+            }
           }
 
           if (this._cachedMatrix) {
@@ -237,6 +251,7 @@ class SettingsModalController {
     // RBAC Section Actions
     this._bindRbacActions();
     this._bindProfileRoleActions();
+    this._bindCatalogEditorActions();
   }
 
   _bindRbacActions() {
@@ -277,6 +292,21 @@ class SettingsModalController {
         });
         if (q) {
           headers.forEach(h => h.style.display = "");
+        }
+      };
+    }
+
+    const btnReloadRbacEmbed = document.getElementById("btn-reload-rbac-embed");
+    if (btnReloadRbacEmbed) {
+      btnReloadRbacEmbed.onclick = () => {
+        const frame = document.getElementById("iframe-rbac-admin");
+        if (frame) {
+          try {
+            frame.contentWindow.location.reload();
+          } catch (e) {
+            frame.src = frame.src;
+          }
+          this._showToast("🔄 RBAC Admin Matrix reloaded.");
         }
       };
     }
@@ -553,8 +583,32 @@ class SettingsModalController {
       case "register-devotee":
         this._loadRegistrationFields();
         break;
+      case "catalog-editor":
+        this._loadCatalogEditor();
+        break;
+      case "rbac-admin":
+        this._loadRbacAdminFrame();
+        break;
       default:
         break;
+    }
+  }
+
+  _loadRbacAdminFrame() {
+    const frame = document.getElementById("iframe-rbac-admin");
+    if (frame) {
+      const isSubdir = typeof window !== "undefined" && window.location && (
+        window.location.pathname.includes("/Masters/") || 
+        window.location.pathname.includes("/Healers/") || 
+        window.location.pathname.includes("/Trainee/") || 
+        window.location.pathname.includes("/Devotee/") || 
+        window.location.pathname.includes("/Seeker/")
+      );
+      const expectedSrc = isSubdir ? "../rbac-admin.html" : "rbac-admin.html";
+      const currentSrc = frame.getAttribute("src");
+      if (!currentSrc || currentSrc === "") {
+        frame.src = expectedSrc;
+      }
     }
   }
 
@@ -746,6 +800,8 @@ class SettingsModalController {
     const level1Rows = tbody.querySelectorAll('.auth-matrix-row[data-level="1"]');
     level1Rows.forEach((l1Row) => {
       const parentId = l1Row.getAttribute("data-item-id");
+      // admin_current_events_strip is an independent section display toggle
+      if (parentId === "admin_current_events_strip") return;
       roles.forEach((role) => {
         const l1Check = l1Row.querySelector(`.matrix-role-check[data-role="${role}"]`);
         if (!l1Check) return;
@@ -925,7 +981,10 @@ class SettingsModalController {
         this.controller.view.applyProfileBox2Visibility(settings.showProfileBox2);
       }
     }
-    this._showToast("✅ Settings saved successfully");
+    if (this.controller && typeof this.controller._renderCurrentState === "function") {
+      this.controller._renderCurrentState();
+    }
+    this._showToast("✅ Settings saved successfully & synchronized");
     this._closeModal();
   }
 
@@ -963,6 +1022,12 @@ class SettingsModalController {
       this._cachedMatrix,
       this.controller.model.getRoleMode(),
     );
+    if (typeof this.controller._applyEventPanelRBAC === "function") {
+      this.controller._applyEventPanelRBAC();
+    }
+    if (typeof this.controller._renderCurrentState === "function") {
+      this.controller._renderCurrentState();
+    }
     this._showToast("💾 Auth matrix saved and synced across all portals!");
   }
 
@@ -1175,6 +1240,165 @@ class SettingsModalController {
     const autoSync = document.getElementById("setting-auto-cloud-sync");
     if (autoSync) {
       autoSync.checked = settings.autoCloudSync !== false;
+    }
+  }
+
+  _bindCatalogEditorActions() {
+    const btnAdd = document.getElementById("btn-add-catalog-item");
+    if (btnAdd) {
+      btnAdd.addEventListener("click", () => {
+        this._openCatalogEditor(null);
+      });
+    }
+
+    const btnCancel = document.getElementById("btn-cancel-catalog-edit");
+    if (btnCancel) {
+      btnCancel.addEventListener("click", () => {
+        document.getElementById("catalog-editor-form-container").style.display = "none";
+        document.getElementById("admin-catalog-list").style.display = "grid";
+      });
+    }
+
+    const btnSave = document.getElementById("btn-save-catalog-item");
+    if (btnSave) {
+      btnSave.addEventListener("click", () => {
+        this._saveCatalogItem();
+      });
+    }
+  }
+
+  _loadCatalogEditor() {
+    this._renderCatalogList();
+    document.getElementById("catalog-editor-form-container").style.display = "none";
+    document.getElementById("admin-catalog-list").style.display = "grid";
+  }
+
+  _renderCatalogList() {
+    const container = document.getElementById("admin-catalog-list");
+    if (!container) return;
+
+    if (!this.controller || !this.controller.model) {
+      container.innerHTML = "<p>Model not initialized.</p>";
+      return;
+    }
+
+    const catalogData = this.controller.model.getSadhanaCatalog();
+    if (!catalogData || Object.keys(catalogData).length === 0) {
+      container.innerHTML = "<p>No catalog items found.</p>";
+      return;
+    }
+
+    let html = "";
+    Object.values(catalogData).forEach(item => {
+      html += `
+        <div class="catalog-list-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px;">
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <div style="font-size: 2rem;">${item.icon || '📿'}</div>
+            <div>
+              <h5 style="margin: 0; color: var(--text-primary); font-size: 1rem;">${item.title}</h5>
+              <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 0.5rem; margin-top: 0.25rem;">
+                <span class="badge" style="background: rgba(255,255,255,0.1); padding: 0.1rem 0.4rem; border-radius: 4px;">${item.category}</span>
+                <span class="badge" style="background: rgba(255,255,255,0.1); padding: 0.1rem 0.4rem; border-radius: 4px;">${item.domain}</span>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-outline btn-sm btn-edit-catalog" data-id="${item.id}">Edit</button>
+            <button class="btn btn-danger btn-sm btn-delete-catalog" data-id="${item.id}">Delete</button>
+          </div>
+        </div>
+      `;
+    });
+    
+    container.innerHTML = html;
+
+    // Bind item actions
+    container.querySelectorAll(".btn-edit-catalog").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        this._openCatalogEditor(e.target.getAttribute("data-id"));
+      });
+    });
+
+    container.querySelectorAll(".btn-delete-catalog").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        this._deleteCatalogItem(e.target.getAttribute("data-id"));
+      });
+    });
+  }
+
+  _openCatalogEditor(id) {
+    const container = document.getElementById("catalog-editor-form-container");
+    const list = document.getElementById("admin-catalog-list");
+    const titleEl = document.getElementById("catalog-editor-title");
+    
+    list.style.display = "none";
+    container.style.display = "block";
+
+    const idInput = document.getElementById("edit-catalog-id");
+    const titleInput = document.getElementById("edit-catalog-title");
+    const catInput = document.getElementById("edit-catalog-category");
+    const domainInput = document.getElementById("edit-catalog-domain");
+    const iconInput = document.getElementById("edit-catalog-icon");
+    const timingInput = document.getElementById("edit-catalog-timing");
+    const mantraInput = document.getElementById("edit-catalog-mantra");
+
+    if (id) {
+      titleEl.textContent = "Edit Catalog Item";
+      const catalogData = this.controller.model.getSadhanaCatalog();
+      const item = catalogData[id];
+      if (item) {
+        idInput.value = item.id;
+        titleInput.value = item.title || "";
+        catInput.value = item.category || "SADHANA";
+        domainInput.value = item.domain || "Spiritual";
+        iconInput.value = item.icon || "";
+        timingInput.value = item.timing || "";
+        mantraInput.value = item.mantra || "";
+      }
+    } else {
+      titleEl.textContent = "Add New Catalog Item";
+      idInput.value = "";
+      titleInput.value = "";
+      catInput.value = "SADHANA";
+      domainInput.value = "Spiritual";
+      iconInput.value = "";
+      timingInput.value = "";
+      mantraInput.value = "";
+    }
+  }
+
+  _saveCatalogItem() {
+    const id = document.getElementById("edit-catalog-id").value;
+    const title = document.getElementById("edit-catalog-title").value.trim();
+    if (!title) {
+      alert("Title is required");
+      return;
+    }
+
+    const newItem = {
+      id: id || `item_${Date.now()}`,
+      title: title,
+      category: document.getElementById("edit-catalog-category").value,
+      domain: document.getElementById("edit-catalog-domain").value,
+      icon: document.getElementById("edit-catalog-icon").value,
+      timing: document.getElementById("edit-catalog-timing").value,
+      mantra: document.getElementById("edit-catalog-mantra").value,
+    };
+
+    if (this.controller && this.controller.model) {
+      this.controller.model.updateSadhanaItem(newItem);
+      this._showToast("Catalog Item Saved successfully!");
+      this._loadCatalogEditor();
+    }
+  }
+
+  _deleteCatalogItem(id) {
+    if (confirm("Are you sure you want to delete this catalog item?")) {
+      if (this.controller && this.controller.model) {
+        this.controller.model.deleteSadhanaItem(id);
+        this._showToast("Catalog Item Deleted successfully!");
+        this._renderCatalogList();
+      }
     }
   }
 

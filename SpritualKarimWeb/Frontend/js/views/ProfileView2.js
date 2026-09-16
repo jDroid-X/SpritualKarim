@@ -1,5 +1,9 @@
 // ProfileView2.js - Extended ProfileView prototype methods
-// Auto-generated from backup - Fixed structure
+if (typeof ProfileView === "undefined") {
+  if (typeof require !== "undefined") {
+    global.ProfileView = require("./ProfileView");
+  }
+}
 const escapeHtmlUtil = (typeof window !== 'undefined' && typeof window.escapeHtmlUtil === 'function')
   ? window.escapeHtmlUtil
   : (typeof window !== 'undefined' && typeof window.escapeHtml === 'function')
@@ -81,11 +85,12 @@ ProfileView.prototype.updateLegendCounts = function(profiles, roleMode = 'MASTER
 ProfileView.prototype.initSadhanaListbox = function() {
     const select = document.getElementById('select-sacred-sadhana');
     const container = document.getElementById('sadhana-detail-preview-container');
-    if (!select || !container || typeof SADHANA_CATALOG === 'undefined') return;
+    const catalog = this.model ? this.model.getSadhanaCatalog() : {};
+    if (!select || !container || !catalog) return;
 
-    const keys = Object.keys(SADHANA_CATALOG);
+    const keys = Object.keys(catalog);
     select.innerHTML = keys.map(k => {
-      const item = SADHANA_CATALOG[k] || {};
+      const item = catalog[k] || {};
       return '<option value="' + k + '">' + (item.icon || '🕉️') + ' ' + escapeHtmlUtil(item.title || k) + ' (' + escapeHtmlUtil(item.category || 'Sadhana') + ' • ' + escapeHtmlUtil(item.levelScope || 'All') + ')</option>';
     }).join('');
 
@@ -94,8 +99,9 @@ ProfileView.prototype.initSadhanaListbox = function() {
 
 ProfileView.prototype.renderSadhanaDetailPreview = function(sadhanaId) {
     const container = document.getElementById('sadhana-detail-preview-container');
-    if (!container || typeof SADHANA_CATALOG === 'undefined') return;
-    const item = SADHANA_CATALOG[sadhanaId] || SADHANA_CATALOG.sri_yantra || {};
+    const catalog = this.model ? this.model.getSadhanaCatalog() : {};
+    if (!container || !catalog) return;
+    const item = catalog[sadhanaId] || catalog.sri_yantra || {};
 
     container.innerHTML = `
       <div class="detail-listbox-preview-card mt-3">
@@ -1251,6 +1257,347 @@ ProfileView.prototype.renderHierarchyTree = function(profiles, focusTier = null)
     this.renderInBodyHierarchyTree(profiles, focusTier, '', 'cluster');
 };
 
+/**
+ * Renders the Visual MLM Genealogy Tree inside #hierarchy-tree-modal
+ * Displays full 5-tier ancestral lineage centered in canvas viewport with zoom & pan.
+ */
+ProfileView.prototype.renderHierarchyTreeModal = function(profiles = [], focusTier = null) {
+  const modal = document.getElementById("hierarchy-tree-modal");
+  if (!modal) return;
+
+  const viewport = document.getElementById("tree-canvas-viewport");
+  const surface = document.getElementById("tree-interactive-surface");
+  const nodesLayer = document.getElementById("spiderweb-nodes-layer");
+  const svgLayer = document.getElementById("spiderweb-svg-layer");
+  if (!nodesLayer) return;
+
+  const dataProfiles = (profiles && profiles.length > 0)
+    ? profiles
+    : (this.allProfiles && this.allProfiles.length > 0
+        ? this.allProfiles
+        : (this.model && this.model.profiles ? this.model.profiles : []));
+
+  if (!dataProfiles || dataProfiles.length === 0) {
+    nodesLayer.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 4rem; font-size: 1.1rem;">No genealogy profiles available.</div>';
+    return;
+  }
+
+  // 1. Organize profiles by 5 canonical tiers
+  const tier1List = dataProfiles.filter(p => this._getTierDetails(p).tier === 1);
+  const tier2List = dataProfiles.filter(p => this._getTierDetails(p).tier === 2);
+  const tier3List = dataProfiles.filter(p => this._getTierDetails(p).tier === 3);
+  const tier4List = dataProfiles.filter(p => this._getTierDetails(p).tier === 4);
+  const tier5List = dataProfiles.filter(p => this._getTierDetails(p).tier === 5);
+
+  const rootProfile = tier1List.length > 0 ? tier1List[0] : dataProfiles[0];
+  const connections = [];
+
+  const renderPersonNode = (p, tier, isRoot = false) => {
+    let headFill = '#1e3a8a';
+    let headStroke = '#93c5fd';
+    let bodyFill = '#1e3a8a';
+    let bodyStroke = '#93c5fd';
+
+    if (tier === 1) {
+      headFill = '#7a1c37'; headStroke = '#f59e0b';
+      bodyFill = '#7a1c37'; bodyStroke = '#f59e0b';
+    } else if (tier === 2) {
+      headFill = '#d97706'; headStroke = '#fbbf24';
+      bodyFill = '#b45309'; bodyStroke = '#fbbf24';
+    } else if (tier === 3) {
+      headFill = '#047857'; headStroke = '#34d399';
+      bodyFill = '#065f46'; bodyStroke = '#34d399';
+    } else if (tier === 4) {
+      headFill = '#0284c7'; headStroke = '#7dd3fc';
+      bodyFill = '#0369a1'; bodyStroke = '#7dd3fc';
+    } else if (tier === 5) {
+      headFill = '#a5f3fc'; headStroke = '#0891b2';
+      bodyFill = '#a5f3fc'; bodyStroke = '#0891b2';
+    }
+
+    const name = p.name || (isRoot ? 'Founder (Karim Ji)' : 'Seeker');
+    const tierInfo = this._getTierDetails(p);
+
+    return `
+      <div class="spiderweb-node spiderweb-node-tier-${tier} ${isRoot ? 'is-root-node' : ''}"
+           data-profile-id="${escapeHtmlUtil(p.id)}"
+           data-tier="${tier}"
+           id="modal-tree-node-${escapeHtmlUtil(p.id)}"
+           tabindex="0"
+           title="${escapeHtmlUtil(name)} (${escapeHtmlUtil(tierInfo.title)}) • Click to inspect details">
+        <div class="person-icon-graphic">
+          <svg viewBox="0 0 36 50" width="${isRoot ? '44' : '36'}" height="${isRoot ? '56' : '46'}" class="person-svg">
+            <circle cx="18" cy="9" r="6.5" fill="${headFill}" stroke="${headStroke}" stroke-width="2" class="person-head" />
+            <rect x="7" y="18" width="22" height="26" rx="3" fill="${bodyFill}" stroke="${bodyStroke}" stroke-width="2" class="person-body" />
+          </svg>
+        </div>
+        <div class="person-node-name" style="font-size: ${isRoot ? '0.85rem' : '0.75rem'}; font-weight: 700; color: #fff; margin-top: 4px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">${escapeHtmlUtil(name)}</div>
+        <div style="font-size: 0.65rem; color: ${tierInfo.color || 'var(--gold-400)'}; font-weight: 600;">${escapeHtmlUtil(tierInfo.roleBadge || tierInfo.title)}</div>
+        <div style="font-size: 0.6rem; color: var(--text-muted); font-family: monospace;">${escapeHtmlUtil(p.referenceCode || '')}</div>
+      </div>
+    `;
+  };
+
+  // Build cluster tree branches
+  const effectiveHealers = tier2List.length > 0
+    ? tier2List
+    : (dataProfiles.length > 1 ? [dataProfiles[1]] : [{ id: 'mock-h1', name: 'Acharya Devendra', referenceCode: 'SKHM-HLR2-3344-5566' }]);
+
+  const healerBranchesHtml = effectiveHealers.map((healer, hIdx) => {
+    connections.push({ parentId: `modal-tree-node-${rootProfile.id}`, childId: `modal-tree-node-${healer.id}` });
+
+    let matchedTrainees = tier3List.filter(t => t.referredByCode && t.referredByCode === healer.referenceCode);
+    if (matchedTrainees.length === 0 && tier3List.length > 0) {
+      matchedTrainees = tier3List.filter((_, idx) => idx % effectiveHealers.length === hIdx);
+    }
+    if (matchedTrainees.length === 0) {
+      matchedTrainees = tier3List.length > 0 ? [tier3List[0]] : [{ id: `modal-t-${hIdx}-1`, name: `Trainee Sadhak ${hIdx + 1}`, referenceCode: `T${hIdx}1` }];
+    }
+
+    const traineeColumnsHtml = matchedTrainees.map((trainee, tIdx) => {
+      connections.push({ parentId: `modal-tree-node-${healer.id}`, childId: `modal-tree-node-${trainee.id}` });
+
+      let dedicatedDevotee = tier4List.find(d => d.referredByCode && d.referredByCode === trainee.referenceCode);
+      if (!dedicatedDevotee && tier4List.length > 0) {
+        dedicatedDevotee = tier4List[tIdx % tier4List.length];
+      }
+
+      let dedicatedSeeker = tier5List.find(s => s.referredByCode && (s.referredByCode === trainee.referenceCode || (dedicatedDevotee && s.referredByCode === dedicatedDevotee.referenceCode)));
+      if (!dedicatedSeeker && tier5List.length > 0) {
+        dedicatedSeeker = tier5List[tIdx % tier5List.length];
+      }
+
+      if (dedicatedDevotee) {
+        connections.push({ parentId: `modal-tree-node-${trainee.id}`, childId: `modal-tree-node-${dedicatedDevotee.id}` });
+        if (dedicatedSeeker) {
+          connections.push({ parentId: `modal-tree-node-${dedicatedDevotee.id}`, childId: `modal-tree-node-${dedicatedSeeker.id}` });
+        }
+      } else if (dedicatedSeeker) {
+        connections.push({ parentId: `modal-tree-node-${trainee.id}`, childId: `modal-tree-node-${dedicatedSeeker.id}` });
+      }
+
+      return `
+        <div class="tree-sub-branch-column tree-trainee-pair-column" id="modal-col-trainee-${escapeHtmlUtil(trainee.id)}" style="display: flex; flex-direction: column; align-items: center; gap: 0.6rem; min-width: 140px;">
+          <div class="tree-cluster-node-wrap">
+            ${renderPersonNode(trainee, 3)}
+          </div>
+          <div class="tree-dedicated-pair-badge spiderweb-pair-badge" style="font-size: 0.62rem; color: var(--gold-400); font-weight: 700; background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); padding: 0.15rem 0.5rem; border-radius: 999px;">
+            🔒 1:1 Dedicated Pair
+          </div>
+          <div class="tree-leaves-row" style="display: flex; flex-direction: column; gap: 0.6rem; align-items: center;">
+            ${dedicatedDevotee ? renderPersonNode(dedicatedDevotee, 4) : ''}
+            ${dedicatedSeeker ? renderPersonNode(dedicatedSeeker, 5) : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="tree-sub-branch-column" id="modal-col-healer-${escapeHtmlUtil(healer.id)}" style="display: flex; flex-direction: column; align-items: center; gap: 1rem; min-width: 280px;">
+        <div class="tree-cluster-node-wrap">
+          ${renderPersonNode(healer, 2)}
+        </div>
+        <div class="tree-sub-branches-row" style="display: flex; gap: 1.25rem; justify-content: center;">
+          ${traineeColumnsHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const html = `
+    <div class="tree-hierarchy-wrapper" id="modal-tree-hierarchy-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 2rem; padding: 2.5rem; width: max-content; margin: 0 auto;">
+      <!-- Tier 1: Top Master Root -->
+      <div class="tree-cluster-node-wrap" id="modal-tree-root-cluster" style="display: flex; flex-direction: column; align-items: center;">
+        ${renderPersonNode(rootProfile, 1, true)}
+      </div>
+      <!-- Tier 2 & Down: Healers & Sub-branches -->
+      <div class="tree-sub-branches-row" id="modal-tree-healers-row" style="display: flex; gap: 2.5rem; justify-content: center; flex-wrap: nowrap;">
+        ${healerBranchesHtml}
+      </div>
+    </div>
+  `;
+
+  nodesLayer.innerHTML = html;
+
+  // Initialize Pan/Zoom State for modal
+  if (!this.modalTreePanState) {
+    this.modalTreePanState = { scale: 1.0, panX: 0, panY: 0, isDragging: false };
+  }
+
+  // Draw connecting bezier lines
+  const drawModalConnectingLines = () => {
+    if (!svgLayer || !nodesLayer) return;
+    const surfaceRect = (typeof nodesLayer.getBoundingClientRect === "function")
+      ? nodesLayer.getBoundingClientRect()
+      : { left: 0, top: 0, width: 800, height: 600 };
+    const scale = (this.modalTreePanState && this.modalTreePanState.scale) || 1.0;
+
+    const getCenterAnchor = (elemId, isTop = false) => {
+      const el = document.getElementById(elemId);
+      if (!el) return null;
+      const rect = (typeof el.getBoundingClientRect === "function")
+        ? el.getBoundingClientRect()
+        : { left: 100, top: 100, width: 80, height: 60, right: 180, bottom: 160 };
+      const sLeft = surfaceRect.left || 0;
+      const sTop = surfaceRect.top || 0;
+      const w = rect.width || 80;
+      const h = rect.height || 60;
+      const x = ((rect.left || 0) + w / 2 - sLeft) / scale;
+      const y = (isTop ? ((rect.top || 0) - sTop) : (((rect.bottom || ((rect.top || 0) + h))) - sTop)) / scale;
+      return { x, y };
+    };
+
+    let pathsSvg = `
+      <defs>
+        <marker id="modal-spiderweb-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#d4af37" />
+        </marker>
+      </defs>
+    `;
+
+    connections.forEach(conn => {
+      const pAnchor = getCenterAnchor(conn.parentId, false);
+      const cAnchor = getCenterAnchor(conn.childId, true);
+      if (pAnchor && cAnchor) {
+        const midY = (pAnchor.y + cAnchor.y) / 2;
+        pathsSvg += `<path d="M ${pAnchor.x} ${pAnchor.y} C ${pAnchor.x} ${midY}, ${cAnchor.x} ${midY}, ${cAnchor.x} ${cAnchor.y}" class="spiderweb-bezier-line" stroke="rgba(212,175,55,0.6)" stroke-width="2" fill="none" stroke-dasharray="4 2" marker-end="url(#modal-spiderweb-arrow)" />`;
+      }
+    });
+
+    svgLayer.innerHTML = pathsSvg;
+  };
+
+  // Immediate draw plus post-layout deferred update
+  drawModalConnectingLines();
+
+  // Smart-center tree in the middle of the viewport
+  const centerModalTree = () => {
+    if (!viewport || typeof viewport.getBoundingClientRect !== "function") return;
+    const wrapper = document.getElementById('modal-tree-hierarchy-wrapper');
+    if (!wrapper || typeof wrapper.getBoundingClientRect !== "function") return;
+
+    const vpRect = viewport.getBoundingClientRect();
+    const contentRect = wrapper.getBoundingClientRect();
+
+    const curScale = this.modalTreePanState.scale || 1.0;
+    const rawW = contentRect.width / curScale;
+    const rawH = contentRect.height / curScale;
+
+    const availW = vpRect.width - 60;
+    const availH = vpRect.height - 60;
+
+    let targetScale = 1.0;
+    if (rawW > 0 && rawH > 0 && availW > 0 && availH > 0) {
+      targetScale = Math.min(1.0, Math.max(0.35, Math.min(availW / rawW, availH / rawH)));
+    }
+
+    const targetPanX = Math.round((vpRect.width - rawW * targetScale) / 2);
+    const targetPanY = Math.max(20, Math.round((vpRect.height - rawH * targetScale) / 2) - 10);
+
+    this.modalTreePanState.scale = targetScale;
+    this.modalTreePanState.panX = targetPanX;
+    this.modalTreePanState.panY = targetPanY;
+
+    if (surface) {
+      surface.style.transform = `translate(${targetPanX}px, ${targetPanY}px) scale(${targetScale})`;
+      surface.style.transformOrigin = '0 0';
+    }
+  };
+
+  setTimeout(() => {
+    centerModalTree();
+    drawModalConnectingLines();
+  }, 50);
+
+  // Setup pan/zoom event listeners on viewport once
+  if (!this._modalPanZoomInitialized && viewport) {
+    this._modalPanZoomInitialized = true;
+
+    // Mouse Drag (Pan Anywhere)
+    viewport.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.spiderweb-node')) return;
+      this.modalTreePanState.isDragging = true;
+      this.modalTreePanState.startX = e.clientX - this.modalTreePanState.panX;
+      this.modalTreePanState.startY = e.clientY - this.modalTreePanState.panY;
+      viewport.classList.add('is-dragging');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!this.modalTreePanState || !this.modalTreePanState.isDragging) return;
+      this.modalTreePanState.panX = e.clientX - this.modalTreePanState.startX;
+      this.modalTreePanState.panY = e.clientY - this.modalTreePanState.startY;
+      if (surface) {
+        surface.style.transform = `translate(${this.modalTreePanState.panX}px, ${this.modalTreePanState.panY}px) scale(${this.modalTreePanState.scale})`;
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (this.modalTreePanState && this.modalTreePanState.isDragging) {
+        this.modalTreePanState.isDragging = false;
+        if (viewport) viewport.classList.remove('is-dragging');
+      }
+    });
+
+    // Mousewheel Zoom
+    viewport.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.12 : 0.88;
+      const newScale = Math.min(2.5, Math.max(0.3, this.modalTreePanState.scale * zoomFactor));
+      this.modalTreePanState.scale = newScale;
+      if (surface) {
+        surface.style.transform = `translate(${this.modalTreePanState.panX}px, ${this.modalTreePanState.panY}px) scale(${newScale})`;
+      }
+    }, { passive: false });
+
+    // Toolbar buttons
+    const btnZoomIn = document.getElementById("btn-tree-zoom-in");
+    if (btnZoomIn) {
+      btnZoomIn.onclick = () => {
+        this.modalTreePanState.scale = Math.min(2.5, this.modalTreePanState.scale + 0.18);
+        if (surface) surface.style.transform = `translate(${this.modalTreePanState.panX}px, ${this.modalTreePanState.panY}px) scale(${this.modalTreePanState.scale})`;
+      };
+    }
+    const btnZoomOut = document.getElementById("btn-tree-zoom-out");
+    if (btnZoomOut) {
+      btnZoomOut.onclick = () => {
+        this.modalTreePanState.scale = Math.max(0.3, this.modalTreePanState.scale - 0.18);
+        if (surface) surface.style.transform = `translate(${this.modalTreePanState.panX}px, ${this.modalTreePanState.panY}px) scale(${this.modalTreePanState.scale})`;
+      };
+    }
+    const btnZoomReset = document.getElementById("btn-tree-zoom-reset");
+    if (btnZoomReset) {
+      btnZoomReset.onclick = () => {
+        centerModalTree();
+      };
+    }
+    const btnFullscreen = document.getElementById("btn-tree-fullscreen");
+    if (btnFullscreen) {
+      btnFullscreen.onclick = () => {
+        const dialog = document.getElementById("tree-modal-dialog");
+        if (dialog) {
+          dialog.classList.toggle("fullscreen-mode");
+          setTimeout(() => centerModalTree(), 100);
+        }
+      };
+    }
+  }
+
+  // Node click listener inside modal: view member details
+  nodesLayer.onclick = (e) => {
+    const nodeEl = e.target.closest('.spiderweb-node');
+    if (!nodeEl) return;
+    const profId = nodeEl.getAttribute('data-profile-id');
+    const selectedProf = dataProfiles.find(p => p.id === profId);
+    if (selectedProf) {
+      if (typeof this.renderTreeProfileDrawer === 'function') {
+        this.renderTreeProfileDrawer(selectedProf);
+      } else if (typeof this.showSlideToast === 'function') {
+        this.showSlideToast("Member Inspected", `👤 Selected: ${selectedProf.name} (${selectedProf.referenceCode})`, "info", 2500);
+      }
+    }
+  };
+};
+
 ProfileView.prototype._drawSpiderwebConnectingLines = function(root, tier2, tier3, tier4) {
     this._drawInBodyConnectingLines(root, tier2, tier3, tier4, 'cluster');
 };
@@ -2268,9 +2615,27 @@ ProfileView.prototype.openSadhanaExplorerModal = function(initialKey) {
   if (!modal) return;
   modal.classList.add('is-active', 'open');
   modal.setAttribute('aria-hidden', 'false');
+  modal.style.display = 'flex';
 
-  const catalog = (typeof SADHANA_CATALOG !== 'undefined') ? SADHANA_CATALOG : {};
-  const sadhanas = Object.values(catalog).filter(item => item.domain === 'sadhanas' || (item.category && item.category.includes('Sadhana')));
+  let modelObj = this.model;
+  if (!modelObj && typeof window !== "undefined") {
+    modelObj = window.ProfileControllerInstance?.model || window.profileModelInstance || (window.ProfileModel ? new window.ProfileModel() : null);
+  }
+  let catalog = (modelObj && typeof modelObj.getSadhanaCatalog === 'function') ? modelObj.getSadhanaCatalog() : {};
+  if (!catalog || typeof catalog !== 'object') catalog = {};
+  
+  // Normalize catalog — support both old 'categoryDomain' key and new 'domain' key
+  const catalogArray = Object.values(catalog);
+  let sadhanas = catalogArray.filter(item => {
+    if (!item) return false;
+    const dom = (item.domain || item.categoryDomain || '').toLowerCase();
+    const cat = (item.category || '').toLowerCase();
+    return dom === 'sadhanas' || cat.includes('sadhana');
+  });
+  if (sadhanas.length === 0 && catalogArray.length > 0) {
+    sadhanas = catalogArray.filter(item => item && !(item.domain || '').includes('remed'));
+    if (sadhanas.length === 0) sadhanas = [...catalogArray];
+  }
   
   let activeFilter = 'ALL';
   let searchQuery = '';
@@ -2282,7 +2647,11 @@ ProfileView.prototype.openSadhanaExplorerModal = function(initialKey) {
   const pills = document.querySelectorAll('#filter-pills-sadhana .split-explorer-pill');
 
   const renderDetail = (key) => {
-    const item = catalog[key] || sadhanas[0];
+    let item = catalog[key];
+    if (!item && Array.isArray(catalog)) {
+      item = catalog.find(c => c && c.id === key);
+    }
+    if (!item) item = sadhanas.find(c => c && c.id === key) || sadhanas[0];
     if (!item || !detailContainer) return;
     detailContainer.innerHTML = `
       <div class="split-detail-banner">
@@ -2424,6 +2793,7 @@ ProfileView.prototype.openSadhanaExplorerModal = function(initialKey) {
   if (closeBtn) {
     closeBtn.onclick = () => {
       modal.classList.remove('is-active', 'open');
+      modal.style.display = 'none';
       modal.setAttribute('aria-hidden', 'true');
     };
   }
@@ -2431,6 +2801,7 @@ ProfileView.prototype.openSadhanaExplorerModal = function(initialKey) {
   modal.onclick = (e) => {
     if (e.target === modal) {
       modal.classList.remove('is-active', 'open');
+      modal.style.display = 'none';
       modal.setAttribute('aria-hidden', 'true');
     }
   };
@@ -2444,9 +2815,27 @@ ProfileView.prototype.openRemedyHubModal = function(initialKey) {
   if (!modal) return;
   modal.classList.add('is-active', 'open');
   modal.setAttribute('aria-hidden', 'false');
+  modal.style.display = 'flex';
 
-  const catalog = (typeof SADHANA_CATALOG !== 'undefined') ? SADHANA_CATALOG : {};
-  const remedies = Object.values(catalog).filter(item => item.domain === 'remedies' || item.domain === 'cleansing' || (item.category && (item.category.includes('Remedy') || item.category.includes('Cleansing'))));
+  let modelObj = this.model;
+  if (!modelObj && typeof window !== "undefined") {
+    modelObj = window.ProfileControllerInstance?.model || window.profileModelInstance || (window.ProfileModel ? new window.ProfileModel() : null);
+  }
+  let catalog = (modelObj && typeof modelObj.getSadhanaCatalog === 'function') ? modelObj.getSadhanaCatalog() : {};
+  if (!catalog || typeof catalog !== 'object') catalog = {};
+  
+  // Normalize catalog — support both old 'categoryDomain' key and new 'domain' key
+  const catalogArray = Object.values(catalog);
+  let remedies = catalogArray.filter(item => {
+    if (!item) return false;
+    const dom = (item.domain || item.categoryDomain || '').toLowerCase();
+    const cat = (item.category || '').toLowerCase();
+    return dom === 'remedies' || dom === 'cleansing' || cat.includes('remedy') || cat.includes('cleansing');
+  });
+  if (remedies.length === 0 && catalogArray.length > 0) {
+    remedies = catalogArray.filter(item => item && !(item.domain || '').includes('sadhana'));
+    if (remedies.length === 0) remedies = [...catalogArray];
+  }
   
   let activeFilter = 'ALL';
   let searchQuery = '';
@@ -2458,7 +2847,11 @@ ProfileView.prototype.openRemedyHubModal = function(initialKey) {
   const pills = document.querySelectorAll('#filter-pills-remedy .split-explorer-pill');
 
   const renderDetail = (key) => {
-    const item = catalog[key] || remedies[0];
+    let item = catalog[key];
+    if (!item && Array.isArray(catalog)) {
+      item = catalog.find(c => c && c.id === key);
+    }
+    if (!item) item = remedies.find(c => c && c.id === key) || remedies[0];
     if (!item || !detailContainer) return;
     detailContainer.innerHTML = `
       <div class="split-detail-banner">
@@ -2600,6 +2993,7 @@ ProfileView.prototype.openRemedyHubModal = function(initialKey) {
   if (closeBtn) {
     closeBtn.onclick = () => {
       modal.classList.remove('is-active', 'open');
+      modal.style.display = 'none';
       modal.setAttribute('aria-hidden', 'true');
     };
   }
@@ -2607,6 +3001,7 @@ ProfileView.prototype.openRemedyHubModal = function(initialKey) {
   modal.onclick = (e) => {
     if (e.target === modal) {
       modal.classList.remove('is-active', 'open');
+      modal.style.display = 'none';
       modal.setAttribute('aria-hidden', 'true');
     }
   };
@@ -2614,4 +3009,8 @@ ProfileView.prototype.openRemedyHubModal = function(initialKey) {
   renderList();
   renderDetail(selectedKey);
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ProfileView;
+}
 

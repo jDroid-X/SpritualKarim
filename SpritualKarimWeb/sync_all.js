@@ -28,7 +28,7 @@ console.log('✅ Updated root index.html with fresh cache query');
 
 // Portals configuration
 const portals = [
-  { dir: 'Masters', role: 'ADMIN', title: 'Master Admin Portal', badgeClass: 'badge-admin', badgeText: '👑 MASTER FOUNDER' },
+  { dir: 'Masters', role: 'ADMIN', title: 'Master Admin Portal', badgeClass: 'badge-admin', badgeText: '👑 MASTER CONTROL' },
   { dir: 'Healers', role: 'HEALER', title: 'Healers Portal', badgeClass: 'badge-healer', badgeText: '🛡️ CERTIFIED HEALER' },
   { dir: 'Trainee', role: 'TRAINEE', title: 'Trainee Sadhak Portal', badgeClass: 'badge-trainee', badgeText: '📿 TRAINEE SADHAK' },
   { dir: 'Devotee', role: 'DEVOTEE', title: 'Devotee Portal', badgeClass: 'badge-devotee', badgeText: '🌟 DEVOTEE / SEEKER' },
@@ -59,6 +59,8 @@ portals.forEach(p => {
   subHtml = subHtml.replace(/href="docs\//g, 'href="../docs/');
   subHtml = subHtml.replace(/src="GOLI_GYAN_FOR_SEEKERS\.html"/g, 'src="../GOLI_GYAN_FOR_SEEKERS.html"');
   subHtml = subHtml.replace(/href="GOLI_GYAN_FOR_SEEKERS\.html"/g, 'href="../GOLI_GYAN_FOR_SEEKERS.html"');
+  subHtml = subHtml.replace(/src="rbac-admin\.html"/g, 'src="../rbac-admin.html"');
+  subHtml = subHtml.replace(/href="rbac-admin\.html"/g, 'href="../rbac-admin.html"');
 
   // Set body data attributes
   subHtml = subHtml.replace(/<body[^>]*>/, `<body data-portal-role="${p.role}" class="portal-${p.role.toLowerCase()}">`);
@@ -67,7 +69,7 @@ portals.forEach(p => {
   subHtml = subHtml.replace(/<title>[^<]*<\/title>/, `<title>${p.title} • Shree Spritual Karim Sansthan</title>`);
 
   // Update header badge
-  subHtml = subHtml.replace(/<span class="header-portal-badge"[^>]*>[^<]*<\/span>/, `<span class="header-portal-badge ${p.badgeClass}">${p.badgeText}</span>`);
+  subHtml = subHtml.replace(/<span[^>]*class="header-portal-badge[^"]*"[^>]*>[^<]*<\/span>/, `<span id="header-portal-badge" class="header-portal-badge ${p.badgeClass}">${p.badgeText}</span>`);
 
   // Mark active portal link in sidebar
   subHtml = subHtml.replace(/class="sub-portal-link active"/g, 'class="sub-portal-link"');
@@ -133,8 +135,8 @@ if (fs.existsSync(frontendDir)) {
     }
   });
 
-  // Mirror login.html, logout.html, join.html to Frontend
-  ['login.html', 'logout.html', 'join.html'].forEach(file => {
+  // Mirror login.html, logout.html, join.html, rbac-admin.html to Frontend
+  ['login.html', 'logout.html', 'join.html', 'rbac-admin.html'].forEach(file => {
     const src = path.join(webRoot, file);
     if (fs.existsSync(src)) {
       fs.copyFileSync(src, path.join(frontendDir, file));
@@ -144,9 +146,9 @@ if (fs.existsSync(frontendDir)) {
   console.log('✅ Synchronized Frontend directory with latest root, portals, login, logout, and join');
 }
 
-// Mirror login.html, logout.html, join.html to portal subdirectories
+// Mirror login.html, logout.html, join.html, rbac-admin.html to portal subdirectories
 portals.forEach(p => {
-  ['login.html', 'logout.html', 'join.html'].forEach(file => {
+  ['login.html', 'logout.html', 'join.html', 'rbac-admin.html'].forEach(file => {
     const src = path.join(webRoot, file);
     const dest = path.join(webRoot, p.dir, file);
     if (fs.existsSync(src)) {

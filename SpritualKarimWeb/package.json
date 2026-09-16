@@ -1,0 +1,17 @@
+{
+  "name": "spritual-karim-web",
+  "version": "3.0.0",
+  "description": "Shree Spritual Karim Sansthan — Multi-Portal MLM Platform",
+  "scripts": {
+    "test": "node scratch/verify_all_standards.js",
+    "test:rag": "node scratch/verify_all_standards.js",
+    "test:routes": "node scratch/verify_all_pages_and_actions.js",
+    "test:matrix": "node scratch/test_matrix_integrity.js",
+    "test:bootstrap": "node scratch/test_bootstrap.js",
+    "build:sync": "node sync_all.js"
+  },
+  "dependencies": {
+    "jsdom": "^30.0.1",
+    "puppeteer": "^25.11.0"
+  }
+}

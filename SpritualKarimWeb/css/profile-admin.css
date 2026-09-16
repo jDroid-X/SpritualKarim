@@ -3016,9 +3016,11 @@ input:checked + .toggle-slider:before {
 
 .admin-modal.open,
 .admin-modal.is-open,
-.admin-modal-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
+.admin-modal-overlay.open,
+.admin-modal-overlay.is-open,
+.admin-modal-overlay[style*="display: flex"] {
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 .modal-card,
@@ -9470,6 +9472,77 @@ html[data-theme="light"] .hc-media-play-icon {
 }
 
 /* ==============================================================
+   SLIDE-OUT RIGHT DRAWER: SADHANA DETAILS (Smart Fit & Scroll)
+   ============================================================== */
+.sadhana-drawer-backdrop,
+#sadhana-drawer-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(8, 4, 18, 0.75) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  z-index: 99990 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s ease, visibility 0.3s ease !important;
+}
+
+.sadhana-drawer-backdrop.open,
+.sadhana-drawer-backdrop.is-open,
+#sadhana-drawer-backdrop.open,
+#sadhana-drawer-backdrop.is-open {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  display: block !important;
+}
+
+.sadhana-detail-drawer,
+#sadhana-detail-drawer {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: min(600px, 96vw) !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  background: var(--bg-surface, #0d0915) !important;
+  border-left: 1.5px solid var(--border-glass-gold, rgba(212, 175, 55, 0.35)) !important;
+  box-shadow: -15px 0 50px rgba(0, 0, 0, 0.85) !important;
+  z-index: 99995 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transform: translateX(100%) !important;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  will-change: transform !important;
+  overflow: hidden !important;
+}
+
+.sadhana-detail-drawer.open,
+.sadhana-detail-drawer.is-open,
+#sadhana-detail-drawer.open,
+#sadhana-detail-drawer.is-open {
+  transform: translateX(0) !important;
+}
+
+/* Active Tile Glow When Being Inspected in Drawer */
+.remedy-card-option.tile-active-inspecting {
+  border-color: var(--gold-400, #d4af37) !important;
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.45), inset 0 0 10px rgba(212, 175, 55, 0.15) !important;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.16), rgba(30, 20, 48, 0.95)) !important;
+  transform: translateY(-2px);
+}
+
+.remedy-card-option.tile-active-inspecting .btn-sadhana-info-trigger {
+  background: var(--gold-400, #d4af37) !important;
+  color: #000 !important;
+  transform: scale(1.18);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+  border-radius: 4px;
+}
+
+/* ==============================================================
    8. SIDEBAR APP HIERARCHY TIERS & AVATAR PROFILES (LEFT PANEL)
    ============================================================== */
 .main-tab-btn .badge-count {
@@ -12113,5 +12186,1566 @@ html[data-theme="light"] .sidebar-user-footer {
     border-bottom: 1.5px solid var(--border-subtle);
   }
 }
+
+/* ==========================================================================
+   Enterprise Navigation Drawer Standard (Rule 7: 15 Nodes Architecture)
+   ========================================================================== */
+.enterprise-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.enterprise-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.enterprise-nav-item:hover {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: var(--gold-400);
+  transform: translateX(3px);
+  color: var(--gold-300);
+}
+
+.enterprise-nav-item.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.22), rgba(139, 92, 246, 0.18));
+  border-color: var(--gold-500);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+}
+
+.enterprise-nav-item .nav-item-icon {
+  font-size: 1.1rem;
+  min-width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.enterprise-nav-item .nav-item-content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.enterprise-nav-item .nav-item-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.enterprise-nav-item .nav-item-desc {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.enterprise-nav-item:hover .nav-item-title {
+  color: var(--gold-300);
+}
+
+.enterprise-nav-item.nav-item-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #fca5a5;
+}
+
+.enterprise-nav-item.nav-item-logout-btn:hover .nav-item-title {
+  color: #fca5a5;
+}
+
+/* ==========================================================================
+   Enterprise UI/UX Component Suite: Toggle, Switch, Flipper, Dropdown, Dialog
+   ========================================================================== */
+
+/* 1. Left/Right Segmented Toggle */
+.segmented-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 0.2rem;
+  gap: 0.25rem;
+  user-select: none;
+}
+
+.segmented-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.segmented-toggle-btn:hover {
+  color: var(--text-primary);
+}
+
+.segmented-toggle-btn.active {
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+  color: #0b0714;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+
+/* 2. Enhanced Textbox with Action & Validation */
+.textbox-enhanced-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.textbox-enhanced-wrap .textbox-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.textbox-enhanced-wrap input {
+  width: 100%;
+  padding: 0.5rem 2.2rem 0.5rem 2.2rem;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1.5px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.textbox-enhanced-wrap input:focus {
+  border-color: var(--gold-400);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+  outline: none;
+}
+
+.textbox-enhanced-wrap .textbox-clear-btn {
+  position: absolute;
+  right: 0.6rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: none;
+  padding: 0.2rem;
+}
+
+.textbox-enhanced-wrap.has-value .textbox-clear-btn {
+  display: block;
+}
+
+.textbox-enhanced-wrap input.is-valid {
+  border-color: #10b981;
+}
+
+.textbox-enhanced-wrap input.is-invalid {
+  border-color: #ef4444;
+}
+
+/* 3. 3D Card Flipper */
+.card-flipper-3d-wrapper {
+  perspective: 1200px;
+  width: 100%;
+}
+
+.card-flipper-3d-inner {
+  position: relative;
+  width: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.card-flipper-3d-wrapper.is-flipped .card-flipper-3d-inner {
+  transform: rotateY(180deg);
+}
+
+.card-flipper-front,
+.card-flipper-back {
+  width: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--radius-md);
+}
+
+.card-flipper-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: rotateY(180deg);
+  background: var(--bg-card);
+  border: 1.5px solid var(--gold-400);
+  padding: 1.25rem;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* 4. Rich Searchable Dropdown List Box */
+.rich-select-dropdown {
+  position: relative;
+  width: 100%;
+  user-select: none;
+}
+
+.rich-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rich-select-trigger:hover {
+  border-color: var(--gold-400);
+}
+
+.rich-select-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg-card-elevated, #1a1528);
+  border: 1.5px solid var(--gold-400);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: none;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.rich-select-dropdown.is-open .rich-select-menu {
+  display: block;
+}
+
+.rich-select-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.15s ease;
+}
+
+.rich-select-item:hover {
+  background: rgba(212, 175, 55, 0.15);
+}
+
+.rich-select-item-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  background: rgba(212, 175, 55, 0.2);
+  color: var(--gold-400);
+  border: 1px solid var(--gold-400);
+  flex-shrink: 0;
+}
+
+.rich-select-item-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.rich-select-item-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.rich-select-item-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* 5. Bottom-Right Slide-in/out Toast Container */
+#slide-toast-container-br {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast-slide-bottom-right {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 320px;
+  max-width: 420px;
+  background: var(--bg-card-elevated, #1e293b);
+  border: 1.5px solid var(--gold-400, #d4af37);
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  animation: toastSlideInBR 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: all 0.3s ease;
+}
+
+.toast-slide-bottom-right.is-closing {
+  animation: toastSlideOutBR 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes toastSlideInBR {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toastSlideOutBR {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.95);
+  }
+}
+
+.toast-br-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.toast-br-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gold-400);
+}
+
+.toast-br-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.toast-br-body {
+  padding: 0.75rem 0.85rem;
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.toast-br-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem;
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.toast-br-progress {
+  height: 3px;
+  background: var(--gold-400);
+  width: 100%;
+  animation: toastProgress 5s linear forwards;
+}
+
+@keyframes toastProgress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+/* 6. Multi-Option Dialog Layout */
+.modal-multi-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.multi-option-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.multi-option-card:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold-400);
+  transform: translateX(4px);
+}
+
+.multi-option-card-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.multi-option-card-icon {
+  font-size: 1.3rem;
+}
+
+.multi-option-card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.multi-option-card-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+
+/* ==========================================================================
+   CURRENT EVENTS IN PROGRESS PANEL
+   Premium enterprise dark-mode component — follows metrics strip design lang.
+   ========================================================================== */
+
+/* ---- Panel Container ---- */
+.current-events-strip {
+  width: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(135deg,
+    rgba(30, 25, 15, 0.85) 0%,
+    rgba(20, 16, 8, 0.92) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 12px;
+  padding: 12px 14px 14px;
+  margin: 0 0 10px 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow:
+    0 2px 24px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(212, 175, 55, 0.08);
+  animation: ceStripFadeIn 0.35s ease;
+}
+
+@keyframes ceStripFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Panel Header Row ---- */
+.current-events-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 0.75rem;
+}
+
+.current-events-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.current-events-icon {
+  font-size: 1.05rem;
+  animation: ceBellRing 3s ease-in-out infinite;
+}
+
+@keyframes ceBellRing {
+  0%, 90%, 100% { transform: rotate(0deg); }
+  93%           { transform: rotate(-18deg); }
+  96%           { transform: rotate(18deg); }
+}
+
+.current-events-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gold-300, #fcd34d);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+}
+
+.current-events-count-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: rgba(212, 175, 55, 0.18);
+  color: var(--gold-300, #fcd34d);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 20px;
+  padding: 1px 8px;
+  white-space: nowrap;
+}
+
+/* ---- Add Event CTA Button ---- */
+.btn-add-event-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 5px 14px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.28) 0%, rgba(180, 83, 9, 0.2) 100%);
+  border: 1.5px solid rgba(212, 175, 55, 0.55);
+  border-radius: 8px;
+  color: var(--gold-300, #fef08a);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.btn-add-event-cta:hover {
+  background: linear-gradient(135deg, #d4af37 0%, #b45309 100%);
+  border-color: #fcd34d;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+}
+
+.btn-add-event-cta:active {
+  transform: translateY(0px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-add-event-icon {
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.btn-add-event-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+/* Light theme overrides for Add Event CTA button — High contrast & premium aesthetics */
+html[data-theme="light"] .btn-add-event-cta,
+[data-theme="light"] .btn-add-event-cta,
+body.theme-light .btn-add-event-cta {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+  border: 1.5px solid #b45309 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(180, 83, 9, 0.3) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+}
+
+html[data-theme="light"] .btn-add-event-cta:hover,
+[data-theme="light"] .btn-add-event-cta:hover,
+body.theme-light .btn-add-event-cta:hover {
+  background: linear-gradient(135deg, #b45309 0%, #92400e 100%) !important;
+  border-color: #78350f !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(180, 83, 9, 0.45) !important;
+}
+
+html[data-theme="light"] .btn-add-event-cta .btn-add-event-icon,
+[data-theme="light"] .btn-add-event-cta .btn-add-event-icon,
+body.theme-light .btn-add-event-cta .btn-add-event-icon {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+html[data-theme="light"] .btn-add-event-cta .btn-add-event-label,
+[data-theme="light"] .btn-add-event-cta .btn-add-event-label,
+body.theme-light .btn-add-event-cta .btn-add-event-label {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+/* ---- Events Tiles Row ---- */
+.current-events-tiles-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+/* ---- Individual Event Tile ---- */
+.current-event-tile {
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 11px 13px 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.current-event-tile::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 100%;
+  border-radius: 10px 0 0 10px;
+}
+
+.current-event-tile.tile-event-ongoing::before {
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+}
+
+.current-event-tile.tile-event-upcoming::before {
+  background: linear-gradient(180deg, var(--gold-400, #d4af37) 0%, #b45309 100%);
+}
+
+.current-event-tile:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+/* ---- Tile Header ---- */
+.event-tile-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 8px;
+}
+
+.event-tile-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.event-icon-fire {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.event-icon-upcoming {
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+.event-tile-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.event-tile-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.event-tile-badge {
+  font-size: 0.66rem;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 1px 6px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.badge-ongoing {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.badge-upcoming {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--gold-300, #fcd34d);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* ---- Options Button ---- */
+.btn-event-options {
+  background: none;
+  border: none;
+  color: var(--text-muted, #9ca3af);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.btn-event-options:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--gold-300, #fcd34d);
+}
+
+/* ---- Tile Actions Group (Edit + Options buttons) ---- */
+.event-tile-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* ---- Edit Button ---- */
+.btn-event-edit {
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: var(--gold-300, #fcd34d);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 3px 6px;
+  border-radius: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.btn-event-edit:hover {
+  background: rgba(212, 175, 55, 0.25);
+  border-color: var(--gold-400, #d4af37);
+  color: #ffffff;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.25);
+}
+
+/* Light theme overrides for Edit button — Vibrant amber badge */
+html[data-theme="light"] .btn-event-edit,
+[data-theme="light"] .btn-event-edit,
+body.theme-light .btn-event-edit {
+  color: #92400e !important;
+  background: rgba(245, 158, 11, 0.16) !important;
+  border: 1.5px solid rgba(217, 119, 6, 0.4) !important;
+  box-shadow: 0 1px 4px rgba(180, 83, 9, 0.12) !important;
+}
+
+html[data-theme="light"] .btn-event-edit:hover,
+[data-theme="light"] .btn-event-edit:hover,
+body.theme-light .btn-event-edit:hover {
+  background: rgba(245, 158, 11, 0.28) !important;
+  border-color: #b45309 !important;
+  color: #78350f !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 2px 8px rgba(180, 83, 9, 0.25) !important;
+}
+
+/* ---- RBAC Disabled State: Trainee / Devotee ---- */
+/* Applied via .btn-event-auth-disabled class by _applyEventPanelRBAC() in ProfileController */
+.btn-event-auth-disabled,
+.btn-event-edit.btn-event-auth-disabled,
+#btn-add-current-event.btn-event-auth-disabled {
+  opacity: 0.35 !important;
+  cursor: not-allowed !important;
+  pointer-events: auto !important; /* keep pointer-events on so toast still fires on click */
+  filter: grayscale(80%) !important;
+  box-shadow: none !important;
+}
+
+.btn-event-auth-disabled:hover {
+  background: none !important;
+  color: inherit !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Light theme disabled state */
+html[data-theme="light"] .btn-event-auth-disabled,
+[data-theme="light"] .btn-event-auth-disabled,
+body.theme-light .btn-event-auth-disabled {
+  background: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+  color: #9ca3af !important;
+  opacity: 0.45 !important;
+  filter: grayscale(100%) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .btn-add-event-cta.btn-event-auth-disabled .btn-add-event-icon,
+html[data-theme="light"] .btn-add-event-cta.btn-event-auth-disabled .btn-add-event-label,
+[data-theme="light"] .btn-add-event-cta.btn-event-auth-disabled .btn-add-event-icon,
+[data-theme="light"] .btn-add-event-cta.btn-event-auth-disabled .btn-add-event-label,
+body.theme-light .btn-add-event-cta.btn-event-auth-disabled .btn-add-event-icon,
+body.theme-light .btn-add-event-cta.btn-event-auth-disabled .btn-add-event-label {
+  color: #9ca3af !important;
+}
+
+/* ---- Badge: Completed ---- */
+.badge-completed {
+  background: rgba(107, 114, 128, 0.18);
+  color: #9ca3af;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+/* ---- Progress bar: Completed ---- */
+.bar-completed {
+  background: linear-gradient(90deg, #4b5563 0%, #6b7280 100%);
+  animation: none;
+}
+
+/* ---- Event Detail Rows ---- */
+.event-tile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 9px;
+}
+
+.event-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.event-detail-label {
+  font-size: 0.68rem;
+  color: var(--text-muted, #9ca3af);
+  white-space: nowrap;
+}
+
+.event-detail-value {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  text-align: right;
+}
+
+/* ---- Progress Bar ---- */
+.event-tile-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.event-progress-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.event-progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bar-ongoing {
+  background: linear-gradient(90deg, #22c55e 0%, #4ade80 60%, #bbf7d0 100%);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+  animation: ceProgressPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes ceProgressPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.75; }
+}
+
+.bar-upcoming {
+  background: linear-gradient(90deg, rgba(212,175,55,0.4) 0%, rgba(212,175,55,0.1) 100%);
+  border: none;
+}
+
+.event-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.event-progress-pct {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #4ade80;
+}
+
+.tile-event-upcoming .event-progress-pct {
+  color: var(--text-muted, #9ca3af);
+  font-weight: 600;
+}
+
+.event-progress-days {
+  font-size: 0.66rem;
+  color: var(--text-muted, #9ca3af);
+}
+
+/* ---- Light Theme Overrides ---- */
+html[data-theme="light"] .current-events-strip,
+[data-theme="light"] .current-events-strip {
+  background: linear-gradient(135deg, rgba(255,251,235,0.9) 0%, rgba(254,243,199,0.95) 100%);
+  border-color: rgba(180, 120, 20, 0.25);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+}
+
+html[data-theme="light"] .current-events-title,
+[data-theme="light"] .current-events-title {
+  color: #92400e;
+}
+
+html[data-theme="light"] .current-event-tile,
+[data-theme="light"] .current-event-tile {
+  background: rgba(255,255,255,0.65);
+  border-color: rgba(180, 120, 20, 0.2);
+}
+
+html[data-theme="light"] .event-tile-name,
+[data-theme="light"] .event-tile-name {
+  color: #1c1917;
+}
+
+html[data-theme="light"] .event-detail-value,
+[data-theme="light"] .event-detail-value {
+  color: #292524;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .current-events-tiles-row {
+    grid-template-columns: 1fr;
+  }
+  .current-events-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+/* Auth gating: panel visible to all roles unless explicitly flagged by auth gate engine */
+#admin-current-events-strip.auth-hidden,
+#admin-current-events-strip.portal-hidden {
+  display: none !important;
+}
+
+/* ==========================================================================
+   ADD EVENT DIALOG PANEL
+   Slide-in modal from right — reuses sadhana-drawer-backdrop pattern.
+   ========================================================================== */
+
+.add-event-dialog-panel {
+  position: fixed;
+  top: 0;
+  right: -480px;
+  width: 100%;
+  max-width: 460px;
+  height: 100%;
+  background: linear-gradient(160deg, #1a1308 0%, #0f0b04 100%);
+  border-left: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: -8px 0 48px rgba(0,0,0,0.6);
+  z-index: 9200;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: right 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.add-event-dialog-panel.is-open {
+  right: 0;
+}
+
+/* Header */
+.add-event-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  flex-shrink: 0;
+  background: rgba(212, 175, 55, 0.04);
+}
+
+.add-event-dialog-icon {
+  font-size: 1.2rem;
+}
+
+.add-event-dialog-title {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--gold-300, #fcd34d);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Body */
+.add-event-dialog-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Field Group */
+.add-event-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.add-event-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Label */
+.add-event-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted, #9ca3af);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* Input / Select / Textarea */
+.add-event-input,
+.add-event-select,
+.add-event-textarea {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 7px;
+  color: #fff;
+  font-size: 0.82rem;
+  padding: 7px 10px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.add-event-input:focus,
+.add-event-select:focus,
+.add-event-textarea:focus {
+  border-color: rgba(212, 175, 55, 0.55);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.12);
+  background: rgba(212, 175, 55, 0.04);
+}
+
+.add-event-select option {
+  background: #1a1308;
+  color: #fff;
+}
+
+.add-event-icon-input {
+  font-size: 1.1rem;
+  text-align: center;
+  max-width: 80px;
+}
+
+.add-event-textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+/* Error message */
+.add-event-error {
+  font-size: 0.75rem;
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+/* Footer Buttons */
+.add-event-dialog-footer {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+  flex-shrink: 0;
+}
+
+.btn-add-event-cancel {
+  flex: 1;
+  padding: 9px 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  color: var(--text-muted, #9ca3af);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.btn-add-event-cancel:hover {
+  background: rgba(255,255,255,0.09);
+  color: #fff;
+}
+
+.btn-add-event-submit {
+  flex: 2;
+  padding: 9px 14px;
+  background: linear-gradient(135deg, rgba(212,175,55,0.28) 0%, rgba(212,175,55,0.14) 100%);
+  border: 1.5px solid rgba(212, 175, 55, 0.5);
+  border-radius: 8px;
+  color: var(--gold-300, #fcd34d);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  letter-spacing: 0.02em;
+}
+
+.btn-add-event-submit:hover {
+  background: linear-gradient(135deg, rgba(212,175,55,0.42) 0%, rgba(212,175,55,0.24) 100%);
+  border-color: var(--gold-400, #d4af37);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(212,175,55,0.2);
+}
+
+.btn-add-event-submit:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Light theme overrides */
+html[data-theme="light"] .add-event-dialog-panel,
+[data-theme="light"] .add-event-dialog-panel {
+  background: linear-gradient(160deg, #fffbeb 0%, #fef3c7 100%);
+  border-left-color: rgba(180,120,20,0.3);
+}
+
+html[data-theme="light"] .add-event-input,
+html[data-theme="light"] .add-event-select,
+html[data-theme="light"] .add-event-textarea,
+[data-theme="light"] .add-event-input,
+[data-theme="light"] .add-event-select,
+[data-theme="light"] .add-event-textarea {
+  background: rgba(255,255,255,0.8);
+  border-color: rgba(180,120,20,0.25);
+  color: #1c1917;
+}
+
+@media (max-width: 480px) {
+  .add-event-dialog-panel {
+    max-width: 100%;
+  }
+  .add-event-field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   UNIFIED SIDEBAR BUTTON THEME & CHRONOLOGICAL STAGE LAYOUT
+   ========================================================================== */
+.btn-sidebar-unified {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.5rem !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  border-radius: var(--radius-sm, 7px) !important;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(212, 175, 55, 0.06)) !important;
+  border: 1px solid rgba(212, 175, 55, 0.32) !important;
+  color: var(--gold-300, #fef08a) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  width: 100% !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.btn-sidebar-unified:hover {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.14)) !important;
+  border-color: var(--gold-400, #d4af37) !important;
+  color: #fff !important;
+  transform: translateX(3px) !important;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25) !important;
+}
+
+.btn-sidebar-unified:active {
+  transform: translateX(1px) !important;
+}
+
+.btn-sidebar-unified span {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ==========================================================================
+   HELP & SUPPORT: 3 INTERACTIVE EXPANDABLE PROCESSES
+   1. Joining Process, 2. Data Entry Process, 3. Sadhana & Healer Approval
+   ========================================================================== */
+.help-processes-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 1.1rem;
+}
+
+.help-process-card {
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.7);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.help-process-card:hover {
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.help-process-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.85rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.help-process-header:hover {
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.help-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.help-badge-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-400, #d4af37), var(--gold-600, #b48328));
+  color: #0d0914;
+  font-size: 0.72rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.help-header-icon {
+  font-size: 1.1rem;
+}
+
+.help-header-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--gold-300, #fef08a);
+}
+
+.help-chevron {
+  font-size: 0.85rem;
+  color: var(--gold-400, #d4af37);
+  transition: transform 0.25s ease;
+  padding: 0 0.25rem;
+}
+
+.help-process-card.is-open .help-chevron {
+  transform: rotate(180deg);
+}
+
+.help-process-body {
+  padding: 0.75rem 0.85rem;
+  border-top: 1px solid rgba(212, 175, 55, 0.15);
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.help-flow-step {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.step-marker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #0d0914;
+  background: var(--gold-400, #d4af37);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.step-content {
+  color: #cbd5e1;
+}
+
+.step-content strong {
+  display: block;
+  color: #f1f5f9;
+  font-size: 0.8rem;
+  margin-bottom: 0.15rem;
+}
+
+.step-content p {
+  margin: 0;
+  color: #94a3b8;
+}
+
+.step-content code {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--gold-300, #fef08a);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   ABOUT ME: SPIRITUAL KARIM PROFILE & MISSION MODAL
+   ========================================================================== */
+.about-tab-bar {
+  display: flex;
+  gap: 0.4rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+}
+
+.about-tab-btn {
+  padding: 0.45rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.about-tab-btn:hover {
+  color: var(--gold-300, #fef08a);
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.about-tab-btn.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(180, 131, 40, 0.15));
+  border-color: rgba(212, 175, 55, 0.4);
+  color: var(--gold-300, #fef08a);
+}
+
+.about-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(80, 50, 120, 0.2));
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  margin-bottom: 1rem;
+}
+
+.about-hero-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--gold-400, #d4af37);
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.4);
+  flex-shrink: 0;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e1308;
+  font-size: 1.8rem;
+}
+
+.about-hero-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.about-hero-sub {
+  margin: 0.2rem 0;
+  font-size: 0.8rem;
+  color: var(--gold-400, #d4af37);
+  font-weight: 600;
+}
+
+.about-hero-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  background: rgba(212, 175, 55, 0.2);
+  color: var(--gold-300, #fef08a);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+}
+
+.about-story-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.about-story-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-left: 3px solid var(--gold-400, #d4af37);
+  border-radius: 6px;
+  padding: 0.75rem 0.9rem;
+}
+
+.about-story-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold-400, #d4af37);
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.about-story-text {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin: 0 0 0.4rem 0;
+}
+
+.about-story-text:last-child {
+  margin-bottom: 0;
+}
+
+.about-free-banner {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.about-free-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #34d399;
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.about-free-body {
+  font-size: 0.76rem;
+  color: #e2e8f0;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.about-contacts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.about-contact-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  text-decoration: none;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.about-contact-card:hover {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: rgba(212, 175, 55, 0.35);
+  color: var(--gold-300, #fef08a);
+  transform: translateY(-1px);
+}
+
+
+
 
 

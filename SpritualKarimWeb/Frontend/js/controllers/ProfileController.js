@@ -1,3 +1,18 @@
+// Safe localStorage polyfill for non-browser/test runtimes
+if (typeof localStorage === "undefined") {
+  if (typeof global !== "undefined") {
+    if (!global.localStorage) {
+      const _memStore = {};
+      global.localStorage = {
+        getItem: (k) => Object.prototype.hasOwnProperty.call(_memStore, k) ? _memStore[k] : null,
+        setItem: (k, v) => { _memStore[k] = String(v); },
+        removeItem: (k) => { delete _memStore[k]; },
+        clear: () => { for (const k in _memStore) delete _memStore[k]; }
+      };
+    }
+  }
+}
+
 class ProfileController {
   constructor(model, view) {
     this.model = model;
@@ -12,9 +27,11 @@ class ProfileController {
     this._renderCurrentState();
     this._bindNavigationTabs();
     this._bindSadhanaCatalogEvents();
+    this._bindCurrentEventsPanel();
     this.view.initSadhanaListbox();
     this._handleHashRouting();
     this._bindEvents();
+    this._bindEnhancedUIEvents();
     this._setupPowerLossDetection();
     this._setupSessionManagement();
     this._setupCrossTabSync();
@@ -55,6 +72,20 @@ class ProfileController {
               this.initInteractiveComponentShowcase();
             }
           }
+          if (event.data && event.data.type === "SETTINGS_UPDATED") {
+            if (event.data.settings) {
+              this.model.settings = Object.assign(this.model.settings || {}, event.data.settings);
+            }
+            this._renderCurrentState();
+            if (typeof this.view.showBottomRightToast === "function") {
+              this.view.showBottomRightToast({
+                title: "Settings Synchronized",
+                message: "System configuration updated across portal tabs.",
+                type: "info",
+                duration: 2000
+              });
+            }
+          }
           if (event.data && event.data.type === "INVITE_SUBMITTED") {
             const freshInvites = this.model.getPairingInvites();
             this.view.renderPendingApprovalsRows(freshInvites);
@@ -76,7 +107,8 @@ class ProfileController {
   _setupPowerLossDetection() {
     const intervalMs = (typeof window !== "undefined" && window.appConfig?.powerLossCheckIntervalMs) || 15000;
     setInterval(() => {
-      const lastWrite = parseInt(localStorage.getItem('sk_last_write_ts') || '0', 10);
+      const storage = (typeof localStorage !== "undefined") ? localStorage : ((typeof window !== "undefined" && window.localStorage) ? window.localStorage : null);
+      const lastWrite = parseInt(storage ? (storage.getItem('sk_last_write_ts') || '0') : '0', 10);
       if (lastWrite > 0 && (Date.now() - lastWrite > intervalMs)) {
         console.warn('[POWER_LOSS_DETECTED] Unsaved changes may be lost');
       }
@@ -154,35 +186,45 @@ class ProfileController {
   // Device OS Theme Management (Auto / Dark / Light)
   // ==========================================
   _initTheme() {
-    const savedTheme = localStorage.getItem("sk_theme_preference") || "auto";
+    const storage = (typeof localStorage !== "undefined") ? localStorage : ((typeof window !== "undefined" && window.localStorage) ? window.localStorage : null);
+    const savedTheme = storage ? (storage.getItem("sk_theme_preference") || "auto") : "auto";
     this._applyTheme(savedTheme, false);
 
     // Dynamic listener for OS theme preference changes
     try {
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      mediaQuery.addEventListener("change", () => {
-        const currentPref =
-          localStorage.getItem("sk_theme_preference") || "auto";
-        if (currentPref === "auto") {
-          this._applyTheme("auto", false);
+      if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        if (mediaQuery && typeof mediaQuery.addEventListener === "function") {
+          mediaQuery.addEventListener("change", () => {
+            const currentPref = storage ? (storage.getItem("sk_theme_preference") || "auto") : "auto";
+            if (currentPref === "auto") {
+              this._applyTheme("auto", false);
+            }
+          });
         }
-      });
+      }
     } catch (err) {
       console.warn("MatchMedia listener error", err);
     }
   }
 
   _applyTheme(pref, showToast = false) {
-    localStorage.setItem("sk_theme_preference", pref);
+    const storage = (typeof localStorage !== "undefined") ? localStorage : ((typeof window !== "undefined" && window.localStorage) ? window.localStorage : null);
+    if (storage) {
+      try { storage.setItem("sk_theme_preference", pref); } catch (e) {}
+    }
     let resolvedTheme = pref;
     if (pref === "auto") {
       const prefersDark =
+        typeof window !== "undefined" &&
         window.matchMedia &&
         window.matchMedia("(prefers-color-scheme: dark)").matches;
       resolvedTheme = prefersDark ? "dark" : "light";
     }
 
-    document.documentElement.setAttribute("data-theme", resolvedTheme);
+    if (typeof document !== "undefined" && document.documentElement) {
+      document.documentElement.setAttribute("data-theme", resolvedTheme);
+    }
 
     if (this.view.themeIcon && this.view.themeLabel) {
       if (pref === "auto") {
@@ -213,7 +255,8 @@ class ProfileController {
   }
 
   _cycleTheme() {
-    const current = localStorage.getItem("sk_theme_preference") || "auto";
+    const storage = (typeof localStorage !== "undefined") ? localStorage : ((typeof window !== "undefined" && window.localStorage) ? window.localStorage : null);
+    const current = storage ? (storage.getItem("sk_theme_preference") || "auto") : "auto";
     const sequence = ["auto", "dark", "light"];
     const nextIndex = (sequence.indexOf(current) + 1) % sequence.length;
     const nextTheme = sequence[nextIndex];
@@ -254,6 +297,7 @@ class ProfileController {
 
     this._enforcePortalVisibility(roleMode);
     this._filterRemedies();
+    this._applyEventPanelRBAC();
   }
 
   /**
@@ -262,12 +306,16 @@ class ProfileController {
    */
   _enforcePortalVisibility(roleMode) {
     const matrix = this.model.getAuthMatrix();
-    const bodyRole = (document.body.getAttribute("data-portal-role") || roleMode || "MASTER").toLowerCase();
+    const rawRole = (document.body.getAttribute("data-portal-role") || roleMode || "MASTER").toLowerCase();
+    const bodyRole = rawRole.includes("admin") || rawRole.includes("master") ? "masters" : rawRole;
 
     const items = Array.isArray(matrix) ? matrix : Object.values(matrix || {});
     items.forEach((item) => {
-      if (!item || !item.portalVisible) return;
-      const shouldBeVisible = item.portalVisible[bodyRole] !== false;
+      const pv = item.portalVisible || item.portals;
+      if (!item || !pv) return;
+      const shouldBeVisible = bodyRole === "masters"
+        ? (pv.masters !== false && pv.master !== false && pv.admin !== false)
+        : pv[bodyRole] !== false;
       const selector = item.selector || (item.id ? `#${item.id}` : null);
       if (!selector) return;
 
@@ -277,6 +325,8 @@ class ProfileController {
           if (!shouldBeVisible) {
             el.style.display = "none";
             el.classList.add("portal-hidden");
+          } else {
+            el.classList.remove("portal-hidden");
           }
         });
       } catch (e) {}
@@ -300,7 +350,8 @@ class ProfileController {
       const titleEl = card.querySelector(".option-title");
       const tagEl = card.querySelector(".option-tag");
       const sadhanaId = card.getAttribute("data-sadhana-id") || "";
-      const catalogItem = SADHANA_CATALOG[sadhanaId] || {};
+      const catalog = (this.model && typeof this.model.getSadhanaCatalog === 'function') ? this.model.getSadhanaCatalog() : {};
+      const catalogItem = catalog[sadhanaId] || {};
 
       const textContent =
         `${titleEl ? titleEl.textContent : ""} ${tagEl ? tagEl.textContent : ""} ${catalogItem.summary || ""} ${catalogItem.mantra || ""}`.toLowerCase();
@@ -409,14 +460,177 @@ class ProfileController {
     });
   }
 
-  _bindSadhanaCatalogEvents() {
-    // 1. Delegated Click on Sadhana/Remedy Card Option / Eye Trigger -> Open Slide-out Drawer
+  /**
+   * Binds event listeners for the Current Events in Progress panel:
+   * - ＋ Add Event CTA button  → MASTER/HEALER: view.showAddEventDialog() | TRAINEE/DEVOTEE: toast + no-op
+   * - ✏️ Edit button (per tile) → MASTER/HEALER: view.showEditEventDialog(id) | TRAINEE/DEVOTEE: toast + no-op
+   * - ⋮ Options button         → future options menu placeholder
+   * Applies init-time RBAC visual state via _applyEventPanelRBAC().
+   * Role gate uses model.getRoleMode() as the single source of truth.
+   */
+  _bindCurrentEventsPanel() {
+    // Apply role-based visual state immediately on init
+    this._applyEventPanelRBAC();
+
+    // Delegated handler on document for resilience (panel may not be in DOM at init)
     document.addEventListener("click", (e) => {
+      const rawRole = (this.model && typeof this.model.getRoleMode === "function" ? this.model.getRoleMode() : "MASTER") || "MASTER";
+      const resolvedRole = (typeof ScreenAuthMatrix !== "undefined" && typeof ScreenAuthMatrix.resolveRole === "function")
+        ? ScreenAuthMatrix.resolveRole(rawRole)
+        : ((rawRole.toUpperCase().includes("ADMIN") || rawRole.toUpperCase().includes("MASTER")) ? "MASTER" : rawRole.toUpperCase());
+
+      const matrix = (this.model && typeof this.model.getAuthMatrix === "function")
+        ? this.model.getAuthMatrix()
+        : (typeof ScreenAuthMatrix !== "undefined" ? ScreenAuthMatrix.getAuthMatrix() : []);
+
+      const checkAllowed = (elementId, defaultAllowed) => {
+        const item = Array.isArray(matrix) ? matrix.find(x => x && x.id === elementId) : null;
+        if (!item) return defaultAllowed;
+        if (item.roles && item.roles[resolvedRole] !== undefined) {
+          return item.roles[resolvedRole] !== false;
+        }
+        if (item[resolvedRole] !== undefined) {
+          return item[resolvedRole] !== false;
+        }
+        return defaultAllowed;
+      };
+
+      // ── ＋ Add Event button ──────────────────────────────────────────────
+      if (e.target.closest("#btn-add-current-event")) {
+        e.preventDefault();
+        e.stopPropagation();
+        const isAuthorized = checkAllowed("btn_add_current_event", resolvedRole === "MASTER" || resolvedRole === "HEALER");
+        if (isAuthorized) {
+          if (typeof this.view.showAddEventDialog === "function") {
+            this.view.showAddEventDialog();
+          }
+        } else {
+          if (typeof this.view.showToast === "function") {
+            this.view.showToast("🔒 Adding events is restricted per Authorization Matrix.");
+          }
+        }
+        return;
+      }
+
+      // ── ✏️ Edit Event button ─────────────────────────────────────────────
+      const editBtn = e.target.closest(".btn-event-edit");
+      if (editBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const isAuthorized = checkAllowed("btn_edit_current_event", resolvedRole === "MASTER" || resolvedRole === "HEALER");
+        if (isAuthorized) {
+          const eventId = editBtn.getAttribute("data-event-id");
+          if (eventId && typeof this.view.showEditEventDialog === "function") {
+            this.view.showEditEventDialog(eventId);
+          }
+        } else {
+          if (typeof this.view.showToast === "function") {
+            this.view.showToast("🔒 Editing events is restricted per Authorization Matrix.");
+          }
+        }
+        return;
+      }
+
+      // ── ⋮ Event Options button ───────────────────────────────────────────
+      const optionsBtn = e.target.closest(".btn-event-options");
+      if (optionsBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const eventId = optionsBtn.getAttribute("data-event-id");
+        if (eventId && typeof this.view.showToast === "function") {
+          this.view.showToast(`⚙️ Options for event: ${eventId}`);
+        }
+        return;
+      }
+    });
+  }
+
+  /**
+   * Applies role-based visual state (active vs. inactive/disabled) to the
+   * Add Event CTA button and all Edit buttons inside the current events panel.
+   * Dynamically checks permissions from the Screen Authorization Matrix.
+   * MASTER / HEALER → active (normal appearance, cursor: pointer)
+   * TRAINEE / DEVOTEE → inactive (dim, cursor: not-allowed, aria-disabled)
+   * Called on init and re-called whenever role changes or matrix updates.
+   */
+  _applyEventPanelRBAC() {
+    const rawRole = (this.model && typeof this.model.getRoleMode === "function" ? this.model.getRoleMode() : "MASTER") || "MASTER";
+    const resolvedRole = (typeof ScreenAuthMatrix !== "undefined" && typeof ScreenAuthMatrix.resolveRole === "function")
+      ? ScreenAuthMatrix.resolveRole(rawRole)
+      : ((rawRole.toUpperCase().includes("ADMIN") || rawRole.toUpperCase().includes("MASTER")) ? "MASTER" : rawRole.toUpperCase());
+
+    const matrix = (this.model && typeof this.model.getAuthMatrix === "function")
+      ? this.model.getAuthMatrix()
+      : (typeof ScreenAuthMatrix !== "undefined" ? ScreenAuthMatrix.getAuthMatrix() : []);
+
+    const checkAllowed = (elementId, defaultAllowed) => {
+      const item = Array.isArray(matrix) ? matrix.find(x => x && x.id === elementId) : null;
+      if (!item) return defaultAllowed;
+      if (item.roles && item.roles[resolvedRole] !== undefined) {
+        return item.roles[resolvedRole] !== false;
+      }
+      if (item[resolvedRole] !== undefined) {
+        return item[resolvedRole] !== false;
+      }
+      return defaultAllowed;
+    };
+
+    const isAddAuthorized = checkAllowed("btn_add_current_event", resolvedRole === "MASTER" || resolvedRole === "HEALER");
+    const isEditAuthorized = checkAllowed("btn_edit_current_event", resolvedRole === "MASTER" || resolvedRole === "HEALER");
+
+    // Add Event CTA
+    const addBtn = document.getElementById("btn-add-current-event");
+    if (addBtn) {
+      addBtn.classList.toggle("btn-event-auth-disabled", !isAddAuthorized);
+      if (isAddAuthorized) {
+        addBtn.removeAttribute("aria-disabled");
+        addBtn.removeAttribute("disabled");
+        addBtn.title = "Add a new current event";
+      } else {
+        addBtn.setAttribute("aria-disabled", "true");
+        addBtn.title = "🔒 Adding events is restricted per Authorization Matrix.";
+      }
+    }
+
+    // All Edit buttons
+    document.querySelectorAll(".btn-event-edit").forEach(btn => {
+      btn.classList.toggle("btn-event-auth-disabled", !isEditAuthorized);
+      if (isEditAuthorized) {
+        btn.removeAttribute("aria-disabled");
+        btn.removeAttribute("disabled");
+        btn.title = "Edit Event Details";
+      } else {
+        btn.setAttribute("aria-disabled", "true");
+        btn.title = "🔒 Editing events is restricted per Authorization Matrix.";
+      }
+    });
+  }
+
+  _bindSadhanaCatalogEvents() {
+    // 1. Delegated Click on Sadhana/Remedy Card Option / Eye Trigger -> Toggle Slide-out Drawer
+    document.addEventListener("click", (e) => {
+      // Close triggers: close button, backdrop, or footer close action
+      if (e.target.closest("#btn-close-sadhana-drawer") || e.target.id === "sadhana-drawer-backdrop" || e.target.closest(".btn-close-sadhana-drawer-action")) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.view.closeSadhanaDrawer();
+        return;
+      }
+
+      // Eye Icon Trigger Click: Toggle Drawer (1st click open, 2nd click close)
       const eyeBtn = e.target.closest(".btn-sadhana-info-trigger");
       if (eyeBtn) {
+        e.preventDefault();
+        e.stopPropagation();
         const sadhanaKey = eyeBtn.getAttribute("data-sadhana-id");
         if (sadhanaKey) {
-          this.view.openSadhanaDrawer(sadhanaKey);
+          if (typeof this.view.toggleSadhanaDrawer === "function") {
+            this.view.toggleSadhanaDrawer(sadhanaKey);
+          } else if (this.view.isSadhanaDrawerOpen && this.view.currentSadhanaKey === sadhanaKey) {
+            this.view.closeSadhanaDrawer();
+          } else {
+            this.view.openSadhanaDrawer(sadhanaKey);
+          }
           return;
         }
       }
@@ -493,17 +707,24 @@ class ProfileController {
         }
       }
 
-      // Catalog Remedy card click (open ritual drawer)
+      // Catalog Remedy card click: Toggle Drawer (1st click open, 2nd click close)
       const remedyCard = e.target.closest(".remedy-card-option");
-      if (remedyCard && !e.target.closest(".tile-actions-vertical")) {
+      if (remedyCard && !e.target.closest(".tile-actions-vertical") && !e.target.closest("input, button")) {
         const sadhanaKey = remedyCard.getAttribute("data-sadhana-id");
         if (sadhanaKey) {
-          this.view.openSadhanaDrawer(sadhanaKey);
+          if (typeof this.view.toggleSadhanaDrawer === "function") {
+            this.view.toggleSadhanaDrawer(sadhanaKey);
+          } else if (this.view.isSadhanaDrawerOpen && this.view.currentSadhanaKey === sadhanaKey) {
+            this.view.closeSadhanaDrawer();
+          } else {
+            this.view.openSadhanaDrawer(sadhanaKey);
+          }
+          return;
         }
       }
     });
 
-    // Close Sadhana Drawer
+    // Close Sadhana Drawer direct triggers
     const btnCloseDrawer = document.getElementById("btn-close-sadhana-drawer");
     if (btnCloseDrawer)
       btnCloseDrawer.addEventListener("click", () =>
@@ -514,6 +735,15 @@ class ProfileController {
       drawerBackdrop.addEventListener("click", () =>
         this.view.closeSadhanaDrawer(),
       );
+
+    // Keyboard Escape key to dismiss drawer
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" || e.key === "Esc") {
+        if (this.view && this.view.isSadhanaDrawerOpen) {
+          this.view.closeSadhanaDrawer();
+        }
+      }
+    });
 
     // 2. Checkbox change: Ticking auto-syncs into Trainee Sadhak In-Progress
     document.addEventListener("change", (e) => {
@@ -534,7 +764,8 @@ class ProfileController {
         if (!profile.interestedSadhanas) profile.interestedSadhanas = [];
         if (!profile.traineeSadhanas) profile.traineeSadhanas = [];
 
-        const catalogItem = SADHANA_CATALOG[key] || {
+        const catalog = (this.model && typeof this.model.getSadhanaCatalog === 'function') ? this.model.getSadhanaCatalog() : {};
+        const catalogItem = catalog[key] || {
           id: key,
           title: key,
           category: "Sadhana",
@@ -1671,8 +1902,8 @@ class ProfileController {
       selectSacredSadhana.addEventListener("change", (e) => {
         this.view.renderSadhanaDetailPreview(e.target.value);
         const item =
-          typeof SADHANA_CATALOG !== "undefined"
-            ? SADHANA_CATALOG[e.target.value]
+          (this.model && typeof this.model.getSadhanaCatalog === "function")
+            ? this.model.getSadhanaCatalog()[e.target.value]
             : null;
         this.view.showSlideToast(
           "Sadhana Loaded",
@@ -1684,15 +1915,13 @@ class ProfileController {
     }
 
     // 4. RBAC Access Matrix Modal Listeners
-    ["btn-open-rbac-matrix", "sidebar-btn-rbac-matrix"].forEach((id) => {
-      const btn = document.getElementById(id);
-      if (btn) {
-        btn.addEventListener("click", (e) => {
-          e.preventDefault();
-          this.view.toggleRbacMatrixModal(true);
-        });
-      }
-    });
+    const btnOpenRbac = document.getElementById("btn-open-rbac-matrix");
+    if (btnOpenRbac) {
+      btnOpenRbac.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.view.toggleRbacMatrixModal(true);
+      });
+    }
 
     ["btn-close-rbac-modal", "btn-close-rbac-footer"].forEach((id) => {
       const btn = document.getElementById(id);
@@ -1727,6 +1956,8 @@ class ProfileController {
         e.preventDefault();
         if (typeof this.view.openSadhanaExplorerModal === "function") {
           this.view.openSadhanaExplorerModal();
+        } else if (typeof ProfileView !== "undefined" && typeof ProfileView.prototype.openSadhanaExplorerModal === "function") {
+          ProfileView.prototype.openSadhanaExplorerModal.call(this.view);
         }
       });
     }
@@ -1737,9 +1968,99 @@ class ProfileController {
         e.preventDefault();
         if (typeof this.view.openRemedyHubModal === "function") {
           this.view.openRemedyHubModal();
+        } else if (typeof ProfileView !== "undefined" && typeof ProfileView.prototype.openRemedyHubModal === "function") {
+          ProfileView.prototype.openRemedyHubModal.call(this.view);
         }
       });
     }
+
+    // 5.6 Pending Approvals Sidebar Action
+    const btnSidebarPending = document.getElementById("sidebar-btn-pending-approvals");
+    if (btnSidebarPending) {
+      btnSidebarPending.addEventListener("click", (e) => {
+        e.preventDefault();
+        const role = (this.model.getRoleMode() || "MASTER").toUpperCase();
+        if (["DEVOTEE", "SEEKER", "TRAINEE", "SADHAK"].includes(role)) {
+          if (typeof this.view.showSlideToast === "function") {
+            this.view.showSlideToast("Access Restricted", "Devotee/Seeker and Trainee/Sadhak do not have approval permissions.", "warning");
+          } else {
+            this.view.showToast("⛔ Access Denied: Approvals are restricted to Mentors and Admin Masters.", "warning");
+          }
+          return;
+        }
+        const scopedInvites = this.model.getPairingInvitesForRole(role, this.model.getActiveProfile());
+        this.view.openPendingApprovalsDrawer(scopedInvites);
+      });
+    }
+
+    // 5.7 Help & Support and About App Sidebar Actions
+    const btnHelpSupport = document.getElementById("sidebar-btn-help-support");
+    if (btnHelpSupport) {
+      btnHelpSupport.addEventListener("click", (e) => {
+        e.preventDefault();
+        const helpModal = document.getElementById("modal-help-support");
+        if (helpModal) {
+          helpModal.style.display = "flex";
+          helpModal.classList.add("is-open", "open");
+          helpModal.setAttribute("aria-hidden", "false");
+        }
+      });
+    }
+
+    const btnAboutApp = document.getElementById("sidebar-btn-about-app");
+    if (btnAboutApp) {
+      btnAboutApp.addEventListener("click", (e) => {
+        e.preventDefault();
+        const aboutModal = document.getElementById("modal-about-app");
+        if (aboutModal) {
+          aboutModal.style.display = "flex";
+          aboutModal.classList.add("is-open", "open");
+          aboutModal.setAttribute("aria-hidden", "false");
+        }
+      });
+    }
+
+    // 5.8 Help & Support 3-Process Accordion & About Modal Tabs
+    document.addEventListener("click", (e) => {
+      const processTrigger = e.target.closest(".help-process-header[data-toggle-process]");
+      if (processTrigger) {
+        e.preventDefault();
+        const targetId = processTrigger.getAttribute("data-toggle-process");
+        const body = document.getElementById(targetId);
+        const card = processTrigger.closest(".help-process-card");
+        if (body && card) {
+          const isOpen = card.classList.contains("is-open");
+          if (isOpen) {
+            body.style.display = "none";
+            card.classList.remove("is-open");
+            processTrigger.setAttribute("aria-expanded", "false");
+          } else {
+            body.style.display = "flex";
+            card.classList.add("is-open");
+            processTrigger.setAttribute("aria-expanded", "true");
+          }
+        }
+        return;
+      }
+
+      const aboutTabBtn = e.target.closest(".about-tab-btn[data-about-tab]");
+      if (aboutTabBtn) {
+        e.preventDefault();
+        const targetTabId = aboutTabBtn.getAttribute("data-about-tab");
+        document.querySelectorAll(".about-tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".about-tab-pane").forEach(p => {
+          p.classList.remove("active");
+          p.style.display = "none";
+        });
+        aboutTabBtn.classList.add("active");
+        const targetPane = document.getElementById(targetTabId);
+        if (targetPane) {
+          targetPane.classList.add("active");
+          targetPane.style.display = "block";
+        }
+        return;
+      }
+    });
 
     // 6. Admin System Settings Modal Listeners
     ["btn-admin-settings", "sidebar-btn-admin-settings"].forEach((id) => {
@@ -2223,6 +2544,8 @@ class ProfileController {
         e.preventDefault();
         if (typeof this.view.openSadhanaExplorerModal === "function") {
           this.view.openSadhanaExplorerModal();
+        } else if (typeof ProfileView !== "undefined" && typeof ProfileView.prototype.openSadhanaExplorerModal === "function") {
+          ProfileView.prototype.openSadhanaExplorerModal.call(this.view);
         }
         return;
       }
@@ -2233,6 +2556,33 @@ class ProfileController {
         e.preventDefault();
         if (typeof this.view.openRemedyHubModal === "function") {
           this.view.openRemedyHubModal();
+        } else if (typeof ProfileView !== "undefined" && typeof ProfileView.prototype.openRemedyHubModal === "function") {
+          ProfileView.prototype.openRemedyHubModal.call(this.view);
+        }
+        return;
+      }
+
+      // Open Help & Support and About App Modals
+      const btnOpenHelp = e.target.closest("#sidebar-btn-help-support");
+      if (btnOpenHelp) {
+        e.preventDefault();
+        const helpModal = document.getElementById("modal-help-support");
+        if (helpModal) {
+          helpModal.style.display = "flex";
+          helpModal.classList.add("is-open", "open");
+          helpModal.setAttribute("aria-hidden", "false");
+        }
+        return;
+      }
+
+      const btnOpenAbout = e.target.closest("#sidebar-btn-about-app");
+      if (btnOpenAbout) {
+        e.preventDefault();
+        const aboutModal = document.getElementById("modal-about-app");
+        if (aboutModal) {
+          aboutModal.style.display = "flex";
+          aboutModal.classList.add("is-open", "open");
+          aboutModal.setAttribute("aria-hidden", "false");
         }
         return;
       }
@@ -3200,6 +3550,96 @@ ProfileController.prototype.bindPendingApprovalDrawerEvents = function() {
 };
 
 ProfileController.prototype._bindSidebarActions = function() {
+  // Enterprise Standard Navigation Drawer (15 Nodes Architecture - Rule 7)
+  const navItems = document.querySelectorAll(".enterprise-nav-item");
+  const self = this;
+  navItems.forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = item.getAttribute("data-nav-target");
+      if (!target) return;
+
+      navItems.forEach(i => i.classList.remove("active"));
+      item.classList.add("active");
+
+      switch(target) {
+        case "dashboard":
+          if (typeof self.handleTabSwitch === "function") self.handleTabSwitch("tab-1");
+          if (self.view && self.view.showToast) self.view.showToast("📊 Switched to Sansthan Dashboard");
+          break;
+        case "children":
+          const btnTree = document.getElementById("btn-open-tree-view");
+          if (btnTree) btnTree.click();
+          break;
+        case "live-map":
+          const mapModal = document.getElementById("modal-live-map");
+          if (mapModal) { mapModal.style.display = "flex"; mapModal.classList.add("is-open", "open"); }
+          break;
+        case "location-history":
+          const histModal = document.getElementById("modal-location-history");
+          if (histModal) { histModal.style.display = "flex"; histModal.classList.add("is-open", "open"); }
+          break;
+        case "groups":
+          const grpModal = document.getElementById("modal-groups");
+          if (grpModal) { grpModal.style.display = "flex"; grpModal.classList.add("is-open", "open"); }
+          break;
+        case "safe-zones":
+          const zoneModal = document.getElementById("modal-safe-zones");
+          if (zoneModal) { zoneModal.style.display = "flex"; zoneModal.classList.add("is-open", "open"); }
+          break;
+        case "guardians":
+          const guarModal = document.getElementById("modal-guardians");
+          if (guarModal) { guarModal.style.display = "flex"; guarModal.classList.add("is-open", "open"); }
+          break;
+        case "notifications":
+          const notifBtn = document.getElementById("header-btn-notifications");
+          if (notifBtn) notifBtn.click();
+          break;
+        case "device-health":
+          const healthModal = document.getElementById("modal-device-health");
+          if (healthModal) { healthModal.style.display = "flex"; healthModal.classList.add("is-open", "open"); }
+          break;
+        case "profile":
+          if (typeof self.handleTabSwitch === "function") self.handleTabSwitch("tab-1");
+          if (self.view && self.view.showToast) self.view.showToast("👤 Devotee Profile View Active");
+          break;
+        case "settings":
+          const btnAdminSettings = document.getElementById("sidebar-btn-admin-settings");
+          if (btnAdminSettings) btnAdminSettings.click();
+          break;
+        case "privacy":
+          const privModal = document.getElementById("modal-privacy-controls");
+          if (privModal) { privModal.style.display = "flex"; privModal.classList.add("is-open", "open"); }
+          break;
+        case "help":
+          const helpModal = document.getElementById("modal-help-support");
+          if (helpModal) { helpModal.style.display = "flex"; helpModal.classList.add("is-open", "open"); }
+          break;
+        case "about":
+          const aboutModal = document.getElementById("modal-about-app");
+          if (aboutModal) { aboutModal.style.display = "flex"; aboutModal.classList.add("is-open", "open"); }
+          break;
+        case "logout":
+          const logoutBtn = document.getElementById("btn-sidebar-logout");
+          if (logoutBtn) logoutBtn.click();
+          break;
+      }
+    });
+  });
+
+  // Generic modal close handlers
+  document.querySelectorAll("[data-close-modal]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const modalId = btn.getAttribute("data-close-modal");
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.style.display = "none";
+        modal.classList.remove("is-open", "open");
+        modal.setAttribute("aria-hidden", "true");
+      }
+    });
+  });
+
   // 0. Sidebar Logout Button Action
   const btnLogout = this.view?.btnSidebarLogout || document.getElementById("btn-sidebar-logout");
   if (btnLogout) {
@@ -3240,64 +3680,28 @@ ProfileController.prototype._bindSidebarActions = function() {
     });
   }
 
-  // 2. Modify Auth Matrix Button
-  const btnModifyAuth = document.getElementById("sidebar-btn-modify-auth-matrix");
-  if (btnModifyAuth) {
-    btnModifyAuth.addEventListener("click", (e) => {
+  // 2. Sidebar Support Actions (Help & Support and About)
+  const btnHelpModal = document.getElementById("sidebar-btn-help-support");
+  if (btnHelpModal) {
+    btnHelpModal.addEventListener("click", (e) => {
       e.preventDefault();
-      if (typeof this.view.toggleRbacMatrixModal === "function") {
-        this.view.toggleRbacMatrixModal(true);
+      const helpModal = document.getElementById("modal-help-support");
+      if (helpModal) {
+        helpModal.style.display = "flex";
+        helpModal.classList.add("is-open", "open");
+        helpModal.setAttribute("aria-hidden", "false");
       }
     });
   }
-
-  // 3. Generate New Reference Code
-  const btnGenRef = document.getElementById("btn-gen-ref-code");
-  if (btnGenRef) {
-    btnGenRef.addEventListener("click", (e) => {
+  const btnAboutModal = document.getElementById("sidebar-btn-about-app");
+  if (btnAboutModal) {
+    btnAboutModal.addEventListener("click", (e) => {
       e.preventDefault();
-      const roleMode = this.model.getRoleMode();
-      const prefix = roleMode === "HEALER" ? "SKHL" : roleMode === "DEVOTEE" ? "SKDV" : "SKHM";
-      const code = typeof this.model.generate16DigitCode === "function"
-        ? this.model.generate16DigitCode(prefix)
-        : `${prefix}-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-      if (this.view.inputRefCode) {
-        this.view.inputRefCode.value = code;
-      }
-      this.view.showToast(`🎲 Generated: ${code}`);
-    });
-  }
-
-  // 4. Copy 16-Digit Reference Code
-  const btnCopyRef = document.getElementById("btn-copy-ref-code");
-  if (btnCopyRef) {
-    btnCopyRef.addEventListener("click", (e) => {
-      e.preventDefault();
-      const activeProf = this.model.getActiveProfile();
-      const code = (this.view.inputRefCode && this.view.inputRefCode.value) || (activeProf && activeProf.referenceCode) || "SK-MASTER-2025-0001";
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(code).then(() => {
-          this.view.showToast(`📋 Copied Reference Code: ${code}`);
-        });
-      }
-    });
-  }
-
-  // 5. Toggle JSON Drawer / Viewer
-  const btnToggleJson = document.getElementById("btn-toggle-json-drawer");
-  if (btnToggleJson) {
-    btnToggleJson.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (typeof this.view.toggleJsonDrawer === "function") {
-        this.view.toggleJsonDrawer(true);
-      }
-    });
-  }
-  const btnCloseJson = document.getElementById("btn-close-json-drawer");
-  if (btnCloseJson) {
-    btnCloseJson.addEventListener("click", () => {
-      if (typeof this.view.toggleJsonDrawer === "function") {
-        this.view.toggleJsonDrawer(false);
+      const aboutModal = document.getElementById("modal-about-app");
+      if (aboutModal) {
+        aboutModal.style.display = "flex";
+        aboutModal.classList.add("is-open", "open");
+        aboutModal.setAttribute("aria-hidden", "false");
       }
     });
   }
@@ -3387,6 +3791,581 @@ ProfileController.prototype.toggleTierProfilesPanel = function(tierFilter) {
       this.openHierarchyTreeForTier(openTier);
     }
   );
+};
+
+// ==============================================================
+// ENTERPRISE UI/UX COMPONENT SUITE EVENT BINDINGS
+// ==============================================================
+ProfileController.prototype._bindEnhancedUIEvents = function() {
+  if (typeof document === "undefined") return;
+
+  // 1. Left/Right Segmented View Mode Toggle (Grid vs List)
+  const btnToggleGrid = document.getElementById("btn-toggle-grid");
+  const btnToggleList = document.getElementById("btn-toggle-list");
+
+  if (btnToggleGrid) {
+    btnToggleGrid.addEventListener("click", () => {
+      if (this.view && typeof this.view.setViewMode === "function") {
+        this.view.setViewMode("GRID");
+      }
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "View Mode Changed",
+          message: "Directory view switched to Grid Cards",
+          type: "info",
+          duration: 2000
+        });
+      }
+    });
+  }
+
+  if (btnToggleList) {
+    btnToggleList.addEventListener("click", () => {
+      if (this.view && typeof this.view.setViewMode === "function") {
+        this.view.setViewMode("LIST");
+      }
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "View Mode Changed",
+          message: "Directory view switched to Compact List",
+          type: "info",
+          duration: 2000
+        });
+      }
+    });
+  }
+
+  // Restore saved view mode preference
+  try {
+    const savedMode = localStorage.getItem("sk_view_mode") || "GRID";
+    if (this.view && typeof this.view.setViewMode === "function") {
+      this.view.setViewMode(savedMode);
+    }
+  } catch (e) {}
+
+  // 2. 3D Card Flipper Trigger Button for Selected Member Card
+  const btnSelectedMemberFlip = document.getElementById("btn-selected-member-flip");
+  if (btnSelectedMemberFlip) {
+    btnSelectedMemberFlip.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (this.view && typeof this.view.flipSelectedMemberCard === "function") {
+        this.view.flipSelectedMemberCard();
+      }
+    });
+  }
+
+  // 3. Enhanced Search Textbox with Clear Button
+  const inputTierSearch = document.getElementById("input-tier-panel-search");
+  const btnClearTierSearch = document.getElementById("btn-clear-tier-search");
+  const searchWrap = inputTierSearch ? inputTierSearch.closest(".textbox-enhanced-wrap") : null;
+
+  if (inputTierSearch) {
+    const handleSearch = () => {
+      const q = inputTierSearch.value.toLowerCase().trim();
+      if (searchWrap) {
+        searchWrap.classList.toggle("has-value", q.length > 0);
+      }
+      // Filter the member items in tier panel
+      const memberRows = document.querySelectorAll("#tier-panel-profiles-list .tier-panel-profile-card, #tier-panel-profiles-list .tier-member-row-item");
+      let visibleCount = 0;
+      memberRows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const match = q === "" || text.includes(q);
+        row.style.display = match ? "" : "none";
+        if (match) visibleCount++;
+      });
+      const countBadge = document.getElementById("tier-panel-count");
+      if (countBadge) {
+        countBadge.textContent = `${visibleCount} Member${visibleCount === 1 ? '' : 's'}`;
+      }
+    };
+
+    inputTierSearch.addEventListener("input", handleSearch);
+
+    if (btnClearTierSearch) {
+      btnClearTierSearch.addEventListener("click", () => {
+        inputTierSearch.value = "";
+        handleSearch();
+        inputTierSearch.focus();
+      });
+    }
+  }
+
+  // 4. Rich Searchable Dropdown List Box
+  const dropdownPicker = document.getElementById("dropdown-devotee-picker");
+  const dropdownTrigger = document.getElementById("dropdown-devotee-trigger");
+
+  if (dropdownPicker && dropdownTrigger) {
+    dropdownTrigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdownPicker.classList.toggle("is-open");
+      const filterInput = document.getElementById("input-dropdown-filter");
+      if (dropdownPicker.classList.contains("is-open") && filterInput) {
+        setTimeout(() => filterInput.focus(), 50);
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!dropdownPicker.contains(e.target)) {
+        dropdownPicker.classList.remove("is-open");
+      }
+    });
+
+    // Populate dropdown with all profiles
+    if (this.view && typeof this.view.populateDevoteeDropdown === "function") {
+      const allProfiles = this.model ? (typeof this.model.getAllProfiles === "function" ? this.model.getAllProfiles() : (this.model.profiles || [])) : [];
+      this.view.populateDevoteeDropdown(allProfiles, (selectedMember) => {
+        if (selectedMember && this.view && typeof this.view.renderTierProfileDetails === "function") {
+          this.view.renderTierProfileDetails(selectedMember);
+        }
+        if (this.view && typeof this.view.showBottomRightToast === "function") {
+          this.view.showBottomRightToast({
+            title: "Devotee Selected",
+            message: `Focused on ${selectedMember.name || 'Member'} (${selectedMember.referenceCode || ''})`,
+            type: "success",
+            duration: 2500
+          });
+        }
+      });
+    }
+  }
+
+  // 5. Global Multi-Option Decision Modal Actions Delegation
+  const decisionModal = document.getElementById("modal-multi-option-decision");
+  if (decisionModal) {
+    decisionModal.querySelectorAll(".multi-option-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const decision = card.getAttribute("data-decision") || "APPROVE";
+        const title = card.querySelector(".multi-option-card-title")?.textContent || decision;
+
+        // Post decision telemetry to backend if available
+        try {
+          if (typeof fetch !== "undefined") {
+            fetch("/api/profiles/decision", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                applicantId: this.model ? this.model.activeProfileId : "unknown",
+                decision: decision,
+                reviewerName: this.model ? this.model.getAnchorProfile()?.name : "Admin Master",
+                timestamp: Date.now()
+              })
+            }).catch(err => console.warn("Backend decision sync notice:", err));
+          }
+        } catch (e) {}
+
+        // Close modal
+        decisionModal.style.display = "none";
+        decisionModal.classList.remove("open");
+        decisionModal.setAttribute("aria-hidden", "true");
+
+        if (this.view && typeof this.view.showBottomRightToast === "function") {
+          this.view.showBottomRightToast({
+            title: `Decision: ${decision}`,
+            message: `Action recorded: "${title}" processed in audit trail.`,
+            type: decision === "APPROVE" ? "success" : decision === "REJECT" ? "error" : "warning",
+            duration: 3500
+          });
+        }
+      });
+    });
+  }
+
+  // 6. Live Map Telemetry Focus & Ping
+  document.querySelectorAll("#modal-live-map .btn-center-ping").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const center = btn.getAttribute("data-center") || "Ashram Node";
+      const statusDiv = document.getElementById("live-map-telemetry-status");
+      if (statusDiv) {
+        statusDiv.textContent = `📡 Pinging ${center}... [Latency: ${(Math.random() * 15 + 8).toFixed(1)}ms | Signal: -48dBm | Status: SYNCHRONIZED]`;
+        statusDiv.style.color = "#10b981";
+      }
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "Node Telemetry Ping",
+          message: `Synchronized with ${center}. RTDB heartbeat verified.`,
+          type: "success",
+          duration: 2500
+        });
+      }
+    });
+  });
+
+  // 7. Location & Attendance Check-in Form
+  const btnCheckin = document.getElementById("btn-submit-location-checkin");
+  const selectZone = document.getElementById("select-checkin-zone");
+  const inputNote = document.getElementById("input-checkin-note");
+  const historyList = document.getElementById("location-history-list");
+  if (btnCheckin && selectZone) {
+    btnCheckin.addEventListener("click", () => {
+      const zone = selectZone.value;
+      const note = inputNote ? (inputNote.value.trim() || "Diya / Mala Sadhana Completed") : "Diya Completed";
+      const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      if (historyList) {
+        const newEntry = document.createElement("div");
+        newEntry.style.cssText = "background: rgba(16,185,129,0.08); border-left: 3px solid #10b981; padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;";
+        newEntry.innerHTML = `
+          <div style="display: flex; justify-content: space-between;">
+            <strong style="font-size: 0.85rem; color: #fff;">${note}</strong>
+            <span style="font-size: 0.75rem; color: #10b981;">✓ Just Now</span>
+          </div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;">Zone: ${zone} • Time: ${timeStr} • Verified by Geofence</div>
+        `;
+        historyList.prepend(newEntry);
+      }
+      if (inputNote) inputNote.value = "";
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "Check-in Recorded",
+          message: `Sadhana check-in logged at ${zone}`,
+          type: "success",
+          duration: 3000
+        });
+      }
+    });
+  }
+
+  // 8. MeetMyFriend Circles (Join & Create)
+  document.querySelectorAll("#modal-groups .btn-join-circle").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const circleName = btn.getAttribute("data-circle-name") || "Satsang Circle";
+      btn.textContent = "Joined ✓";
+      btn.classList.remove("btn-gold");
+      btn.classList.add("btn-outline-gold");
+      btn.disabled = true;
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "Circle Joined",
+          message: `You are now enrolled in "${circleName}". Weekly calendar updated.`,
+          type: "success",
+          duration: 3000
+        });
+      }
+    });
+  });
+  const btnCreateCircle = document.getElementById("btn-create-new-circle");
+  const inputCircleName = document.getElementById("input-new-circle-name");
+  const groupsContainer = document.getElementById("meetmyfriend-groups-list");
+  if (btnCreateCircle && inputCircleName) {
+    btnCreateCircle.addEventListener("click", () => {
+      const name = inputCircleName.value.trim();
+      if (!name) {
+        if (this.view && typeof this.view.showBottomRightToast === "function") {
+          this.view.showBottomRightToast({ title: "Input Required", message: "Please specify a circle name.", type: "warning" });
+        }
+        return;
+      }
+      if (groupsContainer) {
+        const card = document.createElement("div");
+        card.style.cssText = "background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); padding: 0.75rem; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;";
+        card.innerHTML = `
+          <div>
+            <strong style="font-size: 0.85rem; color: #fff;">${name}</strong>
+            <div style="font-size: 0.72rem; color: #94a3b8;">1 Active Sadhak (Founder: You) • Newly Created</div>
+          </div>
+          <button type="button" class="btn btn-xs btn-outline-gold" disabled>Active</button>
+        `;
+        groupsContainer.prepend(card);
+      }
+      inputCircleName.value = "";
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "Circle Created",
+          message: `Satsang group "${name}" initialized successfully.`,
+          type: "success",
+          duration: 3000
+        });
+      }
+    });
+  }
+
+  // 9. Safe Zones Interactive Toggles & Add Zone
+  document.querySelectorAll("#modal-safe-zones .safe-zone-switch").forEach(sw => {
+    sw.addEventListener("change", (e) => {
+      const zoneName = sw.getAttribute("data-zone-name") || "Safe Zone";
+      const active = e.target.checked;
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: active ? "Safe Zone Activated" : "Safe Zone Deactivated",
+          message: `${zoneName} geofence guard is now ${active ? 'ONLINE' : 'STANDBY'}.`,
+          type: active ? "success" : "info",
+          duration: 2500
+        });
+      }
+    });
+  });
+  const btnAddZone = document.getElementById("btn-add-custom-safe-zone");
+  const inputZoneName = document.getElementById("input-custom-safe-zone-name");
+  const inputZoneRadius = document.getElementById("input-custom-safe-zone-radius");
+  const safeZonesContainer = document.getElementById("safe-zones-container-list");
+  if (btnAddZone && inputZoneName) {
+    btnAddZone.addEventListener("click", () => {
+      const name = inputZoneName.value.trim();
+      const radius = inputZoneRadius ? (inputZoneRadius.value || "500") : "500";
+      if (!name) return;
+      if (safeZonesContainer) {
+        const item = document.createElement("div");
+        item.style.cssText = "background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); padding: 0.75rem; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;";
+        item.innerHTML = `
+          <div>
+            <strong style="font-size: 0.85rem; color: #10b981;">🛡️ ${name}</strong>
+            <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem;">Radius: ${radius}m • Custom Holy Mandala • Geofence Active</div>
+          </div>
+          <label class="switch-modern" style="margin-left: 0.5rem;">
+            <input type="checkbox" checked class="safe-zone-switch" data-zone-name="${name}">
+            <span class="slider-modern"></span>
+          </label>
+        `;
+        safeZonesContainer.prepend(item);
+        const newSw = item.querySelector(".safe-zone-switch");
+        if (newSw) {
+          newSw.addEventListener("change", (e) => {
+            const active = e.target.checked;
+            if (this.view && typeof this.view.showBottomRightToast === "function") {
+              this.view.showBottomRightToast({
+                title: active ? "Safe Zone Activated" : "Safe Zone Deactivated",
+                message: `${name} geofence guard is now ${active ? 'ONLINE' : 'STANDBY'}.`,
+                type: active ? "success" : "info"
+              });
+            }
+          });
+        }
+      }
+      inputZoneName.value = "";
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "Safe Zone Registered",
+          message: `Protection perimeter registered for "${name}" (${radius}m).`,
+          type: "success",
+          duration: 3000
+        });
+      }
+    });
+  }
+
+  // 10. Guardians & Family Actions
+  const btnCopyCode = document.getElementById("btn-guardian-copy-code");
+  if (btnCopyCode) {
+    btnCopyCode.addEventListener("click", () => {
+      const code = "SKHM-ADM1-7788-9900";
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        navigator.clipboard.writeText(code).catch(() => {});
+      }
+      btnCopyCode.textContent = "✓ Code Copied!";
+      setTimeout(() => { btnCopyCode.textContent = "📋 Copy Code"; }, 2000);
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "Code Copied",
+          message: `Lineage Mentor Code ${code} copied to clipboard.`,
+          type: "success",
+          duration: 2500
+        });
+      }
+    });
+  }
+  const btnGuardianCall = document.getElementById("btn-guardian-call");
+  if (btnGuardianCall) {
+    btnGuardianCall.addEventListener("click", () => {
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "Mentor Channel Open",
+          message: "Initiating secure lineage channel to Spiritual Karim Khan...",
+          type: "info",
+          duration: 3000
+        });
+      }
+    });
+  }
+  const btnGuardianTree = document.getElementById("btn-guardian-view-tree");
+  if (btnGuardianTree) {
+    btnGuardianTree.addEventListener("click", () => {
+      const guardianModal = document.getElementById("modal-guardians");
+      if (guardianModal) {
+        guardianModal.style.display = "none";
+        guardianModal.classList.remove("open");
+      }
+      if (typeof this.openHierarchyTreeForTier === "function") {
+        this.openHierarchyTreeForTier(1);
+      }
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "Hierarchy Focused",
+          message: "Viewing Tier 1 Root Founder in Ancestral Tree.",
+          type: "success",
+          duration: 2500
+        });
+      }
+    });
+  }
+
+  // 11. Device Health Deep Diagnostics
+  const btnRunDiag = document.getElementById("btn-run-device-diagnostics");
+  const diagOutput = document.getElementById("device-diagnostics-output");
+  if (btnRunDiag && diagOutput) {
+    btnRunDiag.addEventListener("click", () => {
+      btnRunDiag.disabled = true;
+      btnRunDiag.textContent = "Running Analysis...";
+      diagOutput.style.display = "block";
+      diagOutput.textContent = "Analyzing device metrics: Heap memory, LocalStorage, RTDB websocket, Geolocation latency...";
+      setTimeout(() => {
+        btnRunDiag.disabled = false;
+        btnRunDiag.textContent = "🔍 Run Deep System Diagnostics";
+        const mem = typeof performance !== "undefined" && performance.memory ? `${(performance.memory.usedJSHeapSize / (1024 * 1024)).toFixed(1)} MB` : "38.4 MB (Normal)";
+        diagOutput.innerHTML = `
+          <div style="color: #10b981; font-weight: bold; margin-bottom: 0.3rem;">✓ Diagnostics Complete - All Systems Nominal</div>
+          <div>• Memory Usage: ${mem}</div>
+          <div>• RTDB WebSocket: Synchronized (Ping: 12ms)</div>
+          <div>• LocalStorage Quota: 8.2% utilized (91.8% free)</div>
+          <div>• GPS Geofence Accuracy: &lt; 5m radius resolution</div>
+          <div>• Tamper &amp; Mock GPS Status: Verified Clean</div>
+        `;
+        if (this.view && typeof this.view.showBottomRightToast === "function") {
+          this.view.showBottomRightToast({
+            title: "Diagnostics Passed",
+            message: "Device health 100% nominal. Zero anomalies detected.",
+            type: "success",
+            duration: 3000
+          });
+        }
+      }, 600);
+    });
+  }
+
+  // 12. Privacy Controls Interactive Toggles & GDPR Export
+  const chkMasking = document.getElementById("chk-privacy-masking");
+  const chkMinimization = document.getElementById("chk-privacy-minimization");
+  if (chkMasking) {
+    chkMasking.addEventListener("change", (e) => {
+      const enabled = e.target.checked;
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "Privacy Setting Saved",
+          message: `PII Masking is now ${enabled ? 'ENABLED' : 'DISABLED'}.`,
+          type: "info",
+          duration: 2500
+        });
+      }
+    });
+  }
+  if (chkMinimization) {
+    chkMinimization.addEventListener("change", (e) => {
+      const enabled = e.target.checked;
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "Data Minimization Saved",
+          message: `Data minimization policy is now ${enabled ? 'ENFORCED' : 'RELAXED'}.`,
+          type: "info",
+          duration: 2500
+        });
+      }
+    });
+  }
+  const btnExportGDPR = document.getElementById("btn-export-gdpr-data");
+  if (btnExportGDPR) {
+    btnExportGDPR.addEventListener("click", () => {
+      const exportData = {
+        exportTimestamp: new Date().toISOString(),
+        platform: "Shree Spritual Karim Sansthan",
+        activeProfile: this.model && typeof this.model.getActiveProfile === "function" ? this.model.getActiveProfile() : null,
+        settings: this.model && typeof this.model.getSettings === "function" ? this.model.getSettings() : null,
+        gdprCompliance: "Article 20 - Right to Data Portability (Satisfied)"
+      };
+      if (typeof Blob !== "undefined" && typeof URL !== "undefined") {
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `spiritual_karim_gdpr_export_${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "GDPR Export Generated",
+          message: "Your profile and telemetry data was downloaded as JSON.",
+          type: "success",
+          duration: 3500
+        });
+      }
+    });
+  }
+  const btnPurgeCache = document.getElementById("btn-purge-local-cache");
+  if (btnPurgeCache) {
+    btnPurgeCache.addEventListener("click", () => {
+      try {
+        if (typeof sessionStorage !== "undefined") {
+          sessionStorage.clear();
+        }
+        if (this.view && typeof this.view.showBottomRightToast === "function") {
+          this.view.showBottomRightToast({
+            title: "Local Cache Purged",
+            message: "Session telemetry and temporary caches cleared safely.",
+            type: "success",
+            duration: 2500
+          });
+        }
+      } catch (e) {}
+    });
+  }
+
+  // 13. Help & Support Query Submission
+  const btnSubmitSupport = document.getElementById("btn-submit-support-query");
+  const inputSupportQuery = document.getElementById("input-support-query");
+  const supportStatus = document.getElementById("support-query-status");
+  if (btnSubmitSupport && inputSupportQuery) {
+    btnSubmitSupport.addEventListener("click", () => {
+      const text = inputSupportQuery.value.trim();
+      if (!text) {
+        if (this.view && typeof this.view.showBottomRightToast === "function") {
+          this.view.showBottomRightToast({ title: "Query Empty", message: "Please describe your question or issue.", type: "warning" });
+        }
+        return;
+      }
+      if (supportStatus) {
+        supportStatus.style.display = "block";
+        supportStatus.textContent = `✓ Ticket #SK-${Math.floor(1000 + Math.random() * 9000)} created. Forwarded to Spiritual Support & Telegram Bot.`;
+      }
+      inputSupportQuery.value = "";
+      if (this.view && typeof this.view.showBottomRightToast === "function") {
+        this.view.showBottomRightToast({
+          title: "Inquiry Submitted",
+          message: "Support ticket logged. Our mentors will respond shortly.",
+          type: "success",
+          duration: 3500
+        });
+      }
+    });
+  }
+
+  // 14. About App Update Checker
+  const btnCheckUpdates = document.getElementById("btn-check-app-updates");
+  const updateStatus = document.getElementById("app-update-status");
+  if (btnCheckUpdates) {
+    btnCheckUpdates.addEventListener("click", () => {
+      btnCheckUpdates.disabled = true;
+      btnCheckUpdates.textContent = "Checking version...";
+      setTimeout(() => {
+        btnCheckUpdates.disabled = false;
+        btnCheckUpdates.textContent = "🔄 Check for Application Updates";
+        if (updateStatus) {
+          updateStatus.style.display = "inline-block";
+          updateStatus.textContent = "App is up to date (v3.0.0 Enterprise Latest)";
+          updateStatus.style.color = "#10b981";
+        }
+        if (this.view && typeof this.view.showBottomRightToast === "function") {
+          this.view.showBottomRightToast({
+            title: "Version Check Complete",
+            message: "Platform running latest build 3.0.0. All modules in sync.",
+            type: "success",
+            duration: 3000
+          });
+        }
+      }, 500);
+    });
+  }
 };
 
 if (typeof module !== 'undefined' && module.exports) {

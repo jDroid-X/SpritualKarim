@@ -259,6 +259,97 @@ function handleApiRequest(req, res, pathname, queryParams) {
     }
   }
 
+  // 12. Profiles Dynamic Search
+  if (pathname === '/api/profiles/search') {
+    const allProfiles = fb.getProfiles();
+    const q = (queryParams && (queryParams.get('q') || queryParams.get('term') || '')).toLowerCase().trim();
+    const role = (queryParams && queryParams.get('role') || '').toUpperCase();
+    const status = (queryParams && queryParams.get('status') || '').toUpperCase();
+
+    const filtered = allProfiles.filter(p => {
+      let matchesQ = true;
+      if (q) {
+        const text = `${p.name || ''} ${p.phone || ''} ${p.referenceCode || ''} ${p.city || ''} ${p.email || ''}`.toLowerCase();
+        matchesQ = text.includes(q);
+      }
+      let matchesRole = true;
+      if (role && role !== 'ALL') {
+        matchesRole = (p.profileType || '').toUpperCase() === role || (role === 'MASTER' && p.profileType === 'ADMIN');
+      }
+      let matchesStatus = true;
+      if (status === 'ACTIVE') matchesStatus = p.isActive === true;
+      else if (status === 'PAID') matchesStatus = p.isPaid !== false && p.paymentStatus !== 'FREE';
+      else if (status === 'FREE') matchesStatus = p.isPaid === false || p.paymentStatus === 'FREE';
+
+      return matchesQ && matchesRole && matchesStatus;
+    });
+
+    res.writeHead(200);
+    res.end(JSON.stringify({ success: true, count: filtered.length, data: filtered }));
+    return true;
+  }
+
+  // 13. Human-in-the-Loop Governance Decisions
+  if (pathname === '/api/profiles/decision' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body);
+        const logEntry = {
+          action: 'GOVERNANCE_DECISION',
+          decision: payload.decision || 'APPROVE',
+          applicantId: payload.applicantId || 'unknown',
+          reviewerName: payload.reviewerName || 'Admin Master',
+          reason: payload.reason || 'Standard review completed',
+          timestamp: payload.timestamp || Date.now(),
+          ip: req.socket.remoteAddress || '127.0.0.1'
+        };
+        fb.appendAuditLog(logEntry);
+        res.writeHead(200);
+        res.end(JSON.stringify({
+          success: true,
+          message: `Decision '${logEntry.decision}' logged in governance audit trail`,
+          data: logEntry
+        }));
+      } catch (e) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ success: false, error: e.message }));
+      }
+    });
+    return true;
+  }
+
+  // 14. Server-Side Telemetry & Notification Broadcast
+  if (pathname === '/api/telemetry/notify' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body);
+        const notifEntry = {
+          action: 'TELEMETRY_NOTIFY',
+          title: payload.title || 'System Notification',
+          message: payload.message || '',
+          type: payload.type || 'info',
+          recipientId: payload.recipientId || 'ALL',
+          timestamp: payload.timestamp || Date.now()
+        };
+        fb.appendAuditLog(notifEntry);
+        res.writeHead(200);
+        res.end(JSON.stringify({
+          success: true,
+          message: 'Notification published to telemetry stream',
+          data: notifEntry
+        }));
+      } catch (e) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ success: false, error: e.message }));
+      }
+    });
+    return true;
+  }
+
   // 11. DB Export
   if (pathname === '/api/db/export') {
     res.writeHead(200);

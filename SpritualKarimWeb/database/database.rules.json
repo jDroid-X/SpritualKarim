@@ -1,7 +1,7 @@
 {
   "rules": {
     "profiles": {
-      ".read": true,
+      ".read": "auth != null",
       ".write": "auth != null",
       "$deviceId": {
         ".indexOn": [
@@ -14,7 +14,7 @@
       }
     },
     "pairing_invites": {
-      ".read": true,
+      ".read": "auth != null",
       ".write": "auth != null",
       "$queueId": {
         ".indexOn": [
@@ -26,7 +26,7 @@
       }
     },
     "house_clean_logs": {
-      ".read": true,
+      ".read": "auth != null",
       ".write": "auth != null",
       "$auditId": {
         ".indexOn": [
@@ -39,7 +39,7 @@
       }
     },
     "daily_diya_logs": {
-      ".read": true,
+      ".read": "auth != null",
       ".write": "auth != null",
       "$logId": {
         ".indexOn": [
@@ -63,7 +63,7 @@
         }
       },
       "audits": {
-        ".read": "auth != null && auth.token.admin == true",
+        ".read": "auth != null && (auth.token.admin == true || auth.token.role == 'ADMIN' || auth.token.role == 'MASTER')",
         ".write": "auth != null",
         "$auditId": {
           ".indexOn": [
@@ -76,19 +76,19 @@
       }
     },
     "sadhana_catalog": {
-      ".read": true,
-      ".write": "auth != null && auth.token.admin == true"
+      ".read": "auth != null",
+      ".write": "auth != null && (auth.token.admin == true || auth.token.role == 'ADMIN' || auth.token.role == 'MASTER')"
     },
     "auth_matrix": {
-      ".read": true,
-      ".write": "auth != null && auth.token.admin == true"
+      ".read": "auth != null",
+      ".write": "auth != null && (auth.token.admin == true || auth.token.role == 'ADMIN' || auth.token.role == 'MASTER')"
     },
     "profile_role_matrix": {
-      ".read": true,
+      ".read": "auth != null",
       ".write": "auth != null"
     },
     "component_states": {
-      ".read": true,
+      ".read": "auth != null",
       ".write": "auth != null"
     },
     "device_telemetry": {
@@ -96,15 +96,15 @@
       ".write": "auth != null"
     },
     "system_config": {
-      ".read": true,
-      ".write": "auth != null && auth.token.admin == true"
+      ".read": "auth != null",
+      ".write": "auth != null && (auth.token.admin == true || auth.token.role == 'ADMIN' || auth.token.role == 'MASTER')"
     },
     "lineage_graph": {
       ".read": "auth != null",
       ".write": "auth != null"
     },
     "audit_logs": {
-      ".read": "auth != null && auth.token.admin == true",
+      ".read": "auth != null && (auth.token.admin == true || auth.token.role == 'ADMIN' || auth.token.role == 'MASTER')",
       ".write": "auth != null"
     }
   }

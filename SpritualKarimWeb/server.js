@@ -37,10 +37,18 @@ function createRequestHandler() {
     );
     let pathname = decodeURIComponent(parsedUrl.pathname);
 
-    // Check API route
-    if (pathname.startsWith('/api/') && typeof handleApiRequest === 'function') {
-      const handled = handleApiRequest(req, res, pathname, parsedUrl.searchParams);
-      if (handled) return;
+    // Check API route (Dynamic hot-reload for enterprise sync)
+    if (pathname.startsWith('/api/')) {
+      try {
+        delete require.cache[require.resolve("./Backend/api/routes")];
+        const api = require("./Backend/api/routes");
+        if (api && typeof api.handleApiRequest === 'function') {
+          const handled = api.handleApiRequest(req, res, pathname, parsedUrl.searchParams);
+          if (handled) return;
+        }
+      } catch (e) {
+        console.error("API route handling error:", e);
+      }
     }
 
     const candidates = [];
@@ -64,7 +72,13 @@ function createRequestHandler() {
     }
 
     // 3. Subportal relative asset fallback (e.g. /Masters/js/..., /Masters/css/..., /Healers/...)
-    const subportalMatch = pathname.match(/^\/(Masters|Healers|Trainee|Devotee|Seeker|Frontend)\/(.*)$/i);
+    const subportalRootMatch = pathname.match(/^\/(Masters|Healers|Trainee|Devotee|Seeker|Frontend|Public)\/?$/i);
+    if (subportalRootMatch) {
+      candidates.push(path.join(__dirname, subportalRootMatch[1], "index.html"));
+      candidates.push(path.join(__dirname, "index.html"));
+    }
+
+    const subportalMatch = pathname.match(/^\/(Masters|Healers|Trainee|Devotee|Seeker|Frontend|Public)\/(.*)$/i);
     if (subportalMatch && subportalMatch[2]) {
       const subPath = subportalMatch[2];
       candidates.push(path.join(__dirname, subPath));

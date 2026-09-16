@@ -1,4 +1,5 @@
+node_modules/
 scratch/
-.playwright-mcp/
-*.exe
 *.log
+.playwright-mcp/
+test_filter.js

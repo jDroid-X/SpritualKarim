@@ -26,10 +26,43 @@ class FirebaseSyncEngine {
         this.db = firebase.database();
         console.log("[Firebase RTDB] Initialized with Data Minimization Mode");
         this.listenToOnlineNodes();
+        this.listenToSadhanaCatalog();
       } catch (err) {
         console.warn("Firebase RTDB init notice:", err.message);
       }
     }
+  }
+
+  static writeNode(path, data) {
+    if (!this.db || !path) return;
+    try {
+      this.db.ref(path).set(data);
+    } catch (e) {
+      console.warn("Firebase write error for path " + path, e);
+    }
+  }
+
+  static pushNode(path, data) {
+    this.writeNode(path, data);
+  }
+
+  static listenToSadhanaCatalog() {
+    if (!this.db) return;
+    this.db.ref('sadhana_catalog').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        try {
+          localStorage.setItem("sk_sadhana_catalog_v1", JSON.stringify(data));
+          // Optionally trigger a UI re-render event here
+          if (typeof BroadcastChannel !== "undefined") {
+             const bc = new BroadcastChannel("spiritual_karim_sync");
+             bc.postMessage({ type: "SADHANA_CATALOG_UPDATED", data });
+          }
+        } catch(e) {
+          console.error("Error updating local sadhana catalog from Firebase:", e);
+        }
+      }
+    });
   }
 
   /**
@@ -72,4 +105,9 @@ class FirebaseSyncEngine {
   }
 }
 
-window.FirebaseSyncEngine = FirebaseSyncEngine;
+const rootSync = (typeof window !== "undefined") ? window : (typeof global !== "undefined" ? global : {});
+rootSync.FirebaseSyncEngine = FirebaseSyncEngine;
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = FirebaseSyncEngine;
+}

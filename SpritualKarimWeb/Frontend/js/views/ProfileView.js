@@ -69,6 +69,8 @@ class ProfileView {
 
     // Admin Master Live Metrics Strip Elements
     this.adminMetricsStrip = document.getElementById("admin-hierarchy-metrics-strip");
+    // Current Events In Progress Panel
+    this.adminCurrentEventsStrip = document.getElementById("admin-current-events-strip");
     this.metricHealersActiveTotal = document.getElementById("metric-healers-active-total");
     this.metricHealersNewJoined = document.getElementById("metric-healers-new-joined");
     this.metricTraineesActiveTotal = document.getElementById("metric-trainees-active-total");
@@ -982,6 +984,10 @@ class ProfileView {
     if (this.adminMetricsStrip) {
       this.adminMetricsStrip.style.display = isAdmin ? "grid" : "none";
     }
+
+    // Always render Current Events in Progress panel for ALL roles (read-only for Trainee/Devotee)
+    this.renderCurrentEventsPanel();
+
     if (!isAdmin) return;
 
     const m = metrics || {
@@ -1081,6 +1087,561 @@ class ProfileView {
     if (sidePending) sidePending.textContent = m.pendingInvites?.pending ?? 0;
     const headerPending = document.getElementById("header-pending-badge");
     if (headerPending) headerPending.textContent = m.pendingInvites?.pending ?? 0;
+
+    // 8. Current Events in Progress panel is already rendered above for all roles
+  }
+
+  /**
+   * Renders the Current Events in Progress panel with live progress calculations.
+   * Reads event data from ProfileModel (or falls back to seed tile metadata).
+   * Called automatically from renderAdminMetricsTiles() on every role refresh.
+   * Available to ALL roles — read-only for Trainee & Devotee, Add/Edit for Master & Healer.
+   */
+  renderCurrentEventsPanel() {
+    if (!this.adminCurrentEventsStrip) {
+      this.adminCurrentEventsStrip = document.getElementById("admin-current-events-strip");
+    }
+    const strip = this.adminCurrentEventsStrip;
+    if (!strip) return;
+
+    // Show the panel only if not hidden by Authorization Matrix
+    if (!strip.classList.contains("auth-hidden") && !strip.classList.contains("portal-hidden")) {
+      strip.style.display = "block";
+    }
+
+    // DATA-DRIVEN: Compute live progress for ALL event tiles from their data attributes.
+    // This means editing a tile's data-event-start / data-event-end will update progress
+    // automatically on next renderCurrentEventsPanel() call — no hardcoded dates.
+    const now = new Date();
+    const allTiles = strip.querySelectorAll(".current-event-tile[data-event-start][data-event-end]");
+
+    allTiles.forEach(tile => {
+      const eventId  = tile.getAttribute("data-event-id") || "";
+      const status   = (tile.getAttribute("data-event-status") || "UPCOMING").toUpperCase();
+      const startStr = tile.getAttribute("data-event-start");
+      const endStr   = tile.getAttribute("data-event-end");
+      if (!startStr || !endStr) return;
+
+      const start = new Date(startStr);
+      const end   = new Date(endStr);
+      const totalMs   = end - start;
+      const elapsedMs = Math.max(0, Math.min(now - start, totalMs));
+      const pct = totalMs > 0 ? Math.round((elapsedMs / totalMs) * 100) : 0;
+      const daysLeft = Math.max(0, Math.ceil((end - now) / 86400000));
+      const daysUntil = Math.max(0, Math.ceil((start - now) / 86400000));
+      const isCompleted = now > end;
+
+      // Derive a DOM-safe key from the event-id (e.g. bakhoor_sadhana_jul26 → bakhoor)
+      // Falls back to scanning for progress bar within the tile directly
+      const barEl  = tile.querySelector(".event-progress-bar-fill");
+      const pctEl  = tile.querySelector(".event-progress-pct");
+      const daysEl = tile.querySelector(".event-progress-days");
+
+      let progressPct, statusLabel, daysLabel;
+      if (status === "UPCOMING" && now < start) {
+        progressPct  = 0;
+        statusLabel  = "Awaiting Start";
+        daysLabel    = `Starts in ~${daysUntil} days`;
+      } else if (isCompleted) {
+        progressPct  = 100;
+        statusLabel  = "✓ Completed";
+        daysLabel    = "Done";
+      } else {
+        progressPct  = pct;
+        statusLabel  = `${pct}% Complete`;
+        daysLabel    = `~${daysLeft} days left`;
+      }
+
+      if (barEl) {
+        barEl.style.width = `${progressPct}%`;
+        barEl.setAttribute("aria-valuenow", progressPct);
+        barEl.setAttribute("aria-label", statusLabel);
+      }
+      if (pctEl) pctEl.textContent = statusLabel;
+      if (daysEl) daysEl.textContent = daysLabel;
+
+      // Sync duration display (humanized)
+      const durEl = tile.querySelector(`.event-detail-value[id*="duration"]`) ||
+                    tile.querySelectorAll(".event-detail-value")?.[0];
+      if (durEl && totalMs > 0) {
+        const totalDays = Math.ceil(totalMs / 86400000);
+        const totalMonths = Math.round(totalDays / 30);
+        durEl.textContent = totalDays >= 60 ? `${totalMonths} Months` : `${totalDays} Days`;
+      }
+    });
+
+    // Update event count badge
+    const countBadge = document.getElementById("current-events-count-badge");
+    if (countBadge) {
+      const ongoingCount  = strip.querySelectorAll(".tile-event-ongoing").length;
+      const upcomingCount = strip.querySelectorAll(".tile-event-upcoming").length;
+      countBadge.textContent = `${ongoingCount} Ongoing${upcomingCount ? ` · ${upcomingCount} Upcoming` : ""}`;
+    }
+  }
+
+  /**
+   * Opens a slide-in Edit Event dialog pre-populated from the tile's data attributes.
+   * On Save: calls _updateEventTileData(eventId, updatedFields) then re-renders progress.
+   * Reuses the same backdrop and panel pattern as showAddEventDialog().
+   * Role-gated: only accessible to MASTER and HEALER roles (enforced at Controller level).
+   * @param {string} eventId - The data-event-id of the tile to edit.
+   */
+  showEditEventDialog(eventId) {
+    const tile = document.querySelector(`[data-event-id="${eventId}"]`);
+    if (!tile) return;
+
+    // Read current values from data attributes (single source of truth on the tile)
+    const currentName   = tile.getAttribute("data-event-name")  || "";
+    const currentType   = tile.getAttribute("data-event-type")  || "SADHANA";
+    const currentStatus = tile.getAttribute("data-event-status") || "ONGOING";
+    const currentIcon   = tile.getAttribute("data-event-icon")  || "🔔";
+    const currentStart  = tile.getAttribute("data-event-start") || "";
+    const currentEnd    = tile.getAttribute("data-event-end")   || "";
+    const currentNotes  = tile.getAttribute("data-event-notes") || "";
+
+    // Re-use or create backdrop
+    let backdrop = document.getElementById("add-event-dialog-backdrop");
+    if (!backdrop) {
+      backdrop = document.createElement("div");
+      backdrop.id = "add-event-dialog-backdrop";
+      backdrop.className = "sadhana-drawer-backdrop";
+      backdrop.setAttribute("aria-hidden", "true");
+      document.body.appendChild(backdrop);
+    }
+
+    // Re-use or create dialog panel
+    let dialog = document.getElementById("add-event-dialog-panel");
+    if (!dialog) {
+      dialog = document.createElement("div");
+      dialog.id = "add-event-dialog-panel";
+      dialog.className = "add-event-dialog-panel";
+      dialog.setAttribute("role", "dialog");
+      dialog.setAttribute("aria-modal", "true");
+      dialog.setAttribute("aria-label", "Edit Event");
+      document.body.appendChild(dialog);
+    }
+
+    dialog.innerHTML = `
+      <div class="add-event-dialog-header">
+        <span class="add-event-dialog-icon">✏️</span>
+        <h3 class="add-event-dialog-title">Edit Event</h3>
+        <button type="button" id="btn-add-event-dialog-close"
+                class="btn-sadhana-drawer-close" title="Close" aria-label="Close Edit Event">✕</button>
+      </div>
+      <div class="add-event-dialog-body">
+        <div class="add-event-field-group">
+          <label class="add-event-label" for="add-event-name">Event / Sadhana Name *</label>
+          <input type="text" id="add-event-name" class="add-event-input"
+                 placeholder="e.g. Navratri Sadhana" maxlength="80" autocomplete="off"
+                 value="${esc(currentName)}">
+        </div>
+        <div class="add-event-field-row">
+          <div class="add-event-field-group">
+            <label class="add-event-label" for="add-event-type">Type</label>
+            <select id="add-event-type" class="add-event-select">
+              <option value="SADHANA"  ${currentType==='SADHANA'  ?'selected':''}>Sadhana</option>
+              <option value="CEREMONY" ${currentType==='CEREMONY' ?'selected':''}>Ceremony</option>
+              <option value="RETREAT"  ${currentType==='RETREAT'  ?'selected':''}>Retreat</option>
+              <option value="WORKSHOP" ${currentType==='WORKSHOP' ?'selected':''}>Workshop</option>
+              <option value="OTHER"    ${currentType==='OTHER'    ?'selected':''}>Other</option>
+            </select>
+          </div>
+          <div class="add-event-field-group">
+            <label class="add-event-label" for="add-event-status">Status</label>
+            <select id="add-event-status" class="add-event-select">
+              <option value="ONGOING"   ${currentStatus==='ONGOING'   ?'selected':''}>Ongoing</option>
+              <option value="UPCOMING"  ${currentStatus==='UPCOMING'  ?'selected':''}>Upcoming</option>
+              <option value="COMPLETED" ${currentStatus==='COMPLETED' ?'selected':''}>Completed</option>
+            </select>
+          </div>
+        </div>
+        <div class="add-event-field-row">
+          <div class="add-event-field-group">
+            <label class="add-event-label" for="add-event-start">Start Date *</label>
+            <input type="date" id="add-event-start" class="add-event-input" value="${esc(currentStart)}">
+          </div>
+          <div class="add-event-field-group">
+            <label class="add-event-label" for="add-event-end">End Date *</label>
+            <input type="date" id="add-event-end" class="add-event-input" value="${esc(currentEnd)}">
+          </div>
+        </div>
+        <div class="add-event-field-group">
+          <label class="add-event-label" for="add-event-icon">Icon (emoji)</label>
+          <input type="text" id="add-event-icon" class="add-event-input add-event-icon-input"
+                 placeholder="🪔" maxlength="4" value="${esc(currentIcon)}">
+        </div>
+        <div class="add-event-field-group">
+          <label class="add-event-label" for="add-event-notes">Notes / Description</label>
+          <textarea id="add-event-notes" class="add-event-textarea"
+                    placeholder="Brief description..." rows="3" maxlength="300">${esc(currentNotes)}</textarea>
+        </div>
+        <div id="add-event-error-msg" class="add-event-error" style="display:none;"></div>
+      </div>
+      <div class="add-event-dialog-footer">
+        <button type="button" id="btn-add-event-cancel" class="btn-add-event-cancel">Cancel</button>
+        <button type="button" id="btn-add-event-submit" class="btn-add-event-submit">💾 Save Changes</button>
+      </div>
+    `;
+
+    // Show
+    backdrop.classList.add("is-visible");
+    dialog.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+    const nameInput = dialog.querySelector("#add-event-name");
+    if (nameInput) setTimeout(() => nameInput.focus(), 80);
+
+    const closeDialog = () => {
+      backdrop.classList.remove("is-visible");
+      dialog.classList.remove("is-open");
+      document.body.style.overflow = "";
+    };
+
+    dialog.querySelector("#btn-add-event-dialog-close").onclick = closeDialog;
+    dialog.querySelector("#btn-add-event-cancel").onclick = closeDialog;
+    backdrop.onclick = closeDialog;
+
+    const escHandler = (e) => {
+      if (e.key === "Escape") { closeDialog(); document.removeEventListener("keydown", escHandler); }
+    };
+    document.addEventListener("keydown", escHandler);
+
+    dialog.querySelector("#btn-add-event-submit").onclick = () => {
+      const nameVal  = (dialog.querySelector("#add-event-name").value || "").trim();
+      const startVal = dialog.querySelector("#add-event-start").value;
+      const endVal   = dialog.querySelector("#add-event-end").value;
+      const errEl    = dialog.querySelector("#add-event-error-msg");
+
+      if (!nameVal)  { errEl.textContent = "Event name is required."; errEl.style.display = "block"; return; }
+      if (!startVal || !endVal) { errEl.textContent = "Start and End dates are required."; errEl.style.display = "block"; return; }
+      if (new Date(endVal) <= new Date(startVal)) { errEl.textContent = "End date must be after Start date."; errEl.style.display = "block"; return; }
+      errEl.style.display = "none";
+
+      this._updateEventTileData(eventId, {
+        name:   nameVal,
+        type:   dialog.querySelector("#add-event-type").value,
+        status: dialog.querySelector("#add-event-status").value,
+        icon:   (dialog.querySelector("#add-event-icon").value || "🔔").trim(),
+        start:  startVal,
+        end:    endVal,
+        notes:  (dialog.querySelector("#add-event-notes").value || "").trim()
+      });
+
+      closeDialog();
+      document.removeEventListener("keydown", escHandler);
+    };
+  }
+
+  /**
+   * Updates a tile's data attributes and visible display fields with new values,
+   * then triggers renderCurrentEventsPanel() to recalculate live progress.
+   * Single source of truth: all state lives on the tile's data-event-* attributes.
+   * @param {string} eventId  - The data-event-id of the tile to update.
+   * @param {Object} fields   - {name, type, status, icon, start, end, notes}
+   */
+  _updateEventTileData(eventId, fields) {
+    const tile = document.querySelector(`[data-event-id="${eventId}"]`);
+    if (!tile) return;
+
+    const { name, type, status, icon, start, end, notes } = fields;
+
+    // 1. Update data attributes (single source of truth)
+    if (name   !== undefined) tile.setAttribute("data-event-name",   name);
+    if (type   !== undefined) tile.setAttribute("data-event-type",   type);
+    if (status !== undefined) tile.setAttribute("data-event-status", status);
+    if (icon   !== undefined) tile.setAttribute("data-event-icon",   icon);
+    if (start  !== undefined) tile.setAttribute("data-event-start",  start);
+    if (end    !== undefined) tile.setAttribute("data-event-end",    end);
+    if (notes  !== undefined) tile.setAttribute("data-event-notes",  notes);
+
+    // 2. Update visible tile header
+    const nameEl = tile.querySelector(".event-tile-name");
+    if (nameEl && name) nameEl.textContent = name;
+
+    const iconEl = tile.querySelector(".event-tile-icon-wrap");
+    if (iconEl && icon) iconEl.textContent = icon;
+
+    // 3. Update status badge text + tile class
+    const badgeEl = tile.querySelector(".event-tile-badge");
+    if (badgeEl && status) {
+      const badgeMap = {
+        ONGOING:   { text: "● Ongoing",     cls: "badge-ongoing" },
+        UPCOMING:  { text: "◎ Upcoming",    cls: "badge-upcoming" },
+        COMPLETED: { text: "✓ Completed",   cls: "badge-completed" }
+      };
+      const bm = badgeMap[status.toUpperCase()];
+      if (bm) {
+        badgeEl.textContent = bm.text;
+        badgeEl.className = `event-tile-badge ${bm.cls}`;
+      }
+      // Update tile root class for colour accent
+      tile.classList.remove("tile-event-ongoing", "tile-event-upcoming", "tile-event-completed");
+      tile.classList.add(`tile-event-${status.toLowerCase()}`);
+    }
+
+    // 4. Update date display spans
+    const fmtDate = (d) => new Date(d).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+    const startEl = tile.querySelector("[id*='-start']");
+    const endEl   = tile.querySelector("[id*='-end']");
+    if (startEl && start) startEl.textContent = fmtDate(start);
+    if (endEl   && end)   endEl.textContent   = fmtDate(end);
+
+    // 5. Update progress bar fill class
+    const barEl = tile.querySelector(".event-progress-bar-fill");
+    if (barEl && status) {
+      barEl.classList.remove("bar-ongoing", "bar-upcoming", "bar-completed");
+      barEl.classList.add(status === "ONGOING" ? "bar-ongoing" : status === "COMPLETED" ? "bar-completed" : "bar-upcoming");
+    }
+
+    // 6. Re-render all progress values (data-driven)
+    this.renderCurrentEventsPanel();
+
+    // 7. Show toast confirmation
+    if (typeof this.showToast === "function") this.showToast(`✅ Event "${name}" updated successfully.`);
+  }
+
+  /**
+   * Opens an inline slide-in Add Event dialog (reuses existing sadhana-drawer-backdrop
+   * pattern). Provides a structured form to define: name, type, start date, end date,
+   * icon, and notes. On Submit → appends a new tile; on Cancel → closes.
+   * Callable from any controller via: view.showAddEventDialog()
+   */
+  showAddEventDialog() {
+    // Re-use backdrop if already present, else create one
+    let backdrop = document.getElementById("add-event-dialog-backdrop");
+    if (!backdrop) {
+      backdrop = document.createElement("div");
+      backdrop.id = "add-event-dialog-backdrop";
+      backdrop.className = "sadhana-drawer-backdrop";
+      backdrop.setAttribute("aria-hidden", "true");
+      document.body.appendChild(backdrop);
+    }
+
+    // Build or reuse the dialog panel
+    let dialog = document.getElementById("add-event-dialog-panel");
+    if (!dialog) {
+      dialog = document.createElement("div");
+      dialog.id = "add-event-dialog-panel";
+      dialog.className = "add-event-dialog-panel";
+      dialog.setAttribute("role", "dialog");
+      dialog.setAttribute("aria-modal", "true");
+      dialog.setAttribute("aria-label", "Add New Event");
+      document.body.appendChild(dialog);
+    }
+
+    dialog.innerHTML = `
+      <div class="add-event-dialog-header">
+        <span class="add-event-dialog-icon">🔔</span>
+        <h3 class="add-event-dialog-title">Add New Event</h3>
+        <button type="button" id="btn-add-event-dialog-close"
+                class="btn-sadhana-drawer-close" title="Close" aria-label="Close Add Event">✕</button>
+      </div>
+      <div class="add-event-dialog-body">
+        <div class="add-event-field-group">
+          <label class="add-event-label" for="add-event-name">Event / Sadhana Name *</label>
+          <input type="text" id="add-event-name" class="add-event-input"
+                 placeholder="e.g. Navratri Sadhana" maxlength="80" autocomplete="off">
+        </div>
+        <div class="add-event-field-row">
+          <div class="add-event-field-group">
+            <label class="add-event-label" for="add-event-type">Type</label>
+            <select id="add-event-type" class="add-event-select">
+              <option value="SADHANA">Sadhana</option>
+              <option value="CEREMONY">Ceremony</option>
+              <option value="RETREAT">Retreat</option>
+              <option value="WORKSHOP">Workshop</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+          <div class="add-event-field-group">
+            <label class="add-event-label" for="add-event-status">Status</label>
+            <select id="add-event-status" class="add-event-select">
+              <option value="ONGOING">Ongoing</option>
+              <option value="UPCOMING">Upcoming</option>
+              <option value="COMPLETED">Completed</option>
+            </select>
+          </div>
+        </div>
+        <div class="add-event-field-row">
+          <div class="add-event-field-group">
+            <label class="add-event-label" for="add-event-start">Start Date *</label>
+            <input type="date" id="add-event-start" class="add-event-input">
+          </div>
+          <div class="add-event-field-group">
+            <label class="add-event-label" for="add-event-end">End Date *</label>
+            <input type="date" id="add-event-end" class="add-event-input">
+          </div>
+        </div>
+        <div class="add-event-field-group">
+          <label class="add-event-label" for="add-event-icon">Icon (emoji)</label>
+          <input type="text" id="add-event-icon" class="add-event-input add-event-icon-input"
+                 placeholder="🪔" maxlength="4">
+        </div>
+        <div class="add-event-field-group">
+          <label class="add-event-label" for="add-event-notes">Notes / Description</label>
+          <textarea id="add-event-notes" class="add-event-textarea"
+                    placeholder="Brief description or metadata..." rows="3" maxlength="300"></textarea>
+        </div>
+        <div id="add-event-error-msg" class="add-event-error" style="display:none;"></div>
+      </div>
+      <div class="add-event-dialog-footer">
+        <button type="button" id="btn-add-event-cancel" class="btn-add-event-cancel">Cancel</button>
+        <button type="button" id="btn-add-event-submit" class="btn-add-event-submit">＋ Add Event</button>
+      </div>
+    `;
+
+    // Show
+    backdrop.classList.add("is-visible");
+    dialog.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+    const nameInput = dialog.querySelector("#add-event-name");
+    if (nameInput) setTimeout(() => nameInput.focus(), 80);
+
+    const closeDialog = () => {
+      backdrop.classList.remove("is-visible");
+      dialog.classList.remove("is-open");
+      document.body.style.overflow = "";
+    };
+
+    // Close handlers
+    dialog.querySelector("#btn-add-event-dialog-close").onclick = closeDialog;
+    dialog.querySelector("#btn-add-event-cancel").onclick = closeDialog;
+    backdrop.onclick = closeDialog;
+
+    // Escape key
+    const escHandler = (e) => {
+      if (e.key === "Escape") { closeDialog(); document.removeEventListener("keydown", escHandler); }
+    };
+    document.addEventListener("keydown", escHandler);
+
+    // Submit handler
+    dialog.querySelector("#btn-add-event-submit").onclick = () => {
+      const nameVal  = (dialog.querySelector("#add-event-name").value || "").trim();
+      const startVal = dialog.querySelector("#add-event-start").value;
+      const endVal   = dialog.querySelector("#add-event-end").value;
+      const errEl    = dialog.querySelector("#add-event-error-msg");
+
+      // Validation
+      if (!nameVal) {
+        errEl.textContent = "Event name is required."; errEl.style.display = "block"; return;
+      }
+      if (!startVal || !endVal) {
+        errEl.textContent = "Start and End dates are required."; errEl.style.display = "block"; return;
+      }
+      if (new Date(endVal) <= new Date(startVal)) {
+        errEl.textContent = "End date must be after Start date."; errEl.style.display = "block"; return;
+      }
+      errEl.style.display = "none";
+
+      const statusVal = dialog.querySelector("#add-event-status").value;
+      const typeVal   = dialog.querySelector("#add-event-type").value;
+      const iconVal   = (dialog.querySelector("#add-event-icon").value || "🔔").trim();
+
+      // Build new event data object
+      const eventId = `event_${Date.now()}`;
+      const newEvent = {
+        id: eventId,
+        name: nameVal,
+        type: typeVal,
+        status: statusVal,
+        icon: iconVal,
+        startDate: startVal,
+        endDate: endVal,
+        notes: (dialog.querySelector("#add-event-notes").value || "").trim()
+      };
+
+      // Inject tile into the DOM
+      this._appendCurrentEventTile(newEvent);
+      closeDialog();
+      document.removeEventListener("keydown", escHandler);
+
+      // Refresh progress and counts
+      this.renderCurrentEventsPanel();
+    };
+  }
+
+  /**
+   * Appends a dynamically created event tile into #current-events-tiles-row.
+   * Called from showAddEventDialog() on valid form submission.
+   * @param {Object} ev - Structured event object {id, name, type, status, icon, startDate, endDate, notes}
+   */
+  _appendCurrentEventTile(ev) {
+    const row = document.getElementById("current-events-tiles-row");
+    if (!row) return;
+
+    const now = new Date();
+    const start = new Date(ev.startDate);
+    const end   = new Date(ev.endDate);
+    const totalMs = end - start;
+    const elapsedMs = Math.max(0, Math.min(now - start, totalMs));
+    const pct = totalMs > 0 ? Math.round((elapsedMs / totalMs) * 100) : 0;
+    const daysLeft = Math.max(0, Math.ceil((end - now) / 86400000));
+    const isOngoing  = ev.status === "ONGOING";
+    const isUpcoming = ev.status === "UPCOMING";
+    const isCompleted = ev.status === "COMPLETED";
+
+    const tileClass = isOngoing ? "tile-event-ongoing" : isUpcoming ? "tile-event-upcoming" : "tile-event-completed";
+    const badgeClass = isOngoing ? "badge-ongoing" : isUpcoming ? "badge-upcoming" : "badge-completed";
+    const badgeLabel = isOngoing ? "● Ongoing" : isUpcoming ? "◎ Upcoming" : "✓ Completed";
+    const progressPct = isUpcoming ? 0 : pct;
+    const progressLabel = isUpcoming ? "Awaiting Start" : isCompleted ? "Completed" : `${progressPct}% Complete`;
+    const daysLabel = isUpcoming
+      ? `Starts in ~${Math.max(0, Math.ceil((start - now) / 86400000))} days`
+      : isCompleted ? "Done" : `~${daysLeft} days left`;
+
+    const tile = document.createElement("div");
+    tile.className = `current-event-tile ${tileClass}`;
+    tile.id = `event-tile-${ev.id}`;
+    tile.setAttribute("data-event-id", ev.id);
+    tile.setAttribute("data-event-type", ev.type);
+    tile.setAttribute("data-event-status", ev.status);
+    tile.setAttribute("data-event-name", ev.name);
+    tile.setAttribute("data-event-icon", ev.icon || "🔔");
+    tile.setAttribute("data-event-start", ev.startDate);
+    tile.setAttribute("data-event-end", ev.endDate);
+    tile.setAttribute("data-event-notes", ev.notes || "");
+    tile.setAttribute("role", "article");
+    tile.setAttribute("tabindex", "0");
+    tile.setAttribute("title", `${ev.name} — ${ev.status}`);
+    tile.innerHTML = `
+      <div class="event-tile-header">
+        <div class="event-tile-icon-wrap ${isOngoing ? 'event-icon-fire' : 'event-icon-upcoming'}">${esc(ev.icon)}</div>
+        <div class="event-tile-meta">
+          <span class="event-tile-name">${esc(ev.name)}</span>
+          <span class="event-tile-badge ${badgeClass}">${badgeLabel}</span>
+        </div>
+        <div class="event-tile-actions">
+          <button type="button" class="btn-event-edit" data-event-id="${esc(ev.id)}"
+                  title="Edit Event Details" aria-label="Edit Event">✏️</button>
+          <button type="button" class="btn-event-options" data-event-id="${esc(ev.id)}"
+                  title="Event Options" aria-label="Event Options">⋮</button>
+        </div>
+      </div>
+      <div class="event-tile-details">
+        <div class="event-detail-row">
+          <span class="event-detail-label">📅 Start</span>
+          <span class="event-detail-value">${esc(new Date(ev.startDate).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}))}</span>
+        </div>
+        <div class="event-detail-row">
+          <span class="event-detail-label">🏁 End</span>
+          <span class="event-detail-value">${esc(new Date(ev.endDate).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}))}</span>
+        </div>
+      </div>
+      <div class="event-tile-progress-wrap">
+        <div class="event-progress-bar-track">
+          <div class="event-progress-bar-fill ${isOngoing ? 'bar-ongoing' : isCompleted ? 'bar-completed' : 'bar-upcoming'}"
+               style="width:${progressPct}%;"
+               role="progressbar"
+               aria-valuenow="${progressPct}" aria-valuemin="0" aria-valuemax="100"
+               aria-label="${progressLabel}"></div>
+        </div>
+        <div class="event-progress-labels">
+          <span class="event-progress-pct">${progressLabel}</span>
+          <span class="event-progress-days">${daysLabel}</span>
+        </div>
+      </div>
+    `;
+    row.appendChild(tile);
+
   }
 
   /**
@@ -1541,7 +2102,8 @@ class ProfileView {
           const isPaid = ts.isPaid !== false && ts.paymentStatus !== "FREE";
           const isSelected = ts.id === this.selectedTraineeId;
           const sadhanaKey = ts.sadhanaKey || ts.id;
-          const catalogItem = SADHANA_CATALOG[sadhanaKey] || { icon: "🌿" };
+          const catalog = (this.model && typeof this.model.getSadhanaCatalog === 'function') ? this.model.getSadhanaCatalog() : {};
+          const catalogItem = catalog[sadhanaKey] || { icon: "🌿" };
           return `
         <div class="trainee-card-tile ${isPaid ? "tile-paid" : "tile-free"} ${isSelected ? "active-selected-tile" : ""}" 
              data-item-id="${ts.id}" 
@@ -1635,7 +2197,8 @@ class ProfileView {
 
     const isPaid = item.isPaid !== false && item.paymentStatus !== "FREE";
     const sadhanaKey = item.sadhanaKey || item.id;
-    const catalogItem = SADHANA_CATALOG[sadhanaKey] || {
+    const catalog = (this.model && typeof this.model.getSadhanaCatalog === 'function') ? this.model.getSadhanaCatalog() : {};
+    const catalogItem = catalog[sadhanaKey] || {
       icon: "🌿",
       category: "Sadhana",
     };
@@ -2080,14 +2643,52 @@ class ProfileView {
     }
   }
 
+  // Reusable Slide-out Right Drawer Toggle Mechanics (1st click open, 2nd click close)
+  toggleSadhanaDrawer(sadhanaKey) {
+    if (this.isSadhanaDrawerOpen && this.currentSadhanaKey === sadhanaKey) {
+      this.closeSadhanaDrawer();
+    } else {
+      this.openSadhanaDrawer(sadhanaKey);
+    }
+  }
+
   // Slide-out Drawer Rendering
   openSadhanaDrawer(sadhanaKey) {
-    const item = SADHANA_CATALOG[sadhanaKey] || SADHANA_CATALOG.sri_yantra;
+    this.isSadhanaDrawerOpen = true;
+    this.currentSadhanaKey = sadhanaKey;
+
+    const catalog = (this.model && typeof this.model.getSadhanaCatalog === 'function') ? this.model.getSadhanaCatalog() : {};
+    const item = catalog[sadhanaKey] || catalog.sri_yantra || {
+      id: sadhanaKey,
+      title: sadhanaKey,
+      category: "Sadhana",
+      levelScope: "All Levels",
+      icon: "🕉️",
+      summary: "Sacred spiritual practice and divine ritual.",
+      mantra: "Om Namah Shivaya",
+      timing: "Brahma Muhurta (4:00 AM – 6:00 AM)",
+      aasanDirection: "Kusha Aasan facing East",
+      ingredients: "Pure Cow Ghee Diya, Ganga Jal, Camphor, Consecrated Incense",
+      steps: ["Perform Aachaman and purify hands.", "Light the sacred flame.", "Chant mantra with focused meditative attention."],
+      benefits: "Astral protection, karmic debt alleviation, spiritual elevation.",
+      cautions: "Maintain strict sattvic discipline during practice."
+    };
+
     if (this.sadhanaDrawerTitle)
       this.sadhanaDrawerTitle.textContent = item.title;
     if (this.sadhanaDrawerCategory)
-      this.sadhanaDrawerCategory.textContent = `${item.category} ? ${item.levelScope}`;
-    if (this.sadhanaDrawerIcon) this.sadhanaDrawerIcon.textContent = item.icon;
+      this.sadhanaDrawerCategory.textContent = `${item.category || 'Sadhana'} • ${item.levelScope || 'All Levels'}`;
+    if (this.sadhanaDrawerIcon) this.sadhanaDrawerIcon.textContent = item.icon || '🕉️';
+
+    // Highlight active inspecting tile across all remedy/sadhana tiles
+    document.querySelectorAll('.remedy-card-option').forEach(tile => {
+      const tileKey = tile.getAttribute('data-sadhana-id') || tile.getAttribute('data-sadhana-trigger');
+      if (tileKey === sadhanaKey) {
+        tile.classList.add('tile-active-inspecting');
+      } else {
+        tile.classList.remove('tile-active-inspecting');
+      }
+    });
 
     if (this.sadhanaDrawerBody) {
       this.sadhanaDrawerBody.innerHTML = `
@@ -2105,7 +2706,7 @@ class ProfileView {
         </div>
 
         <div class="sadhana-info-block">
-          <div class="sadhana-info-title"><span>â°</span> Auspicious Timing &amp; Aasan Direction</div>
+          <div class="sadhana-info-title"><span>⏰</span> Auspicious Timing &amp; Aasan Direction</div>
           <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.35rem;"><strong>Timing:</strong> ${item.timing}</p>
           <p style="font-size: 0.88rem; color: var(--text-secondary);"><strong>Aasan &amp; Direction:</strong> ${item.aasanDirection}</p>
         </div>
@@ -2118,7 +2719,7 @@ class ProfileView {
         <div class="sadhana-info-block">
           <div class="sadhana-info-title"><span>📜</span> Step-by-Step Ritual Protocol</div>
           <ol class="sadhana-steps-list">
-            ${item.steps.map((st) => `<li>${st}</li>`).join("")}
+            ${Array.isArray(item.steps) ? item.steps.map((st) => `<li>${st}</li>`).join("") : `<li>${item.steps}</li>`}
           </ol>
         </div>
 
@@ -2134,9 +2735,7 @@ class ProfileView {
       `;
 
       // Bind copy mantra
-      const copyBtn = this.sadhanaDrawerBody.querySelector(
-        ".btn-copy-drawer-mantra",
-      );
+      const copyBtn = this.sadhanaDrawerBody.querySelector(".btn-copy-drawer-mantra");
       if (copyBtn) {
         copyBtn.addEventListener("click", () => {
           const text = decodeURIComponent(copyBtn.getAttribute("data-mantra"));
@@ -2151,25 +2750,53 @@ class ProfileView {
     }
 
     if (this.btnDrawerEnroll)
-      this.btnDrawerEnroll.setAttribute("data-sadhana-key", item.id);
+      this.btnDrawerEnroll.setAttribute("data-sadhana-key", item.id || sadhanaKey);
     if (this.btnDrawerSendTrainee)
-      this.btnDrawerSendTrainee.setAttribute("data-sadhana-key", item.id);
+      this.btnDrawerSendTrainee.setAttribute("data-sadhana-key", item.id || sadhanaKey);
 
-    if (this.sadhanaDrawer) {
-      this.sadhanaDrawer.classList.add("open");
-      this.sadhanaDrawer.setAttribute("aria-hidden", "false");
+    const drawer = this.sadhanaDrawer || document.getElementById("sadhana-detail-drawer");
+    const backdrop = this.sadhanaDrawerBackdrop || document.getElementById("sadhana-drawer-backdrop");
+
+    if (drawer) {
+      drawer.style.display = "flex";
+      drawer.classList.add("open", "is-open");
+      drawer.setAttribute("aria-hidden", "false");
     }
-    if (this.sadhanaDrawerBackdrop)
-      this.sadhanaDrawerBackdrop.classList.add("open");
+    if (backdrop) {
+      backdrop.style.display = "block";
+      backdrop.classList.add("open", "is-open");
+    }
   }
 
   closeSadhanaDrawer() {
-    if (this.sadhanaDrawer) {
-      this.sadhanaDrawer.classList.remove("open");
-      this.sadhanaDrawer.setAttribute("aria-hidden", "true");
+    this.isSadhanaDrawerOpen = false;
+    this.currentSadhanaKey = null;
+
+    // Clear active inspecting highlight from all tiles
+    document.querySelectorAll('.remedy-card-option').forEach(tile => {
+      tile.classList.remove('tile-active-inspecting');
+    });
+
+    const drawer = this.sadhanaDrawer || document.getElementById("sadhana-detail-drawer");
+    const backdrop = this.sadhanaDrawerBackdrop || document.getElementById("sadhana-drawer-backdrop");
+
+    if (drawer) {
+      drawer.classList.remove("open", "is-open");
+      drawer.setAttribute("aria-hidden", "true");
+      setTimeout(() => {
+        if (!this.isSadhanaDrawerOpen && drawer) {
+          drawer.style.display = "none";
+        }
+      }, 350);
     }
-    if (this.sadhanaDrawerBackdrop)
-      this.sadhanaDrawerBackdrop.classList.remove("open");
+    if (backdrop) {
+      backdrop.classList.remove("open", "is-open");
+      setTimeout(() => {
+        if (!this.isSadhanaDrawerOpen && backdrop) {
+          backdrop.style.display = "none";
+        }
+      }, 300);
+    }
   }
 
   // ==============================================================
@@ -3635,10 +4262,11 @@ Installation & Activation Steps:
   applyDynamicAuthMatrix(matrix, roleMode = "MASTER") {
     if (!matrix || !Array.isArray(matrix)) return;
 
-    const resolvedRole =
-      (roleMode || "MASTER").toUpperCase() === "ADMIN"
-        ? "MASTER"
-        : (roleMode || "MASTER").toUpperCase();
+    const rawRole = (roleMode || "MASTER").toUpperCase().trim();
+    const resolvedRole = (typeof ScreenAuthMatrix !== "undefined" && typeof ScreenAuthMatrix.resolveRole === "function")
+      ? ScreenAuthMatrix.resolveRole(rawRole)
+      : ((rawRole.includes("ADMIN") || rawRole.includes("MASTER")) ? "MASTER" : rawRole);
+
     const bodyPortalRole = (document.body.getAttribute("data-portal-role") || resolvedRole).toLowerCase();
     let firstVisibleTab = null;
 
@@ -3648,10 +4276,46 @@ Installation & Activation Steps:
         : (item[resolvedRole] !== undefined ? item[resolvedRole] !== false : true);
 
       const isPortalAllowed = item.portalVisible
-        ? (item.portalVisible[bodyPortalRole] !== false)
-        : true;
+        ? (item.portalVisible[bodyPortalRole] !== false &&
+           ((bodyPortalRole === "master" || bodyPortalRole === "admin") ? (item.portalVisible.masters !== false && item.portalVisible.admin !== false) : true))
+        : (item.portals
+            ? (item.portals[bodyPortalRole] !== false &&
+               ((bodyPortalRole === "master" || bodyPortalRole === "admin") ? (item.portals.masters !== false && item.portals.admin !== false) : true))
+            : true);
 
-      const isAllowed = isRoleAllowed && isPortalAllowed;
+      let isAllowed = isRoleAllowed && isPortalAllowed;
+
+      // Container/Parent Level 1 Sections: if any child is allowed, show container; if all children are denied and parent is denied, hide it
+      if (item.id === "admin_current_events_strip") {
+        isAllowed = isRoleAllowed && isPortalAllowed;
+      } else if (item.level === 1) {
+        const childElements = matrix.filter(m => m && m.parent === item.id);
+        if (childElements.length > 0) {
+          const anyChildAllowed = childElements.some(ch => {
+            const chRole = (ch.roles && ch.roles[resolvedRole] !== undefined)
+              ? ch.roles[resolvedRole] !== false
+              : (ch[resolvedRole] !== undefined ? ch[resolvedRole] !== false : true);
+            const chPortal = ch.portalVisible
+              ? (ch.portalVisible[bodyPortalRole] !== false &&
+                 ((bodyPortalRole === "master" || bodyPortalRole === "admin") ? (ch.portalVisible.masters !== false && ch.portalVisible.admin !== false) : true))
+              : (ch.portals
+                  ? (ch.portals[bodyPortalRole] !== false &&
+                     ((bodyPortalRole === "master" || bodyPortalRole === "admin") ? (ch.portals.masters !== false && ch.portals.admin !== false) : true))
+                  : true);
+            return chRole && chPortal;
+          });
+          const allChildrenDenied = childElements.every(ch => {
+            return (ch.roles && ch.roles[resolvedRole] !== undefined)
+              ? ch.roles[resolvedRole] === false
+              : (ch[resolvedRole] !== undefined ? ch[resolvedRole] === false : false);
+          });
+          if (allChildrenDenied && !isRoleAllowed) {
+            isAllowed = false;
+          } else if (anyChildAllowed) {
+            isAllowed = true;
+          }
+        }
+      }
 
       if (item.type === "SCREEN") {
         const tabTarget =
@@ -3686,6 +4350,8 @@ Installation & Activation Steps:
               el.style.display = shouldShowCard2 ? "block" : "none";
             } else if (el.id === "admin-hierarchy-metrics-strip") {
               el.style.display = isAllowed ? "grid" : "none";
+            } else if (el.id === "admin-current-events-strip") {
+              el.style.display = isAllowed ? "block" : "none";
             } else if (el.id === "sidebar-rtdb-section" || el.classList.contains("sidebar-rtdb-card")) {
               el.style.display = isAllowed ? "" : "none";
             } else {
@@ -4054,10 +4720,19 @@ Installation & Activation Steps:
               matrixData.forEach((m) => {
                 if (m.category === cat) {
                   m[role] = isChecked;
-                  if (role === "DEVOTEE") m["SEEKER"] = isChecked;
+                  if (!m.roles) m.roles = {};
+                  m.roles[role] = isChecked;
+                  if (role === "DEVOTEE") {
+                    m["SEEKER"] = isChecked;
+                    m.roles["SEEKER"] = isChecked;
+                  }
                 }
               });
               this.controller.model.saveAuthMatrix(matrixData);
+              this.controller.view.applyDynamicAuthMatrix(matrixData, this.controller.model.getRoleMode());
+              if (typeof this.controller._applyEventPanelRBAC === "function") {
+                this.controller._applyEventPanelRBAC();
+              }
             }
 
             this.updateAuthMatrixIndeterminateStates(tbody);
@@ -4085,12 +4760,14 @@ Installation & Activation Steps:
                 chk.classList.remove("is-partial");
               });
             } else if (level === 1) {
-              const childChecks = tbody.querySelectorAll(`.auth-matrix-row[data-parent="${itemId}"] .matrix-role-check[data-role="${role}"]`);
-              childChecks.forEach((chk) => {
-                chk.checked = isChecked;
-                chk.indeterminate = false;
-                chk.classList.remove("is-partial");
-              });
+              if (itemId !== "admin_current_events_strip") {
+                const childChecks = tbody.querySelectorAll(`.auth-matrix-row[data-parent="${itemId}"] .matrix-role-check[data-role="${role}"]`);
+                childChecks.forEach((chk) => {
+                  chk.checked = isChecked;
+                  chk.indeterminate = false;
+                  chk.classList.remove("is-partial");
+                });
+              }
             }
 
             // Update underlying model data
@@ -4103,10 +4780,19 @@ Installation & Activation Steps:
                 const found = matrixData.find((m) => m.id === id);
                 if (found && r) {
                   found[r] = chk.checked;
-                  if (r === "DEVOTEE") found["SEEKER"] = chk.checked;
+                  if (!found.roles) found.roles = {};
+                  found.roles[r] = chk.checked;
+                  if (r === "DEVOTEE") {
+                    found["SEEKER"] = chk.checked;
+                    found.roles["SEEKER"] = chk.checked;
+                  }
                 }
               });
               this.controller.model.saveAuthMatrix(matrixData);
+              this.controller.view.applyDynamicAuthMatrix(matrixData, this.controller.model.getRoleMode());
+              if (typeof this.controller._applyEventPanelRBAC === "function") {
+                this.controller._applyEventPanelRBAC();
+              }
             }
 
             // Recalculate parent and category header indeterminate / checked states
@@ -4179,6 +4865,8 @@ Installation & Activation Steps:
     const level1Rows = tbody.querySelectorAll('.auth-matrix-row[data-level="1"]');
     level1Rows.forEach((l1Row) => {
       const parentId = l1Row.getAttribute("data-item-id");
+      // admin_current_events_strip is an independent section display toggle
+      if (parentId === "admin_current_events_strip") return;
       roles.forEach((role) => {
         const l1Check = l1Row.querySelector(`.matrix-role-check[data-role="${role}"]`);
         if (!l1Check) return;
@@ -4560,6 +5248,307 @@ ProfileView.prototype.closeTierProfilesPanel = function() {
 };
 
 
+
+// ==============================================================
+// ENTERPRISE UI/UX COMPONENT SUITE METHODS (Antigravity Standards)
+// ==============================================================
+
+/**
+ * Bottom-Right Slide-in/out Toast Notification
+ * @param {Object} options - { title, message, type, duration, actionText, onAction }
+ */
+ProfileView.prototype.showBottomRightToast = function(options = {}) {
+  const {
+    title = "Notice",
+    message = "",
+    type = "info",
+    duration = 4000,
+    actionText = null,
+    onAction = null
+  } = typeof options === "string" ? { message: options } : options;
+
+  if (typeof document === "undefined") return;
+
+  let container = document.getElementById("slide-toast-container-br");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "slide-toast-container-br";
+    container.className = "slide-toast-container-br";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast-slide-bottom-right toast-${type}`;
+  toast.setAttribute("role", "alert");
+  toast.setAttribute("aria-live", "polite");
+
+  const icons = {
+    info: "ℹ️",
+    success: "✅",
+    warning: "⚠️",
+    error: "❌"
+  };
+  const icon = icons[type] || "🔔";
+
+  let actionsHtml = "";
+  if (actionText && typeof onAction === "function") {
+    actionsHtml = `
+      <div class="toast-br-actions">
+        <button type="button" class="btn btn-xs btn-gold toast-br-action-btn">${actionText}</button>
+      </div>
+    `;
+  }
+
+  toast.innerHTML = `
+    <div class="toast-br-header">
+      <div class="toast-br-title-wrap">
+        <span>${icon}</span>
+        <span>${title}</span>
+      </div>
+      <button type="button" class="toast-br-close" aria-label="Dismiss">&times;</button>
+    </div>
+    <div class="toast-br-body">${message}</div>
+    ${actionsHtml}
+    <div class="toast-br-progress" style="animation-duration: ${duration}ms;"></div>
+  `;
+
+  // Dismiss logic
+  let dismissed = false;
+  const dismiss = () => {
+    if (dismissed) return;
+    dismissed = true;
+    toast.classList.add("is-closing");
+    setTimeout(() => {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 320);
+  };
+
+  const closeBtn = toast.querySelector(".toast-br-close");
+  if (closeBtn) closeBtn.addEventListener("click", dismiss);
+
+  if (actionText && typeof onAction === "function") {
+    const actBtn = toast.querySelector(".toast-br-action-btn");
+    if (actBtn) {
+      actBtn.addEventListener("click", () => {
+        try { onAction(); } catch (e) { console.error(e); }
+        dismiss();
+      });
+    }
+  }
+
+  container.appendChild(toast);
+
+  if (duration > 0) {
+    setTimeout(dismiss, duration);
+  }
+
+  return toast;
+};
+
+// Preserve backward-compatibility for legacy calls to showSlideToast
+ProfileView.prototype.showSlideToast = function(title, message, type = "info", duration = 3000) {
+  if (typeof title === "object" && title !== null) {
+    return this.showBottomRightToast(title);
+  }
+  return this.showBottomRightToast({ title, message, type, duration });
+};
+
+/**
+ * Multi-Option Decision Modal (HITL Governance Dialog)
+ * @param {Object} options - { title, subtitle, message, options: Array, onAction: Function }
+ */
+ProfileView.prototype.showMultiOptionDialog = function(options = {}) {
+  if (typeof document === "undefined") return Promise.resolve(null);
+
+  return new Promise((resolve) => {
+    const modal = document.getElementById("modal-multi-option-decision");
+    if (!modal) {
+      console.warn("Modal #modal-multi-option-decision not found in DOM");
+      return resolve(null);
+    }
+
+    const titleEl = document.getElementById("multi-dialog-title");
+    const subtitleEl = document.getElementById("multi-dialog-subtitle");
+    const messageEl = document.getElementById("multi-dialog-message");
+    const optionsContainer = document.getElementById("multi-dialog-options-container");
+
+    if (titleEl && options.title) titleEl.textContent = options.title;
+    if (subtitleEl && options.subtitle) subtitleEl.textContent = options.subtitle;
+    if (messageEl && options.message) messageEl.textContent = options.message;
+
+    // If custom action options provided, render them dynamically
+    if (optionsContainer && Array.isArray(options.options) && options.options.length > 0) {
+      optionsContainer.innerHTML = options.options.map(opt => `
+        <div class="multi-option-card" data-decision="${opt.id || opt.decision || 'SELECT'}">
+          <div class="multi-option-card-left">
+            <span class="multi-option-card-icon" style="color: ${opt.color || 'var(--gold-400)'};">${opt.icon || '⚖️'}</span>
+            <div>
+              <div class="multi-option-card-title" style="color: ${opt.color || '#fff'};">${opt.title}</div>
+              <div class="multi-option-card-desc">${opt.desc || opt.description || ''}</div>
+            </div>
+          </div>
+          <span style="font-size: 0.75rem; color: ${opt.color || 'var(--gold-400)'};">Select &rsaquo;</span>
+        </div>
+      `).join("");
+    }
+
+    const cleanup = () => {
+      modal.style.display = "none";
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+    };
+
+    const handleSelect = (decision) => {
+      cleanup();
+      if (typeof options.onAction === "function") {
+        try { options.onAction(decision); } catch (e) { console.error(e); }
+      }
+      resolve(decision);
+    };
+
+    // Bind cards
+    const cards = modal.querySelectorAll(".multi-option-card");
+    cards.forEach(card => {
+      card.onclick = () => {
+        const dec = card.getAttribute("data-decision") || "APPROVE";
+        handleSelect(dec);
+      };
+    });
+
+    // Close button
+    const closeBtns = modal.querySelectorAll("[data-close-modal='modal-multi-option-decision'], .modal-close");
+    closeBtns.forEach(btn => {
+      btn.onclick = () => {
+        cleanup();
+        resolve(null);
+      };
+    });
+
+    modal.style.display = "flex";
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+  });
+};
+
+/**
+ * Segmented View Mode Toggle: Grid Cards vs List
+ * @param {string} mode - 'GRID' | 'LIST'
+ */
+ProfileView.prototype.setViewMode = function(mode = "GRID") {
+  const normMode = mode.toUpperCase();
+  this.viewMode = normMode;
+
+  const btnGrid = document.getElementById("btn-toggle-grid");
+  const btnList = document.getElementById("btn-toggle-list");
+  if (btnGrid && btnList) {
+    btnGrid.classList.toggle("active", normMode === "GRID");
+    btnList.classList.toggle("active", normMode === "LIST");
+  }
+
+  const listContainer = document.getElementById("tier-panel-profiles-list");
+  if (listContainer) {
+    listContainer.setAttribute("data-view-mode", normMode);
+    listContainer.classList.toggle("view-mode-grid", normMode === "GRID");
+    listContainer.classList.toggle("view-mode-list", normMode === "LIST");
+  }
+
+  try {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("sk_view_mode", normMode);
+    }
+  } catch (e) {}
+};
+
+/**
+ * 3D Card Flipper trigger for Selected Member Card
+ * @param {boolean} [isFlipped]
+ */
+ProfileView.prototype.flipSelectedMemberCard = function(isFlipped) {
+  const card = document.getElementById("selected-member-profile-card") || this.selectedMemberCard;
+  if (!card) return;
+
+  if (typeof isFlipped === "boolean") {
+    card.classList.toggle("is-flipped", isFlipped);
+  } else {
+    card.classList.toggle("is-flipped");
+  }
+
+  const flippedNow = card.classList.contains("is-flipped");
+  this.showBottomRightToast({
+    title: flippedNow ? "3D Sadhana & Telemetry" : "Member Identity Card",
+    message: flippedNow
+      ? "Viewing Sadhana streak, daily target malas, and live telemetry."
+      : "Viewing member name, Gotra, and contact metadata.",
+    type: "info",
+    duration: 2500
+  });
+};
+
+/**
+ * Rich Searchable Dropdown List Box Population
+ * @param {Array} profiles
+ * @param {Function} onSelect
+ */
+ProfileView.prototype.populateDevoteeDropdown = function(profiles = [], onSelect = null) {
+  const dropdownMenu = document.getElementById("dropdown-devotee-menu");
+  const itemsContainer = document.getElementById("dropdown-devotee-items-list");
+  const filterInput = document.getElementById("input-dropdown-filter");
+  const labelEl = document.getElementById("picker-selected-label");
+
+  if (!itemsContainer) return;
+
+  const renderItems = (filteredList) => {
+    if (!filteredList || filteredList.length === 0) {
+      itemsContainer.innerHTML = '<div style="padding: 0.6rem; text-align: center; color: var(--text-muted); font-size: 0.75rem;">No members match filter</div>';
+      return;
+    }
+
+    itemsContainer.innerHTML = filteredList.map(prof => {
+      const initials = (prof.name || "DK")
+        .split(" ")
+        .map(w => w[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase();
+      return `
+        <div class="rich-select-item" data-profile-id="${prof.id}" tabindex="0">
+          <div class="rich-select-item-avatar">${initials}</div>
+          <div class="rich-select-item-content">
+            <div class="rich-select-item-title">${prof.name || 'Member'}</div>
+            <div class="rich-select-item-sub">${prof.referenceCode || prof.city || 'Devotee'} &bull; Tier ${prof.level || 4}</div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    itemsContainer.querySelectorAll(".rich-select-item").forEach(item => {
+      item.onclick = () => {
+        const id = item.getAttribute("data-profile-id");
+        const selected = profiles.find(p => p.id === id);
+        if (selected) {
+          if (labelEl) labelEl.textContent = selected.name;
+          const dropdownWrap = document.getElementById("dropdown-devotee-picker");
+          if (dropdownWrap) dropdownWrap.classList.remove("is-open");
+          if (typeof onSelect === "function") onSelect(selected);
+        }
+      };
+    });
+  };
+
+  renderItems(profiles);
+
+  if (filterInput) {
+    filterInput.oninput = () => {
+      const q = filterInput.value.toLowerCase().trim();
+      const filtered = profiles.filter(p =>
+        (p.name && p.name.toLowerCase().includes(q)) ||
+        (p.referenceCode && p.referenceCode.toLowerCase().includes(q)) ||
+        (p.city && p.city.toLowerCase().includes(q))
+      );
+      renderItems(filtered);
+    };
+  }
+};
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = ProfileView;

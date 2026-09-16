@@ -2790,6 +2790,115 @@ class ScreenAuthMatrix {
     }
   },
   {
+    "id": "admin_current_events_strip",
+    "label": "🔔 Current Events in Progress Panel (Display/Hide)",
+    "name": "🔔 Current Events in Progress Panel (Display/Hide)",
+    "type": "SECTION",
+    "selector": "#admin-current-events-strip",
+    "category": "Global: Header",
+    "level": 1,
+    "parent": "header_division",
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true
+    },
+    "MASTER": true,
+    "HEALER": true,
+    "TRAINEE": true,
+    "DEVOTEE": true,
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": true,
+      "devotee": true,
+      "seeker": true
+    },
+    "portalVisible": {
+      "masters": true,
+      "healers": true,
+      "trainee": true,
+      "devotee": true,
+      "seeker": true,
+      "master": true,
+      "admin": true
+    }
+  },
+  {
+    "id": "btn_add_current_event",
+    "label": "＋ Add Current Event Button",
+    "name": "＋ Add Current Event Button",
+    "type": "BUTTON",
+    "selector": "#btn-add-current-event",
+    "category": "Global: Header",
+    "level": 2,
+    "parent": "admin_current_events_strip",
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false
+    },
+    "MASTER": true,
+    "HEALER": true,
+    "TRAINEE": false,
+    "DEVOTEE": false,
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": false,
+      "devotee": false,
+      "seeker": false
+    },
+    "portalVisible": {
+      "masters": true,
+      "healers": true,
+      "trainee": false,
+      "devotee": false,
+      "seeker": false,
+      "master": true,
+      "admin": true
+    }
+  },
+  {
+    "id": "btn_edit_current_event",
+    "label": "✏️ Edit Current Event Button (Per Tile)",
+    "name": "✏️ Edit Current Event Button (Per Tile)",
+    "type": "BUTTON",
+    "selector": ".btn-event-edit",
+    "category": "Global: Header",
+    "level": 2,
+    "parent": "admin_current_events_strip",
+    "notes": "Active for Admin (MASTER) and Healer. Inactive (dimmed, cursor:not-allowed) for Trainee and Devotee. Visual gate applied via _applyEventPanelRBAC() in ProfileController.",
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false
+    },
+    "MASTER": true,
+    "HEALER": true,
+    "TRAINEE": false,
+    "DEVOTEE": false,
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": false,
+      "devotee": false,
+      "seeker": false
+    },
+    "portalVisible": {
+      "masters": true,
+      "healers": true,
+      "trainee": false,
+      "devotee": false,
+      "seeker": false,
+      "master": true,
+      "admin": true
+    }
+  },
+  {
     "id": "tier_profiles_panel",
     "label": "Hierarchy Tier Ribbon & Flyout Panel",
     "type": "PANEL",
@@ -3119,69 +3228,91 @@ class ScreenAuthMatrix {
     }
   },
   {
-    "id": "sidebar_access_matrix",
-    "label": "RBAC Access Matrix Button",
+    "id": "sidebar_sadhana_explorer",
+    "label": "Sadhana Explorer Catalog Button",
     "type": "BUTTON",
-    "selector": "#sidebar-btn-rbac-matrix",
+    "selector": "#sidebar-btn-sadhana-explorer",
     "category": "Global: Sidebar",
     "level": 2,
-    "parent": "sidebar_tools_section",
+    "parent": "sidebar_sacred_catalogs_section",
     "roles": {
       "MASTER": true,
       "HEALER": true,
-      "TRAINEE": false,
-      "DEVOTEE": false
+      "TRAINEE": true,
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
-      "trainee": false,
-      "devotee": false,
-      "seeker": false
+      "trainee": true,
+      "devotee": true,
+      "seeker": true
     }
   },
   {
-    "id": "sidebar_modify_auth_matrix",
-    "label": "Modify Auth Matrix Button",
+    "id": "sidebar_remedy_hub",
+    "label": "Remedy & Upay Hub Button",
     "type": "BUTTON",
-    "selector": "#sidebar-btn-modify-auth-matrix",
+    "selector": "#sidebar-btn-remedy-hub",
     "category": "Global: Sidebar",
     "level": 2,
-    "parent": "sidebar_tools_section",
-    "roles": {
-      "MASTER": true,
-      "HEALER": false,
-      "TRAINEE": false,
-      "DEVOTEE": false
-    },
-    "portals": {
-      "masters": true,
-      "healers": false,
-      "trainee": false,
-      "devotee": false,
-      "seeker": false
-    }
-  },
-  {
-    "id": "sidebar_toggle_json_drawer",
-    "label": "View JSON Payload Button",
-    "type": "BUTTON",
-    "selector": "#btn-toggle-json-drawer",
-    "category": "Global: Sidebar",
-    "level": 2,
-    "parent": "sidebar_tools_section",
+    "parent": "sidebar_sacred_catalogs_section",
     "roles": {
       "MASTER": true,
       "HEALER": true,
-      "TRAINEE": false,
-      "DEVOTEE": false
+      "TRAINEE": true,
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
-      "trainee": false,
-      "devotee": false,
-      "seeker": false
+      "trainee": true,
+      "devotee": true,
+      "seeker": true
+    }
+  },
+  {
+    "id": "sidebar_help_support",
+    "label": "Help & Support Button",
+    "type": "BUTTON",
+    "selector": "#sidebar-btn-help-support",
+    "category": "Global: Sidebar",
+    "level": 2,
+    "parent": "sidebar_support_docs_section",
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true
+    },
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": true,
+      "devotee": true,
+      "seeker": true
+    }
+  },
+  {
+    "id": "sidebar_about_app",
+    "label": "About App Button",
+    "type": "BUTTON",
+    "selector": "#sidebar-btn-about-app",
+    "category": "Global: Sidebar",
+    "level": 2,
+    "parent": "sidebar_support_docs_section",
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true
+    },
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": true,
+      "devotee": true,
+      "seeker": true
     }
   },
   {
@@ -3840,25 +3971,48 @@ class ScreenAuthMatrix {
               const s = storedMap.get(def.id);
               const rbac = rbacConfig[def.id] || {};
               
-              // RBAC Settings directly set/unticked by user have highest precedence
-              const master = rbac.MASTER !== undefined ? rbac.MASTER : (s && s.roles && s.roles.MASTER !== undefined ? s.roles.MASTER : (s && s.MASTER !== undefined ? s.MASTER : def.MASTER));
-              const healer = rbac.HEALER !== undefined ? rbac.HEALER : (s && s.roles && s.roles.HEALER !== undefined ? s.roles.HEALER : (s && s.HEALER !== undefined ? s.HEALER : def.HEALER));
-              const trainee = rbac.TRAINEE !== undefined ? rbac.TRAINEE : (s && s.roles && s.roles.TRAINEE !== undefined ? s.roles.TRAINEE : (s && s.TRAINEE !== undefined ? s.TRAINEE : def.TRAINEE));
-              const devotee = rbac.DEVOTEE !== undefined ? rbac.DEVOTEE : (s && s.roles && s.roles.DEVOTEE !== undefined ? s.roles.DEVOTEE : (s && s.DEVOTEE !== undefined ? s.DEVOTEE : def.DEVOTEE));
+              const getRoleVal = (roleKey) => {
+                if (rbac[roleKey] !== undefined) return rbac[roleKey];
+                // For canonical Current Event controls, ensure default false for non-masters if not userCustomized
+                if (def.id === 'btn_add_current_event' && (roleKey === 'TRAINEE' || roleKey === 'DEVOTEE') && (!s || !s.userCustomized)) {
+                  return false;
+                }
+                if (def.id === 'admin_current_events_strip' && (!s || !s.userCustomized)) {
+                  return true;
+                }
+                if (s && s.roles && s.roles[roleKey] !== undefined) return s.roles[roleKey];
+                if (s && s[roleKey] !== undefined) return s[roleKey];
+                if (def.roles && def.roles[roleKey] !== undefined) return def.roles[roleKey];
+                if (def[roleKey] !== undefined) return def[roleKey];
+                return (roleKey === 'MASTER' || roleKey === 'HEALER');
+              };
+
+              const master = getRoleVal('MASTER');
+              const healer = getRoleVal('HEALER');
+              const trainee = getRoleVal('TRAINEE');
+              const devotee = getRoleVal('DEVOTEE');
               const seeker = rbac.SEEKER !== undefined ? rbac.SEEKER : (s && s.roles && s.roles.SEEKER !== undefined ? s.roles.SEEKER : (s && s.SEEKER !== undefined ? s.SEEKER : devotee));
+
+              const defPortals = def.portalVisible || def.portals || {};
+              const sPortals = (s && (s.portalVisible || s.portals)) || {};
+              const mergedPortals = { ...defPortals, ...sPortals };
+
+              const finalLabel = (def.id === 'admin_current_events_strip') ? def.label : ((s && s.label) || def.label);
+              const finalName = (def.id === 'admin_current_events_strip') ? def.name : ((s && s.name) || (s && s.label) || def.label);
 
               return {
                 ...def,
                 ...(s || {}),
-                label: (s && s.label) || def.label,
-                name: (s && s.name) || (s && s.label) || def.label,
+                label: finalLabel,
+                name: finalName,
                 roles: { MASTER: master, HEALER: healer, TRAINEE: trainee, DEVOTEE: devotee, SEEKER: seeker },
                 MASTER: master,
                 HEALER: healer,
                 TRAINEE: trainee,
                 DEVOTEE: devotee,
                 SEEKER: seeker,
-                portalVisible: (s && s.portalVisible) ? { ...def.portalVisible, ...s.portalVisible } : def.portalVisible
+                portals: mergedPortals,
+                portalVisible: mergedPortals
               };
             });
             // Include user-added dynamic custom elements
@@ -4019,11 +4173,11 @@ class ScreenAuthMatrix {
    * Resolves normalized role string across all 4 operational levels.
    */
   static resolveRole(role) {
-    const r = (role || 'DEVOTEE').toUpperCase();
-    if (r === 'ADMIN' || r === 'MASTER') return 'MASTER';
-    if (r === 'HEALER') return 'HEALER';
-    if (r === 'TRAINEE' || r === 'SADHAK') return 'TRAINEE';
-    if (r === 'SEEKER') return 'DEVOTEE';
+    const r = (role || 'DEVOTEE').toUpperCase().trim();
+    if (r.includes('ADMIN') || r.includes('MASTER')) return 'MASTER';
+    if (r.includes('HEALER')) return 'HEALER';
+    if (r.includes('TRAINEE') || r.includes('SADHAK')) return 'TRAINEE';
+    if (r.includes('DEVOTEE') || r.includes('SEEKER')) return 'DEVOTEE';
     return 'DEVOTEE';
   }
 
@@ -4051,9 +4205,10 @@ class ScreenAuthMatrix {
    */
   static canAccessElement(elementId, role) {
     const resolved = this.resolveRole(role);
-    const def = this.getMatrixDefinition().find(item => item.id === elementId);
-    if (!def) return true;
-    return Boolean(def.roles && (def.roles[resolved] !== undefined ? def.roles[resolved] : def.roles['DEVOTEE']));
+    const matrix = this.getAuthMatrix();
+    const item = matrix.find(m => m.id === elementId);
+    if (!item) return true;
+    return Boolean(item.roles && (item.roles[resolved] !== undefined ? item.roles[resolved] : (item[resolved] !== undefined ? item[resolved] : item.roles['DEVOTEE'])));
   }
 
   /**
