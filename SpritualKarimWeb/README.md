@@ -20,3 +20,12 @@ The **Spiritual Karim Web Portal** (`SpritualKarimWeb`) is built with modern Van
 - 🌳 **Lineage MLM Spiderweb Tree**: Visual dynamic tree rendering multi-generation spiritual downlines.
 - 📱 **Pairing Protocols**: 16-digit cryptographic reference code pairing system.
 - 🔐 **Screen Auth Matrix**: Granular field-level and action-level permission controls across roles.
+
+---
+
+## 🔑 Getting Started / Workflow Steps
+
+The platform uses a closed-loop authentication and onboarding flow:
+1. **Joining Step (`join.html`)**: New seekers use the 5-step induction wizard to enter their pairing reference code, personal identity, and sign the spiritual consent.
+2. **Login Step (`login.html`)**: Registered users authenticate by selecting their assigned persona role and entering their credentials to receive a session token.
+3. **Logout Step (`logout.html`)**: Users securely terminate their session, wipe local caches and demo states, and are provided options to sign in again or return to the main portal.

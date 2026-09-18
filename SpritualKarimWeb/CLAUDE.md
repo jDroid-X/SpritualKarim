@@ -16,6 +16,12 @@ and contains project-specific extensions.
 **Stack**: Vanilla JS (MVC/MVVM), HTML5, CSS3, LocalStorage + Firebase sync
 **Portals**: Admin, Mahamana, Mahant, Sadhna, Pracharak, Seeker, Public
 
+### 1.1 Strict Domain Boundary Isolation (Zero Cross-App Bleed)
+**Mandate**: Under Domain-Driven Design (DDD), **`SpritualKarim` is strictly segregated from `jFindMe`**.
+- **No Shared Activities/Classes**: `MapActivity`, `AvatarEditorActivity`, `BaseActivityJava`, `AuthActivity`, `UiArchitect`, `EnterpriseCardTable`, `FamilyFriendsActivity`, `PersonDetailsActivity`, `FactoryResetActivity`, `ForensicVaultExplorerActivity`, `HistoryActivity`, `AboutActivity`, `ProfileActivity` belong strictly to `jFindMe`.
+- **Zero Bleed Rule**: Never import, reference, or cross-wire hardware device tracking, GPS coordinates, remote wipe, or telemetry tables into `SpritualKarim`.
+- **Spiritual Domain Model**: All discipleship hierarchy, lineage mentorship, regional ashram chapters, and sadhana counters must remain 100% native spiritual entities.
+
 ---
 
 ## 2. Architecture Patterns (Enforced)
@@ -88,6 +94,13 @@ setInterval(() => {
   }
 }, 15000);
 ```
+
+### 2.5 Auth & Onboarding Flow (Login, Logout, Joining)
+
+The application enforces a closed-loop onboarding and authentication process:
+1. **Joining Step (`join.html`)**: The entry point for new devotees. A 5-step wizard captures the device pairing invite code, personal data, and consent forms.
+2. **Login Step (`login.html`)**: The primary authentication gate where registered users select their persona/role to receive a session token.
+3. **Logout Step (`logout.html`)**: Terminates sessions, calls `DemoAuth.logout()`, and securely clears local storage caches and tokens.
 
 ---
 

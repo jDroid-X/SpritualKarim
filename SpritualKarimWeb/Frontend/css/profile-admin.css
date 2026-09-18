@@ -3287,7 +3287,7 @@ input:checked + .toggle-slider:before {
 /* Tablets / Phablets (<= 768px) */
 @media (max-width: 768px) {
   .admin-topbar .topbar-row-primary {
-    flex-wrap: nowrap !important;
+    flex-wrap: wrap !important;
     padding: 0.45rem 0.75rem;
     gap: 0.5rem;
   }
@@ -16809,3 +16809,685 @@ html[data-theme="dark"] .tree-drawer-footer {
 }
 
 
+
+
+/* ==========================================================================
+   MASTER RESPONSIVE OVERRIDES (MOBILE-FIRST SMART FIT & HAMBURGER DRAWER)
+   Highest Cascade Specificity - Best & Smart Fit for Mobile Px Widths (like login.html)
+   ========================================================================== */
+
+/* Universal Mobile Safety: Prevent unwanted horizontal scrolling & split overflow */
+@media (max-width: 992px) {
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+  }
+
+  /* 1. Master Layout: Enforce 1-Column Fluid Fit (Eliminate 275px Left Blank Offset) */
+  .admin-layout,
+  html[data-theme="light"] .admin-layout,
+  html[data-theme="dark"] .admin-layout,
+  [data-theme="light"] .admin-layout,
+  [data-theme="dark"] .admin-layout,
+  body.portal-admin[data-portal-role] .admin-layout,
+  .admin-layout.has-tier-panel-open {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 100% !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    min-height: calc(100vh - 44px) !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* 2. Mobile Off-Canvas Hamburger Sidebar Drawer */
+  .admin-sidebar,
+  #admin-enterprise-drawer,
+  html[data-theme="light"] .admin-sidebar,
+  html[data-theme="dark"] .admin-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 320px !important;
+    max-width: 86vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    z-index: 100000 !important;
+    transform: translateX(-105%) !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: none !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    background: var(--bg-sidebar, #ffffff) !important;
+    border-right: 1.5px solid var(--border-color, rgba(212, 175, 55, 0.35)) !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  html[data-theme="dark"] .admin-sidebar,
+  html[data-theme="dark"] #admin-enterprise-drawer {
+    background: #140f24 !important;
+    border-right: 1.5px solid rgba(212, 175, 55, 0.3) !important;
+  }
+
+  .admin-sidebar.mobile-open,
+  #admin-enterprise-drawer.mobile-open {
+    transform: translateX(0) !important;
+    box-shadow: 12px 0 55px rgba(0, 0, 0, 0.75) !important;
+  }
+
+  /* 3. Sidebar Backdrop Overlay */
+  .sidebar-backdrop,
+  #sidebar-backdrop {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    z-index: 99999 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.25s ease !important;
+    display: block !important;
+  }
+
+  .sidebar-backdrop.open,
+  #sidebar-backdrop.open {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  /* 4. Canvas Smart Fit (Zero Left Offset, Zero Unwanted Whitespace) */
+  .admin-canvas,
+  html[data-theme="light"] .admin-canvas,
+  html[data-theme="dark"] .admin-canvas,
+  body.portal-admin[data-portal-role] .admin-canvas {
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    padding: 0.5rem 0.65rem 4rem 0.65rem !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+
+  .profile-form-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+  }
+}
+
+/* Tablets & Mobile Screens (<= 768px) */
+@media (max-width: 768px) {
+  /* 5. Production Metric Tiles: Smart 2-Column Responsive Grid */
+  .admin-metrics-tiles-row,
+  #admin-hierarchy-metrics-strip {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 0 10px 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Tile 5 (All Tiers / Summary) spans full 2-columns */
+  .admin-metrics-tiles-row .admin-metric-tile-card:last-child,
+  #admin-hierarchy-metrics-strip .admin-metric-tile-card:last-child {
+    grid-column: span 2 !important;
+  }
+
+  .admin-metric-tile-card {
+    height: auto !important;
+    min-height: 78px !important;
+    max-height: none !important;
+    padding: 7px 10px !important;
+    box-sizing: border-box !important;
+    border-radius: 8px !important;
+  }
+
+  .metric-tile-title {
+    font-size: 0.74rem !important;
+  }
+
+  .metric-tile-count-number {
+    font-size: 1.2rem !important;
+    font-weight: 800 !important;
+  }
+
+  /* 6. Touch-Friendly Stage & Section Tab Bar */
+  .main-tabs-nav-bar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 4px !important;
+    gap: 4px !important;
+    margin: 0.65rem 0 0.85rem 0 !important;
+    scrollbar-width: none !important;
+    border-radius: 8px !important;
+  }
+  .main-tabs-nav-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .main-tab-btn {
+    flex-shrink: 0 !important;
+    min-width: auto !important;
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+    border-radius: 6px !important;
+    white-space: nowrap !important;
+  }
+
+  /* 7. Identity Dossier Card: Clean Vertical Stacking */
+  .header-card-front-slim {
+    padding: 0.85rem 0.95rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border-radius: 10px !important;
+  }
+
+  .header-card-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+
+  .header-card-avatar-wrap {
+    margin: 0 auto !important;
+  }
+
+  .header-card-user-info {
+    text-align: center !important;
+  }
+
+  .header-card-badges-row {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+
+  .header-card-actions-row {
+    margin-left: 0 !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  /* 8. Fluid Forms & Inputs (Matching login.html smart mobile fit) */
+  .form-grid-3,
+  .form-grid-2,
+  .form-grid-6,
+  .form-grid-4,
+  .form-row {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .form-group {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .form-control,
+  .form-input,
+  .form-select,
+  select.form-control,
+  textarea.form-control,
+  input.form-control {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 0.92rem !important;
+    padding: 0.6rem 0.75rem !important;
+    border-radius: 6px !important;
+  }
+
+  .form-label {
+    text-align: left !important;
+    font-size: 0.8rem !important;
+  }
+
+  .card,
+  .main-form-section,
+  .sadhana-dashboard-card,
+  .tree-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0.85rem 0.95rem !important;
+    margin: 0 0 0.85rem 0 !important;
+    border-radius: 10px !important;
+  }
+
+  .form-footer-actions {
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0.65rem 0.85rem !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  .footer-left,
+  .footer-right {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
+  /* 9. Drawers & Modals Smart Fit */
+  .modal-card,
+  .tree-modal-card {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: 0.5rem auto !important;
+    padding: 1rem !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  .sadhana-detail-drawer,
+  .pending-approval-drawer,
+  #pending-approval-drawer,
+  .tree-profile-drawer,
+  #tree-profile-drawer {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+}
+
+/* Small / Ultra-Compact Mobile (<= 480px) */
+@media (max-width: 480px) {
+  .admin-canvas,
+  html[data-theme="light"] .admin-canvas,
+  html[data-theme="dark"] .admin-canvas {
+    padding: 0.35rem 0.5rem 4rem 0.5rem !important;
+  }
+
+  .admin-metrics-tiles-row,
+  #admin-hierarchy-metrics-strip {
+    gap: 6px !important;
+  }
+
+  .admin-metric-tile-card {
+    min-height: 72px !important;
+    padding: 6px 8px !important;
+  }
+
+  .metric-tile-lead {
+    gap: 4px !important;
+  }
+
+  .metric-tile-icon {
+    font-size: 1rem !important;
+  }
+
+  .metric-tile-title {
+    font-size: 0.7rem !important;
+  }
+
+  .metric-tile-count-number {
+    font-size: 1.1rem !important;
+  }
+
+  .header-card-front-slim {
+    padding: 0.75rem 0.75rem !important;
+  }
+}
+
+/* ==========================================================================
+   MOBILE DRAWER HEADER & CLOSE BUTTON (HUMAN-IN-THE-LOOP ACCESSIBILITY)
+   ========================================================================== */
+.drawer-header-bar {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .drawer-header-bar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0.6rem 0.5rem 0.75rem 0.5rem !important;
+    border-bottom: 1.5px solid rgba(212, 175, 55, 0.3) !important;
+    margin-bottom: 0.85rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .drawer-header-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    font-family: var(--font-heading, 'Cinzel', serif) !important;
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+    color: #a17c18 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  html[data-theme="dark"] .drawer-header-title {
+    color: #f5d365 !important;
+  }
+
+  .drawer-header-emblem {
+    font-size: 1.15rem !important;
+    color: #d4af37 !important;
+  }
+
+  .btn-drawer-close {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: 6px !important;
+    background: rgba(239, 68, 68, 0.08) !important;
+    border: 1.5px solid rgba(239, 68, 68, 0.3) !important;
+    color: #dc2626 !important;
+    font-size: 1.4rem !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .btn-drawer-close:hover,
+  .btn-drawer-close:active {
+    background: rgba(239, 68, 68, 0.2) !important;
+    border-color: #dc2626 !important;
+    transform: scale(1.08) !important;
+  }
+
+  html[data-theme="dark"] .btn-drawer-close {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #f87171 !important;
+  }
+}
+
+/* ==========================================================================
+   TABS & SUBTABS SLIDING ARROW CONTROLS (EDGE BOUNDARY CONTROLS)
+   ========================================================================== */
+.tabs-slider-wrapper,
+.subtabs-slider-wrapper {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0.75rem 0 !important;
+  gap: 4px !important;
+}
+
+.tabs-slider-wrapper .main-tabs-nav-bar,
+.subtabs-slider-wrapper .sub-tabs-nav-bar {
+  flex: 1 !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-behavior: smooth !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  margin: 0 !important;
+  min-width: 0 !important;
+}
+
+.tabs-slider-wrapper .main-tabs-nav-bar::-webkit-scrollbar,
+.subtabs-slider-wrapper .sub-tabs-nav-bar::-webkit-scrollbar {
+  display: none !important;
+}
+
+.tab-slider-arrow {
+  display: none;
+  width: 30px !important;
+  height: 38px !important;
+  min-width: 30px !important;
+  border-radius: 6px !important;
+  background: rgba(212, 175, 55, 0.18) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1.5px solid #d4af37 !important;
+  color: #b8960c !important;
+  font-size: 0.92rem !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  flex-shrink: 0 !important;
+}
+
+.tab-slider-arrow:hover,
+.tab-slider-arrow:active {
+  background: rgba(212, 175, 55, 0.35) !important;
+  color: #78350f !important;
+  transform: scale(1.08) !important;
+}
+
+html[data-theme="dark"] .tab-slider-arrow {
+  background: rgba(30, 20, 48, 0.85) !important;
+  border-color: #f5d365 !important;
+  color: #fde047 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
+}
+
+@media (max-width: 992px) {
+  .tab-slider-arrow {
+    display: flex !important;
+  }
+}
+
+/* Card title bar & actions responsive wrapping for <= 680px */
+@media (max-width: 680px) {
+  .card-title-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.65rem !important;
+  }
+  .card-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.4rem !important;
+    width: 100% !important;
+  }
+  .card-actions .btn {
+    flex: 1 1 auto !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+}
+
+
+
+
+/* ==========================================================================
+   MOBILE & TABLET / SPLIT-VIEWPORT SMART-FIT HEADER (<= 992px)
+   Strict desktop single line for screens > 992px;
+   Smart-fit multi-tier for screens <= 992px.
+   ========================================================================== */
+@media (max-width: 992px) {
+  .mobile-sidebar-toggle {
+    display: inline-flex !important;
+  }
+
+  .admin-topbar,
+  header.admin-topbar {
+    height: auto !important;
+    min-height: 44px !important;
+    max-height: none !important;
+    padding: 6px 10px 8px 10px !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .admin-topbar .topbar-row-primary,
+  .topbar-row-primary {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    height: auto !important;
+    min-height: 38px !important;
+    max-height: none !important;
+    padding: 0 !important;
+    gap: 6px 8px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .topbar-col1 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex: 0 1 auto !important;
+    flex-shrink: 0 !important;
+  }
+
+  .admin-brand {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  .admin-title {
+    font-size: 0.85rem !important;
+  }
+
+  .header-portal-badge {
+    display: inline-flex !important;
+    font-size: 0.65rem !important;
+    font-weight: 700 !important;
+    padding: 2px 8px !important;
+    border-radius: 999px !important;
+  }
+
+  .topbar-col2 {
+    display: flex !important;
+    align-items: center !important;
+    flex: 0 1 auto !important;
+    flex-shrink: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .header-user-role-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    height: 28px !important;
+    padding: 0 10px !important;
+    font-size: 0.76rem !important;
+    max-width: 100% !important;
+    white-space: nowrap !important;
+    border-radius: 999px !important;
+  }
+
+  .pill-user-name {
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+  }
+
+  .topbar-col3 {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    flex: 1 1 100% !important;
+    margin-top: 4px !important;
+    padding-top: 4px !important;
+    border-top: 1px dashed rgba(212, 175, 55, 0.25) !important;
+    justify-content: flex-start !important;
+  }
+
+  .topbar-right-group {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 5px 6px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .btn-compact-header,
+  .header-status-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    max-height: 26px !important;
+    padding: 0 8px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    border-radius: 6px !important;
+  }
+
+  .btn-text {
+    display: inline !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .admin-topbar,
+  header.admin-topbar {
+    padding: 4px 6px 6px 6px !important;
+  }
+  .admin-topbar .topbar-row-primary,
+  .topbar-row-primary {
+    gap: 5px 6px !important;
+  }
+  .admin-title {
+    font-size: 0.8rem !important;
+  }
+  .header-portal-badge {
+    font-size: 0.62rem !important;
+    padding: 2px 6px !important;
+  }
+  .header-user-role-pill {
+    height: 28px !important;
+    padding: 0 8px !important;
+    font-size: 0.72rem !important;
+  }
+  .btn-compact-header {
+    padding: 0 6px !important;
+    font-size: 0.7rem !important;
+  }
+}

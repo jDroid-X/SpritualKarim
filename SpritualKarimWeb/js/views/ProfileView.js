@@ -365,6 +365,9 @@ class ProfileView {
     this.sidebarBackdrop =
       document.getElementById("sidebar-backdrop") ||
       document.getElementById("sidebarBackdrop");
+    this.btnCloseSidebarDrawer =
+      document.getElementById("btn-close-sidebar-drawer") ||
+      document.getElementById("btnCloseSidebarDrawer");
     this.sidebarEl = this.adminSidebar;
     this.btnThemeToggle =
       document.getElementById("btn-theme-toggle") ||

@@ -115,7 +115,8 @@ if (typeof document !== "undefined") {
       // Auth gate check if strict auth is enforced in appConfig
       if (typeof appConfig !== "undefined" && appConfig.requireAuth) {
         if (typeof DemoAuth !== "undefined" && DemoAuth.requireAuth) {
-          if (!DemoAuth.requireAuth("login.html")) return;
+          const isInSub = /\/(Masters|Healers|Trainee|Devotee|Seeker|Public)\//i.test(window.location.pathname);
+          if (!DemoAuth.requireAuth(isInSub ? "../login.html" : "login.html")) return;
         }
       } else if (typeof DemoAuth !== "undefined" && DemoAuth.getSession) {
         const session = DemoAuth.getSession();

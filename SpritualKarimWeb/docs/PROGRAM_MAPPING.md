@@ -101,6 +101,7 @@ graph TD
 | **Rich List Box (Dropdown Details)** | `#dropdown-devotee-picker`, `#dropdown-devotee-items-list` | `ProfileView.prototype.populateDevoteeDropdown` | Searchable dropdown with member initials avatar, role, and city | On select: focuses member in workspace and displays notification |
 | **Multi-Option Decision Dialog** | `#modal-multi-option-decision` | `ProfileView.prototype.showMultiOptionDialog` | 4-way HITL governance modal (`APPROVE`, `REVISE`, `ESCALATE`, `REJECT`) | Posts to `/api/profiles/decision`, logs to audit trail, closes modal |
 | **Bottom-Right Slide Toast** | `#slide-toast-container-br` | `ProfileView.prototype.showBottomRightToast` | Smooth cubic-bezier slide-in notifications with progress bar & action button | Auto-dismisses with slide-out animation after duration timeout |
+| **Mobile Hamburger Off-Canvas Drawer** | `#btn-mobile-sidebar-toggle`, `#admin-enterprise-drawer`, `#sidebar-backdrop` | `ProfileController.prototype.init` (Mobile Drawer Toggle) | Translates 275px fixed desktop sidebar into off-canvas sliding drawer with darkened blur backdrop on mobile/split-browser screens `<= 992px` | Eliminates 275px left offset, provides zero horizontal scroll, closes on backdrop tap or node navigation |
 
 ---
 
@@ -156,4 +157,12 @@ sequenceDiagram
     SettingsModal->>User: Show Bottom-Right Toast & Immediate DOM Update
 ```
 
+---
 
+## 9. Authentication & Onboarding Workflow Steps
+
+| Step | Component | Target Element / Route | Description / Functional Behavior | Target Audience |
+| :---: | :--- | :--- | :--- | :--- |
+| **1. Join** | `join.html` | `/join.html` | 5-Step Induction Wizard: Pairing → Identity → Contact → Guardian → Consent | New Seekers & Devotees |
+| **2. Login** | `login.html` | `/login.html` | Select persona role (Master, Healer, Trainee, Devotee), authenticate, load token | Registered Users |
+| **3. Logout**| `logout.html`| `/logout.html` | Execute `DemoAuth.logout()`, purge local tokens/session, and provide re-entry paths | All Roles |

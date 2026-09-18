@@ -183,11 +183,17 @@ class ProfileController {
 
   _setupPowerLossDetection() {
     const intervalMs = (typeof window !== "undefined" && window.appConfig?.powerLossCheckIntervalMs) || 15000;
+    let powerLossWarned = false;
     setInterval(() => {
       const storage = (typeof localStorage !== "undefined") ? localStorage : ((typeof window !== "undefined" && window.localStorage) ? window.localStorage : null);
-      const lastWrite = parseInt(storage ? (storage.getItem('sk_last_write_ts') || '0') : '0', 10);
-      if (lastWrite > 0 && (Date.now() - lastWrite > intervalMs)) {
-        console.warn('[POWER_LOSS_DETECTED] Unsaved changes may be lost');
+      if (!storage) return;
+      const hasUnsaved = storage.getItem('sk_has_unsaved_dirty') === 'true' || (this.isDirty === true);
+      const lastWrite = parseInt(storage.getItem('sk_last_write_ts') || '0', 10);
+      if (hasUnsaved && !powerLossWarned && (Date.now() - lastWrite > intervalMs)) {
+        console.warn('[POWER_LOSS_DETECTED] Unsaved changes pending in session');
+        powerLossWarned = true;
+      } else if (!hasUnsaved) {
+        powerLossWarned = false;
       }
     }, intervalMs);
   }
@@ -2915,12 +2921,55 @@ class ProfileController {
       });
     }
 
+    // Dedicated Mobile Drawer Close Button ('✕')
+    const btnCloseDrawer = document.getElementById("btn-close-sidebar-drawer") || this.view.btnCloseSidebarDrawer;
+    if (btnCloseDrawer && this.view.adminSidebar) {
+      btnCloseDrawer.addEventListener("click", () => {
+        this.view.adminSidebar.classList.remove("mobile-open");
+        if (this.view.sidebarBackdrop) {
+          this.view.sidebarBackdrop.classList.remove("open");
+        }
+      });
+    }
+
+    // Auto-close drawer when any interactive sidebar link/button is clicked on mobile/tablet
+    if (this.view.adminSidebar) {
+      this.view.adminSidebar.querySelectorAll("a, button:not(#btn-close-sidebar-drawer), .legend-item").forEach((el) => {
+        el.addEventListener("click", () => {
+          if (window.innerWidth <= 992) {
+            this.view.adminSidebar.classList.remove("mobile-open");
+            if (this.view.sidebarBackdrop) {
+              this.view.sidebarBackdrop.classList.remove("open");
+            }
+          }
+        });
+      });
+    }
+
     if (this.view.sidebarBackdrop && this.view.adminSidebar) {
       this.view.sidebarBackdrop.addEventListener("click", () => {
         this.view.adminSidebar.classList.remove("mobile-open");
         this.view.sidebarBackdrop.classList.remove("open");
       });
     }
+
+    // Tabs & Subtabs Horizontal Sliding Arrow Handlers (Mobile Edge Controls)
+    document.querySelectorAll(".tabs-slider-wrapper, .subtabs-slider-wrapper").forEach((wrapper) => {
+      const scrollViewport = wrapper.querySelector(".main-tabs-nav-bar, .sub-tabs-nav-bar");
+      const btnLeft = wrapper.querySelector(".tab-slider-arrow.arrow-left");
+      const btnRight = wrapper.querySelector(".tab-slider-arrow.arrow-right");
+
+      if (scrollViewport && btnLeft && btnRight) {
+        btnLeft.addEventListener("click", (e) => {
+          e.preventDefault();
+          scrollViewport.scrollBy({ left: -200, behavior: "smooth" });
+        });
+        btnRight.addEventListener("click", (e) => {
+          e.preventDefault();
+          scrollViewport.scrollBy({ left: 200, behavior: "smooth" });
+        });
+      }
+    });
 
     // Quick Goli Gyan Header Button Trigger
     if (this.view.btnQuickGoliGyan) {
@@ -4414,6 +4463,30 @@ ProfileController.prototype._bindSidebarActions = function() {
     });
   });
 
+  // Modal backdrop click handler (closes modal if user clicks outside dialog)
+  document.querySelectorAll(".admin-modal, .admin-modal-overlay").forEach(modal => {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.style.display = "none";
+        modal.classList.remove("is-open", "open");
+        modal.setAttribute("aria-hidden", "true");
+      }
+    });
+  });
+
+  // Global ESC key listener for all enterprise modals
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" || e.keyCode === 27) {
+      document.querySelectorAll(".admin-modal, .admin-modal-overlay, #modal-multi-option-decision").forEach(modal => {
+        if (modal.style.display !== "none") {
+          modal.style.display = "none";
+          modal.classList.remove("is-open", "open");
+          modal.setAttribute("aria-hidden", "true");
+        }
+      });
+    }
+  });
+
   // 0. Sidebar Logout Button Action
   const btnLogout = this.view?.btnSidebarLogout || document.getElementById("btn-sidebar-logout");
   if (btnLogout) {
@@ -4433,7 +4506,8 @@ ProfileController.prototype._bindSidebarActions = function() {
       } catch (err) {
         console.warn("Logout error:", err);
       }
-      window.location.href = "logout.html";
+      const isInSubfolder = /\/(Masters|Healers|Trainee|Devotee|Seeker|Public)\//i.test(window.location.pathname);
+      window.location.href = isInSubfolder ? "../logout.html" : "logout.html";
     });
   }
 

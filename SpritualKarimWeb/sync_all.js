@@ -66,6 +66,9 @@ portals.forEach(p => {
   subHtml = subHtml.replace(/src="Logo\.png"/g, 'src="../Logo.png"');
   subHtml = subHtml.replace(/href="Logo\.png"/g, 'href="../Logo.png"');
   subHtml = subHtml.replace(/href="index\.html"/g, 'href="../index.html"');
+  subHtml = subHtml.replace(/href="login\.html"/g, 'href="../login.html"');
+  subHtml = subHtml.replace(/href="join\.html"/g, 'href="../join.html"');
+  subHtml = subHtml.replace(/href="logout\.html"/g, 'href="../logout.html"');
   subHtml = subHtml.replace(/href="Masters\/index\.html"/g, 'href="../Masters/index.html"');
   subHtml = subHtml.replace(/href="Healers\/index\.html"/g, 'href="../Healers/index.html"');
   subHtml = subHtml.replace(/href="Trainee\/index\.html"/g, 'href="../Trainee/index.html"');

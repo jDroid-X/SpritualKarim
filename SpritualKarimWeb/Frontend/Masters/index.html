@@ -14,26 +14,28 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1789675213250">
+  <link rel="stylesheet" href="../css/profile-admin.css?v=sk_v5_1789743731326">
   <style id="sk-critical-header-styles">
-    /* Single-Row Permanent Fit Across All Browsers & Devices */
+    /* ============================================================
+       DESKTOP & LAPTOP SCREEN HEADER (Strict Single-Line, Perfectly Aligned)
+       ============================================================ */
     .admin-topbar,
     header.admin-topbar {
       display: flex !important;
       flex-direction: row !important;
-      flex-wrap: nowrap !important;
       align-items: center !important;
-      height: 44px !important;
-      min-height: 44px !important;
-      max-height: 44px !important;
-      padding: 0 !important;
+      justify-content: space-between !important;
+      height: 48px !important;
+      min-height: 48px !important;
+      max-height: 48px !important;
+      padding: 0 12px !important;
       margin: 0 !important;
       border-bottom: 1.5px solid rgba(212, 175, 55, 0.3) !important;
       background: var(--bg-card, #ffffff) !important;
       box-sizing: border-box !important;
       width: 100% !important;
-      overflow: hidden !important;
       z-index: 1000 !important;
+      overflow: visible !important;
     }
 
     .topbar-row-primary {
@@ -43,14 +45,11 @@
       align-items: center !important;
       justify-content: space-between !important;
       width: 100% !important;
-      height: 44px !important;
-      min-height: 44px !important;
-      max-height: 44px !important;
-      padding: 0 12px !important;
+      height: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
       gap: 8px !important;
       box-sizing: border-box !important;
-      overflow: hidden !important;
-      white-space: nowrap !important;
     }
 
     .topbar-col1 {
@@ -59,6 +58,39 @@
       gap: 8px !important;
       flex-shrink: 0 !important;
       white-space: nowrap !important;
+    }
+
+    .mobile-sidebar-toggle {
+      display: none !important;
+      background: rgba(212, 175, 55, 0.12) !important;
+      border: 1.5px solid #d4af37 !important;
+      color: #b8960c !important;
+      width: 34px !important;
+      height: 34px !important;
+      min-width: 34px !important;
+      border-radius: 6px !important;
+      cursor: pointer !important;
+      padding: 5px !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 3.5px !important;
+      box-sizing: border-box !important;
+      transition: all 0.2s ease !important;
+      flex-shrink: 0 !important;
+    }
+    .mobile-sidebar-toggle:hover,
+    .mobile-sidebar-toggle:active {
+      background: rgba(212, 175, 55, 0.25) !important;
+      transform: scale(1.05) !important;
+    }
+    .hamburger-bar {
+      display: block !important;
+      width: 18px !important;
+      height: 2px !important;
+      background-color: #b8960c !important;
+      border-radius: 2px !important;
+      transition: all 0.2s ease !important;
     }
 
     .admin-brand {
@@ -81,7 +113,7 @@
 
     .admin-title {
       font-family: "Cinzel", Georgia, serif !important;
-      font-size: 0.92rem !important;
+      font-size: 0.90rem !important;
       font-weight: 700 !important;
       letter-spacing: 0.5px !important;
       color: #a17c18 !important;
@@ -91,9 +123,9 @@
     }
 
     .header-portal-badge {
-      font-size: 0.68rem !important;
+      font-size: 0.66rem !important;
       font-weight: 700 !important;
-      padding: 2px 9px !important;
+      padding: 2px 8px !important;
       border-radius: 999px !important;
       background: rgba(212, 175, 55, 0.1) !important;
       border: 1.5px solid #d4af37 !important;
@@ -109,20 +141,21 @@
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      flex-shrink: 0 !important;
+      flex: 1 1 auto !important;
+      margin: 0 6px !important;
       white-space: nowrap !important;
     }
 
     .header-user-role-pill {
       display: inline-flex !important;
       align-items: center !important;
-      gap: 6px !important;
+      gap: 5px !important;
       height: 30px !important;
       box-sizing: border-box !important;
       border-radius: 999px !important;
       border: 1.5px solid rgba(212, 175, 55, 0.35) !important;
       background: #ffffff !important;
-      padding: 0 14px !important;
+      padding: 0 11px !important;
       white-space: nowrap !important;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
       position: relative !important;
@@ -136,12 +169,12 @@
     }
 
     .pill-person-icon { font-size: 0.85rem !important; color: #6366f1 !important; }
-    .pill-user-name { font-weight: 700 !important; font-size: 0.8rem !important; color: #854d0e !important; white-space: nowrap !important; }
+    .pill-user-name { font-weight: 700 !important; font-size: 0.78rem !important; color: #854d0e !important; white-space: nowrap !important; }
     .pill-dot { color: #94a3b8 !important; font-size: 0.75rem !important; }
-    .pill-shield-icon { font-size: 0.82rem !important; color: #3b82f6 !important; }
-    .pill-role-prefix { font-size: 0.76rem !important; font-weight: 600 !important; color: #64748b !important; }
-    .pill-role-name { font-size: 0.78rem !important; font-weight: 700 !important; color: #1e293b !important; letter-spacing: 0.02em !important; }
-    .pill-dropdown-caret { font-size: 0.62rem !important; color: #64748b !important; margin-left: 2px !important; }
+    .pill-shield-icon { font-size: 0.80rem !important; color: #3b82f6 !important; }
+    .pill-role-prefix { font-size: 0.74rem !important; font-weight: 600 !important; color: #64748b !important; }
+    .pill-role-name { font-size: 0.76rem !important; font-weight: 700 !important; color: #1e293b !important; letter-spacing: 0.02em !important; }
+    .pill-dropdown-caret { font-size: 0.60rem !important; color: #64748b !important; margin-left: 2px !important; }
 
     .pill-role-select-overlay {
       position: absolute !important;
@@ -162,23 +195,29 @@
     .topbar-col3 {
       display: flex !important;
       align-items: center !important;
+      justify-content: flex-end !important;
       flex-shrink: 0 !important;
       white-space: nowrap !important;
+      width: auto !important;
+      margin-left: auto !important;
     }
 
     .topbar-right-group {
       display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
       align-items: center !important;
-      gap: 6px !important;
+      gap: 5px !important;
       white-space: nowrap !important;
+      width: auto !important;
     }
 
     .btn-compact-header {
       height: 28px !important;
       min-height: 28px !important;
       max-height: 28px !important;
-      padding: 0 10px !important;
-      font-size: 0.74rem !important;
+      padding: 0 8px !important;
+      font-size: 0.72rem !important;
       font-weight: 700 !important;
       border-radius: 6px !important;
       display: inline-flex !important;
@@ -197,13 +236,13 @@
       height: 28px !important;
       min-height: 28px !important;
       max-height: 28px !important;
-      padding: 0 10px !important;
-      font-size: 0.74rem !important;
+      padding: 0 8px !important;
+      font-size: 0.72rem !important;
       font-weight: 700 !important;
       border-radius: 6px !important;
       display: inline-flex !important;
       align-items: center !important;
-      gap: 5px !important;
+      gap: 4px !important;
       border: 1.5px solid rgba(16, 185, 129, 0.4) !important;
       background: rgba(16, 185, 129, 0.08) !important;
       color: #059669 !important;
@@ -263,7 +302,7 @@
       border-color: #d4af37 !important;
     }
 
-    /* Dark Mode Critical Overrides */
+    /* Dark Mode Overrides */
     html[data-theme="dark"] .admin-topbar,
     html[data-theme="dark"] header.admin-topbar {
       background: #161124 !important;
@@ -282,6 +321,159 @@
       border-color: rgba(212, 175, 55, 0.35) !important;
       color: #f1f5f9 !important;
     }
+    html[data-theme="dark"] .mobile-sidebar-toggle {
+      background: rgba(212, 175, 55, 0.18) !important;
+      border-color: #f5d365 !important;
+    }
+    html[data-theme="dark"] .hamburger-bar {
+      background-color: #f5d365 !important;
+    }
+
+    /* ============================================================
+       MOBILE & TABLET / SPLIT-VIEWPORT (<= 992px) SMART-FIT MULTI-TIER
+       ============================================================ */
+    @media (max-width: 992px) {
+      .mobile-sidebar-toggle {
+        display: inline-flex !important;
+      }
+      .admin-topbar,
+      header.admin-topbar {
+        height: auto !important;
+        min-height: 44px !important;
+        max-height: none !important;
+        padding: 6px 10px 8px 10px !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      .admin-topbar .topbar-row-primary,
+      .topbar-row-primary {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        height: auto !important;
+        min-height: 38px !important;
+        max-height: none !important;
+        padding: 0 !important;
+        gap: 6px 8px !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        overflow: visible !important;
+      }
+      .topbar-col1 {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex: 0 1 auto !important;
+        flex-shrink: 0 !important;
+      }
+      .admin-brand {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+      }
+      .admin-title {
+        font-size: 0.85rem !important;
+      }
+      .header-portal-badge {
+        display: inline-flex !important;
+        font-size: 0.65rem !important;
+        font-weight: 700 !important;
+        padding: 2px 8px !important;
+        border-radius: 999px !important;
+      }
+      .topbar-col2 {
+        display: flex !important;
+        align-items: center !important;
+        flex: 0 1 auto !important;
+        flex-shrink: 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+      }
+      .header-user-role-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        height: 28px !important;
+        padding: 0 10px !important;
+        font-size: 0.76rem !important;
+        max-width: 100% !important;
+        white-space: nowrap !important;
+        border-radius: 999px !important;
+      }
+      .pill-user-name {
+        font-size: 0.78rem !important;
+        font-weight: 700 !important;
+      }
+      .topbar-col3 {
+        display: flex !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        margin-top: 4px !important;
+        padding-top: 4px !important;
+        border-top: 1px dashed rgba(212, 175, 55, 0.25) !important;
+        justify-content: flex-start !important;
+      }
+      .topbar-right-group {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 5px 6px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .btn-compact-header,
+      .header-status-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        height: 26px !important;
+        min-height: 26px !important;
+        max-height: 26px !important;
+        padding: 0 8px !important;
+        font-size: 0.72rem !important;
+        font-weight: 700 !important;
+        white-space: nowrap !important;
+        border-radius: 6px !important;
+      }
+      .btn-text {
+        display: inline !important;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .admin-topbar,
+      header.admin-topbar {
+        padding: 4px 6px 6px 6px !important;
+      }
+      .admin-topbar .topbar-row-primary,
+      .topbar-row-primary {
+        gap: 5px 6px !important;
+      }
+      .admin-title {
+        font-size: 0.8rem !important;
+      }
+      .header-portal-badge {
+        font-size: 0.62rem !important;
+        padding: 2px 6px !important;
+      }
+      .header-user-role-pill {
+        height: 28px !important;
+        padding: 0 8px !important;
+        font-size: 0.72rem !important;
+      }
+      .btn-compact-header {
+        padding: 0 6px !important;
+        font-size: 0.7rem !important;
+      }
+    }
   </style>
 </head>
 <body data-portal-role="ADMIN" class="portal-admin">
@@ -290,7 +482,7 @@
     <div class="topbar-row-primary">
       <!-- Col 1: Brand & Master Control Pill Badge -->
       <div class="topbar-col1">
-        <button type="button" id="btn-mobile-sidebar-toggle" class="mobile-sidebar-toggle" aria-label="Toggle Directory Sidebar" style="display: none;">
+        <button type="button" id="btn-mobile-sidebar-toggle" class="mobile-sidebar-toggle" aria-label="Toggle Directory Sidebar">
           <span class="hamburger-bar"></span>
           <span class="hamburger-bar"></span>
           <span class="hamburger-bar"></span>
@@ -372,6 +564,8 @@
             <span class="btn-icon-app">📱</span>
             <span class="btn-text">Get App</span>
           </a>
+
+          
         </div>
       </div>
     </div>
@@ -386,134 +580,13 @@
     <!-- Left Navigation & Enterprise Drawer (User Rule 7 Standard Compliant) -->
     <aside class="admin-sidebar" id="admin-enterprise-drawer">
 
-      <!-- Enterprise Drawer Section 1: Standard Enterprise Navigation (User Rule 7 Standard Compliant) -->
-      <div class="sidebar-section" id="sidebar-standard-nav-section" style="display: none !important;" aria-hidden="true">
-        <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
-          <span>Enterprise Standard Menu</span>
-          <span class="badge" style="background: rgba(212,175,55,0.2); color: var(--gold-400); font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 4px;">15 Nodes</span>
+      <!-- Mobile Drawer Header Bar with Dedicated Close Button -->
+      <div class="drawer-header-bar" id="drawer-header-bar">
+        <div class="drawer-header-title">
+          <span class="drawer-header-emblem">ॐ</span>
+          <span class="drawer-header-text">Directory &amp; Navigation</span>
         </div>
-        <div class="enterprise-nav-list" id="enterprise-standard-nav-list">
-          <!-- 1. Dashboard -->
-          <a class="enterprise-nav-item active" id="nav-item-dashboard" data-nav-target="dashboard" title="Dashboard: Sansthan Overview & Lineage Analytics">
-            <span class="nav-item-icon">📊</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Dashboard</span>
-              <span class="nav-item-desc">Sansthan Overview &amp; Analytics</span>
-            </div>
-          </a>
-          <!-- 2. Children Devices -->
-          <a class="enterprise-nav-item" id="nav-item-children" data-nav-target="children" title="Children Devices: Subordinate Devotees & Nodes">
-            <span class="nav-item-icon">👥</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Children Devices</span>
-              <span class="nav-item-desc">Subordinate Disciples &amp; Nodes</span>
-            </div>
-          </a>
-          <!-- 3. Live Map -->
-          <a class="enterprise-nav-item" id="nav-item-live-map" data-nav-target="live-map" title="Live Map: Sacred Lineage Map & Satsang Centers">
-            <span class="nav-item-icon">🗺️</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Live Map</span>
-              <span class="nav-item-desc">Ashrams &amp; Satsang Geo-Centers</span>
-            </div>
-          </a>
-          <!-- 4. Location History -->
-          <a class="enterprise-nav-item" id="nav-item-location-history" data-nav-target="location-history" title="Location History: Sadhana Attendance & Check-in History">
-            <span class="nav-item-icon">📜</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Location History</span>
-              <span class="nav-item-desc">Sadhana Attendance Logs</span>
-            </div>
-          </a>
-          <!-- 5. MeetMyFriend Groups -->
-          <a class="enterprise-nav-item" id="nav-item-groups" data-nav-target="groups" title="MeetMyFriend Groups: Satsang Circles & Regional Mandalas">
-            <span class="nav-item-icon">📿</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">MeetMyFriend Groups</span>
-              <span class="nav-item-desc">Satsang Circles &amp; Sanghas</span>
-            </div>
-          </a>
-          <!-- 6. Safe Zones -->
-          <a class="enterprise-nav-item" id="nav-item-safe-zones" data-nav-target="safe-zones" title="Safe Zones: Holy Ashrams & Geo-Protected Sansthan Zones">
-            <span class="nav-item-icon">🏛️</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Safe Zones</span>
-              <span class="nav-item-desc">Geo-Protected Ashram Zones</span>
-            </div>
-          </a>
-          <!-- 7. Guardians / Family -->
-          <a class="enterprise-nav-item" id="nav-item-guardians" data-nav-target="guardians" title="Guardians / Family: Mentors, Guru Lineage & Family Gotra">
-            <span class="nav-item-icon">👨‍👩‍👧‍👦</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Guardians / Family</span>
-              <span class="nav-item-desc">Guru Lineage &amp; Family Gotra</span>
-            </div>
-          </a>
-          <!-- 8. Notifications -->
-          <a class="enterprise-nav-item" id="nav-item-notifications" data-nav-target="notifications" title="Notifications: Sacred Alerts, Diksha Updates & System Telemetry">
-            <span class="nav-item-icon">🔔</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Notifications</span>
-              <span class="nav-item-desc">Sacred Alerts &amp; Telemetry</span>
-            </div>
-          </a>
-          <!-- 9. Device Health -->
-          <a class="enterprise-nav-item" id="nav-item-device-health" data-nav-target="device-health" title="Device Health: Node Connectivity, RTDB Sync & Power Status">
-            <span class="nav-item-icon">⚡</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Device Health</span>
-              <span class="nav-item-desc">Node Telemetry &amp; RTDB Pulse</span>
-            </div>
-          </a>
-          <!-- 10. Profile -->
-          <a class="enterprise-nav-item" id="nav-item-profile" data-nav-target="profile" title="Profile: Sadhak Identity, Diksha Stage & Spiritual Level">
-            <span class="nav-item-icon">👤</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Profile</span>
-              <span class="nav-item-desc">Sadhak Identity &amp; Level</span>
-            </div>
-          </a>
-          <!-- 11. Settings -->
-          <a class="enterprise-nav-item" id="nav-item-settings" data-nav-target="settings" title="Settings: Sansthan Admin Settings & Preferences">
-            <span class="nav-item-icon">⚙️</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Settings</span>
-              <span class="nav-item-desc">Admin System &amp; Flags</span>
-            </div>
-          </a>
-          <!-- 12. Privacy Controls -->
-          <a class="enterprise-nav-item" id="nav-item-privacy" data-nav-target="privacy" title="Privacy Controls: Data Confidentiality, PII Encryption & Permission Matrix">
-            <span class="nav-item-icon">🛡️</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Privacy Controls</span>
-              <span class="nav-item-desc">PII Encryption &amp; GDPR Audit</span>
-            </div>
-          </a>
-          <!-- 13. Help & Support -->
-          <a class="enterprise-nav-item" id="nav-item-help" data-nav-target="help" title="Help & Support: Spiritual Guidance Desk & FAQ Hub">
-            <span class="nav-item-icon">💬</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Help &amp; Support</span>
-              <span class="nav-item-desc">Guidance Desk &amp; FAQs</span>
-            </div>
-          </a>
-          <!-- 14. About App -->
-          <a class="enterprise-nav-item" id="nav-item-about" data-nav-target="about" title="About App: Sacred Mission, ISO/IEC 27001 & Sansthan Heritage">
-            <span class="nav-item-icon">ℹ️</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">About App</span>
-              <span class="nav-item-desc">Mission &amp; ISO/IEC Standards</span>
-            </div>
-          </a>
-          <!-- 15. Logout -->
-          <a class="enterprise-nav-item nav-item-logout-btn" id="nav-item-logout" data-nav-target="logout" title="Logout: End Sacred Session & Secure Token Wipe">
-            <span class="nav-item-icon">🚪</span>
-            <div class="nav-item-content">
-              <span class="nav-item-title">Logout</span>
-              <span class="nav-item-desc">End Session &amp; Wipe Cache</span>
-            </div>
-          </a>
-        </div>
+        <button type="button" id="btn-close-sidebar-drawer" class="btn-drawer-close" aria-label="Close Navigation Drawer" title="Close Directory">&times;</button>
       </div>
 
       <!-- Stage 1: Dedicated Portals (Primary Role Persona Navigation) -->
@@ -1128,40 +1201,44 @@
         </div>
         
         <!-- ==============================================================
-             6 MAIN NAVIGATION TABS BELOW 1st BOX
+             6 MAIN NAVIGATION TABS BELOW 1st BOX WITH SLIDING ARROWS
              ============================================================== -->
-        <div class="main-tabs-nav-bar">
-          <button type="button" class="main-tab-btn active" data-main-tab="tab-devotee-personal">
-            <span class="tab-icon">🌟</span>
-            <div class="tab-label-wrap">
-              <span class="tab-main-title">1. Devotee Personal</span>
-              <span class="tab-sub-title">Identity &bull; Lineage &bull; House Clean</span>
-            </div>
-          </button>
+        <div class="tabs-slider-wrapper" id="main-tabs-slider-wrapper">
+          <button type="button" class="tab-slider-arrow arrow-left" id="btn-main-tabs-slide-left" aria-label="Slide tabs left" title="Slide Left">◀</button>
+          <div class="main-tabs-nav-bar" id="main-tabs-nav-bar" role="tablist">
+            <button type="button" class="main-tab-btn active" data-main-tab="tab-devotee-personal">
+              <span class="tab-icon">🌟</span>
+              <div class="tab-label-wrap">
+                <span class="tab-main-title">1. Devotee Personal</span>
+                <span class="tab-sub-title">Identity &bull; Lineage &bull; House Clean</span>
+              </div>
+            </button>
 
-          <button type="button" class="main-tab-btn" data-main-tab="tab-seeker-purpose">
-            <span class="tab-icon">🎯</span>
-            <div class="tab-label-wrap">
-              <span class="tab-main-title">2. Seeker Purpose</span>
-              <span class="tab-sub-title">Goals &bull; Clean Logs &bull; Sadhanas</span>
-            </div>
-          </button>
+            <button type="button" class="main-tab-btn" data-main-tab="tab-seeker-purpose">
+              <span class="tab-icon">🎯</span>
+              <div class="tab-label-wrap">
+                <span class="tab-main-title">2. Seeker Purpose</span>
+                <span class="tab-sub-title">Goals &bull; Clean Logs &bull; Sadhanas</span>
+              </div>
+            </button>
 
-          <button type="button" class="main-tab-btn" data-main-tab="tab-trainee-sadhak">
-            <span class="tab-icon">📿</span>
-            <div class="tab-label-wrap">
-              <span class="tab-main-title">3. Trainee Sadhak</span>
-              <span class="tab-sub-title">In-Progress Level Wise &bull; Goli Gyan</span>
-            </div>
-          </button>
+            <button type="button" class="main-tab-btn" data-main-tab="tab-trainee-sadhak">
+              <span class="tab-icon">📿</span>
+              <div class="tab-label-wrap">
+                <span class="tab-main-title">3. Trainee Sadhak</span>
+                <span class="tab-sub-title">In-Progress Level Wise &bull; Goli Gyan</span>
+              </div>
+            </button>
 
-          <button type="button" class="main-tab-btn" data-main-tab="tab-healer-connect">
-            <span class="tab-icon">🛡️</span>
-            <div class="tab-label-wrap">
-              <span class="tab-main-title">4. Healer Connect</span>
-              <span class="tab-sub-title">Siddhi Completed &bull; Seekers Guided</span>
-            </div>
-          </button>
+            <button type="button" class="main-tab-btn" data-main-tab="tab-healer-connect">
+              <span class="tab-icon">🛡️</span>
+              <div class="tab-label-wrap">
+                <span class="tab-main-title">4. Healer Connect</span>
+                <span class="tab-sub-title">Siddhi Completed &bull; Seekers Guided</span>
+              </div>
+            </button>
+          </div>
+          <button type="button" class="tab-slider-arrow arrow-right" id="btn-main-tabs-slide-right" aria-label="Slide tabs right" title="Slide Right">▶</button>
         </div>
 
         <!-- ==============================================================
@@ -1171,19 +1248,23 @@
 
 <div class="main-tab-content-panel active" id="tab-devotee-personal">
             <!-- Sub-Navigation for Devotee Personal -->
-            <div class="sub-tabs-nav-bar">
-              <button type="button" class="sub-tab-btn active" data-sub-tab="devotee-sub-identity">
-                <span>👤</span> Personal Identity
-              </button>
-              <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-lineage">
-                <span>🌳</span> 3-Gen Ancestral Lineage
-              </button>
-              <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-houseclean">
-                <span>🧹</span> House Clean (All Levels)
-              </button>
-              <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-applications">
-                <span>📿</span> My Applications
-              </button>
+            <div class="subtabs-slider-wrapper">
+              <button type="button" class="tab-slider-arrow arrow-left" aria-label="Slide subtabs left" title="Slide Left">◀</button>
+              <div class="sub-tabs-nav-bar">
+                <button type="button" class="sub-tab-btn active" data-sub-tab="devotee-sub-identity">
+                  <span>👤</span> Personal Identity
+                </button>
+                <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-lineage">
+                  <span>🌳</span> 3-Gen Ancestral Lineage
+                </button>
+                <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-houseclean">
+                  <span>🧹</span> House Clean (All Levels)
+                </button>
+                <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-applications">
+                  <span>📿</span> My Applications
+                </button>
+              </div>
+              <button type="button" class="tab-slider-arrow arrow-right" aria-label="Slide subtabs right" title="Slide Right">▶</button>
             </div>
 
             <!-- 1A: Personal Identity -->
@@ -1584,16 +1665,20 @@
                ############################################################ -->
           <div class="main-tab-content-panel" id="tab-seeker-purpose">
             <!-- Sub-Navigation for Seeker Purpose -->
-            <div class="sub-tabs-nav-bar">
-              <button type="button" class="sub-tab-btn active" data-sub-tab="seeker-sub-purpose">
-                <span>🎯</span> Spiritual Purpose &amp; Goals
-              </button>
-              <button type="button" class="sub-tab-btn" data-sub-tab="seeker-sub-houseclean">
-                <span>🧹</span> House Clean Status
-              </button>
-              <button type="button" class="sub-tab-btn" data-sub-tab="seeker-sub-sadhanas">
-                <span>🕉️</span> Sadhanas Interested
-              </button>
+            <div class="subtabs-slider-wrapper">
+              <button type="button" class="tab-slider-arrow arrow-left" aria-label="Slide subtabs left" title="Slide Left">◀</button>
+              <div class="sub-tabs-nav-bar">
+                <button type="button" class="sub-tab-btn active" data-sub-tab="seeker-sub-purpose">
+                  <span>🎯</span> Spiritual Purpose &amp; Goals
+                </button>
+                <button type="button" class="sub-tab-btn" data-sub-tab="seeker-sub-houseclean">
+                  <span>🧹</span> House Clean Status
+                </button>
+                <button type="button" class="sub-tab-btn" data-sub-tab="seeker-sub-sadhanas">
+                  <span>🕉️</span> Sadhanas Interested
+                </button>
+              </div>
+              <button type="button" class="tab-slider-arrow arrow-right" aria-label="Slide subtabs right" title="Slide Right">▶</button>
             </div>
 
             <!-- 2A: Purpose & Inquiries -->
@@ -4880,21 +4965,21 @@
   </div>
 
   <!-- External Vendor & Core Logic Scripts -->
-  <script src="../js/profile-admin-header.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/models/ProfileModel.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/models/MetadataCountEngine.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/models/SadhanaRemedyModel.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/config/appConfig.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/models/FirebaseSyncEngine.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/views/ProfileView.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/views/ProfileView2.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/views/SadhanaRemedyView.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/controllers/ProfileController.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/controllers/SettingsModalController.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/controllers/SadhanaRemedyController.js?v=sk_v5_1789675213250"></script>
-  <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789675213250"></script>
+  <script src="../js/profile-admin-header.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/models/ScreenAuthMatrix.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/models/ProfileModel.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/models/MetadataCountEngine.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/models/SadhanaRemedyModel.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/config/appConfig.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/models/FirebaseSyncEngine.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/views/ProfileView.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/views/ProfileView2.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/views/SadhanaRemedyView.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/controllers/ProfileController.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/controllers/ProfileController2.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/controllers/SettingsModalController.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/controllers/SadhanaRemedyController.js?v=sk_v5_1789743731326"></script>
+  <script src="../js/profile-admin-bootstrap.js?v=sk_v5_1789743731326"></script>
 
   <!-- ==============================================================
        SLIDE-IN NOTIFICATIONS STACK & CUSTOM DIALOG BACKDROP
@@ -5306,6 +5391,405 @@
       </div>
       <div class="modal-footer" style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 0.5rem;">
         <button type="button" class="btn btn-sm btn-outline" data-close-modal="modal-multi-option-decision">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       ENTERPRISE 15-NODE MODAL SUITE (Rule 7 & PROGRAM_MAPPING Standard)
+       ============================================================== -->
+
+  <!-- 1. Live Map Modal (Ashram Geo-Nodes & Satsang Centers) -->
+  <div id="modal-live-map" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10600;">
+    <div class="admin-modal-dialog modal-lg" style="max-width: 800px; width: 95%; background: var(--bg-surface, #1e293b); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.7); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">🗺️</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">Live Ashram Map & Satsang Centers</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Geographical Ashram Nodes & Sacred Sansthan Convocations</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" data-close-modal="modal-live-map" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted, #94a3b8); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem; max-height: 70vh; overflow-y: auto;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+          <div style="background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 0.85rem;">
+            <div style="font-size: 0.75rem; color: var(--gold-400, #d4af37); font-weight: bold;">PRIMARY ASHRAM</div>
+            <div style="font-size: 0.95rem; font-weight: bold; color: #fff; margin-top: 0.2rem;">Haridwar Central Peeth</div>
+            <div style="font-size: 0.76rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Lat: 29.9457° N, Lng: 78.1642° E</div>
+            <div style="font-size: 0.72rem; color: #10b981; margin-top: 0.4rem;">🟢 1,420 Disciples Active</div>
+          </div>
+          <div style="background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 0.85rem;">
+            <div style="font-size: 0.75rem; color: var(--gold-400, #d4af37); font-weight: bold;">WESTERN MANDALA</div>
+            <div style="font-size: 0.95rem; font-weight: bold; color: #fff; margin-top: 0.2rem;">Mumbai Ashram Chapter</div>
+            <div style="font-size: 0.76rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Lat: 19.0760° N, Lng: 72.8777° E</div>
+            <div style="font-size: 0.72rem; color: #10b981; margin-top: 0.4rem;">🟢 890 Disciples Active</div>
+          </div>
+          <div style="background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 0.85rem;">
+            <div style="font-size: 0.75rem; color: var(--gold-400, #d4af37); font-weight: bold;">NORTHERN MANDALA</div>
+            <div style="font-size: 0.95rem; font-weight: bold; color: #fff; margin-top: 0.2rem;">Delhi NCR Satsang Kendra</div>
+            <div style="font-size: 0.76rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Lat: 28.6139° N, Lng: 77.2090° E</div>
+            <div style="font-size: 0.72rem; color: #10b981; margin-top: 0.4rem;">🟢 1,150 Disciples Active</div>
+          </div>
+        </div>
+        <div style="border: 1px dashed rgba(212,175,55,0.4); border-radius: 8px; padding: 1.5rem; text-align: center; background: rgba(0,0,0,0.2);">
+          <span style="font-size: 2rem;">🕉️</span>
+          <div style="font-size: 0.9rem; font-weight: 700; color: var(--gold-400, #d4af37); margin-top: 0.5rem;">Ashram Telemetry & Satellite Geo-Feed Connected</div>
+          <p style="font-size: 0.76rem; color: var(--text-muted, #94a3b8); max-width: 480px; margin: 0.5rem auto 0;">All 74-tier spiritual lineage coordinates and daily attendance are dynamically tracked under strict Sansthan privacy protection protocols.</p>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-sm btn-outline" data-close-modal="modal-live-map">Close Map</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Location History Modal (Sadhana Attendance) -->
+  <div id="modal-location-history" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10600;">
+    <div class="admin-modal-dialog modal-md" style="max-width: 600px; width: 95%; background: var(--bg-surface, #1e293b); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.7); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">📜</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">Sadhana Attendance History</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Historical Pilgrimages & Daily Ashram Check-in Timeline</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" data-close-modal="modal-location-history" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted, #94a3b8); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem; max-height: 65vh; overflow-y: auto;">
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="padding: 0.75rem; background: rgba(255,255,255,0.04); border-left: 3px solid #10b981; border-radius: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; color: #fff;">
+              <span>Kalashtami Mahasankalpa</span>
+              <span style="color: #10b981;">Verified Complete</span>
+            </div>
+            <div style="font-size: 0.72rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Haridwar Central Peeth • 108 Malas Chanted</div>
+          </div>
+          <div style="padding: 0.75rem; background: rgba(255,255,255,0.04); border-left: 3px solid #3b82f6; border-radius: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; color: #fff;">
+              <span>Sri Yantra Prana Pratishtha</span>
+              <span style="color: #3b82f6;">Consecrated</span>
+            </div>
+            <div style="font-size: 0.72rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Western Mandala (Mumbai) • Brahma Muhurta Session</div>
+          </div>
+          <div style="padding: 0.75rem; background: rgba(255,255,255,0.04); border-left: 3px solid #f59e0b; border-radius: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; color: #fff;">
+              <span>Three Diya Evening Sandhya Kaal</span>
+              <span style="color: #f59e0b;">Continuous (Day 21)</span>
+            </div>
+            <div style="font-size: 0.72rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Devotee Home Sanctum • Sesame Oil Lamp Process</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-sm btn-outline" data-close-modal="modal-location-history">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. MeetMyFriend Groups Modal (Satsang Circles) -->
+  <div id="modal-groups" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10600;">
+    <div class="admin-modal-dialog modal-md" style="max-width: 620px; width: 95%; background: var(--bg-surface, #1e293b); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.7); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">📿</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">MeetMyFriend Groups</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Regional Mandalas, Discipleship Circles & Satsang Sanghas</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" data-close-modal="modal-groups" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted, #94a3b8); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem; max-height: 65vh; overflow-y: auto;">
+        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px;">
+            <div>
+              <div style="font-weight: bold; color: #fff; font-size: 0.9rem;">🌸 Om Namah Shivaya Sadhana Mandal</div>
+              <div style="font-size: 0.74rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Guided by: Acharya Rajesh Sharma • 342 Members</div>
+            </div>
+            <button type="button" class="btn btn-sm btn-gold" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Connected</button>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px;">
+            <div>
+              <div style="font-weight: bold; color: #fff; font-size: 0.9rem;">🌿 Vedic Remedies & House Cleansing Circle</div>
+              <div style="font-size: 0.74rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Guided by: Healer Coordination Council • 218 Members</div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Join Circle</button>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px;">
+            <div>
+              <div style="font-weight: bold; color: #fff; font-size: 0.9rem;">👑 Level 1 & 2 Initiated Healers Forum</div>
+              <div style="font-size: 0.74rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Direct Mentorship: Spiritual Karim Khan • 74 Members</div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Join Circle</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-sm btn-outline" data-close-modal="modal-groups">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Safe Zones Modal (Geo-Protected Perimeters) -->
+  <div id="modal-safe-zones" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10600;">
+    <div class="admin-modal-dialog modal-md" style="max-width: 580px; width: 95%; background: var(--bg-surface, #1e293b); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.7); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">🏛️</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">Safe Zones & Spiritual Perimeters</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Consecrated Geofenced Sansthan Boundaries & Energy Shields</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" data-close-modal="modal-safe-zones" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted, #94a3b8); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem; max-height: 65vh; overflow-y: auto;">
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="padding: 0.85rem; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #fff; font-size: 0.85rem;">
+              <span>Haridwar Peeth Sanctum Perimeter</span>
+              <span style="color: #10b981;">🛡️ 500m Shield Active</span>
+            </div>
+            <div style="font-size: 0.74rem; color: var(--text-muted, #94a3b8); margin-top: 0.3rem;">Energy Protection Status: High Divine Resonance (99.8%)</div>
+          </div>
+          <div style="padding: 0.85rem; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #fff; font-size: 0.85rem;">
+              <span>Mumbai Mandir & Meditation Hall</span>
+              <span style="color: #10b981;">🛡️ 250m Shield Active</span>
+            </div>
+            <div style="font-size: 0.74rem; color: var(--text-muted, #94a3b8); margin-top: 0.3rem;">Energy Protection Status: Daily Bakhoor Fumigated (97.4%)</div>
+          </div>
+          <div style="padding: 0.85rem; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #fff; font-size: 0.85rem;">
+              <span>Devotee Personal Home Sanctum</span>
+              <span style="color: #f59e0b;">🛡️ Level 1 Boundary In Progress</span>
+            </div>
+            <div style="font-size: 0.74rem; color: var(--text-muted, #94a3b8); margin-top: 0.3rem;">Three Diya threshold & kitchen purification active.</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-sm btn-outline" data-close-modal="modal-safe-zones">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Guardians / Family Modal (Guru Lineage & Gotra) -->
+  <div id="modal-guardians" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10600;">
+    <div class="admin-modal-dialog modal-md" style="max-width: 600px; width: 95%; background: var(--bg-surface, #1e293b); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.7); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">👨‍👩‍👧‍👦</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">Guardians & Ancestral Lineage</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Guru Gotra Mentors, Family Lineage Tree & Spiritual Guardians</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" data-close-modal="modal-guardians" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted, #94a3b8); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem; max-height: 65vh; overflow-y: auto;">
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="padding: 0.85rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px;">
+            <div style="font-size: 0.72rem; color: var(--gold-400, #d4af37); font-weight: bold;">DIRECT SPIRITUAL MENTOR</div>
+            <div style="font-size: 0.95rem; font-weight: bold; color: #fff; margin-top: 0.2rem;">Acharya Rajesh Sharma (Healer Level 2)</div>
+            <div style="font-size: 0.76rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Lineage Ref: SKHM-ACH2-4411-8899 • Helpline: +91 98765 43210</div>
+          </div>
+          <div style="padding: 0.85rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px;">
+            <div style="font-size: 0.72rem; color: var(--gold-400, #d4af37); font-weight: bold;">ANCESTRAL GOTRA GUARDIANSHIP</div>
+            <div style="font-size: 0.95rem; font-weight: bold; color: #fff; margin-top: 0.2rem;">Kashyap Gotra (Self & 3-Generations Linked)</div>
+            <div style="font-size: 0.76rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Paternal & Maternal branches consecrated under Pitra Dosh Upay.</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-sm btn-outline" data-close-modal="modal-guardians">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Device Health Modal (Node Diagnostics & RTDB Pulse) -->
+  <div id="modal-device-health" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10600;">
+    <div class="admin-modal-dialog modal-md" style="max-width: 580px; width: 95%; background: var(--bg-surface, #1e293b); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.7); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">⚡</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">Node Telemetry & Device Health</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Cloud RTDB Heartbeat, Dual-Write Integrity & Power Pulse</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" data-close-modal="modal-device-health" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted, #94a3b8); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem; max-height: 65vh; overflow-y: auto;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 0.75rem;">
+            <div style="font-size: 0.72rem; color: var(--text-muted, #94a3b8);">RTDB Cloud Status</div>
+            <div style="font-size: 0.9rem; font-weight: bold; color: #10b981; margin-top: 0.2rem;">🟢 Connected (24ms)</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 0.75rem;">
+            <div style="font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Power-Loss Watchdog</div>
+            <div style="font-size: 0.9rem; font-weight: bold; color: #10b981; margin-top: 0.2rem;">🟢 Active (15s Poll)</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 0.75rem;">
+            <div style="font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Dual-Write Mode</div>
+            <div style="font-size: 0.9rem; font-weight: bold; color: #d4af37; margin-top: 0.2rem;">⚡ LocalStorage + RTDB</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 0.75rem;">
+            <div style="font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Pending Sync Queue</div>
+            <div style="font-size: 0.9rem; font-weight: bold; color: #fff; margin-top: 0.2rem;">0 Items (Synced)</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-sm btn-outline" data-close-modal="modal-device-health">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Privacy Controls Modal (GDPR & Data Protection) -->
+  <div id="modal-privacy-controls" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10600;">
+    <div class="admin-modal-dialog modal-md" style="max-width: 580px; width: 95%; background: var(--bg-surface, #1e293b); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.7); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">🛡️</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">Privacy Controls & GDPR Audit</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">PII Encryption, Session Security & Data Confidentiality</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" data-close-modal="modal-privacy-controls" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted, #94a3b8); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem; max-height: 65vh; overflow-y: auto;">
+        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <div style="padding: 0.85rem; background: rgba(255,255,255,0.04); border-radius: 8px;">
+            <div style="font-weight: bold; color: #fff; font-size: 0.85rem;">🔒 AES-256 Client-Side Token Storage</div>
+            <div style="font-size: 0.74rem; color: var(--text-muted, #94a3b8); margin-top: 0.25rem;">All profile credentials and 16-digit lineage reference numbers are isolated from public inspection.</div>
+          </div>
+          <div style="padding: 0.85rem; background: rgba(255,255,255,0.04); border-radius: 8px;">
+            <div style="font-weight: bold; color: #fff; font-size: 0.85rem;">🧹 Reset Local Storage & Clear Demo State</div>
+            <div style="font-size: 0.74rem; color: var(--text-muted, #94a3b8); margin-top: 0.25rem;">Purge all local session cookies, cache data, and simulate cold start.</div>
+            <button type="button" class="btn btn-sm btn-outline" style="margin-top: 0.5rem; color: #ef4444; border-color: rgba(239,68,68,0.4);" onclick="if(confirm('Clear all local demo cache?')){localStorage.clear();sessionStorage.clear();window.location.reload();}">Wipe Local Cache</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-sm btn-outline" data-close-modal="modal-privacy-controls">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Help & Support Modal (Spiritual Guidance Desk) -->
+  <div id="modal-help-support" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10600;">
+    <div class="admin-modal-dialog modal-md" style="max-width: 560px; width: 95%; background: var(--bg-surface, #1e293b); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.7); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">💬</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">Help & Spiritual Guidance Desk</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">24/7 Sansthan Helpline, Telegram Community & FAQs</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" data-close-modal="modal-help-support" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted, #94a3b8); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem; max-height: 65vh; overflow-y: auto;">
+        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem; background: rgba(255,255,255,0.04); border-radius: 8px;">
+            <div>
+              <div style="font-weight: bold; color: #fff; font-size: 0.85rem;">📞 Direct Ashram Helpline</div>
+              <div style="font-size: 0.74rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Available 9:00 AM - 9:00 PM IST</div>
+            </div>
+            <a href="tel:+919876543210" class="btn btn-sm btn-gold" style="text-decoration: none; padding: 0.35rem 0.75rem; font-size: 0.75rem;">Call Now</a>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem; background: rgba(255,255,255,0.04); border-radius: 8px;">
+            <div>
+              <div style="font-weight: bold; color: #fff; font-size: 0.85rem;">✈️ Official Telegram Channel</div>
+              <div style="font-size: 0.74rem; color: var(--text-muted, #94a3b8); margin-top: 0.2rem;">Daily notices, sadhana timings & discourses</div>
+            </div>
+            <a href="https://t.me/spritualkarim" target="_blank" class="btn btn-sm btn-outline" style="text-decoration: none; padding: 0.35rem 0.75rem; font-size: 0.75rem;">Open Telegram</a>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-sm btn-outline" data-close-modal="modal-help-support">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. About App Modal (ISO/IEC Standards & Heritage) -->
+  <div id="modal-about-app" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10600;">
+    <div class="admin-modal-dialog modal-md" style="max-width: 580px; width: 95%; background: var(--bg-surface, #1e293b); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.7); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">ℹ️</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">About Spiritual Karim Sansthan</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">ISO/IEC 27001 & 25010 Enterprise Architecture Specification</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" data-close-modal="modal-about-app" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted, #94a3b8); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem; max-height: 65vh; overflow-y: auto;">
+        <div style="text-align: center; margin-bottom: 1rem;">
+          <img src="../Logo.png" alt="Logo" style="width: 54px; height: 54px; border-radius: 50%; border: 2px solid #d4af37;">
+          <h4 style="color: var(--gold-400, #d4af37); margin: 0.5rem 0 0.2rem; font-family: 'Cinzel', serif;">Shree Spritual Karim Sansthan</h4>
+          <div style="font-size: 0.75rem; color: var(--text-muted, #94a3b8);">Version 3.0.0 (Enterprise Suite) • Native Android & Web SPA Parity</div>
+        </div>
+        <div style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.6;">
+          Shree Spritual Karim Sansthan provides 100% Free Solutions for removing negativity, spiritual progress, and divine remedies through our 74-tier spiritual lineage hierarchy. The mobile and web applications implement zero-cross-bleed domain isolation with strict closed-loop governance.
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-sm btn-outline" data-close-modal="modal-about-app">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Visual MLM Hierarchy Tree Modal -->
+  <div id="hierarchy-tree-modal" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10600;">
+    <div class="admin-modal-dialog modal-xl" style="max-width: 900px; width: 95%; background: var(--bg-surface, #1e293b); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.7); overflow: hidden;">
+      <div class="modal-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25);">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.3rem;">🌳</span>
+          <div>
+            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">Multilevel Lineage Tree Explorer</h3>
+            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">5-Level Lineage Canvas & Downline Discipleship Spiderweb</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close" data-close-modal="hierarchy-tree-modal" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted, #94a3b8); cursor: pointer;">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem; max-height: 70vh; overflow-y: auto;">
+        <div id="in-modal-tree-container" style="min-height: 350px; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; align-items: center;">
+          <div style="padding: 0.6rem 1.2rem; background: rgba(212,175,55,0.2); border: 1.5px solid #d4af37; border-radius: 8px; color: #fff; font-weight: bold; text-align: center;">
+            👑 Level 1: Master Founder (Spiritual Karim Khan)
+          </div>
+          <div style="width: 2px; height: 24px; background: #d4af37; margin: 0 auto;"></div>
+          <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+            <div style="padding: 0.5rem 0.85rem; background: rgba(59,130,246,0.15); border: 1px solid #3b82f6; border-radius: 6px; text-align: center; color: #fff; font-size: 0.8rem;">
+              🌿 Acharya Rajesh Sharma<br><span style="font-size: 0.7rem; color: #94a3b8;">Level 2 Senior Healer</span>
+            </div>
+            <div style="padding: 0.5rem 0.85rem; background: rgba(59,130,246,0.15); border: 1px solid #3b82f6; border-radius: 6px; text-align: center; color: #fff; font-size: 0.8rem;">
+              🌿 Guruji Amitav Shastri<br><span style="font-size: 0.7rem; color: #94a3b8;">Level 2 Senior Healer</span>
+            </div>
+          </div>
+          <div style="width: 2px; height: 20px; background: #3b82f6; margin: 0 auto;"></div>
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <div style="padding: 0.4rem 0.7rem; background: rgba(16,185,129,0.12); border: 1px solid #10b981; border-radius: 6px; text-align: center; color: #fff; font-size: 0.76rem;">
+              🌟 Vikram Sharma<br><span style="font-size: 0.68rem; color: #94a3b8;">Level 3 Devotee</span>
+            </div>
+            <div style="padding: 0.4rem 0.7rem; background: rgba(16,185,129,0.12); border: 1px solid #10b981; border-radius: 6px; text-align: center; color: #fff; font-size: 0.76rem;">
+              🌟 Ananya Patel<br><span style="font-size: 0.68rem; color: #94a3b8;">Level 3 Devotee</span>
+            </div>
+            <div style="padding: 0.4rem 0.7rem; background: rgba(16,185,129,0.12); border: 1px solid #10b981; border-radius: 6px; text-align: center; color: #fff; font-size: 0.76rem;">
+              🌟 Rohit Verma<br><span style="font-size: 0.68rem; color: #94a3b8;">Level 3 Devotee</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-sm btn-outline" data-close-modal="hierarchy-tree-modal">Close</button>
       </div>
     </div>
   </div>
