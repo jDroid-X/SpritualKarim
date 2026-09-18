@@ -2,6 +2,7 @@
  * Backend/server.js
  * Universal Multi-Route Node.js HTTP & API Server
  * Shree Spritual Karim Sansthan
+ * @deprecated Standalone port 8080 deprecated in favor of Unified SSOT server.js on Port 8085
  */
 
 const http = require('http');
@@ -9,7 +10,14 @@ const fs = require('fs');
 const path = require('path');
 const { handleApiRequest } = require('./api/routes');
 
-const PORT = process.env.PORT || 8080;
+let appConfig = null;
+try {
+  appConfig = require('../js/config/appConfig');
+} catch (e) {}
+
+// Single Source of Truth (SSOT) Port Configuration (Consolidated from legacy 8080 to 8085)
+const SSOT_PORT = (appConfig && appConfig.server && appConfig.server.port) || 8085;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : SSOT_PORT;
 const ROOT_DIR = path.resolve(__dirname, '..');
 
 const MIME_TYPES = {
@@ -89,9 +97,15 @@ const server = http.createServer((req, res) => {
 });
 
 if (require.main === module) {
-  server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Spiritual Karim Backend Server running on http://localhost:${PORT}`);
-  });
+  console.warn(`[SSOT NOTICE] Backend/server.js is deprecated for direct execution.`);
+  console.warn(`Delegating directly to the unified root server on SSOT Port ${PORT}...`);
+  try {
+    require('../server.js');
+  } catch (e) {
+    server.listen(PORT, '0.0.0.0', () => {
+      console.log(`Spiritual Karim Unified Server running on http://localhost:${PORT}`);
+    });
+  }
 }
 
 module.exports = server;

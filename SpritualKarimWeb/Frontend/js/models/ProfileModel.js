@@ -82,8 +82,8 @@ class ProfileModel {
           detectedRole = "TRAINEE";
         } else if (pathName.includes("/devotee") || pathName.endsWith("devotee.html")) {
           detectedRole = "DEVOTEE";
-        } else if (portalRoleTag && ["HEALER", "TRAINEE", "DEVOTEE"].includes(portalRoleTag.toUpperCase())) {
-          detectedRole = portalRoleTag.toUpperCase();
+        } else if (portalRoleTag && ["ADMIN", "MASTER", "HEALER", "TRAINEE", "DEVOTEE"].includes(portalRoleTag.toUpperCase())) {
+          detectedRole = (portalRoleTag.toUpperCase() === "ADMIN") ? "MASTER" : portalRoleTag.toUpperCase();
         } else if (portalModeTag) {
           detectedRole = portalModeTag.toUpperCase();
         } else {
@@ -196,6 +196,20 @@ class ProfileModel {
     } catch (e) {}
 
     if (!this.anchorProfileId) {
+      const storedActiveId =
+        (typeof sessionStorage !== "undefined" && (sessionStorage.getItem("sk_active_profile_id") || sessionStorage.getItem(this.activeProfileIdKey))) ||
+        (typeof localStorage !== "undefined" && (localStorage.getItem("sk_active_profile_id") || localStorage.getItem(this.activeProfileIdKey)));
+      if (storedActiveId) {
+        const foundStored = this.profiles.find(
+          (p) => p.id === storedActiveId && (p.profileType === this.roleMode || p.role === this.roleMode)
+        );
+        if (foundStored) {
+          this.anchorProfileId = foundStored.id;
+        }
+      }
+    }
+
+    if (!this.anchorProfileId) {
       if (this.roleMode === "HEALER") {
         const hProf = this.profiles.find((p) => p.profileType === "HEALER");
         this.anchorProfileId = hProf ? hProf.id : "prof-healer-01";
@@ -297,6 +311,28 @@ class ProfileModel {
 
   calculateHierarchyMetrics() {
     const profiles = this.profiles || [];
+    const invites = typeof this.getPairingInvites === "function" ? this.getPairingInvites() : [];
+    const sadhanaApps = typeof this.getSadhanaRemedyApplications === "function" ? this.getSadhanaRemedyApplications() : [];
+
+    if (typeof MetadataCountEngine !== "undefined" && typeof MetadataCountEngine.computeAll === "function") {
+      const computed = MetadataCountEngine.computeAll(profiles, invites, sadhanaApps);
+      return {
+        totalProfiles: computed.totalProfiles,
+        activeProfiles: computed.activeProfiles,
+        tier1: computed.hierarchy.tier1,
+        tier2: computed.hierarchy.tier2,
+        tier3: computed.hierarchy.tier3,
+        tier4: computed.hierarchy.tier4,
+        masters: computed.hierarchy.tier1,
+        healers: computed.hierarchy.tier2,
+        trainees: computed.hierarchy.tier3,
+        devotees: computed.hierarchy.tier4,
+        pendingInvites: computed.pending,
+        pendingSadhanaCount: computed.pending.sadhanaPending,
+        healerHub: computed.healerHub
+      };
+    }
+
     const totalProfiles = profiles.length;
     const activeProfiles = profiles.filter(p => p.isActive !== false).length;
 
@@ -317,7 +353,6 @@ class ProfileModel {
     };
 
     const tier1 = getStats("ADMIN");
-    // Also include MASTER synonym if needed
     if (tier1.count === 0) {
       const mMatch = profiles.filter(p => (p.profileType || "").toUpperCase() === "MASTER");
       tier1.count = mMatch.length;
@@ -329,8 +364,16 @@ class ProfileModel {
     const tier3 = getStats("TRAINEE");
     const tier4 = getStats("DEVOTEE");
 
-    const invites = typeof this.getPairingInvites === "function" ? this.getPairingInvites() : [];
-    const pendingCount = invites.filter(i => (i.status || "").toLowerCase() === "pending").length;
+    const pendingInvitesCount = invites.filter(i => (i.status || "").toLowerCase() === "pending").length;
+    const pendingSadhanaCount = sadhanaApps.filter(a => (a.status || "").toUpperCase() === "PENDING").length;
+
+    const sadhanaIdsInInvites = new Set(
+      invites
+        .filter(i => (i.status || "").toLowerCase() === "pending" && (i.type === "SADHANA_APPLICATION" || i.type === "REMEDY_APPLICATION"))
+        .map(i => i.id)
+    );
+    const uniquePendingSadhana = sadhanaApps.filter(a => (a.status || "").toUpperCase() === "PENDING" && !sadhanaIdsInInvites.has(a.id)).length;
+    const totalPending = pendingInvitesCount + uniquePendingSadhana;
 
     return {
       totalProfiles,
@@ -344,11 +387,21 @@ class ProfileModel {
       trainees: tier3,
       devotees: tier4,
       pendingInvites: {
-        pending: pendingCount,
+        pending: totalPending,
+        registrationPending: invites.filter(i => (i.status || "").toLowerCase() === "pending" && i.type !== "SADHANA_APPLICATION" && i.type !== "REMEDY_APPLICATION").length,
+        sadhanaPending: pendingSadhanaCount,
         expired: 0,
-        approved: invites.filter(i => (i.status || "").toLowerCase() === "approved").length,
+        approved: invites.filter(i => (i.status || "").toLowerCase() === "approved").length + sadhanaApps.filter(a => (a.status || "").toUpperCase() === "APPROVED").length,
         rejected: 0,
-        total: invites.length
+        total: totalPending
+      },
+      pendingSadhanaCount: pendingSadhanaCount,
+      healerHub: {
+        total: totalProfiles,
+        admin: tier1.total,
+        healers: tier2.total,
+        trainees: tier3.total,
+        devotees: tier4.total
       }
     };
   }
@@ -1213,6 +1266,13 @@ class ProfileModel {
         },
         interestedSadhanas: [
           {
+            id: "sri_yantra",
+            name: "Sri Yantra Sadhana",
+            category: "Sacred Sadhana",
+            priority: "High",
+            status: "Enrolled",
+          },
+          {
             id: "three_diya",
             name: "Three Diya Process",
             category: "Divine Remedy",
@@ -1248,6 +1308,24 @@ class ProfileModel {
         ],
         traineeSadhanas: [
           {
+            id: "ts-t4-2",
+            sadhanaKey: "sri_yantra",
+            title: "Sri Yantra Sadhana",
+            categoryDomain: "sadhanas",
+            isPaid: true,
+            paymentStatus: "PAID",
+            level: "Level 3 — Diksha Sadhak",
+            dailyTarget: "11 Malas & Trataka",
+            currentStreak: "21 Days",
+            progressPercent: 75,
+            status: "In Progress",
+            mentorCode: "SKHM-HLR2-3344-5566",
+            mentorName: "Acharya Devendra",
+            diaryNotes: "Meru Sri Yantra geometry consecrated; 11 malas japa active.",
+            initiationToken: "SK-SY-7788",
+            verificationStatus: "VERIFIED",
+          },
+          {
             id: "ts-t4-1",
             sadhanaKey: "three_diya",
             title: "Three Diya Process",
@@ -1260,7 +1338,10 @@ class ProfileModel {
             progressPercent: 75,
             status: "In Progress",
             mentorCode: "SKHM-HLR2-3344-5566",
+            mentorName: "Acharya Devendra",
             diaryNotes: "Threshold cleared.",
+            initiationToken: "IN-SADH-INITIATED",
+            verificationStatus: "VERIFIED",
           },
         ],
         healerCompletedSadhanas: [],
@@ -1322,6 +1403,13 @@ class ProfileModel {
         },
         interestedSadhanas: [
           {
+            id: "karmic_debts",
+            name: "Pitru Rin Mukti Sadhana",
+            category: "Sacred Sadhana",
+            priority: "High",
+            status: "Enrolled",
+          },
+          {
             id: "negativity",
             name: "Negativity Cleansing",
             category: "Cleansing & Healing",
@@ -1345,6 +1433,24 @@ class ProfileModel {
         ],
         traineeSadhanas: [
           {
+            id: "ts-t5-2",
+            sadhanaKey: "karmic_debts",
+            title: "Pitru Rin Mukti & Karmic Debt Sadhana",
+            categoryDomain: "sadhanas",
+            isPaid: true,
+            paymentStatus: "PAID",
+            level: "Level 2 — Mantra Diksha",
+            dailyTarget: "7 Malas Pitru Tarpana",
+            currentStreak: "10 Days",
+            progressPercent: 65,
+            status: "In Progress",
+            mentorCode: "SKHM-HLR2-3344-5566",
+            mentorName: "Acharya Devendra",
+            diaryNotes: "Pitru Rin Mukti fire rituals performed.",
+            initiationToken: "SK-PRM-8899",
+            verificationStatus: "VERIFIED",
+          },
+          {
             id: "ts-t5-1",
             sadhanaKey: "negativity",
             title: "Negativity Cleansing (Bakhoor)",
@@ -1357,7 +1463,10 @@ class ProfileModel {
             progressPercent: 70,
             status: "In Progress",
             mentorCode: "SKHM-HLR2-3344-5566",
+            mentorName: "Acharya Devendra",
             diaryNotes: "Atmosphere purified.",
+            initiationToken: "SK-NEG-1122",
+            verificationStatus: "VERIFIED",
           },
         ],
         healerCompletedSadhanas: [],
@@ -1425,6 +1534,13 @@ class ProfileModel {
             priority: "High",
             status: "Enrolled",
           },
+          {
+            id: "nazar_suraksha",
+            name: "Nazar Suraksha & Aura Shield",
+            category: "Divine Remedy",
+            priority: "High",
+            status: "Enrolled",
+          },
         ],
         houseCleanLevels: [
           {
@@ -1454,7 +1570,28 @@ class ProfileModel {
             progressPercent: 60,
             status: "In Progress",
             mentorCode: "SKHM-HLR2-5566-7788",
+            mentorName: "Maa Anandita Devi",
             diaryNotes: "Fear banished.",
+            initiationToken: "SK-BHR-6677",
+            verificationStatus: "VERIFIED",
+          },
+          {
+            id: "ts-t6-2",
+            sadhanaKey: "nazar_suraksha",
+            title: "Nazar Suraksha & Aura Shield",
+            categoryDomain: "remedies",
+            isPaid: true,
+            paymentStatus: "PAID",
+            level: "Level 1 — Initiation",
+            dailyTarget: "Dusk Mustard Oil Lamp",
+            currentStreak: "9 Days",
+            progressPercent: 60,
+            status: "In Progress",
+            mentorCode: "SKHM-HLR2-5566-7788",
+            mentorName: "Maa Anandita Devi",
+            diaryNotes: "Protection seal active.",
+            initiationToken: "SK-NZR-9900",
+            verificationStatus: "VERIFIED",
           },
         ],
         healerCompletedSadhanas: [],
@@ -1516,6 +1653,13 @@ class ProfileModel {
         },
         interestedSadhanas: [
           {
+            id: "business_money",
+            name: "Lakshmi Kuber Dhan Varsha Sadhana",
+            category: "Sacred Sadhana",
+            priority: "High",
+            status: "Enrolled",
+          },
+          {
             id: "aura_strengthening",
             name: "Aura Strengthening",
             category: "Cleansing & Healing",
@@ -1538,6 +1682,24 @@ class ProfileModel {
           },
         ],
         traineeSadhanas: [
+          {
+            id: "ts-t7-2",
+            sadhanaKey: "business_money",
+            title: "Lakshmi Kuber Dhan Varsha Sadhana",
+            categoryDomain: "sadhanas",
+            isPaid: false,
+            paymentStatus: "FREE",
+            level: "Level 1 — Initiation",
+            dailyTarget: "11 Malas Gayatri / Kuber Mantra",
+            currentStreak: "5 Days",
+            progressPercent: 45,
+            status: "In Progress",
+            mentorCode: "SKHM-HLR2-5566-7788",
+            mentorName: "Maa Anandita Devi",
+            diaryNotes: "Aura stabilization and financial obstacle removal.",
+            initiationToken: "SK-LKD-3344",
+            verificationStatus: "VERIFIED",
+          },
           {
             id: "ts-t7-1",
             sadhanaKey: "aura_strengthening",
@@ -2086,7 +2248,7 @@ class ProfileModel {
       if (typeof localStorage !== "undefined") {
         const data = localStorage.getItem(this.storageKey);
         if (data) {
-          const parsed = JSON.parse(data);
+          let parsed = JSON.parse(data);
           if (
             Array.isArray(parsed) &&
             parsed.length >= 8 &&
@@ -2095,6 +2257,49 @@ class ProfileModel {
                 p.profileType === "TRAINEE" || p.level === 3 || p.level === 4,
             )
           ) {
+            // Deduplicate by profile id and referenceCode
+            const seenIds = new Set();
+            const seenCodes = new Set();
+            const unique = [];
+            for (const p of parsed) {
+              const pid = p.id || p.referenceCode;
+              const ref = p.referenceCode;
+              if (pid && !seenIds.has(pid) && (!ref || !seenCodes.has(ref))) {
+                seenIds.add(pid);
+                if (ref) seenCodes.add(ref);
+                unique.push(p);
+              }
+            }
+            parsed = unique;
+
+            // Sanitize traineeSadhanas against circular references / object values
+            parsed.forEach(p => {
+              if (p && Array.isArray(p.traineeSadhanas)) {
+                p.traineeSadhanas.forEach(s => {
+                  if (s.verifiedBy && typeof s.verifiedBy === 'object') s.verifiedBy = s.verifiedBy.name || "Mentor";
+                  if (s.mentorName && typeof s.mentorName === 'object') s.mentorName = s.mentorName.name || "Mentor";
+                  if (s.rejectedBy && typeof s.rejectedBy === 'object') s.rejectedBy = s.rejectedBy.name || "Mentor";
+                  if (Array.isArray(s.memos)) {
+                    s.memos.forEach(m => {
+                      if (m && m.author && typeof m.author === 'object') m.author = m.author.name || "Mentor";
+                    });
+                  }
+                });
+              }
+            });
+
+            // Purge legacy seeker profiles if present (Seeker Portal no more required)
+            parsed = parsed.filter(p => {
+              const role = (p.profileType || p.role || "").toUpperCase();
+              return role !== "SEEKER" && !p.id.includes("seeker");
+            });
+
+            // Re-align to defaults if corrupted or inflated beyond canonical 12 nodes
+            const defaults = this._getDefaultProfiles();
+            if (parsed.length !== defaults.length || parsed.length > 12) {
+              parsed = defaults;
+            }
+
             // Automatic migration: restore original Spiritual Karim Khan profile name
             const rootP = parsed.find((p) => p.id === "prof-admin-01");
             if (rootP && rootP.name !== "Spiritual Karim Khan") {
@@ -2103,8 +2308,61 @@ class ProfileModel {
                 rootP.lineage.currentFamily.selfName = "Spiritual Karim Khan";
                 rootP.lineage.currentFamily.spouseName = "Fatima Karim Khan";
               }
-              this.saveProfiles(parsed);
             }
+
+            // Auto-heal trainee profiles: ensure Sacred Sadhanas and Remedies exist in traineeSadhanas
+            const catalog = this._getDefaultSadhanaCatalog();
+            parsed.forEach((p) => {
+              if (p.profileType === "TRAINEE" || p.categoryTag === "Trainee Sadhak") {
+                if (!Array.isArray(p.traineeSadhanas)) p.traineeSadhanas = [];
+                const defMatch = defaults.find((d) => d.id === p.id);
+                if (defMatch && Array.isArray(defMatch.traineeSadhanas)) {
+                  defMatch.traineeSadhanas.forEach((defTs) => {
+                    const exists = p.traineeSadhanas.some(
+                      (ts) => ts.sadhanaKey === defTs.sadhanaKey || ts.id === defTs.id || ts.title === defTs.title
+                    );
+                    if (!exists) {
+                      p.traineeSadhanas.unshift(JSON.parse(JSON.stringify(defTs)));
+                    }
+                  });
+                }
+                if (defMatch && Array.isArray(defMatch.interestedSadhanas)) {
+                  if (!Array.isArray(p.interestedSadhanas) || p.interestedSadhanas.length < defMatch.interestedSadhanas.length) {
+                    p.interestedSadhanas = JSON.parse(JSON.stringify(defMatch.interestedSadhanas));
+                  }
+                }
+                if (Array.isArray(p.selectedRemedies)) {
+                  p.selectedRemedies.forEach((key) => {
+                    const hasPractice = p.traineeSadhanas.some(
+                      (ts) => ts.sadhanaKey === key || ts.id === key || (ts.title && ts.title.toLowerCase().includes(key.replace(/_/g, " ")))
+                    );
+                    if (!hasPractice) {
+                      const catItem = catalog[key] || {};
+                      const isSadhana = catItem.domain === "sadhanas" || (catItem.category || "").toLowerCase().includes("sadhana") || key.includes("yantra") || key.includes("bhairav") || key.includes("debts");
+                      p.traineeSadhanas.unshift({
+                        id: `ts-${p.id.slice(-2)}-${key}`,
+                        sadhanaKey: key,
+                        title: catItem.title || key.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()),
+                        categoryDomain: isSadhana ? "sadhanas" : "remedies",
+                        isPaid: p.isPaid !== false,
+                        paymentStatus: p.paymentStatus || "PAID",
+                        level: `Level ${p.level || 2} — Mantra Diksha`,
+                        dailyTarget: isSadhana ? "11 Malas & Trataka" : "3 Diyas at Dusk",
+                        currentStreak: "14 Days",
+                        progressPercent: p.progressPercent || 75,
+                        status: "In Progress",
+                        mentorCode: p.referredByCode || "SKHM-HLR2-3344-5566",
+                        mentorName: p.referredByName || "Acharya Devendra",
+                        diaryNotes: `${catItem.title || key} active practice.`,
+                        initiationToken: `SK-${key.toUpperCase().slice(0, 4)}-7788`,
+                        verificationStatus: "VERIFIED"
+                      });
+                    }
+                  });
+                }
+              }
+            });
+            this.saveProfiles(parsed);
             return parsed;
           }
         }
@@ -2247,6 +2505,11 @@ class ProfileModel {
 
   setActiveProfileId(id) {
     this.setInspectedProfileId(id);
+    this.activeProfileId = id;
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(this.activeProfileIdKey, id);
+      localStorage.setItem("sk_active_profile_id", id);
+    }
   }
 
   updateActiveProfile(updatedData) {
@@ -2505,8 +2768,11 @@ class ProfileModel {
     author = null,
     isVerification = false,
     type = "NORMAL",
+    targetProfile = null,
   ) {
-    const profile = this.getActiveProfile();
+    const profile = (typeof targetProfile === 'object' && targetProfile) 
+      ? targetProfile 
+      : (typeof targetProfile === 'string' ? this.profiles.find(p => p.id === targetProfile) : null) || this.getActiveProfile();
     if (!profile.traineeSadhanas) profile.traineeSadhanas = [];
     const item = profile.traineeSadhanas.find((s) => s.id === itemId);
     if (item) {
@@ -2540,8 +2806,19 @@ class ProfileModel {
     return null;
   }
 
-  requestTraineeVerification(itemId, customNote = "") {
-    const profile = this.getActiveProfile();
+  loadProfiles() {
+    this.profiles = this._loadProfiles();
+    return this.profiles;
+  }
+
+  requestTraineeVerification(itemId, customNote = "", targetProfile = null) {
+    if (typeof customNote === 'object' && customNote !== null && !targetProfile) {
+      targetProfile = customNote;
+      customNote = "";
+    }
+    const profile = (typeof targetProfile === 'object' && targetProfile) 
+      ? targetProfile 
+      : (typeof targetProfile === 'string' ? this.profiles.find(p => p.id === targetProfile) : null) || this.getActiveProfile();
     if (!profile.traineeSadhanas) profile.traineeSadhanas = [];
     const item = profile.traineeSadhanas.find((s) => s.id === itemId);
     if (item) {
@@ -2558,25 +2835,38 @@ class ProfileModel {
         });
       item.verificationStatus = "PENDING_APPROVAL";
       item.verificationRequestedDate = nowStamp;
-      const author = profile.name || "Devotee Sadhak";
+      const author = typeof profile.name === 'string' ? profile.name : "Devotee Sadhak";
+      
       const sponsorCode =
-        item.mentorCode ||
-        profile.referredByCode ||
+        (typeof item.mentorCode === 'string' && item.mentorCode) ||
+        (typeof profile.referredByCode === 'string' && profile.referredByCode) ||
         this.settings?.defaultMentorCode ||
         "SKHM-ADM1-7788-9900";
-      const note =
-        customNote ||
-        `[VERIFICATION REQUESTED] Sadhak submitted ${item.progressPercent || 0}% progress (${item.currentStreak || "1 Day"}) to upline (${sponsorCode}) for approval seal.`;
+      const mentorObj = this.profiles.find(p => p.referenceCode === sponsorCode);
+      const mentorName = (typeof item.mentorName === 'string' && item.mentorName) || (mentorObj ? mentorObj.name : null) || (typeof profile.referredByName === 'string' && profile.referredByName) || "Upline Mentor";
+      item.mentorName = String(mentorName);
+      item.mentorCode = String(sponsorCode);
 
-      this.addTraineeMemo(itemId, note, author, true, "PENDING");
+      const safeCustomNote = typeof customNote === 'string' ? customNote : "";
+      const note =
+        safeCustomNote ||
+        `[FEEDBACK REQUEST SENT] Submitted ${item.progressPercent || 0}% progress (${item.currentStreak || "1 Day"}) to Upline Mentor ${mentorName} (${sponsorCode}) for verification & feedback seal.`;
+
+      this.addTraineeMemo(itemId, note, author, true, "PENDING", profile);
       this.saveProfiles(this.profiles);
       return item;
     }
     return null;
   }
 
-  approveTraineeVerification(itemId, mentorName = null, mentorCode = null) {
-    const profile = this.getActiveProfile();
+  approveTraineeVerification(itemId, mentorName = null, mentorCode = null, targetProfile = null) {
+    if (typeof mentorName === 'object' && mentorName !== null && !targetProfile) {
+      targetProfile = mentorName;
+      mentorName = null;
+    }
+    const profile = (typeof targetProfile === 'object' && targetProfile) 
+      ? targetProfile 
+      : (typeof targetProfile === 'string' ? this.profiles.find(p => p.id === targetProfile) : null) || this.getActiveProfile();
     if (!profile.traineeSadhanas) profile.traineeSadhanas = [];
     const item = profile.traineeSadhanas.find((s) => s.id === itemId);
     if (item) {
@@ -2591,40 +2881,78 @@ class ProfileModel {
           hour: "2-digit",
           minute: "2-digit",
         });
-      const activeMentor =
-        mentorName || this.settings?.defaultMentorName || "Karim Ji (Founder)";
-      const activeCode =
-        mentorCode || this.settings?.defaultMentorCode || "SKHM-ADM1-7788-9900";
+      const activeMentor = (typeof mentorName === 'string' && mentorName)
+        ? mentorName
+        : (mentorName && typeof mentorName === 'object' && mentorName.name) || this.settings?.defaultMentorName || "Karim Ji (Founder)";
+      const activeCode = (typeof mentorCode === 'string' && mentorCode)
+        ? mentorCode
+        : (mentorCode && typeof mentorCode === 'object' && mentorCode.referenceCode) || this.settings?.defaultMentorCode || "SKHM-ADM1-7788-9900";
 
       item.verificationStatus = "VERIFIED";
       item.verifiedDate = nowStamp;
-      item.verifiedBy = activeMentor;
-      item.verifiedCode = activeCode;
+      item.verifiedBy = String(activeMentor);
+      item.verifiedCode = String(activeCode);
+      item.mentorName = String(activeMentor);
+      item.mentorCode = String(activeCode);
       item.verifiedPercent = item.progressPercent || 100;
 
-      const note = `[APPROVED BY UPLINE] ${activeMentor} (${activeCode}) verified and officially sealed ${item.progressPercent || 0}% progress advancement!`;
-      this.addTraineeMemo(itemId, note, activeMentor, true, "VERIFIED");
+      const note = `[FEEDBACK RECEIVED & SEALED] Officially approved by Upline Mentor ${activeMentor} (${activeCode}). Progress verified with sacred seal!`;
+      this.addTraineeMemo(itemId, note, String(activeMentor), true, "VERIFIED", profile);
       this.saveProfiles(this.profiles);
       return item;
     }
     return null;
   }
 
-  rejectTraineeVerification(itemId, reason = "", mentorName = null) {
-    const profile = this.getActiveProfile();
+  rejectTraineeVerification(itemId, reason = "", mentorName = null, mentorCode = null, targetProfile = null) {
+    if (typeof reason === 'object' && reason !== null && !targetProfile) {
+      targetProfile = reason;
+      reason = "";
+    }
+    if (typeof mentorName === 'object' && mentorName !== null && !targetProfile) {
+      targetProfile = mentorName;
+      mentorName = null;
+    }
+    const profile = (typeof targetProfile === 'object' && targetProfile) 
+      ? targetProfile 
+      : (typeof targetProfile === 'string' ? this.profiles.find(p => p.id === targetProfile) : null) || this.getActiveProfile();
     if (!profile.traineeSadhanas) profile.traineeSadhanas = [];
     const item = profile.traineeSadhanas.find((s) => s.id === itemId);
     if (item) {
-      item.verificationStatus = "UNVERIFIED";
-      const activeMentor =
-        mentorName || this.settings?.defaultMentorName || "Karim Ji (Founder)";
-      const note = `[REVISION REQUESTED] Upline Mentor Guidance: ${reason || "Please complete additional daily malas before reapplying for the verification seal."}`;
-      this.addTraineeMemo(itemId, note, activeMentor, true, "REVISION");
+      const nowStamp =
+        new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }) +
+        " " +
+        new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      const activeMentor = (typeof mentorName === 'string' && mentorName)
+        ? mentorName
+        : (mentorName && typeof mentorName === 'object' && mentorName.name) || this.settings?.defaultMentorName || "Karim Ji (Founder)";
+      const activeCode = (typeof mentorCode === 'string' && mentorCode)
+        ? mentorCode
+        : (mentorCode && typeof mentorCode === 'object' && mentorCode.referenceCode) || this.settings?.defaultMentorCode || "SKHM-ADM1-7788-9900";
+
+      item.verificationStatus = "REVISION_REQUESTED";
+      item.verifiedDate = null;
+      item.rejectedDate = nowStamp;
+      item.rejectedBy = String(activeMentor);
+      item.mentorName = String(activeMentor);
+      item.mentorCode = String(activeCode);
+
+      const safeReason = typeof reason === 'string' && reason ? reason : "Complete additional practice daily and re-submit for seal.";
+      const note = `[REVISION REQUESTED] Mentor ${activeMentor} requested revision: "${safeReason}"`;
+      this.addTraineeMemo(itemId, note, String(activeMentor), true, "REVISION", profile);
       this.saveProfiles(this.profiles);
       return item;
     }
     return null;
   }
+
 
   // ==========================================
   // 4-PHASE APP SHARING & 24-HOUR PAIRING PROTOCOL (ENTERPRISE UPGRADED)
@@ -2834,7 +3162,23 @@ class ProfileModel {
             ...customInvites,
             ...(existingDefaults.length > 0 ? existingDefaults : defaultInvites),
           ];
-          return merged;
+
+          // Strictly isolate Registration pairing invites from Sadhana/Remedy initiations
+          const registrationInvites = merged.filter(p => 
+            p && 
+            p.type !== "SADHANA_APPLICATION" && 
+            p.type !== "REMEDY_APPLICATION" && 
+            p.contextType !== "sadhana" && 
+            p.contextType !== "remedy" &&
+            !p.id?.startsWith("sadhana-") &&
+            !p.id?.startsWith("remedy-")
+          );
+
+          if (registrationInvites.length !== merged.length) {
+            try { localStorage.setItem("sk_pairing_invites", JSON.stringify(registrationInvites)); } catch (e) {}
+          }
+
+          return registrationInvites;
         }
       }
     } catch (e) {
@@ -2880,16 +3224,16 @@ class ProfileModel {
       },
       {
         id: "inv-02",
-        sponsorCode: "SKHM-ADM1-7788-9900",
+        sponsorCode: "SKHM-HLR2-3344-5566",
         seekerName: "Rahul Sharma",
         seekerPhone: "+91 98445 22334",
         seekerEmail: "rahul.sadhak@spiritualkarim.org",
         dob: "1992-11-20",
-        appliedRole: "TRAINEE",
-        assignedRole: "TRAINEE",
+        appliedRole: "DEVOTEE",
+        assignedRole: "DEVOTEE",
         seekerDeviceModel: "Google Pixel 8",
         hardwareNonce: "HW-FPRINT-4433-2211",
-        devoteeCode: "SKTR-TRN3-4433-2211",
+        devoteeCode: "SKDV-DEV4-4433-2211",
         activationPin: "781120",
         lineage: {
           paternalGotra: "Vashishta",
@@ -2912,7 +3256,7 @@ class ProfileModel {
       },
       {
         id: "inv-03",
-        sponsorCode: "SKHM-ADM1-7788-9900",
+        sponsorCode: "SKHM-HLR2-5566-7788",
         seekerName: "Ananya Sharma",
         seekerPhone: "+91 98112 33445",
         seekerEmail: "ananya.sharma@spiritualkarim.org",
@@ -3119,6 +3463,57 @@ class ProfileModel {
     return newInvite;
   }
 
+  deletePairingInvite(inviteId) {
+    const invites = this.getPairingInvites();
+    const filtered = invites.filter(i => i.id !== inviteId);
+    this.savePairingInvites(filtered);
+
+    const inviteIndex = invites.findIndex(i => i.id === inviteId);
+    if (inviteIndex !== -1) {
+      invites[inviteIndex].status = "DELETED";
+      invites[inviteIndex].deletedAtMs = Date.now();
+      this.savePairingInvites(invites);
+    }
+
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const syncChan = new BroadcastChannel("spiritual_karim_sync");
+        syncChan.postMessage({ type: "PAIRING_INVITE_DELETED", inviteId });
+      } catch (e) {}
+    }
+
+    // Backend HTTP delete (optional - we may want to pass soft-delete to backend too, but keeping API same for now)
+    try {
+      fetch(`/api/pairing-invites?id=${encodeURIComponent(inviteId)}`, { method: "DELETE" }).catch(() => {});
+    } catch (e) {}
+
+    // Firebase RTDB delete (we keep this hard delete for now to save space on remote)
+    const firebaseUrl = this.settings?.firebaseUrl || "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/";
+    try {
+      fetch(`${firebaseUrl.replace(/\/$/, "")}/pairing_invites/${encodeURIComponent(inviteId)}.json`, { method: "DELETE" }).catch(() => {});
+    } catch (e) {}
+
+    return true;
+  }
+
+  restorePairingInvite(inviteId) {
+    const invites = this.getPairingInvites();
+    const inviteIndex = invites.findIndex(i => i.id === inviteId);
+    if (inviteIndex !== -1) {
+      invites[inviteIndex].status = "PENDING";
+      delete invites[inviteIndex].deletedAtMs;
+      this.savePairingInvites(invites);
+    }
+    
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const syncChan = new BroadcastChannel("spiritual_karim_sync");
+        syncChan.postMessage({ type: "PAIRING_INVITE_RESTORED", inviteId });
+      } catch (e) {}
+    }
+    return true;
+  }
+
   approvePairingInvite(inviteId, targetRole = null) {
     const invites = this.getPairingInvites();
     const item = invites.find((i) => i.id === inviteId);
@@ -3157,6 +3552,8 @@ class ProfileModel {
       // Ensure seeker exists as a registered profile in directory with assigned role
       const existingProfile = this.profiles.find(
         (p) =>
+          (item.seekerId && p.id === item.seekerId) ||
+          (item.devoteeCode && (p.referenceCode === item.devoteeCode || p.id === item.devoteeCode)) ||
           p.name === item.seekerName ||
           (item.seekerPhone && p.phone === item.seekerPhone) ||
           p.referenceCode === targetRefCode,
@@ -3282,6 +3679,39 @@ class ProfileModel {
       } else {
         existingProfile.profileType = assignedRole;
         existingProfile.level = roleLevel;
+        existingProfile.role = `${assignedRole.charAt(0) + assignedRole.slice(1).toLowerCase()} (Level ${roleLevel})`;
+        existingProfile.categoryTag = assignedRole === "HEALER" ? "Healers & Mentors" : assignedRole === "TRAINEE" ? "Trainee Sadhaks" : "House Clean & Seekers";
+
+        if (assignedRole === "TRAINEE") {
+          if (!Array.isArray(existingProfile.traineeSadhanas)) {
+            existingProfile.traineeSadhanas = [];
+          }
+          const initiatedSadhanaId = item.sadhanaId || "three_diya";
+          const initiatedTitle = item.sadhanaTitle || (typeof SADHANA_CATALOG !== "undefined" && SADHANA_CATALOG[initiatedSadhanaId]?.title) || "Three Diya Practice";
+          const hasSadhana = existingProfile.traineeSadhanas.some(s => s && (s.id === initiatedSadhanaId || s.title === initiatedTitle));
+          if (!hasSadhana) {
+            existingProfile.traineeSadhanas.push({
+              id: initiatedSadhanaId,
+              title: initiatedTitle,
+              category: "Sacred Sadhana",
+              status: "IN_PROGRESS",
+              dailyMalasDone: 0,
+              targetMalas: item.targetMalas || 11,
+              scheduleSlot: item.scheduleSlot || "Brahma Muhurta",
+              streakDays: 0,
+              startDate: new Date().toISOString().split("T")[0]
+            });
+          }
+        }
+
+        // Seamlessly update active session credentials if this profile is currently active in this browser
+        if (this.activeProfileId === existingProfile.id) {
+          try {
+            sessionStorage.setItem("portalRole", assignedRole);
+            localStorage.setItem("sk_active_portal_role", assignedRole);
+            localStorage.setItem("sk_admin_active_role_mode_v1", assignedRole);
+          } catch (e) {}
+        }
       }
 
       this.saveProfiles(this.profiles);
@@ -3310,6 +3740,18 @@ class ProfileModel {
               referenceCode: targetRefCode,
               assignedRole: assignedRole,
               invite: item,
+            },
+          });
+          syncChan.postMessage({
+            type: "ROLE_UPGRADED",
+            data: {
+              seekerName: item.seekerName,
+              referenceCode: targetRefCode,
+              profileId: existingProfile ? existingProfile.id : null,
+              newRole: assignedRole,
+              level: roleLevel,
+              sadhanaId: item.sadhanaId,
+              sadhanaTitle: item.sadhanaTitle,
             },
           });
         } catch (e) {}
@@ -3367,6 +3809,748 @@ class ProfileModel {
       return item;
     }
     return null;
+  }
+
+  // ==============================================================
+  // NOTIFICATION & TELEMETRY SUBSYSTEM (MULTI-STAGE CLOSED LOOP)
+  // ==============================================================
+  getNotifications(recipientId = null) {
+    try {
+      const stored = JSON.parse(localStorage.getItem("sk_notifications_v1") || "[]");
+      if (!recipientId) return stored;
+      return stored.filter(n => !n.recipientId || n.recipientId === recipientId || n.recipientId === "ALL");
+    } catch (e) {
+      return [];
+    }
+  }
+
+  addNotification(notification) {
+    try {
+      const notifs = this.getNotifications();
+      const notifItem = {
+        id: notification.id || ("notif-" + Date.now() + "-" + Math.random().toString(36).substring(2, 6)),
+        recipientId: notification.recipientId || "ALL",
+        type: notification.type || "INFO",
+        title: notification.title || "Spiritual Notification",
+        message: notification.message || "",
+        timestamp: notification.timestamp || Date.now(),
+        read: false,
+        metadata: notification.metadata || {}
+      };
+      notifs.unshift(notifItem);
+      if (notifs.length > 100) notifs.length = 100;
+      localStorage.setItem("sk_notifications_v1", JSON.stringify(notifs));
+
+      // Broadcast real-time event across tabs
+      if (typeof BroadcastChannel !== "undefined") {
+        try {
+          const syncChan = new BroadcastChannel("spiritual_karim_sync");
+          syncChan.postMessage({ type: "NEW_NOTIFICATION", data: notifItem });
+        } catch (e) {}
+      }
+      return notifItem;
+    } catch (e) {
+      console.warn("addNotification error:", e);
+      return null;
+    }
+  }
+
+  markNotificationRead(notifId) {
+    try {
+      const notifs = this.getNotifications();
+      const found = notifs.find(n => n.id === notifId);
+      if (found) {
+        found.read = true;
+        localStorage.setItem("sk_notifications_v1", JSON.stringify(notifs));
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ==============================================================
+  // SADHANA & REMEDY QUEUE DATA MANAGEMENT
+  // ==============================================================
+  getSadhanaRemedyApplications() {
+    let apps = [];
+    try {
+      apps = JSON.parse(localStorage.getItem("sk_sadhana_initiations_v1") || "null");
+    } catch (e) {
+      apps = null;
+    }
+
+    if (!apps || !Array.isArray(apps) || apps.length === 0) {
+      // Seed rich, authentic mock applications for instant visibility and testing
+      apps = [
+        {
+          id: "sadhana-app-001",
+          type: "SADHANA_APPLICATION",
+          contextType: "sadhana",
+          seekerId: "prof-devotee-09",
+          seekerName: "Deepak Saxena",
+          devoteeCode: "SKHM-DEV4-3322-1100",
+          seekerPhone: "+91 97220 66554",
+          seekerLevel: "Level 4 (Devotee)",
+          itemId: "sadhana-navarna",
+          itemTitle: "Navarna Chandi Anushthan",
+          category: "Vedic Sadhana",
+          targetMalas: 11,
+          cycleDays: 21,
+          scheduleSlot: "Brahma Muhurta (04:00 - 06:00)",
+          intention: "Seeking Maa Durga's divine grace, household positivity, ancestral protection, and deeper spiritual discipline.",
+          commitments: ["Strict Sattvic Diet", "Daily Diya Practice", "Brahmacharya During 21-Day Cycle", "Digital Oath Signed"],
+          signature: "Deepak Saxena",
+          sponsorCode: "SKHM-ADM1-7788-9900",
+          mentorName: "Spiritual Karim Khan",
+          status: "PENDING",
+          createdAtMs: Date.now() - (2 * 3600 * 1000),
+          expiresAtMs: Date.now() + (22 * 3600 * 1000)
+        },
+        {
+          id: "remedy-app-002",
+          type: "REMEDY_APPLICATION",
+          contextType: "remedy",
+          seekerId: "prof-devotee-08",
+          seekerName: "Sunita Mehra",
+          devoteeCode: "SKHM-DEV4-9988-1122",
+          seekerPhone: "+91 98123 45678",
+          seekerLevel: "Level 4 (Devotee)",
+          itemId: "remedy-pitra",
+          itemTitle: "Pitra Dosh Shanti & Griha Shuddhi",
+          category: "Remedy & Upay",
+          targetMalas: 11,
+          cycleDays: 41,
+          scheduleSlot: "Sandhya Kaal (18:00 - 19:30)",
+          intention: "Resolution of prolonged household unrest, peace for departed ancestors (Pitru), and removal of Nazar/negative vibrations.",
+          commitments: ["Strict Sattvic Diet", "Daily Sandhya Aarti", "No Intoxicants", "Digital Oath Signed"],
+          signature: "Sunita Mehra",
+          sponsorCode: "SKHM-ADM1-7788-9900",
+          mentorName: "Spiritual Karim Khan",
+          status: "PENDING",
+          createdAtMs: Date.now() - (5 * 3600 * 1000),
+          expiresAtMs: Date.now() + (19 * 3600 * 1000)
+        },
+        {
+          id: "sadhana-app-003",
+          type: "SADHANA_APPLICATION",
+          contextType: "sadhana",
+          seekerId: "prof-trainee-04",
+          seekerName: "Amitabh Sen",
+          devoteeCode: "SKHM-TRN3-1122-3344",
+          seekerPhone: "+91 97654 32109",
+          seekerLevel: "Level 3 (Trainee Sadhak)",
+          itemId: "sadhana-mahamrityunjaya",
+          itemTitle: "Mahamrityunjaya Kavach Sadhana",
+          category: "Vedic Sadhana",
+          targetMalas: 21,
+          cycleDays: 41,
+          scheduleSlot: "Pratah Kaal (06:00 - 08:00)",
+          intention: "Overcoming severe chronic health afflictions and building spiritual vitality under mentor supervision.",
+          commitments: ["Strict Sattvic Diet", "Daily Diya Practice", "Brahmacharya During 41-Day Cycle", "Digital Oath Signed"],
+          signature: "Amitabh Sen",
+          sponsorCode: "SKHM-ADM1-7788-9900",
+          mentorName: "Spiritual Karim Khan",
+          status: "APPROVED",
+          initiationToken: "IN-SADH-9K24M",
+          mentorFeedback: "Initiation granted for 21 malas daily. Wear rudraksha bead and maintain daily diya log.",
+          approvedAtMs: Date.now() - (24 * 3600 * 1000),
+          createdAtMs: Date.now() - (48 * 3600 * 1000),
+          expiresAtMs: Date.now() + (72 * 3600 * 1000)
+        }
+      ];
+      localStorage.setItem("sk_sadhana_initiations_v1", JSON.stringify(apps));
+    }
+
+    // Auto-heal/correct corrupted seeker records where Master Admin was recorded as the requester
+    let needsResave = false;
+    if (apps && Array.isArray(apps)) {
+      apps.forEach(app => {
+        if (app && (app.seekerName === "Spiritual Karim Khan" || app.seekerId === "prof-admin-01" || app.devoteeCode === "SKHM-ADM1-7788-9900")) {
+          needsResave = true;
+          if (app.signature && app.signature !== "Spiritual Karim Khan" && app.signature.trim().length > 2 && !app.signature.includes("Select")) {
+            app.seekerName = app.signature;
+            app.seekerId = app.signature.includes("Sunita") ? "prof-dev-02" : app.signature.includes("Amit") ? "prof-dev-03" : "prof-dev-01";
+            app.devoteeCode = app.signature.includes("Sunita") ? "SKDV-SUNT-4412" : app.signature.includes("Amit") ? "SKDV-AMIT-9930" : "SKDV-ROHN-8821";
+            app.seekerPhone = app.signature.includes("Sunita") ? "+91 98123 45678" : app.signature.includes("Amit") ? "+91 97654 32109" : "+91 98765 43210";
+          } else if (app.itemId === 'sri_yantra' || (app.itemTitle && app.itemTitle.includes('Sri Yantra'))) {
+            app.seekerName = "Deepak Saxena";
+            app.seekerId = "prof-devotee-09";
+            app.devoteeCode = "SKHM-DEV4-3322-1100";
+            app.seekerPhone = "+91 97220 66554";
+            app.seekerLevel = "Devotee (Level 4)";
+            app.signature = "Deepak Saxena";
+          } else {
+            app.seekerName = "Rohan Sharma";
+            app.seekerId = "prof-dev-01";
+            app.devoteeCode = "SKDV-ROHN-8821";
+            app.seekerPhone = "+91 98765 43210";
+            app.seekerLevel = "Devotee (Level 4)";
+          }
+          app.mentorCode = "SKHM-ADM1-7788-9900";
+          app.mentorName = "Shri Karim Ji";
+        }
+      });
+      if (needsResave) {
+        try { localStorage.setItem("sk_sadhana_initiations_v1", JSON.stringify(apps)); } catch (e) {}
+      }
+    }
+
+    return apps;
+  }
+
+  deleteSadhanaRemedyApplication(appId) {
+    let apps = this.getSadhanaRemedyApplications();
+    const appIndex = apps.findIndex(a => a.id === appId);
+    if (appIndex !== -1) {
+      apps[appIndex].status = "DELETED";
+      apps[appIndex].deletedAtMs = Date.now();
+      this.saveSadhanaRemedyApplications(apps);
+    }
+
+    // Also soft-remove from pairing invites
+    this.deletePairingInvite(appId);
+
+    // Broadcast cross-tab sync
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const syncChan = new BroadcastChannel("spiritual_karim_sync");
+        syncChan.postMessage({ type: "SADHANA_APPLICATION_DELETED", appId });
+        syncChan.postMessage({ type: "SADHANA_APPLICATIONS_UPDATED", count: apps.length });
+      } catch (e) {}
+    }
+
+    // Backend HTTP delete
+    try {
+      fetch(`/api/pairing-invites?id=${encodeURIComponent(appId)}`, { method: "DELETE" }).catch(() => {});
+    } catch (e) {}
+
+    // Firebase RTDB delete
+    const firebaseUrl = this.settings?.firebaseUrl || "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/";
+    try {
+      fetch(`${firebaseUrl.replace(/\/$/, "")}/pairing_invites/${encodeURIComponent(appId)}.json`, { method: "DELETE" }).catch(() => {});
+    } catch (e) {}
+
+    return true;
+  }
+
+  restoreSadhanaRemedyApplication(appId) {
+    let apps = this.getSadhanaRemedyApplications();
+    const appIndex = apps.findIndex(a => a.id === appId);
+    if (appIndex !== -1) {
+      apps[appIndex].status = "PENDING";
+      delete apps[appIndex].deletedAtMs;
+      this.saveSadhanaRemedyApplications(apps);
+    }
+    this.restorePairingInvite(appId);
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const syncChan = new BroadcastChannel("spiritual_karim_sync");
+        syncChan.postMessage({ type: "SADHANA_APPLICATION_RESTORED", appId });
+        syncChan.postMessage({ type: "SADHANA_APPLICATIONS_UPDATED", count: apps.length });
+      } catch (e) {}
+    }
+    return true;
+  }
+
+  getUplineApprovers(profileOrIdOrCode) {
+    const defaultMaster = {
+      code: "SKHM-ADM1-7788-9900",
+      name: "Spiritual Karim Khan",
+      role: "MASTER",
+      level: 1,
+      id: "prof-admin-01"
+    };
+
+    let target = null;
+    if (typeof profileOrIdOrCode === "object" && profileOrIdOrCode !== null) {
+      target = profileOrIdOrCode;
+    } else if (typeof profileOrIdOrCode === "string") {
+      target = this.profiles.find(p => p.id === profileOrIdOrCode || p.referenceCode === profileOrIdOrCode || p.name === profileOrIdOrCode);
+    }
+    if (!target) {
+      return {
+        directSponsor: defaultMaster,
+        firstApprover: defaultMaster,
+        secondApprover: defaultMaster,
+        lineagePath: [defaultMaster.name]
+      };
+    }
+
+    let current = target;
+    let directSponsor = null;
+    let firstApproverHealer = null;
+    let secondApproverMaster = null;
+    const lineagePath = [target.name];
+    const visited = new Set([target.id || target.referenceCode]);
+
+    while (current && current.referredByCode) {
+      const parent = this.profiles.find(p => p.referenceCode === current.referredByCode || p.id === current.referredByCode);
+      if (!parent || visited.has(parent.id || parent.referenceCode)) break;
+      visited.add(parent.id || parent.referenceCode);
+      lineagePath.push(parent.name);
+
+      if (!directSponsor) {
+        directSponsor = {
+          id: parent.id,
+          name: parent.name,
+          code: parent.referenceCode,
+          role: parent.profileType || "TRAINEE",
+          level: parent.level
+        };
+      }
+
+      const pType = (parent.profileType || "").toUpperCase();
+      if (!firstApproverHealer && (pType === "HEALER" || parent.level === 2)) {
+        firstApproverHealer = {
+          id: parent.id,
+          name: parent.name,
+          code: parent.referenceCode,
+          role: "HEALER",
+          level: 2
+        };
+      }
+
+      if (!secondApproverMaster && (pType === "ADMIN" || pType === "MASTER" || parent.level === 1 || parent.level === 0 || parent.id === "prof-admin-01")) {
+        secondApproverMaster = {
+          id: parent.id,
+          name: parent.name,
+          code: parent.referenceCode,
+          role: "MASTER",
+          level: 1
+        };
+      }
+
+      current = parent;
+    }
+
+    if (!secondApproverMaster) secondApproverMaster = defaultMaster;
+    if (!firstApproverHealer) {
+      if (directSponsor && directSponsor.role === "HEALER") {
+        firstApproverHealer = directSponsor;
+      } else {
+        firstApproverHealer = secondApproverMaster;
+      }
+    }
+
+    return {
+      directSponsor: directSponsor || defaultMaster,
+      firstApprover: firstApproverHealer,
+      secondApprover: secondApproverMaster,
+      lineagePath
+    };
+  }
+
+  submitSadhanaRemedyApplication(data) {
+    const apps = this.getSadhanaRemedyApplications();
+    const activeProf = this.getActiveProfile() || {};
+    const contextType = data.contextType || (data.type === 'REMEDY_APPLICATION' ? 'remedy' : 'sadhana');
+
+    const seekerId = data.applicantId || data.seekerId || activeProf.id || "prof-trainee-06";
+    const seekerName = data.applicantName || data.seekerName || ((activeProf && !activeProf.profileType?.toLowerCase().includes("admin") && !activeProf.profileType?.toLowerCase().includes("master")) ? activeProf.name : "Trainee Sadhak");
+    const devoteeCode = data.devoteeCode || activeProf.referenceCode || "SKTR-AMIT-9021";
+
+    // Dynamic 2-Tier Upline Approver Resolution
+    const upline = this.getUplineApprovers(activeProf.referenceCode ? activeProf : (devoteeCode || seekerId));
+    const firstApprover = upline.firstApprover || upline.directSponsor;
+    const secondApprover = upline.secondApprover;
+
+    const newApp = {
+      id: data.id || `${contextType}-req-${Date.now().toString(36)}`,
+      type: data.type || (contextType === 'remedy' ? "REMEDY_APPLICATION" : "SADHANA_APPLICATION"),
+      contextType: contextType,
+      seekerId: seekerId,
+      seekerName: seekerName,
+      devoteeCode: devoteeCode,
+      seekerPhone: data.seekerPhone || activeProf.phone || "+91 98765 00000",
+      seekerEmail: data.seekerEmail || activeProf.email || "",
+      seekerLevel: data.applicantRole || activeProf.profileType || "Trainee Sadhak",
+      itemId: data.itemId || data.sadhanaId || "sadhana-mrityunjaya",
+      itemTitle: data.title || data.itemTitle || data.sadhanaTitle || "Maha Mrityunjaya Jaap - Rigvedic Vedic Diksha",
+      category: data.category || (contextType === 'remedy' ? "Remedy & Upay" : "Trainee Diksha"),
+      scheduleSlot: data.scheduleSlot || "Brahma Muhurta (04:00 - 06:00)",
+      
+      // 2-Tier Hierarchy Workflow Metadata
+      mentorCode: firstApprover.code,
+      sponsorCode: upline.directSponsor.code,
+      mentorName: firstApprover.name,
+      firstApproverCode: firstApprover.code,
+      firstApproverName: firstApprover.name,
+      firstApproverRole: firstApprover.role || "HEALER",
+      firstApproverStatus: "PENDING",
+      secondApproverCode: secondApprover.code,
+      secondApproverName: secondApprover.name,
+      secondApproverRole: "MASTER",
+      secondApproverStatus: "PENDING",
+      approvalStage: 1, // 1 = Awaiting Healer Verification, 2 = Awaiting Master Sanction
+
+      targetMalas: Number(data.targetMalas) || 11,
+      cycleDays: Number(data.cycleDays) || 21,
+      intention: data.notes || data.intention || "Seeking Divine initiation and spiritual growth.",
+      commitments: ["Strict Sattvic Diet", "Daily Diya Practice", "Brahmacharya During Cycle", "Digital Oath Signed"],
+      signature: data.signature || activeProf.name || "Trainee Sadhak",
+      date: new Date().toISOString(),
+      createdAtMs: Date.now(),
+      expiresAtMs: Date.now() + (24 * 3600 * 1000),
+      status: "PENDING"
+    };
+
+    apps.unshift(newApp);
+    this.saveSadhanaRemedyApplications(apps);
+
+    this.addNotification({
+      id: "notif-sadh-new-" + Date.now(),
+      recipientId: firstApprover.code || "ALL",
+      type: "NEW_SADHANA_APPLICATION",
+      title: `📿 New ${newApp.category || "Sadhana"} Initiation Request`,
+      message: `${newApp.seekerName} requested initiation for "${newApp.itemTitle}". Assigned 1st Approver: ${firstApprover.name} (${firstApprover.role}). Target: ${newApp.targetMalas} Malas.`,
+      timestamp: Date.now(),
+      metadata: { appId: newApp.id, itemTitle: newApp.itemTitle, seekerName: newApp.seekerName, firstApprover: firstApprover.name, secondApprover: secondApprover.name }
+    });
+
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const syncChan = new BroadcastChannel("spiritual_karim_sync");
+        syncChan.postMessage({
+          type: "NEW_PENDING_APPROVAL",
+          invite: newApp,
+          data: newApp
+        });
+        syncChan.postMessage({
+          type: "NEW_SADHANA_APPLICATION",
+          data: newApp,
+          invite: newApp
+        });
+      } catch (e) {}
+    }
+
+    return newApp;
+  }
+
+  saveSadhanaRemedyApplications(apps) {
+    try {
+      localStorage.setItem("sk_sadhana_initiations_v1", JSON.stringify(apps));
+      if (typeof BroadcastChannel !== "undefined") {
+        try {
+          const syncChan = new BroadcastChannel("spiritual_karim_sync");
+          syncChan.postMessage({ type: "SADHANA_APPLICATIONS_UPDATED", count: apps.length });
+        } catch (e) {}
+      }
+    } catch (e) {
+      console.warn("saveSadhanaRemedyApplications error:", e);
+    }
+  }
+
+  approveSadhanaRemedyApplication(appId, mentorNotes = "", adjustedMalas = null, adjustedSlot = null, operatorProfile = null) {
+    const apps = this.getSadhanaRemedyApplications();
+    const app = apps.find(a => a.id === appId);
+    if (!app) return null;
+
+    const op = operatorProfile || this.getActiveProfile() || this.getOperatorProfile() || {};
+    const opRole = (op.profileType || op.role || this.getRoleMode() || "MASTER").toUpperCase();
+    const isMaster = opRole.includes("ADMIN") || opRole.includes("MASTER") || op.id === "prof-admin-01";
+    const isHealer = opRole.includes("HEALER") || op.level === 2;
+
+    if (adjustedMalas) app.targetMalas = Number(adjustedMalas);
+    if (adjustedSlot) app.scheduleSlot = adjustedSlot;
+
+    // 2-Tier Closed-Loop Approval State Machine:
+    // Case 1: Stage 1 Approval by Certified Healer (1st Approver)
+    if (isHealer && !isMaster && app.status !== "HEALER_VERIFIED") {
+      app.status = "HEALER_VERIFIED";
+      app.approvalStage = 2; // Advanced to Stage 2: Awaiting Master Sanction
+      app.firstApproverStatus = "APPROVED";
+      app.firstApprovedAtMs = Date.now();
+      app.firstApprovedBy = op.name || app.firstApproverName || "Certified Healer";
+      app.firstApproverCode = op.referenceCode || app.firstApproverCode;
+      app.healerNotes = (mentorNotes || "Prescription validated. Recommended for initiation.").trim();
+      app.mentorFeedback = app.healerNotes;
+
+      this.saveSadhanaRemedyApplications(apps);
+
+      this.addNotification({
+        id: "notif-sadh-h-appr-" + Date.now(),
+        recipientId: app.secondApproverCode || "SKHM-ADM1-7788-9900",
+        type: "SADHANA_HEALER_VERIFIED",
+        title: `🛡️ Stage 1 Verified: ${app.itemTitle} (${app.seekerName})`,
+        message: `${op.name} has verified ${app.seekerName}'s application for "${app.itemTitle}". Awaiting Master Deeksha Sanction.`,
+        timestamp: Date.now(),
+        metadata: { appId: app.id, itemTitle: app.itemTitle, seekerName: app.seekerName, healer: op.name }
+      });
+
+      if (typeof BroadcastChannel !== "undefined") {
+        try {
+          const syncChan = new BroadcastChannel("spiritual_karim_sync");
+          syncChan.postMessage({
+            type: "SADHANA_HEALER_VERIFIED",
+            data: { appId: app.id, seekerName: app.seekerName, itemTitle: app.itemTitle, healerName: op.name }
+          });
+          syncChan.postMessage({ type: "SADHANA_APPLICATIONS_UPDATED" });
+        } catch (e) {}
+      }
+
+      return app;
+    }
+
+    // Case 2: Stage 2 Final Deeksha Sanction by Master (2nd Approver / Emergency Override)
+    app.status = "APPROVED";
+    app.approvalStage = 3; // Fully Completed
+    app.secondApproverStatus = "APPROVED";
+    app.secondApprovedAtMs = Date.now();
+    app.secondApprovedBy = op.name || app.secondApproverName || "Spiritual Karim Khan";
+    app.secondApproverCode = op.referenceCode || app.secondApproverCode;
+    app.approvedAtMs = Date.now();
+
+    if (!app.firstApprovedBy) {
+      app.firstApproverStatus = "APPROVED (DIRECT)";
+      app.firstApprovedBy = op.name || "Master Direct Sanction";
+      app.firstApprovedAtMs = Date.now();
+    }
+
+    if (mentorNotes) {
+      app.masterNotes = mentorNotes.trim();
+      app.mentorFeedback = mentorNotes.trim();
+    }
+    if (!app.initiationToken) {
+      app.initiationToken = "IN-" + (app.contextType === "remedy" ? "REMD" : "SADH") + "-" + Math.random().toString(36).substring(2, 7).toUpperCase();
+    }
+
+    this.saveSadhanaRemedyApplications(apps);
+
+    // Update active sadhana in devotee profile
+    const profile = this.profiles.find(p =>
+      p.id === app.seekerId ||
+      p.referenceCode === app.devoteeCode ||
+      p.name === app.seekerName
+    );
+
+    if (profile) {
+      if (!profile.traineeSadhanas && profile.activeSadhanas) {
+        profile.traineeSadhanas = profile.activeSadhanas;
+      }
+      if (!profile.traineeSadhanas) profile.traineeSadhanas = [];
+      
+      const existingPractice = profile.traineeSadhanas.find(s => s.id === (app.itemId || app.id));
+      if (!existingPractice) {
+        profile.traineeSadhanas.push({
+          id: app.itemId || app.id,
+          title: app.itemTitle,
+          category: app.category || (app.contextType === "remedy" ? "Remedy & Upay" : "Sacred Sadhana"),
+          status: "Active",
+          targetMalas: app.targetMalas,
+          cycleDays: app.cycleDays || 21,
+          scheduleSlot: app.scheduleSlot,
+          initiationToken: app.initiationToken,
+          startDate: new Date().toISOString().split("T")[0],
+          completedDays: 0,
+          dailyMalasDone: 0,
+          streakDays: 0,
+          mentorCode: app.firstApproverCode || "SKHM-HLR2-5566-7788",
+          mentorName: app.firstApproverName || "Maa Anandita Devi",
+          mentorGuidance: mentorNotes || app.healerNotes || "Chant with focused devotion and maintain strict diet.",
+          deekshaDate: new Date().toLocaleDateString()
+        });
+      } else {
+        existingPractice.status = "Active";
+        existingPractice.initiationToken = app.initiationToken;
+        existingPractice.targetMalas = app.targetMalas;
+        existingPractice.scheduleSlot = app.scheduleSlot;
+        existingPractice.mentorGuidance = mentorNotes || existingPractice.mentorGuidance;
+      }
+
+      // Lineage Ascension: When a Devotee's initiation is approved, elevate to Level 3 Trainee Sadhak
+      if (profile.level === 4 || (profile.profileType && profile.profileType.toUpperCase().includes("DEVOTEE"))) {
+        profile.level = 3;
+        profile.profileType = "TRAINEE";
+        profile.assignedRole = "TRAINEE";
+      }
+
+      // Keep activeSadhanas array mirrored for complete backward compatibility
+      profile.activeSadhanas = profile.traineeSadhanas;
+
+      this.saveProfiles(this.profiles);
+    }
+
+    // Closed-Loop Information Exchange & Notification
+    this.addNotification({
+      id: "notif-sadh-appr-" + Date.now(),
+      recipientId: app.devoteeCode || app.seekerId,
+      type: "SADHANA_INITIATION_APPROVED",
+      title: `📿 Deeksha & Initiation Granted: ${app.itemTitle}`,
+      message: `Divine blessing! Initiation for ${app.itemTitle} sanctioned under 2-tier seal (1st: ${app.firstApprovedBy}, 2nd: ${app.secondApprovedBy}). Token: ${app.initiationToken}. Target: ${app.targetMalas} Malas (${app.scheduleSlot}).`,
+      timestamp: Date.now(),
+      metadata: {
+        appId: app.id,
+        itemTitle: app.itemTitle,
+        initiationToken: app.initiationToken,
+        targetMalas: app.targetMalas,
+        scheduleSlot: app.scheduleSlot,
+        firstApprover: app.firstApprovedBy,
+        secondApprover: app.secondApprovedBy
+      }
+    });
+
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const syncChan = new BroadcastChannel("spiritual_karim_sync");
+        syncChan.postMessage({
+          type: "SADHANA_INITIATION_APPROVED",
+          data: {
+            appId: app.id,
+            seekerName: app.seekerName,
+            itemTitle: app.itemTitle,
+            initiationToken: app.initiationToken,
+            targetMalas: app.targetMalas,
+            firstApprover: app.firstApprovedBy,
+            secondApprover: app.secondApprovedBy
+          }
+        });
+        syncChan.postMessage({ type: "SADHANA_APPLICATIONS_UPDATED" });
+      } catch (e) {}
+    }
+
+    return app;
+  }
+
+  requestRevisionSadhanaRemedy(appId, mentorNotes = "Adjustments required in practice schedule or sankalp.") {
+    const apps = this.getSadhanaRemedyApplications();
+    const app = apps.find(a => a.id === appId);
+    if (!app) return null;
+
+    app.status = "REVISION_REQUIRED";
+    app.mentorFeedback = mentorNotes.trim();
+    app.updatedAtMs = Date.now();
+    this.saveSadhanaRemedyApplications(apps);
+
+    // Closed-Loop Notification
+    this.addNotification({
+      id: "notif-sadh-rev-" + Date.now(),
+      recipientId: app.devoteeCode || app.seekerId,
+      type: "SADHANA_REVISION_REQUESTED",
+      title: `📝 Sadhana Revision Required: ${app.itemTitle}`,
+      message: `Mentor guidance for your application: "${mentorNotes}". Please adjust your parameters in the Sadhana portal.`,
+      timestamp: Date.now(),
+      metadata: { appId: app.id, itemTitle: app.itemTitle, feedback: mentorNotes }
+    });
+
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const syncChan = new BroadcastChannel("spiritual_karim_sync");
+        syncChan.postMessage({
+          type: "SADHANA_REVISION_REQUESTED",
+          data: { appId: app.id, seekerName: app.seekerName, notes: mentorNotes }
+        });
+      } catch (e) {}
+    }
+
+    return app;
+  }
+
+  rejectSadhanaRemedy(appId, reason = "Prerequisites incomplete or unsuited at this stage.") {
+    const apps = this.getSadhanaRemedyApplications();
+    const app = apps.find(a => a.id === appId);
+    if (!app) return null;
+
+    app.status = "REJECTED";
+    app.mentorFeedback = reason.trim();
+    app.updatedAtMs = Date.now();
+    this.saveSadhanaRemedyApplications(apps);
+
+    // Closed-Loop Notification
+    this.addNotification({
+      id: "notif-sadh-rej-" + Date.now(),
+      recipientId: app.devoteeCode || app.seekerId,
+      type: "SADHANA_APPLICATION_REJECTED",
+      title: `Application Update: ${app.itemTitle}`,
+      message: `Initiation request not approved at this time. Reason: "${reason}". Please continue daily diya foundation.`,
+      timestamp: Date.now(),
+      metadata: { appId: app.id, itemTitle: app.itemTitle, reason }
+    });
+
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const syncChan = new BroadcastChannel("spiritual_karim_sync");
+        syncChan.postMessage({
+          type: "SADHANA_APPLICATION_REJECTED",
+          data: { appId: app.id, seekerName: app.seekerName, reason }
+        });
+      } catch (e) {}
+    }
+
+    return app;
+  }
+
+  /**
+   * Retrieves all Sadhana applications submitted by the given devotee/trainee.
+   * Single Source of Truth: queries both pairing_invites and sadhana_initiations_v1 (deduped by id).
+   */
+  getMySadhanaApplications(profileOrCode = null) {
+    return this._filterMyApplications(profileOrCode, 'sadhana');
+  }
+
+  /**
+   * Retrieves all Remedy applications submitted by the given devotee/trainee.
+   * Single Source of Truth: queries both pairing_invites and sadhana_initiations_v1 (deduped by id).
+   */
+  getMyRemedyApplications(profileOrCode = null) {
+    return this._filterMyApplications(profileOrCode, 'remedy');
+  }
+
+  /**
+   * Internal helper to filter applications by seeker profile and contextType.
+   */
+  _filterMyApplications(profileOrCode, targetType) {
+    const activeProf = (typeof profileOrCode === 'object' && profileOrCode) 
+      ? profileOrCode 
+      : (typeof this.getActiveProfile === 'function' ? this.getActiveProfile() : null);
+
+    const refCode = typeof profileOrCode === 'string' ? profileOrCode : (activeProf?.referenceCode || activeProf?.code || '');
+    const profId = activeProf?.id || (typeof profileOrCode === 'string' ? profileOrCode : '');
+    const seekerName = (activeProf?.name || '').trim().toLowerCase();
+
+    // Pool from both sources
+    const pool = new Map();
+
+    // Source 1: sadhana_initiations_v1
+    const sadhanaApps = typeof this.getSadhanaRemedyApplications === 'function' ? this.getSadhanaRemedyApplications() : [];
+    sadhanaApps.forEach(app => {
+      if (app && app.id) pool.set(app.id, app);
+    });
+
+    // Source 2: pairing_invites
+    const pairingInvites = typeof this.getPairingInvites === 'function' ? this.getPairingInvites() : [];
+    pairingInvites.forEach(inv => {
+      if (inv && inv.id && (inv.type === 'SADHANA_APPLICATION' || inv.type === 'REMEDY_APPLICATION' || inv.contextType === 'sadhana' || inv.contextType === 'remedy')) {
+        if (!pool.has(inv.id)) {
+          pool.set(inv.id, inv);
+        }
+      }
+    });
+
+    const allApps = Array.from(pool.values());
+
+    return allApps.filter(app => {
+      // Check type match
+      const isRemedy = app.type === 'REMEDY_APPLICATION' || app.contextType === 'remedy' || (app.category && app.category.toLowerCase().includes('remedy'));
+      const isSadhana = !isRemedy && (app.type === 'SADHANA_APPLICATION' || app.contextType === 'sadhana' || (app.category && !app.category.toLowerCase().includes('remedy')));
+
+      if (targetType === 'remedy' && !isRemedy) return false;
+      if (targetType === 'sadhana' && !isSadhana) return false;
+
+      // If no filter supplied and no active prof, return all
+      if (!refCode && !profId && !seekerName) return true;
+
+      // Match devotee
+      const appDevCode = (app.devoteeCode || app.sponsorCode || '').trim().toLowerCase();
+      const appSeekerId = (app.seekerId || app.applicantId || '').trim().toLowerCase();
+      const appSeekerName = (app.seekerName || app.applicantName || '').trim().toLowerCase();
+
+      const matchRef = refCode && appDevCode === refCode.trim().toLowerCase();
+      const matchId = profId && appSeekerId === profId.trim().toLowerCase();
+      const matchName = seekerName && appSeekerName === seekerName;
+
+      return Boolean(matchRef || matchId || matchName);
+    }).sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
   }
 
   resendPairingInvite(inviteId) {
@@ -3864,6 +5048,10 @@ class ProfileModel {
       }
     }
     return true;
+  }
+
+  _saveProfiles() {
+    return this.saveProfiles(this.profiles);
   }
 
   getProfiles() {

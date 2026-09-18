@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/profile-admin.css?v=sk_v5_1789556744083">
+  <link rel="stylesheet" href="css/profile-admin.css?v=sk_v5_1789675213250">
   <style id="sk-critical-header-styles">
     /* Single-Row Permanent Fit Across All Browsers & Devices */
     .admin-topbar,
@@ -317,13 +317,20 @@
           <select id="select-role-mode" class="pill-role-select-overlay" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; margin: 0; padding: 0; border: none; background: transparent; -webkit-appearance: none; appearance: none;" title="Switch Access View & Permissions">
             <option value="MASTER" selected>👑 Admin Master (Full Control)</option>
             <option value="HEALER">🛡️ Healer Connect</option>
-            <option value="TRAINEE">📿 Trainee Sadhak</option>
+            
             <option value="DEVOTEE">🌟 Devotee Personal Space</option>
           </select>
           
           <!-- Hidden compatibility elements for zero-exception script updates -->
           <span id="topbar-session-avatar" style="display:none;" aria-hidden="true">SK</span>
           <span id="topbar-session-subtitle" style="display:none;" aria-hidden="true">👑 Founder Master Control</span>
+        </div>
+
+        <!-- Dynamic Approval Notification Pill -->
+        <div id="pending-approval-notification-banner" class="approval-notification-pill" style="display:none; cursor: pointer; margin-left: 0.75rem;" title="Click to review and approve pending applications">
+          <span class="notification-bell">🔔</span>
+          <span id="approval-notification-text">New Application Pending</span>
+          <span class="badge-count" id="approval-notification-count">6</span>
         </div>
       </div>
 
@@ -345,7 +352,7 @@
           <!-- 2b. Pending Approvals -->
           <button type="button" id="btn-header-pending-approvals" class="btn-compact-header btn-header-approvals" style="background: rgba(234, 179, 8, 0.12); border: 1.5px solid rgba(234, 179, 8, 0.4); color: #b45309;" title="Open Seeker Pending Approvals Queue (Slide-Out Drawer)">
             <span class="btn-icon-bell" style="font-size: 0.85rem;">⏳</span>
-            <span class="btn-text">Approvals (<strong id="header-pending-badge">0</strong>)</span>
+            <span class="btn-text">Approvals (<strong id="header-pending-badge">6</strong>)</span>
           </button>
 
           <!-- 3. Light / Dark Theme Mode -->
@@ -379,7 +386,7 @@
     <!-- Left Navigation & Enterprise Drawer (User Rule 7 Standard Compliant) -->
     <aside class="admin-sidebar" id="admin-enterprise-drawer">
 
-      <!-- Enterprise Drawer Section 1: Standard Enterprise Navigation (Hidden from Visible Sidebar per User Request) -->
+      <!-- Enterprise Drawer Section 1: Standard Enterprise Navigation (User Rule 7 Standard Compliant) -->
       <div class="sidebar-section" id="sidebar-standard-nav-section" style="display: none !important;" aria-hidden="true">
         <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
           <span>Enterprise Standard Menu</span>
@@ -525,9 +532,6 @@
           <a href="Devotee/index.html" class="sub-portal-link" data-portal-tier="4" title="Open Devotee Portal">
             <span>🌟</span> Devotee Portal
           </a>
-          <a href="Seeker/index.html" class="sub-portal-link" data-portal-tier="4" title="Open Seeker Portal">
-            <span>🌟</span> Seeker Portal
-          </a>
         </div>
       </div>
 
@@ -555,7 +559,7 @@
               <span class="legend-level">Tier 2 &bull; Level Completed</span>
             </div>
             <div class="legend-item-right">
-              <span class="legend-count-badge" id="legend-count-tier-2">3</span>
+              <span class="legend-count-badge" id="legend-count-tier-2">2</span>
               <span class="legend-arrow">&rsaquo;</span>
             </div>
           </div>
@@ -566,7 +570,7 @@
               <span class="legend-level">Tier 3 &bull; In-Progress</span>
             </div>
             <div class="legend-item-right">
-              <span class="legend-count-badge" id="legend-count-tier-3">2</span>
+              <span class="legend-count-badge" id="legend-count-tier-3">4</span>
               <span class="legend-arrow">&rsaquo;</span>
             </div>
           </div>
@@ -577,7 +581,7 @@
               <span class="legend-level">Tier 4 &bull; Personal &amp; House Clean</span>
             </div>
             <div class="legend-item-right">
-              <span class="legend-count-badge" id="legend-count-tier-4">3</span>
+              <span class="legend-count-badge" id="legend-count-tier-4">5</span>
               <span class="legend-arrow">&rsaquo;</span>
             </div>
           </div>
@@ -592,7 +596,7 @@
         </button>
         <button type="button" id="sidebar-btn-pending-approvals" class="btn btn-sm btn-gold w-100 mb-2 btn-sidebar-unified" style="display: flex; justify-content: space-between; align-items: center;" title="Open Seeker Pending Approvals Queue (Slide-Out Drawer)">
           <span style="display: flex; align-items: center; gap: 0.4rem;"><span>⏳</span> <span>Pending Approvals</span></span>
-          <span class="badge-pending-pill" id="sidebar-pending-badge" style="background: #eab308; color: #000; font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 999px;">0</span>
+          <span class="badge-pending-pill" id="sidebar-pending-badge" style="background: #eab308; color: #000; font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 999px;">6</span>
         </button>
       </div>
 
@@ -609,10 +613,54 @@
         </button>
       </div>
 
-      <!-- Stage 5: Firebase RTDB Live Data & Node Telemetry -->
-      <div class="sidebar-section" id="sidebar-rtdb-section">
+      <!-- Stage 5: System Operations & Settings -->
+      <div class="sidebar-section" id="sidebar-tools-section">
+        <div class="sidebar-heading">Stage 5: System Operations</div>
+        <button type="button" id="sidebar-btn-admin-settings" class="btn btn-sm btn-gold w-100 mb-2 btn-sidebar-unified" title="Admin System &amp; Permission Settings">
+          <span>⚙️</span> <span>System Settings</span>
+        </button>
+      </div>
+
+      <!-- Stage 6: Architecture, Help & Lineage Guidance -->
+      <div class="sidebar-section" id="sidebar-support-docs-section">
+        <div class="sidebar-heading">Stage 6: Guidance &amp; Support</div>
+        <button type="button" id="sidebar-btn-help-support" class="btn btn-sm btn-gold w-100 mb-2 btn-sidebar-unified" style="display: flex; align-items: center; justify-content: flex-start; gap: 0.5rem;" title="Open Help &amp; Support Workflow Desk (Joining, Data Entry, Healer Approval)">
+          <span>❓</span> <span>Help &amp; Support</span>
+        </button>
+        <button type="button" id="sidebar-btn-about-app" class="btn btn-sm btn-gold w-100 mb-2 btn-sidebar-unified" style="display: flex; align-items: center; justify-content: flex-start; gap: 0.5rem;" title="About Spiritual Karim &amp; Sansthan Application">
+          <span>ℹ️</span> <span>About Karim &amp; App</span>
+        </button>
+        <div class="sub-portal-links mt-2">
+          <a href="docs/online-offline-sync-lifecycle.html" id="sidebar-link-sync-lifecycle" class="sub-portal-link" target="_blank" title="Open Online/Offline Synchronization Lifecycle Architecture">
+            <span>🔄</span> Online/Offline Lifecycle
+          </a>
+          <a href="docs/data-structure-workflow.html" id="sidebar-link-data-structure" class="sub-portal-link" target="_blank" title="Open Database &amp; Schema Data Structure Workflow">
+            <span>📊</span> Data Structure Workflow
+          </a>
+          <a href="docs/platform-overview.html" id="sidebar-link-platform-overview" class="sub-portal-link" target="_blank" title="Open Complete Platform System Overview">
+            <span>🏛️</span> Platform Overview
+          </a>
+        </div>
+      </div>
+
+      <!-- Enterprise Drawer Section: Authenticated Session Profile & Logout (Bottom-Left) -->
+      <div class="sidebar-user-footer" id="sidebar-user-footer">
+        <div class="sidebar-user-info">
+          <div class="avatar-circle-sm" id="sidebar-user-avatar">SK</div>
+          <div class="sidebar-user-details">
+            <div class="sidebar-user-name" id="sidebar-user-name">Spiritual Karim Khan</div>
+            <div class="sidebar-user-role" id="sidebar-user-role">👑 Admin Master</div>
+          </div>
+        </div>
+        <button type="button" class="btn-sidebar-logout" id="btn-sidebar-logout" title="Sign Out of Session">
+          <span>🚪</span> <span>Logout</span>
+        </button>
+      </div>
+
+      <!-- Stage 7: Firebase RTDB Live Data & Node Telemetry (Positioned After Logout per User Directive) -->
+      <div class="sidebar-section" id="sidebar-rtdb-section" style="margin-top: 0.75rem;">
         <div class="sidebar-heading" style="display: flex; justify-content: space-between; align-items: center;">
-          <span>Stage 5: Firebase RTDB</span>
+          <span>Stage 7: Firebase RTDB</span>
           <span class="badge-live-pulse" title="Connected to spritualkarim-7b5fd">🟢 Live</span>
         </div>
         <div class="sidebar-rtdb-card">
@@ -645,50 +693,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Stage 6: System Operations & Settings -->
-      <div class="sidebar-section" id="sidebar-tools-section">
-        <div class="sidebar-heading">Stage 6: System Operations</div>
-        <button type="button" id="sidebar-btn-admin-settings" class="btn btn-sm btn-gold w-100 mb-2 btn-sidebar-unified" title="Admin System &amp; Permission Settings">
-          <span>⚙️</span> <span>System Settings</span>
-        </button>
-      </div>
-
-      <!-- Stage 7: Architecture, Help & Lineage Guidance -->
-      <div class="sidebar-section" id="sidebar-support-docs-section">
-        <div class="sidebar-heading">Stage 7: Guidance &amp; Support</div>
-        <button type="button" id="sidebar-btn-help-support" class="btn btn-sm btn-gold w-100 mb-2 btn-sidebar-unified" style="display: flex; align-items: center; justify-content: flex-start; gap: 0.5rem;" title="Open Help &amp; Support Workflow Desk (Joining, Data Entry, Healer Approval)">
-          <span>❓</span> <span>Help &amp; Support</span>
-        </button>
-        <button type="button" id="sidebar-btn-about-app" class="btn btn-sm btn-gold w-100 mb-2 btn-sidebar-unified" style="display: flex; align-items: center; justify-content: flex-start; gap: 0.5rem;" title="About Spiritual Karim &amp; Sansthan Application">
-          <span>ℹ️</span> <span>About Karim &amp; App</span>
-        </button>
-        <div class="sub-portal-links mt-2">
-          <a href="docs/online-offline-sync-lifecycle.html" class="sub-portal-link" target="_blank" title="Open Online/Offline Synchronization Lifecycle Architecture">
-            <span>🔄</span> Online/Offline Lifecycle
-          </a>
-          <a href="docs/data-structure-workflow.html" class="sub-portal-link" target="_blank" title="Open Database &amp; Schema Data Structure Workflow">
-            <span>📊</span> Data Structure Workflow
-          </a>
-          <a href="docs/platform-overview.html" class="sub-portal-link" target="_blank" title="Open Complete Platform System Overview">
-            <span>🏛️</span> Platform Overview
-          </a>
-        </div>
-      </div>
-
-      <!-- Enterprise Drawer Section: Authenticated Session Profile & Logout (Bottom-Left) -->
-      <div class="sidebar-user-footer" id="sidebar-user-footer">
-        <div class="sidebar-user-info">
-          <div class="avatar-circle-sm" id="sidebar-user-avatar">SK</div>
-          <div class="sidebar-user-details">
-            <div class="sidebar-user-name" id="sidebar-user-name">Spiritual Karim Khan</div>
-            <div class="sidebar-user-role" id="sidebar-user-role">👑 Admin Master</div>
-          </div>
-        </div>
-        <button type="button" class="btn-sidebar-logout" id="btn-sidebar-logout" title="Sign Out of Session">
-          <span>🚪</span> <span>Logout</span>
-        </button>
-      </div>
     </aside>
 
     <!-- Main Canvas Area -->
@@ -698,7 +702,7 @@
         <!-- ============================================================
              ADMIN MASTER LIVE METRICS STRIP (5 Unified Sized Compact Tiles)
              ============================================================ -->
-        <div id="admin-hierarchy-metrics-strip" class="admin-metrics-tiles-row" style="display: none;" role="region" aria-label="Hierarchy Summary Metrics">
+        <div id="admin-hierarchy-metrics-strip" class="admin-metrics-tiles-row" role="region" aria-label="Hierarchy Summary Metrics">
           <!-- Tile 1: Admin Master -->
           <div class="admin-metric-tile-card tile-master" data-tier-filter="MASTER" role="button" tabindex="0" title="Click to view Admin Master list & profile metadata">
             <div class="metric-tile-line-top">
@@ -779,7 +783,7 @@
                 <span class="subrow-icon">🌳</span>
                 <span class="subrow-title">Genealogy</span>
               </div>
-              <span class="badge-tree-pill" id="metric-tree-total-nodes">15 Nodes</span>
+              <span class="badge-tree-pill" id="metric-tree-total-nodes">12 Nodes</span>
             </div>
             <div class="tile-subrow-divider"></div>
             <!-- DOWN: Pending Approval Metadata -->
@@ -788,7 +792,7 @@
                 <span class="subrow-icon">⏳</span>
                 <span class="subrow-title">Approvals</span>
               </div>
-              <span class="badge-pending-pill" id="metric-tile-pending-count">0 Pending</span>
+              <span class="badge-pending-pill" id="metric-tile-pending-count">6 Pending</span>
             </div>
           </div>
         </div>
@@ -943,6 +947,56 @@
 
         </div><!-- /#admin-current-events-strip -->
 
+        <!-- ============================================================
+             SADHANA APPLIED BOX (Devotee & Trainee Portals)
+             Shows applied sadhanas with live progress and approval status.
+             ============================================================ -->
+        <div id="devotee-sadhana-applied-strip" class="current-events-strip devotee-applied-box" style="display:none;"
+             role="region" aria-label="Sadhana Applied">
+          <div class="current-events-header">
+            <div class="current-events-title-group">
+              <span class="current-events-icon">🕉️</span>
+              <h4 class="current-events-title">Sadhana Applied</h4>
+              <span class="current-events-count-badge" id="devotee-sadhana-count-badge">0 Applied</span>
+            </div>
+            <button type="button" id="btn-toggle-sadhana-applied"
+                    class="devotee-toggle-collapse-btn"
+                    title="Toggle Sadhana Applied Details"
+                    aria-label="Toggle Sadhana Applied Details"
+                    aria-expanded="true">
+              <span class="collapse-chevron-icon">❯</span>
+            </button>
+          </div>
+          <div class="current-events-tiles-row tiles-scroll-horizontal" id="devotee-sadhana-tiles-row">
+            <!-- Tiles dynamically rendered by ProfileController2 -->
+          </div>
+        </div>
+
+        <!-- ============================================================
+             REMEDY APPLIED BOX (Devotee & Trainee Portals)
+             Shows applied remedies with live progress and approval status.
+             ============================================================ -->
+        <div id="devotee-remedy-applied-strip" class="current-events-strip devotee-applied-box" style="display:none;"
+             role="region" aria-label="Remedy Applied">
+          <div class="current-events-header">
+            <div class="current-events-title-group">
+              <span class="current-events-icon">🌿</span>
+              <h4 class="current-events-title">Remedy Applied</h4>
+              <span class="current-events-count-badge" id="devotee-remedy-count-badge">0 Applied</span>
+            </div>
+            <button type="button" id="btn-toggle-remedy-applied"
+                    class="devotee-toggle-collapse-btn"
+                    title="Toggle Remedy Applied Details"
+                    aria-label="Toggle Remedy Applied Details"
+                    aria-expanded="true">
+              <span class="collapse-chevron-icon">❯</span>
+            </button>
+          </div>
+          <div class="current-events-tiles-row tiles-scroll-horizontal" id="devotee-remedy-tiles-row">
+            <!-- Tiles dynamically rendered by ProfileController2 -->
+          </div>
+        </div>
+
         <!-- In-Body Stretched Tier Profiles Ribbon (Compact 2-Row Split Layout: Left List, Right Metadata) -->
         <div id="tier-profiles-panel" class="tier-profiles-flyout-panel tier-panel-stretched-row" role="region" aria-label="Hierarchy Tier Profiles">
           <!-- Row 1: Ribbon Header (Title, Search, Filters, Close) -->
@@ -1034,6 +1088,13 @@
                   <h2 class="profile-name-title" id="selected-member-name" style="margin: 0; font-size: 1.2rem;"></h2>
                   <span class="role-badge" id="selected-member-role-badge"></span>
                 </div>
+                <!-- Sadhana Applied shown below Profile Name -->
+                <div class="selected-member-applied-sadhana-row" id="selected-member-applied-sadhana-row" style="display: flex; align-items: center; gap: 0.45rem; margin-top: 0.25rem; font-size: 0.78rem;">
+                  <span id="selected-member-applied-sadhana-label" style="color: var(--gold-400); font-weight: 700;">📿 Sadhana Applied:</span>
+                  <strong id="selected-member-applied-sadhana-name" style="color: var(--text-primary); font-weight: 800;">--</strong>
+                  <span class="status-pill active" id="selected-member-applied-sadhana-status" style="font-size: 0.68rem; padding: 0.1rem 0.45rem;">Active</span>
+                </div>
+                  <div id="selected-member-progress-tile-container" style="margin-top: 0.75rem;"></div>
                 <div class="profile-role-badge-row" style="display: flex; align-items: center; gap: 0.45rem; margin-top: 0.25rem; flex-wrap: wrap;">
                   <span class="status-pill active" id="selected-member-status-pill">Active Member</span>
                   <span class="stamp-indicator stamp-paid" id="selected-member-payment-stamp">PAID</span>
@@ -1120,6 +1181,9 @@
               <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-houseclean">
                 <span>🧹</span> House Clean (All Levels)
               </button>
+              <button type="button" class="sub-tab-btn" data-sub-tab="devotee-sub-applications">
+                <span>📿</span> My Applications
+              </button>
             </div>
 
             <!-- 1A: Personal Identity -->
@@ -1180,7 +1244,7 @@
                     <select id="input-profile-type" class="form-control" required>
                       <option value="ADMIN">👑 Admin Master (Level 1)</option>
                       <option value="HEALER">🛡️ Spiritual Healer (Level 2)</option>
-                      <option value="TRAINEE">📿 Mentorship Trainee (Level 3)</option>
+                      
                       <option value="DEVOTEE">🌟 Devotee Seeker (Level 4)</option>
                     </select>
                   </div>
@@ -1491,6 +1555,24 @@
                       </button>
                     </div>
                     <div class="houseclean-level-content" id="houseclean-level-3-content"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 1D: My Applications & Initiations -->
+            <div class="sub-tab-panel" id="devotee-sub-applications">
+              <div class="card">
+                <div class="card-title-bar">
+                  <div class="card-title"><span class="card-title-icon">📿</span> My Applied Sadhanas &amp; Remedies</div>
+                </div>
+                <p class="card-desc">Track the status of your applications for Sacred Sadhana or Spiritual Remedy initiation. Approvals are granted by Mentors.</p>
+                <div id="devotee-applications-container" class="dashboard-grid mt-3" style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+                  <!-- Applications will be rendered here dynamically -->
+                  <div class="empty-state-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem; background: var(--bg-surface, #f8fafc); border-radius: 8px; border: 1.5px dashed var(--border-color, #cbd5e1);">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;">📿</div>
+                    <div style="font-weight: 600; color: var(--text-muted, #64748b);">No Pending Applications</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted, #64748b); margin-top: 0.25rem;">Explore the Sadhana Catalog to apply for an initiation.</div>
                   </div>
                 </div>
               </div>
@@ -1984,45 +2066,84 @@
               <div class="card-title-bar">
                 <div class="card-title"><span class="card-title-icon">📿</span> Trainee Sadhak &bull; In-Progress Dashboard (Level-Wise)</div>
                 <div class="card-actions">
-                  <button type="button" id="btn-add-trainee-sadhana" class="btn btn-sm btn-gold">➕ Add In-Progress Sadhana</button>
-                  <button type="button" id="btn-open-goli-gyan" class="btn btn-sm btn-goli-gyan">📜 Goli Gyan Guide</button>
+                  <button type="button" class="btn btn-sm btn-gold" onclick="window.sadhanaRemedyController && window.sadhanaRemedyController.initiateFlow('sadhana')">➕ Apply for Sadhana</button>
+                  <button type="button" class="btn btn-sm btn-primary" onclick="window.sadhanaRemedyController && window.sadhanaRemedyController.initiateFlow('remedy')">➕ Apply for Remedy/Upay</button>
+                  <button type="button" class="btn btn-sm btn-outline" id="btn-sadhak-view-history" onclick="window.ProfileControllerInstance && window.ProfileControllerInstance.handlePendingApprovalsClick ? window.ProfileControllerInstance.handlePendingApprovalsClick() : null">📋 Applications Queue</button>
                 </div>
               </div>
-              <p class="card-desc">Ticked sadhanas and remedies display on the left panel. Select any tile to view real-time graphical progress (%), level stats, and add date-time stamped progress memos on the right.</p>
 
-              <!-- Master-Detail Split Workspace -->
-              <div class="trainee-split-workspace">
-                <!-- Left Panel: Categorized In-Progress Tiles -->
-                <div class="trainee-left-panel">
-                  <!-- Section 3A: Sacred Sadhanas In Progress -->
-                  <div class="trainee-category-block">
-                    <div class="trainee-category-title">
-                      <span>🕉️</span> 1. Sacred Sadhanas In-Progress
-                    </div>
-                    <div id="trainee-sadhanas-group-sadhanas" class="remedy-checkbox-grid"></div>
+              <!-- Deprecated/Hidden Sadhak Identity Banner: preserver IDs for backward compatibility -->
+              <div id="sadhak-profile-identity-banner" style="display: none !important;">
+                <div id="sadhak-identity-avatar" style="display:none;"></div>
+                <div id="sadhak-identity-name" style="display:none;"></div>
+                <div id="sadhak-identity-role" style="display:none;"></div>
+                <div id="sadhak-identity-code" style="display:none;"></div>
+                <div id="sadhak-applied-sadhana-row" style="display:none;"></div>
+                <div id="sadhak-applied-sadhana-title" style="display:none;"></div>
+                <div id="sadhak-applied-sadhana-status" style="display:none;"></div>
+                <div id="sadhak-applied-sadhana-token" style="display:none;"></div>
+              </div>
+
+              <!-- Selected Sadhana / Remedy Dynamic Header Strip (Single Row) -->
+              <div id="trainee-selected-practice-banner" class="selected-practice-banner-row"></div>
+
+              <!-- 2-Panel Trainee Workspace (Enterprise OOPS MVC & Single Source of Truth Compliant) -->
+              <div class="trainee-3panel-workspace trainee-2panel-workspace" id="trainee-3panel-workspace">
+                
+                <!-- Deprecated 1st Panel: Hidden for zero-exception DOM reference compatibility -->
+                <div class="trainee-slim-panel trainee-team-panel" id="trainee-team-panel" style="display: none !important;">
+                  <span id="trainee-team-count-badge" style="display:none;">0</span>
+                  <div id="count-accordion-trainees" style="display:none;">0</div>
+                  <div id="list-accordion-trainees" style="display:none;"></div>
+                  <div id="count-accordion-devotees" style="display:none;">0</div>
+                  <div id="list-accordion-devotees" style="display:none;"></div>
+                </div>
+
+                <!-- Master Sidebar: Practices of Selected Sadhak (Sadhana & Remedy Accordion) -->
+                <div class="trainee-slim-panel trainee-practices-panel" id="trainee-practices-panel">
+                  <div class="slim-panel-header">
+                    <div class="slim-panel-title"><span class="panel-icon">📋</span> Practices List</div>
+                    <span class="slim-panel-member-name" id="practices-member-name">Selected Member</span>
                   </div>
 
-                  <!-- Section 3B: Divine Remedies & Havans In Progress -->
-                  <div class="trainee-category-block">
-                    <div class="trainee-category-title">
-                      <span>🪔</span> 2. Divine Remedies &amp; Havans In-Progress
+                  <!-- Accordion 2A: Sadhana Section (Open by Default) -->
+                  <div class="trainee-accordion-section active open" id="accordion-section-sadhanas">
+                    <div class="trainee-accordion-header" data-section="sadhanas" id="btn-accordion-sadhanas">
+                      <span class="accordion-arrow" id="arrow-accordion-sadhanas">▼</span>
+                      <span class="accordion-title">🕉️ Sacred Sadhanas</span>
+                      <span class="accordion-count" id="count-accordion-sadhanas">0</span>
                     </div>
-                    <div id="trainee-sadhanas-group-remedies" class="remedy-checkbox-grid"></div>
+                    <div class="trainee-accordion-body" id="list-accordion-sadhanas">
+                      <!-- Rendered dynamically by ProfileView -->
+                    </div>
                   </div>
 
-                  <!-- Section 3C: Energy Cleansing & Healing In Progress -->
-                  <div class="trainee-category-block">
-                    <div class="trainee-category-title">
-                      <span>🌿</span> 3. Energy Cleansing &amp; Healing In-Progress
+                  <!-- Accordion 2B: Remedy Section (Open by Default) -->
+                  <div class="trainee-accordion-section active open" id="accordion-section-remedies">
+                    <div class="trainee-accordion-header" data-section="remedies" id="btn-accordion-remedies">
+                      <span class="accordion-arrow" id="arrow-accordion-remedies">▼</span>
+                      <span class="accordion-title">🪔 Remedies &amp; Havans</span>
+                      <span class="accordion-count" id="count-accordion-remedies">0</span>
                     </div>
-                    <div id="trainee-sadhanas-group-cleansing" class="remedy-checkbox-grid"></div>
+                    <div class="trainee-accordion-body" id="list-accordion-remedies" style="display: block;">
+                      <!-- Rendered dynamically by ProfileView -->
+                    </div>
                   </div>
                 </div>
 
-                <!-- Right Panel: Active Sadhana Progress Graphics & Memo Box -->
-                <div class="trainee-right-panel" id="trainee-active-sadhana-detail">
-                  <!-- Rendered dynamically by ProfileView._renderTraineeActiveDetail -->
+                <!-- 3rd Body: 2-Column Progress & Feedback Report (Accessible to ALL Roles) -->
+                <div class="trainee-body-panel" id="trainee-body-panel">
+                  <div class="trainee-two-col-grid" id="trainee-active-sadhana-detail">
+                    <!-- Column 1: Practice Details + Feedback Request Sent -->
+                    <!-- Column 2: Sadhana Progress Graphic Report + Feedback Received & Seal -->
+                    <!-- Rendered dynamically by ProfileView -->
+                  </div>
                 </div>
+
+                <!-- Hidden legacy containers for zero-exception backward compatibility -->
+                <div style="display:none;" id="trainee-sadhanas-group-sadhanas"></div>
+                <div style="display:none;" id="trainee-sadhanas-group-remedies"></div>
+                <div style="display:none;" id="trainee-sadhanas-group-cleansing"></div>
               </div>
             </div>
           </div>
@@ -2065,23 +2186,23 @@
 
                 <div class="healers-metrics-strip" id="healers-hub-metrics-strip">
                   <div class="metric-pill-item metric-total">
-                    <span class="metric-pill-count" id="hub-metric-total">0</span>
+                    <span class="metric-pill-count" id="hub-metric-total">12</span>
                     <span class="metric-pill-label">Total</span>
                   </div>
                   <div class="metric-pill-item metric-admin">
-                    <span class="metric-pill-count" id="hub-metric-admin">0</span>
+                    <span class="metric-pill-count" id="hub-metric-admin">1</span>
                     <span class="metric-pill-label">Admin</span>
                   </div>
                   <div class="metric-pill-item metric-healers">
-                    <span class="metric-pill-count" id="hub-metric-healers">0</span>
+                    <span class="metric-pill-count" id="hub-metric-healers">2</span>
                     <span class="metric-pill-label">Healers</span>
                   </div>
                   <div class="metric-pill-item metric-trainees">
-                    <span class="metric-pill-count" id="hub-metric-trainees">0</span>
+                    <span class="metric-pill-count" id="hub-metric-trainees">4</span>
                     <span class="metric-pill-label">Trainees</span>
                   </div>
                   <div class="metric-pill-item metric-devotees">
-                    <span class="metric-pill-count" id="hub-metric-devotees">0</span>
+                    <span class="metric-pill-count" id="hub-metric-devotees">5</span>
                     <span class="metric-pill-label">Devotees</span>
                   </div>
                 </div>
@@ -2095,11 +2216,11 @@
                 </div>
 
                 <div class="healers-filter-chips-row" id="healers-filter-chips-container">
-                  <button type="button" class="healer-filter-chip active" data-type="ALL">All (<span id="chip-cnt-all">0</span>)</button>
-                  <button type="button" class="healer-filter-chip" data-type="ADMIN">Admin (<span id="chip-cnt-admin">0</span>)</button>
-                  <button type="button" class="healer-filter-chip" data-type="HEALER">Healers (<span id="chip-cnt-healers">0</span>)</button>
-                  <button type="button" class="healer-filter-chip" data-type="TRAINEE">Trainees (<span id="chip-cnt-trainees">0</span>)</button>
-                  <button type="button" class="healer-filter-chip" data-type="DEVOTEE">Devotees (<span id="chip-cnt-devotees">0</span>)</button>
+                  <button type="button" class="healer-filter-chip active" data-type="ALL">All (<span id="chip-cnt-all">12</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="ADMIN">Admin (<span id="chip-cnt-admin">1</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="HEALER">Healers (<span id="chip-cnt-healers">2</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="TRAINEE">Trainees (<span id="chip-cnt-trainees">4</span>)</button>
+                  <button type="button" class="healer-filter-chip" data-type="DEVOTEE">Devotees (<span id="chip-cnt-devotees">5</span>)</button>
                 </div>
                 <!-- Directory View Segmented Toggle (Grid Cards vs Table List) -->
                 <div class="segmented-toggle-bar" id="healers-layout-toggle-bar" title="Switch Directory Layout: Grid Cards vs Table List">
@@ -2627,7 +2748,7 @@
                 <select id="setting-default-role-mode" class="form-control">
                   <option value="MASTER">👑 Master</option>
                   <option value="HEALER">🛡️ Healer</option>
-                  <option value="TRAINEE">📿 Trainee</option>
+                  
                   <option value="DEVOTEE">🌟 Devotee</option>
                 </select>
               </div>
@@ -3299,7 +3420,7 @@
                     <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Default Induction Role</label>
                     <select id="setting-default-induction-role" class="form-control" style="padding: 0.35rem 0.5rem; font-size: 0.8rem;">
                       <option value="DEVOTEE" selected>Devotee (Level 5)</option>
-                      <option value="TRAINEE">Trainee Sadhak (Level 3)</option>
+                      
                       <option value="HEALER">Healer (Level 2)</option>
                     </select>
                   </div>
@@ -4056,6 +4177,90 @@
               </div>
             </div>
           </div>
+
+          <!-- 4. Sacred Sadhana Initiation & Lineage Upgrade (Devotee ➔ Trainee) -->
+          <div class="help-process-card" id="help-card-sadhana-upgrade">
+            <button type="button" class="help-process-header" data-toggle-process="help-detail-sadhana-upgrade" aria-expanded="false" title="Click to view Sadhana Initiation &amp; Upgrade Details">
+              <div class="help-header-left">
+                <span class="help-badge-num">4</span>
+                <span class="help-header-icon">🔥</span>
+                <span class="help-header-title">Sadhana Initiation &amp; Trainee Upgrade Workflow</span>
+              </div>
+              <span class="help-chevron" id="chevron-sadhana-upgrade">▾</span>
+            </button>
+            <div class="help-process-body" id="help-detail-sadhana-upgrade" style="display: none;">
+              <div class="help-flow-step">
+                <div class="step-marker">Step 1</div>
+                <div class="step-content">
+                  <strong>Devotee Sadhana Application via Sadhana Explorer / Catalog</strong>
+                  <p>In Devotee Portal, seeker navigates to <em>Stage 4: Sacred Knowledge &amp; Upay ➔ 📿 Sadhana Explorer</em> (or Tab 2 Sadhana Catalog), browses the prescribed sadhanas, and taps <strong>📿 Apply for Sadhana Initiation</strong>.</p>
+                </div>
+              </div>
+              <div class="help-flow-step">
+                <div class="step-marker">Step 2</div>
+                <div class="step-content">
+                  <strong>Instant Cryptographic Routing to Lineage Mentor</strong>
+                  <p>A formal initiation ticket (<code>type: SADHANA_APPLICATION</code>, target role <code>TRAINEE</code>) is automatically generated and routed to the assigned mentor's <em>Pending Approvals Drawer</em> and pushed to Firebase RTDB.</p>
+                </div>
+              </div>
+              <div class="help-flow-step">
+                <div class="step-marker">Step 3</div>
+                <div class="step-content">
+                  <strong>Mentor Evaluation &amp; Approval Sign-Off</strong>
+                  <p>Mentor inspects devotee's household energetic purification (3 House Clean levels), gotra lineage integrity, and sadhana readiness before signing off in the Pending Approvals Queue as <em>Trainee Sadhak (Level 3)</em>.</p>
+                </div>
+              </div>
+              <div class="help-flow-step">
+                <div class="step-marker">Step 4</div>
+                <div class="step-content">
+                  <strong>Lineage Node Elevation &amp; Trainee Workspace Activation</strong>
+                  <p>Upon approval, the system immediately updates the member's credentials (<code>profileType: TRAINEE</code>, <code>level: 3</code>), registers the initiated sadhana with daily target malas (1188 reps) &amp; streak tracking, and seamlessly unlocks the <strong>Trainee Sadhak Workspace</strong>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. 4-Tier RBAC Access & Authorization Governance Matrix -->
+          <div class="help-process-card" id="help-card-rbac-matrix">
+            <button type="button" class="help-process-header" data-toggle-process="help-detail-rbac-matrix" aria-expanded="false" title="Click to view 4-Tier RBAC Access Details">
+              <div class="help-header-left">
+                <span class="help-badge-num">5</span>
+                <span class="help-header-icon">🛡️</span>
+                <span class="help-header-title">4-Tier RBAC Access &amp; Authorization Matrix</span>
+              </div>
+              <span class="help-chevron" id="chevron-rbac-matrix">▾</span>
+            </button>
+            <div class="help-process-body" id="help-detail-rbac-matrix" style="display: none;">
+              <div class="help-flow-step">
+                <div class="step-marker">Tier 1</div>
+                <div class="step-content">
+                  <strong>👑 Master Founder (Level 0 / 1)</strong>
+                  <p>Root system authority, complete 174-element RBAC matrix governance, Firebase cloud schema management, system settings, database seed resets, and universal downline inspection.</p>
+                </div>
+              </div>
+              <div class="help-flow-step">
+                <div class="step-marker">Tier 2</div>
+                <div class="step-content">
+                  <strong>🌿 Certified Healers (Level 2)</strong>
+                  <p>Lineage mentors, sadhana prescription sign-offs, seeker pairing evaluations, 3-level house clean audits, and downline case arbitration.</p>
+                </div>
+              </div>
+              <div class="help-flow-step">
+                <div class="step-marker">Tier 3</div>
+                <div class="step-content">
+                  <strong>🔥 Trainee Sadhaks (Level 3)</strong>
+                  <p>Daily japa mala practice counters (1188 reps), sunset diya telemetry, genealogy tree viewer, intermediate sadhana execution, and mentor pairing connectivity.</p>
+                </div>
+              </div>
+              <div class="help-flow-step">
+                <div class="step-marker">Tier 4</div>
+                <div class="step-content">
+                  <strong>🌟 Devotee / Seeker (Level 4 / 5)</strong>
+                  <p>Personal profile &amp; Gotra registration, 3-level household cleansing self-service, sacred upay catalog browsing, and sadhana initiation application.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- External Quick Links -->
@@ -4093,19 +4298,19 @@
 
   <!-- 9. About App & About Me Modal -->
   <div id="modal-about-app" class="admin-modal admin-modal-overlay" aria-hidden="true" style="display: none; z-index: 10500;">
-    <div class="admin-modal-dialog modal-md" style="max-width: 680px; width: 95%; background: var(--bg-surface, #1e293b); border: 1px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); overflow: hidden; max-height: 90vh; display: flex; flex-direction: column;">
-      <div class="modal-header" style="padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25); flex-shrink: 0;">
+    <div class="admin-modal-dialog modal-md about-modal-dialog">
+      <div class="modal-header about-modal-header">
         <div style="display: flex; align-items: center; gap: 0.6rem;">
           <span style="font-size: 1.3rem;">ℹ️</span>
           <div>
-            <h3 style="font-size: 1rem; margin: 0; font-weight: 700; color: var(--gold-400, #d4af37);">About Spiritual Karim &amp; Sansthan</h3>
-            <p style="margin: 0; font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Founder Spiritual Journey, Lineage Heritage &amp; Governance Architecture</p>
+            <h3 class="about-modal-heading">About Spiritual Karim &amp; Sansthan</h3>
+            <p class="about-modal-subheading">Founder Spiritual Journey, Lineage Heritage &amp; Governance Architecture</p>
           </div>
         </div>
-        <button type="button" class="modal-close" data-close-modal="modal-about-app" aria-label="Close" style="background: transparent; border: none; font-size: 1.25rem; color: var(--text-muted); cursor: pointer;">✕</button>
+        <button type="button" class="modal-close about-modal-close" data-close-modal="modal-about-app" aria-label="Close">✕</button>
       </div>
 
-      <div class="modal-body" style="padding: 1.15rem; overflow-y: auto; flex: 1;">
+      <div class="modal-body about-modal-body">
         <!-- Modal Tabs: About Karim (Me) vs. Sansthan Architecture -->
         <div class="about-tab-bar" id="about-modal-tabs">
           <button type="button" class="about-tab-btn active" data-about-tab="about-tab-content-me">✨ About Karim (Founder &amp; Mentor)</button>
@@ -4156,7 +4361,7 @@
           <!-- 24-Hour Upline Pairing & 1-to-1 Sync Protocol -->
           <div class="about-story-box" style="margin-bottom: 1rem;">
             <div class="about-story-title"><span>🔄</span> 24-Hour Upline Approval &amp; 1-to-1 Device Sync Protocol</div>
-            <div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.76rem; color: #cbd5e1;">
+            <div class="about-protocol-list">
               <div>• <strong>24-Hour Link Expiry</strong>: Every pairing link or OTP generated is cryptographically secured for exactly 24 hours.</div>
               <div>• <strong>Multiple Resends Allowed</strong>: Seekers and mentors can resend fresh pairing links multiple times until official upline approval.</div>
               <div>• <strong>Upline Push Notification</strong>: Guiding mentors receive an instant approval notification to activate new members.</div>
@@ -4169,29 +4374,29 @@
             <a href="tel:+918087827555" class="about-contact-card">
               <span style="font-size: 1.1rem;">📞</span>
               <div>
-                <div style="font-weight: 700;">Helpline Phone</div>
-                <div style="font-size: 0.7rem; color: var(--gold-300);">+91 80878 27555</div>
+                <div class="about-contact-label">Helpline Phone</div>
+                <div class="about-contact-val">+91 80878 27555</div>
               </div>
             </a>
             <a href="https://t.me/spiritualkarim369" target="_blank" class="about-contact-card">
               <span style="font-size: 1.1rem;">✈️</span>
               <div>
-                <div style="font-weight: 700;">Telegram Channel</div>
-                <div style="font-size: 0.7rem; color: var(--gold-300);">@spiritualkarim369</div>
+                <div class="about-contact-label">Telegram Channel</div>
+                <div class="about-contact-val">@spiritualkarim369</div>
               </div>
             </a>
             <a href="https://www.youtube.com/@spiritualkarim" target="_blank" class="about-contact-card">
               <span style="font-size: 1.1rem;">📺</span>
               <div>
-                <div style="font-weight: 700;">YouTube Channel</div>
-                <div style="font-size: 0.7rem; color: var(--gold-300);">@spiritualkarim</div>
+                <div class="about-contact-label">YouTube Channel</div>
+                <div class="about-contact-val">@spiritualkarim</div>
               </div>
             </a>
             <a href="https://spiritualkarim.com/" target="_blank" class="about-contact-card">
               <span style="font-size: 1.1rem;">🌐</span>
               <div>
-                <div style="font-weight: 700;">Official Website</div>
-                <div style="font-size: 0.7rem; color: var(--gold-300);">spiritualkarim.com</div>
+                <div class="about-contact-label">Official Website</div>
+                <div class="about-contact-val">spiritualkarim.com</div>
               </div>
             </a>
           </div>
@@ -4207,25 +4412,25 @@
         <!-- TAB 2: SYSTEM ARCHITECTURE & STANDARDS -->
         <div class="about-tab-pane" id="about-tab-content-system" style="display: none;">
           <div style="text-align: center; margin-bottom: 1rem;">
-            <img src="Logo.png" alt="Sansthan Logo" style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.4);">
-            <h4 style="margin: 0.5rem 0 0.2rem; color: #fff;">Shree Spritual Karim Sansthan</h4>
-            <p style="font-size: 0.75rem; color: var(--gold-400); margin: 0;">Multi-Portal MLM Platform • Enterprise Edition 3.0.0</p>
+            <img src="Logo.png" alt="Sansthan Logo" class="about-system-logo" style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.4);">
+            <h4 class="about-system-title">Shree Spritual Karim Sansthan</h4>
+            <p class="about-system-sub">Multi-Portal MLM Platform • Enterprise Edition 3.0.0</p>
           </div>
-          <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.85rem; font-size: 0.75rem; color: #94a3b8; line-height: 1.6; margin-bottom: 0.85rem;">
+          <div class="about-system-specs">
             <div>• <strong>Architecture</strong>: Dynamic OOPS-based MVC / SOLID Compliant</div>
             <div>• <strong>Security Standard</strong>: ISO/IEC 27001 &amp; OWASP Top 10 Hardened Node Telemetry</div>
             <div>• <strong>Hierarchy</strong>: 74-Tier Role-Based Access Control (RBAC) Matrix</div>
             <div>• <strong>Persistence</strong>: Dual-Write LocalStorage + Firebase Realtime Database Sync</div>
             <div>• <strong>Founder &amp; Guide</strong>: Spiritual Karim Khan</div>
           </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+          <div class="about-update-row">
             <button type="button" id="btn-check-app-updates" class="btn btn-xs btn-outline-gold">🔄 Check for Application Updates</button>
             <span id="app-update-status" style="font-size: 0.72rem; color: #10b981; font-weight: 600;"></span>
           </div>
         </div>
       </div>
 
-      <div class="modal-footer" style="padding: 0.65rem 1.25rem; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); display: flex; justify-content: flex-end; flex-shrink: 0;">
+      <div class="modal-footer about-modal-footer">
         <button type="button" class="btn btn-gold btn-sm" data-close-modal="modal-about-app">Done</button>
       </div>
     </div>
@@ -4447,7 +4652,7 @@
           <label class="form-label" for="new-profile-role">Target Role Tier</label>
           <select id="new-profile-role" class="form-control">
             <option value="DEVOTEE" selected>🌟 Devotee / Seeker (Tier 4)</option>
-            <option value="TRAINEE">📿 Trainee Sadhak (Tier 3)</option>
+            
             <option value="HEALER">🛡️ Spiritual Healer (Tier 2)</option>
             <option value="ADMIN">👑 Admin Master (Tier 1)</option>
           </select>
@@ -4483,18 +4688,213 @@
     </div>
   </div>
 
+  <!-- ==============================================================
+       MODAL: SACRED SADHANA INITIATION (MULTI-STEP WIZARD)
+       ============================================================== -->
+  <div id="modal-sadhana-initiation" class="admin-modal" aria-hidden="true">
+    <div class="modal-card" style="max-width: 720px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #fdfbf7 0%, #fffdfa 100%); border-bottom: 1px solid var(--border-subtle);">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="header-icon-ring" style="width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--gold-400); display: flex; align-items: center; justify-content: center; background: #fff; font-size: 1.4rem; box-shadow: 0 4px 12px rgba(184,150,12,0.15);">📿</div>
+          <div>
+            <h3 class="modal-title" style="font-family: 'Cinzel', serif; font-weight: 800; color: #0f172a; margin: 0; font-size: 1.3rem;">Sacred Sadhana Initiation &amp; Elevation</h3>
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.2rem;">
+              <p style="font-size: 0.78rem; color: #475569; margin: 0; font-weight: 500;">Step-by-Step Trainee Sadhak Induction Protocol</p>
+              <span style="color: #cbd5e1;">•</span>
+              <div id="sadhana-modal-requester-badge" style="display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(184,150,12,0.12); border: 1px solid var(--gold-400); padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.74rem; color: #92400e; font-weight: 700;">
+                <span>👤 Requester:</span>
+                <strong id="sadhana-modal-requester-name">Seeker</strong>
+                <span id="sadhana-modal-requester-meta" style="font-family: var(--font-mono); font-size: 0.68rem; color: #b45309;">(Devotee)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button id="btn-close-sadhana-initiation" class="icon-btn" aria-label="Close Modal" style="font-size: 1.5rem; color: #64748b;">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.5rem; background: var(--bg-page);">
+        
+        <!-- STEP PROGRESS BAR -->
+        <div class="wizard-progress-container" style="margin-bottom: 2rem;">
+          <div style="display: flex; justify-content: space-between; position: relative;">
+            <div class="wizard-step-bar" style="position: absolute; top: 14px; left: 10%; right: 10%; z-index: 1;"></div>
+            <div class="wizard-step-bar active" id="sadhana-progress-fill" style="position: absolute; top: 14px; left: 10%; width: 0%; z-index: 2; transition: width 0.3s ease;"></div>
+            
+            <div class="wizard-step-pill active" id="sadhana-step-1-pill" style="position: relative; z-index: 3; flex: 1; margin: 0 4px;">1. Sacred Mantra</div>
+            <div class="wizard-step-pill" id="sadhana-step-2-pill" style="position: relative; z-index: 3; flex: 1; margin: 0 4px;">2. Disciplines</div>
+            <div class="wizard-step-pill" id="sadhana-step-3-pill" style="position: relative; z-index: 3; flex: 1; margin: 0 4px;">3. Mentor</div>
+            <div class="wizard-step-pill" id="sadhana-step-4-pill" style="position: relative; z-index: 3; flex: 1; margin: 0 4px;">4. Sacred Oath</div>
+          </div>
+        </div>
+
+        <!-- STEP 1: SADHANA SELECTION & FLIPPER -->
+        <div id="sadhana-step-1" class="sadhana-wizard-step" style="display: block;">
+          <div class="form-group mb-3">
+            <label class="form-label" id="sadhana-step1-title" style="font-family: 'Cinzel', serif; font-weight: 700;">Select Sacred Sadhana / Anushthan</label>
+            <select id="sadhana-init-select" class="form-control" style="font-weight: 600; color: #0f172a; padding: 0.75rem; border: 2px solid #cbd5e1;">
+              <option value="three_diya">Three Diya Practice (Sunset Healing)</option>
+              <option value="gayatri_mantra">Gayatri Mantra Anushthan (21 Days)</option>
+              <option value="mahamrityunjaya">Mahamrityunjaya Mantra (41 Days)</option>
+            </select>
+          </div>
+          
+          <div class="sadhana-flipper-container" style="perspective: 1000px; height: 280px; width: 100%; margin-top: 1.5rem;">
+            <div class="sadhana-flip-card" id="sadhana-flipper-card" style="width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; position: relative;">
+              <!-- FRONT -->
+              <div class="sadhana-flip-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: #fff; border: 2px solid var(--gold-300); border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: 0 8px 24px rgba(184,150,12,0.12);">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">🕉️</div>
+                <h4 id="flipper-title" style="font-family: 'Cinzel', serif; color: #0f172a; margin-bottom: 0.5rem;">Sacred Three Diya Practice</h4>
+                <p id="flipper-desc" style="font-size: 0.85rem; color: #475569; line-height: 1.5;">A sacred practice channeling divine light for household purification and spiritual ascension.</p>
+                <button type="button" class="btn btn-outline" id="btn-flip-front" style="margin-top: 1rem; border-color: var(--gold-400); color: var(--gold-500);">🔄 Flip to View Lineage Rules</button>
+              </div>
+              <!-- BACK -->
+              <div class="sadhana-flip-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; transform: rotateY(180deg); border: 2px solid var(--gold-500); border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: 0 8px 24px rgba(15,23,42,0.25);">
+                <h4 style="font-family: 'Cinzel', serif; color: var(--gold-300); margin-bottom: 1rem;">Lineage Rules &amp; Targets</h4>
+                <ul style="text-align: left; font-size: 0.85rem; color: #cbd5e1; list-style-type: none; padding: 0; line-height: 1.8;">
+                  <li>✔️ <strong style="color: #fff;">Diet:</strong> Strict Satvik (No Onion/Garlic)</li>
+                  <li>✔️ <strong style="color: #fff;">Target:</strong> Minimum 11 Malas Daily</li>
+                  <li>✔️ <strong style="color: #fff;">Window:</strong> Sunset (06:15 PM - 07:00 PM)</li>
+                </ul>
+                <button type="button" class="btn btn-gold" id="btn-flip-back" style="margin-top: 1rem;">🔄 Flip Back to Deity</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: DISCIPLINES -->
+        <div id="sadhana-step-2" class="sadhana-wizard-step" style="display: none;">
+          <h4 id="sadhana-step2-title" style="font-family: 'Cinzel', serif; color: #0f172a; margin-bottom: 1.5rem; font-weight: 700;">Sacred Commitments</h4>
+          
+          <div id="sadhana-switches-container">
+            <!-- Dynamically populated by SadhanaRemedyView -->
+          </div>
+          
+
+
+          <div class="form-group mb-3">
+            <label class="form-label">Preferred Practice Schedule</label>
+            <div class="toggle-segment" id="toggle-practice-slot" style="display: flex; background: #f1f5f9; border-radius: 8px; padding: 4px; border: 1px solid #cbd5e1;">
+              <button type="button" class="segment-btn active" data-slot="Brahma Muhurta" style="flex: 1; border: none; padding: 0.6rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s;">🌅 Brahma Muhurta</button>
+              <button type="button" class="segment-btn" data-slot="Sandhya Kaal" style="flex: 1; border: none; padding: 0.6rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: #475569;">🌇 Sandhya Kaal</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: MENTOR & INTENTION -->
+        <div id="sadhana-step-3" class="sadhana-wizard-step" style="display: none;">
+          <h4 id="sadhana-step3-title" style="font-family: 'Cinzel', serif; color: #0f172a; margin-bottom: 1.5rem; font-weight: 700;">Mentor &amp; Intention</h4>
+          <div class="form-group mb-4">
+            <label class="form-label" style="font-family: 'Cinzel', serif; font-weight: 700;">Lineage Mentor (Upline Sponsor)</label>
+            <select id="sadhana-mentor-select" class="form-control" style="font-weight: 600; padding: 0.75rem; border: 2px solid #cbd5e1;">
+              <option value="SKHM-ADM1-7788-9900">👑 Spiritual Karim Khan (Founder)</option>
+              <option value="SKHM-DEV2-1122-3344">🌿 Acharya Devendra (Senior Healer)</option>
+              <option value="SKHM-MAA3-4455-6677">🌿 Maa Anandita Devi (Lineage Master)</option>
+            </select>
+            <div id="sadhana-mentor-lineage-note" style="font-size: 0.76rem; color: #b45309; margin-top: 0.45rem; font-weight: 600; background: rgba(245,158,11,0.1); border-left: 3px solid #f59e0b; padding: 0.35rem 0.6rem; border-radius: 0 4px 4px 0; display: none;"></div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.5rem;">This mentor will review your application and authorize your elevation to Trainee Sadhak.</div>
+          </div>
+          
+          <div class="form-group mb-3">
+            <label class="form-label" style="font-family: 'Cinzel', serif; font-weight: 700;">Target Duration</label>
+            <input type="text" id="sadhana-target-days" class="form-control" value="41 Days Anushthan" readonly style="background: #f1f5f9; font-weight: 600; color: #334155;">
+          </div>
+          
+          <div class="form-group mb-3">
+            <label class="form-label" style="font-family: 'Cinzel', serif; font-weight: 700;">Seeker Diagnostics / Target Outcome *</label>
+            <textarea id="sadhana-diagnostics-text" class="form-control" rows="2" placeholder="Briefly describe your affliction duration or specific target outcome for Mentor review..." style="border: 2px solid #cbd5e1;"></textarea>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label" style="font-family: 'Cinzel', serif; font-weight: 700;">Spiritual Intention / Household Cleansing Objective *</label>
+            <textarea id="sadhana-intention-text" class="form-control" rows="3" placeholder="Describe your purpose for taking this sacred oath (Min 15 chars)..." style="border: 2px solid #cbd5e1;"></textarea>
+          </div>
+        </div>
+
+        <!-- STEP 4: SACRED OATH & REVIEW -->
+        <div id="sadhana-step-4" class="sadhana-wizard-step" style="display: none;">
+          <div style="background: #fdfbf7; border: 1.5px dashed var(--gold-400); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+            <h5 id="sadhana-step4-title" style="font-family: 'Cinzel', serif; color: #0f172a; margin-top: 0; font-weight: 700;">Official Trainee Elevation Review</h5>
+            <ul style="font-size: 0.85rem; color: #334155; line-height: 1.6; padding-left: 1.25rem; margin-bottom: 0;">
+              <li><strong>Sadhana:</strong> <span id="review-sadhana-name">Three Diya Practice</span></li>
+              <li><strong>Target:</strong> 11 Malas / 41 Days</li>
+              <li><strong>Schedule:</strong> <span id="review-sadhana-slot">Brahma Muhurta</span></li>
+              <li><strong>Mentor:</strong> <span id="review-sadhana-mentor">Spiritual Karim Khan</span></li>
+              <li><strong>Commitments:</strong> All Pledges Accepted ✅</li>
+            </ul>
+          </div>
+          
+          <div class="form-group mb-3">
+            <label class="form-label" style="font-family: 'Cinzel', serif; font-weight: 700;">Digital Signature (Type your full name) *</label>
+            <input type="text" id="sadhana-signature-text" class="form-control" placeholder="I solemnly swear to uphold the lineage rules..." style="border: 2px solid #cbd5e1; font-family: 'Cinzel', serif; font-weight: 600;">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: space-between; background: #f8fafc; border-top: 1px solid var(--border-subtle);">
+        <button type="button" class="btn btn-outline" id="btn-sadhana-prev" style="visibility: hidden;">◀ Back</button>
+        <button type="button" class="btn btn-gold" id="btn-sadhana-next" style="font-weight: 700;">Next Step ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIALOG BOX WITH MULTIPLE OPTIONS -->
+  <div id="modal-sadhana-dialog-options" class="admin-modal" aria-hidden="true" style="z-index: 100000;">
+    <div class="modal-card" style="max-width: 460px; text-align: center;">
+      <div class="modal-body" style="padding: 1.75rem;">
+        <div style="font-size: 2.75rem; margin-bottom: 0.75rem;" id="dialog-options-icon">⚠️</div>
+        <h4 id="dialog-options-title" style="font-family: 'Cinzel', serif; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 0.35rem; font-size: 1.25rem;">CONFIRM APPLICATION</h4>
+        <p id="dialog-options-desc" style="font-size: 0.88rem; color: #475569; margin-bottom: 1.25rem;">Your application for Sacred Sadhana Initiation is ready. Please choose an action below.</p>
+
+        <!-- Designated Upline Healer Card -->
+        <div id="dialog-upline-mentor-card" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.02) 100%); border: 1.5px solid rgba(212, 175, 55, 0.35); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 1rem; text-align: left; display: flex; align-items: center; gap: 0.85rem; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
+          <div id="dialog-upline-avatar" style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #c59b27, #9e7811); color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; flex-shrink: 0; box-shadow: 0 2px 6px rgba(197, 155, 39, 0.3);">AD</div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 0.68rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Designated Upline Healer</div>
+            <div id="dialog-upline-name" style="font-family: 'Cinzel', serif; font-weight: 800; font-size: 0.98rem; color: #854d0e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Acharya Devendra</div>
+            <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.2rem;">
+              <span id="dialog-upline-role" style="font-size: 0.7rem; font-weight: 700; background: rgba(59, 130, 246, 0.1); color: #2563eb; padding: 1px 6px; border-radius: 4px;">🛡️ Senior Healer</span>
+              <span id="dialog-upline-code" style="font-size: 0.7rem; font-family: monospace; color: #64748b;">SKHM-DEV2-1122-3344</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Practice & Slot Summary Card -->
+        <div id="dialog-practice-summary-card" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.55rem 0.85rem; margin-bottom: 1.25rem; font-size: 0.82rem; color: #334155; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+          <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 65%;"><strong>Practice:</strong> <span id="dialog-practice-title">Sri Yantra Sadhana</span></span>
+          <span id="dialog-practice-slot" style="background: rgba(16, 185, 129, 0.1); color: #059669; padding: 2px 7px; border-radius: 4px; font-weight: 700; font-size: 0.75rem; white-space: nowrap;">Brahma Muhurta</span>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <button type="button" class="btn btn-gold" id="btn-dialog-opt-1" style="width: 100%; justify-content: center; font-weight: 700;">✅ Confirm &amp; Dispatch to <span id="btn-dispatch-mentor-name">Mentor</span></button>
+          <button type="button" class="btn btn-outline" id="btn-dialog-opt-2" style="width: 100%; justify-content: center; border-color: var(--gold-400); color: var(--gold-500); font-weight: 600;">💾 Save as Draft</button>
+          <button type="button" class="btn btn-outline" id="btn-dialog-opt-3" style="width: 100%; justify-content: center; color: #64748b; font-weight: 600;">✏️ Back to Edit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM-RIGHT NOTIFICATION STACK -->
+  <div id="notification-toast-container" style="position: fixed; bottom: 24px; right: 24px; z-index: 99999; display: flex; flex-direction: column; gap: 12px; pointer-events: none;">
+    <!-- Toasts injected here dynamically -->
+  </div>
+
   <!-- External Vendor & Core Logic Scripts -->
-  <script src="js/profile-admin-header.js?v=sk_v5_1789556744083"></script>
-  <script src="js/models/ScreenAuthMatrix.js?v=sk_v5_1789556744083"></script>
-  <script src="js/models/ProfileModel.js?v=sk_v5_1789556744083"></script>
-  <script src="js/config/appConfig.js?v=sk_v5_1789556744083"></script>
-  <script src="js/models/FirebaseSyncEngine.js?v=sk_v5_1789556744083"></script>
-  <script src="js/views/ProfileView.js?v=sk_v5_1789556744083"></script>
-  <script src="js/views/ProfileView2.js?v=sk_v5_1789556744083"></script>
-  <script src="js/controllers/ProfileController.js?v=sk_v5_1789556744083"></script>
-  <script src="js/controllers/ProfileController2.js?v=sk_v5_1789556744083"></script>
-  <script src="js/controllers/SettingsModalController.js?v=sk_v5_1789556744083"></script>
-  <script src="js/profile-admin-bootstrap.js?v=sk_v5_1789556744083"></script>
+  <script src="js/profile-admin-header.js?v=sk_v5_1789675213250"></script>
+  <script src="js/models/ScreenAuthMatrix.js?v=sk_v5_1789675213250"></script>
+  <script src="js/models/ProfileModel.js?v=sk_v5_1789675213250"></script>
+  <script src="js/models/MetadataCountEngine.js?v=sk_v5_1789675213250"></script>
+  <script src="js/models/SadhanaRemedyModel.js?v=sk_v5_1789675213250"></script>
+  <script src="js/config/appConfig.js?v=sk_v5_1789675213250"></script>
+  <script src="js/models/FirebaseSyncEngine.js?v=sk_v5_1789675213250"></script>
+  <script src="js/views/ProfileView.js?v=sk_v5_1789675213250"></script>
+  <script src="js/views/ProfileView2.js?v=sk_v5_1789675213250"></script>
+  <script src="js/views/SadhanaRemedyView.js?v=sk_v5_1789675213250"></script>
+  <script src="js/controllers/ProfileController.js?v=sk_v5_1789675213250"></script>
+  <script src="js/controllers/ProfileController2.js?v=sk_v5_1789675213250"></script>
+  <script src="js/controllers/SettingsModalController.js?v=sk_v5_1789675213250"></script>
+  <script src="js/controllers/SadhanaRemedyController.js?v=sk_v5_1789675213250"></script>
+  <script src="js/profile-admin-bootstrap.js?v=sk_v5_1789675213250"></script>
 
   <!-- ==============================================================
        SLIDE-IN NOTIFICATIONS STACK & CUSTOM DIALOG BACKDROP
@@ -4523,13 +4923,13 @@
           <span id="sadhana-drawer-category" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Sacred Sadhana • Level 1–4</span>
         </div>
       </div>
-      <button type="button" id="btn-close-sadhana-drawer" class="icon-btn btn-close-sadhana-drawer-action" aria-label="Close Sadhana Drawer" title="Close Details (or press Esc)" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); font-size: 1.4rem; color: var(--gold-300); cursor: pointer; transition: all 0.2s ease;">&times;</button>
+      <button type="button" id="btn-close-sadhana-drawer" class="icon-btn btn-close-sadhana-drawer-action" aria-label="Close Sadhana Drawer" title="Close Details (or press Esc)">&times;</button>
     </div>
-    <div id="sadhana-drawer-body" class="sadhana-drawer-body" style="padding: 1.25rem; overflow-y: auto; flex-grow: 1;">
+    <div id="sadhana-drawer-body" class="sadhana-drawer-body">
       <!-- Content populated dynamically by ProfileView.openSadhanaDrawer -->
     </div>
-    <div class="sadhana-drawer-footer" style="padding: 1rem 1.25rem; border-top: 1px solid var(--border-glass-gold); display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; background: rgba(14, 10, 22, 0.95);">
-      <button type="button" class="btn btn-sm btn-outline btn-close-sadhana-drawer-action" id="btn-drawer-close-footer" style="border-color: rgba(255,255,255,0.2); color: var(--text-muted);">✕ Close</button>
+    <div class="sadhana-drawer-footer">
+      <button type="button" class="btn btn-sm btn-outline btn-close-sadhana-drawer-action" id="btn-drawer-close-footer">✕ Close</button>
       <div style="display: flex; gap: 0.6rem;">
         <button type="button" class="btn btn-outline btn-sm" id="btn-drawer-send-trainee">📤 Send to Trainee</button>
         <button type="button" class="btn btn-gold btn-sm" id="btn-drawer-enroll">🌟 Enroll in Sadhana</button>
@@ -4727,23 +5127,42 @@
        ============================================================== -->
   <div id="pending-approval-drawer-backdrop" class="drawer-backdrop" style="display: none;"></div>
   <aside id="pending-approval-drawer" class="pending-approval-drawer" aria-hidden="true">
-    <div class="pending-drawer-header" style="padding: 1.15rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); flex-shrink: 0;">
+    <div class="pending-drawer-header">
       <div style="display: flex; align-items: center; gap: 0.75rem;">
         <span style="font-size: 1.6rem;">⏳</span>
         <div>
           <h3 style="margin: 0; font-family: var(--font-heading); color: var(--gold-400); font-size: 1.2rem;">Pending Seeker Approvals</h3>
-          <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">24-Hour Verification Protocol</span>
+          <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Closed-Loop Verification &amp; Telemetry Protocol</span>
         </div>
       </div>
-      <button type="button" id="btn-close-pending-approval-drawer" class="icon-btn" aria-label="Close Drawer" style="font-size: 1.4rem; color: var(--text-muted); cursor: pointer; background: transparent; border: none;">&times;</button>
+      <button type="button" id="btn-close-pending-approval-drawer" class="icon-btn" aria-label="Close Drawer">&times;</button>
     </div>
-    <div id="pending-approval-drawer-body" class="pending-drawer-body" style="padding: 1.25rem; overflow-y: auto; flex-grow: 1;">
-      <!-- Populated dynamically by ProfileView.openPendingApprovalsDrawer -->
+
+    <!-- 2 TABS: REGISTRATION & SADHANA/REMEDY -->
+    <div class="pending-drawer-tabs">
+      <button type="button" class="pending-drawer-tab-btn active" id="tab-btn-pending-registration" data-tab="registration">
+        <span>📝 Registration Queue</span>
+        <span class="tab-badge" id="tab-badge-pending-registration">0</span>
+      </button>
+      <button type="button" class="pending-drawer-tab-btn" id="tab-btn-pending-sadhana" data-tab="sadhana-remedy">
+        <span>📿 Sadhana &amp; Remedy Queue</span>
+        <span class="tab-badge" id="tab-badge-pending-sadhana">0</span>
+      </button>
     </div>
-    <div class="pending-drawer-footer" style="padding: 0.85rem 1.25rem; border-top: 1px solid var(--border-glass-gold); display: flex; justify-content: space-between; align-items: center; background: rgba(14, 10, 22, 0.95); flex-shrink: 0;">
+
+    <div id="pending-approval-drawer-body" class="pending-drawer-body">
+      <div id="pending-tab-pane-registration" class="pending-tab-pane active" style="display: block;">
+        <!-- Populated dynamically by renderRegistrationApprovalsTab -->
+      </div>
+      <div id="pending-tab-pane-sadhana" class="pending-tab-pane" style="display: none;">
+        <!-- Populated dynamically by renderSadhanaRemedyApprovalsTab -->
+      </div>
+    </div>
+    <div class="pending-drawer-footer">
       <button type="button" class="btn btn-outline btn-xs" id="btn-drawer-refresh-invites">🔄 Refresh List</button>
       <button type="button" class="btn btn-gold btn-xs" id="btn-drawer-open-share-modal">📲 Share &amp; Pair New Seeker</button>
     </div>
+  </aside>
   <!-- ==============================================================
        SPLIT-VIEW MODAL: 1. SADHANA EXPLORER (Catalog & Details)
        ============================================================== -->

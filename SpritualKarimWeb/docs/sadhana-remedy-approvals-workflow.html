@@ -1,0 +1,1427 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sadhana & Remedy Approvals Workflow Architecture • Shree Spritual Karim Sansthan</title>
+    <meta
+      name="description"
+      content="Comprehensive End-to-End Sadhana & Remedy Approvals Workflow Architecture with Multi-Stage Information Exchange, Notification Telemetry, OOPS MVC System Integration, and Closed-Loop Feedback"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cinzel:wght@700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #09060f;
+        --bg-card: #140e22;
+        --bg-subtle: #1c142e;
+        --border: #2e2248;
+        --border-dark: #46336c;
+        --border-gold: rgba(212, 175, 55, 0.4);
+        --txt: #f8fafc;
+        --txt-muted: #94a3b8;
+        --txt-light: #64748b;
+        --gold: #d4af37;
+        --gold-light: rgba(212, 175, 55, 0.15);
+        --gold-border: rgba(212, 175, 55, 0.5);
+        --blue: #38bdf8;
+        --blue-light: rgba(56, 189, 248, 0.15);
+        --blue-border: rgba(56, 189, 248, 0.4);
+        --purple: #a855f7;
+        --purple-light: rgba(168, 85, 247, 0.15);
+        --purple-border: rgba(168, 85, 247, 0.4);
+        --green: #10b981;
+        --green-light: rgba(16, 185, 129, 0.15);
+        --green-border: rgba(16, 185, 129, 0.4);
+        --amber: #f59e0b;
+        --amber-light: rgba(245, 158, 11, 0.15);
+        --amber-border: rgba(245, 158, 11, 0.4);
+        --red: #ef4444;
+        --red-light: rgba(239, 68, 68, 0.15);
+        --red-border: rgba(239, 68, 68, 0.4);
+        --cyan: #06b6d4;
+        --cyan-light: rgba(6, 182, 212, 0.15);
+        --cyan-border: rgba(6, 182, 212, 0.4);
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+        --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.55);
+        --shadow-lg: 0 12px 35px rgba(0, 0, 0, 0.75);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg);
+        color: var(--txt);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        padding-bottom: 4rem;
+      }
+
+      /* TOP BRAND HEADER */
+      .brand-header {
+        background: linear-gradient(135deg, #180d2b 0%, #27133f 50%, #0d1933 100%);
+        border-bottom: 1.5px solid var(--border-gold);
+        color: #ffffff;
+        padding: 2rem 2rem 1.6rem;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+      }
+      .brand-logo-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.85rem;
+        margin-bottom: 0.5rem;
+      }
+      .brand-icon {
+        font-size: 2.2rem;
+        filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
+      }
+      .brand-title {
+        font-family: "Cinzel", serif;
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        background: linear-gradient(135deg, #fff 0%, var(--gold) 60%, #fff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .brand-sub {
+        font-size: 0.82rem;
+        color: var(--txt-muted);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 0.85rem;
+      }
+      .brand-meta-badges {
+        display: flex;
+        justify-content: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+      .brand-badge {
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        border: 1px solid;
+      }
+      .bb-gold {
+        background: rgba(212, 175, 55, 0.18);
+        color: #fde047;
+        border-color: rgba(212, 175, 55, 0.5);
+      }
+      .bb-purple {
+        background: rgba(168, 85, 247, 0.18);
+        color: #d8b4fe;
+        border-color: rgba(168, 85, 247, 0.5);
+      }
+      .bb-green {
+        background: rgba(16, 185, 129, 0.18);
+        color: #6ee7b7;
+        border-color: rgba(16, 185, 129, 0.5);
+      }
+      .bb-blue {
+        background: rgba(56, 189, 248, 0.18);
+        color: #7dd3fc;
+        border-color: rgba(56, 189, 248, 0.5);
+      }
+
+      /* CONTROLS BAR */
+      .controls-bar {
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        padding: 0.85rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow-md);
+      }
+      .nav-pills {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .nav-pill-btn {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.4rem 0.85rem;
+        border-radius: 6px;
+        text-decoration: none;
+        color: var(--txt-muted);
+        border: 1px solid var(--border);
+        background: var(--bg-subtle);
+        transition: all 0.15s ease;
+      }
+      .nav-pill-btn:hover {
+        background: #25193e;
+        color: #ffffff;
+        border-color: var(--gold-border);
+      }
+      .nav-pill-btn.active {
+        background: var(--gold-light);
+        color: var(--gold);
+        border-color: var(--gold);
+      }
+
+      .search-box {
+        position: relative;
+        min-width: 280px;
+      }
+      .search-input {
+        width: 100%;
+        background: var(--bg-subtle);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.45rem 0.85rem 0.45rem 2rem;
+        color: #ffffff;
+        font-size: 0.78rem;
+        outline: none;
+      }
+      .search-input:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+      }
+      .search-icon {
+        position: absolute;
+        left: 0.65rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8rem;
+        color: var(--txt-muted);
+      }
+
+      /* MAIN LAYOUT */
+      .layout-container {
+        max-width: 1540px;
+        margin: 1.75rem auto 0;
+        padding: 0 1.5rem;
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 1.75rem;
+        align-items: start;
+      }
+      @media (max-width: 1120px) {
+        .layout-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* WORKFLOW CANVAS */
+      .workflow-canvas {
+        display: flex;
+        flex-direction: column;
+        gap: 1.75rem;
+      }
+
+      /* STAGE BLOCK */
+      .stage-block {
+        background: var(--bg-card);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 1.4rem;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .stage-block:hover {
+        border-color: var(--border-dark);
+        box-shadow: var(--shadow-md);
+      }
+      .stage-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.15rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .stage-badge-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .stage-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        color: #ffffff;
+        font-size: 0.85rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      }
+      .sn-0 { background: #64748b; }
+      .sn-1 { background: var(--blue); }
+      .sn-2 { background: var(--purple); }
+      .sn-3 { background: var(--amber); }
+      .sn-4 { background: var(--green); }
+      .sn-5 { background: var(--cyan); }
+      .sn-6 { background: #e11d48; }
+      .sn-7 { background: #ec4899; }
+
+      .stage-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: 0.2px;
+      }
+      .stage-sub {
+        font-size: 0.75rem;
+        color: var(--txt-muted);
+        margin-top: 0.15rem;
+      }
+      .stage-sla {
+        font-size: 0.7rem;
+        font-weight: 800;
+        padding: 0.2rem 0.65rem;
+        border-radius: 9999px;
+        border: 1px solid;
+      }
+
+      /* NODES GRID */
+      .flow-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.15rem;
+        margin-bottom: 1.25rem;
+      }
+
+      /* WORKFLOW NODE CARD */
+      .wf-node {
+        background: var(--bg-subtle);
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem 1.15rem;
+        cursor: pointer;
+        position: relative;
+        transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      }
+      .wf-node:hover {
+        transform: translateY(-3px);
+        border-color: var(--gold);
+        box-shadow: 0 6px 18px rgba(212, 175, 55, 0.2);
+      }
+      .node-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+        gap: 0.5rem;
+      }
+      .node-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .node-icon {
+        font-size: 1.15rem;
+      }
+      .node-title {
+        font-size: 0.88rem;
+        font-weight: 800;
+        color: #ffffff;
+      }
+      .node-type-badge {
+        font-size: 0.62rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+        letter-spacing: 0.05em;
+      }
+      .badge-entry { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8; }
+      .badge-decision { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b; }
+      .badge-process { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7; }
+      .badge-approval { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+      .badge-token { background: rgba(212, 175, 55, 0.2); color: #fde047; border: 1px solid #d4af37; }
+
+      .node-desc {
+        font-size: 0.75rem;
+        color: var(--txt-muted);
+        margin-bottom: 0.65rem;
+        line-height: 1.4;
+      }
+      .node-attrs {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        font-size: 0.72rem;
+        color: var(--txt);
+      }
+      .node-attrs li {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .node-attrs li::before {
+        content: "•";
+        color: var(--gold);
+        font-weight: bold;
+      }
+
+      .node-code {
+        margin-top: 0.65rem;
+        background: #0b0714;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        padding: 0.45rem 0.65rem;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.68rem;
+        color: #7dd3fc;
+        overflow-x: auto;
+      }
+
+      /* BRANCH PATHS */
+      .branch-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+      .branch-path {
+        padding: 0.5rem;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        line-height: 1.35;
+      }
+      .branch-pass {
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid var(--green-border);
+        color: #a7f3d0;
+      }
+      .branch-pass-title {
+        font-weight: 800;
+        color: #34d399;
+        margin-bottom: 0.15rem;
+      }
+      .branch-fail {
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid var(--red-border);
+        color: #fecaca;
+      }
+      .branch-fail-title {
+        font-weight: 800;
+        color: #f87171;
+        margin-bottom: 0.15rem;
+      }
+      .loop-tag {
+        font-size: 0.65rem;
+        font-weight: 800;
+        margin-top: 0.35rem;
+        color: var(--gold);
+        display: block;
+      }
+
+      /* INFORMATION EXCHANGE & NOTIFICATION TELEMETRY BOX */
+      .telemetry-banner {
+        background: linear-gradient(90deg, rgba(20, 14, 34, 0.95), rgba(35, 18, 56, 0.95));
+        border: 1.5px dashed var(--gold-border);
+        border-radius: 8px;
+        padding: 0.85rem 1.15rem;
+        margin-top: 0.85rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .telemetry-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .telemetry-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .telemetry-title {
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: var(--gold);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .telemetry-channels {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+      }
+      .channel-pill {
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #cbd5e1;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+      .telemetry-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        font-size: 0.73rem;
+      }
+      @media (max-width: 768px) {
+        .telemetry-grid { grid-template-columns: 1fr; }
+      }
+      .tg-item {
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+        padding: 0.5rem 0.75rem;
+      }
+      .tg-label {
+        color: var(--txt-muted);
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 0.2rem;
+      }
+      .tg-content {
+        color: #ffffff;
+      }
+
+      /* RIGHT SIDEBAR */
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        position: sticky;
+        top: 4.8rem;
+      }
+      .side-card {
+        background: var(--bg-card);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: var(--shadow-sm);
+      }
+      .side-card-title {
+        font-size: 0.88rem;
+        font-weight: 800;
+        color: var(--gold);
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.45rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* SLA STATS TABLE */
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.45rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 0.75rem;
+      }
+      .stat-row:last-child { border-bottom: none; }
+      .stat-val {
+        font-weight: 800;
+        color: #ffffff;
+      }
+
+      /* SPECIFICATION MODAL / DRAWER */
+      #spec-drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(520px, 94vw);
+        background: #0f0a1a;
+        border-left: 2px solid var(--gold);
+        box-shadow: -15px 0 50px rgba(0, 0, 0, 0.85);
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      #spec-drawer.open {
+        transform: translateX(0);
+      }
+      .spec-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-card);
+      }
+      .spec-body {
+        padding: 1.5rem;
+        overflow-y: auto;
+        flex-grow: 1;
+        font-size: 0.82rem;
+        line-height: 1.55;
+      }
+      .spec-close-btn {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- TOP BRAND HEADER -->
+    <header class="brand-header">
+      <div class="brand-logo-wrap">
+        <span class="brand-icon">📿</span>
+        <h1 class="brand-title">Shree Spritual Karim Sansthan</h1>
+      </div>
+      <div class="brand-sub">End-to-End Sacred Sadhana &amp; Karmic Remedy Initiation Architecture</div>
+      <div class="brand-meta-badges">
+        <span class="brand-badge bb-gold">📜 OOPS-MVC Protocol</span>
+        <span class="brand-badge bb-purple">🔔 Multi-Stage Notification Telemetry</span>
+        <span class="brand-badge bb-green">🛡️ Mentor Decision Gate</span>
+        <span class="brand-badge bb-blue">🔁 Closed-Loop Feedback Architecture</span>
+      </div>
+    </header>
+
+    <!-- CONTROLS & NAVIGATION BAR -->
+    <nav class="controls-bar">
+      <div class="nav-pills">
+        <a href="#stage-0" class="nav-pill-btn">0. Foundation Gate</a>
+        <a href="#stage-1" class="nav-pill-btn">1. Catalog &amp; Upay</a>
+        <a href="#stage-2" class="nav-pill-btn">2. Sankalp &amp; Pledges</a>
+        <a href="#stage-3" class="nav-pill-btn active">3. Mentor Review Gate</a>
+        <a href="#stage-4" class="nav-pill-btn">4. Deeksha Token</a>
+        <a href="#stage-5" class="nav-pill-btn">5. Japa Telemetry</a>
+        <a href="#stage-6" class="nav-pill-btn">6. Purnaahuti</a>
+        <a href="#stage-7" class="nav-pill-btn">7. Closed-Loop</a>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="workflow-search" class="search-input" placeholder="Search stages, telemetry, notifications..." oninput="filterWorkflowNodes(this.value)" />
+      </div>
+    </nav>
+
+    <!-- MAIN WORKFLOW LAYOUT -->
+    <main class="layout-container">
+      <div class="workflow-canvas">
+
+        <!-- ==============================================================
+             STAGE 0: PREREQUISITE & LINEAGE FOUNDATION GATE
+             ============================================================== -->
+        <section class="stage-block" id="stage-0">
+          <div class="stage-header">
+            <div class="stage-badge-group">
+              <div class="stage-number sn-0">0</div>
+              <div>
+                <h2 class="stage-title">Candidate Eligibility &amp; Lineage Foundation Gate</h2>
+                <div class="stage-sub">Verification of Devotee Sangha membership, 14-day basic diya discipline, and ancestral karma readiness</div>
+              </div>
+            </div>
+            <span class="stage-sla bb-blue">Prerequisite Gate • System Check</span>
+          </div>
+
+          <div class="flow-row">
+            <!-- Node 0.1 -->
+            <div class="wf-node" onclick="openSpecDrawer('0.1', 'Devotee Sangha Status Check', 'Validates that the applicant has an active Devotee profile (Level 4) and is bound to a verified Lineage Mentor in the platform directory.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">🌟</span>
+                  <span class="node-title">Sangha Membership Check</span>
+                </div>
+                <span class="node-type-badge badge-entry">GATE</span>
+              </div>
+              <p class="node-desc">Asserts seeker profile exists with valid Reference Code (e.g. <code>SKDV-ROHN-8821</code>) and verified contact details.</p>
+              <ul class="node-attrs">
+                <li>Devotee Level 4 Verification</li>
+                <li>Lineage Mentor Reference (<code>sponsorCode</code>)</li>
+                <li>KYC Phone &amp; Photo Document Match</li>
+              </ul>
+              <div class="node-code">ProfileModel.getActiveProfile().referenceCode</div>
+            </div>
+
+            <!-- Node 0.2 -->
+            <div class="wf-node" onclick="openSpecDrawer('0.2', '14-Day Diya Foundation Telemetry', 'Inspects daily diya practice logs. Candidate must have sustained at least 14 days of unbroken basic diya practice before undertaking anushthan.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">🪔</span>
+                  <span class="node-title">14-Day Diya Foundation</span>
+                </div>
+                <span class="node-type-badge badge-decision">TELEMETRY</span>
+              </div>
+              <p class="node-desc">Evaluates household basic diya practice history and morning/evening Aarti compliance score.</p>
+              <div class="branch-container">
+                <div class="branch-pass">
+                  <div class="branch-pass-title">✓ COMPLIANT (&gt;= 14 Days)</div>
+                  Devotee spiritual vessel purified. Proceed to Sadhana/Remedy catalog.
+                </div>
+                <div class="branch-fail">
+                  <div class="branch-fail-title">✕ INCOMPLETE</div>
+                  Foundation days insufficient.
+                  <span class="loop-tag">↩ FEEDBACK LOOP: Daily Diya Practice Tracker</span>
+                </div>
+              </div>
+              <div class="node-code">devoteeProfile.diyaDays &gt;= 14</div>
+            </div>
+          </div>
+
+          <!-- Stage 0 Telemetry Banner -->
+          <div class="telemetry-banner">
+            <div class="telemetry-header">
+              <div class="telemetry-title-wrap">
+                <span>📡</span>
+                <span class="telemetry-title">Stage 0 Telemetry &amp; Notification Telemetry</span>
+              </div>
+              <div class="telemetry-channels">
+                <span class="channel-pill">In-App Notification</span>
+                <span class="channel-pill">BroadcastChannel</span>
+                <span class="channel-pill">Devotee Portal Badge</span>
+              </div>
+            </div>
+            <div class="telemetry-grid">
+              <div class="tg-item">
+                <div class="tg-label">Outbound Notification Event</div>
+                <div class="tg-content"><code>FOUNDATION_DISCIPLINE_VERIFIED</code> &bull; "Congratulations! You have completed 14 days of Diya foundation. You are now eligible for Sacred Sadhana &amp; Upay initiation."</div>
+              </div>
+              <div class="tg-item">
+                <div class="tg-label">Data Exchange Payload</div>
+                <div class="tg-content"><code>{ seekerId, diyaStreak: 14, eligibleCatalog: ["sadhana", "remedy"] }</code></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             STAGE 1: CURRICULUM & UPAY SELECTION
+             ============================================================== -->
+        <section class="stage-block" id="stage-1">
+          <div class="stage-header">
+            <div class="stage-badge-group">
+              <div class="stage-number sn-1">1</div>
+              <div>
+                <h2 class="stage-title">Sacred Curriculum &amp; Karmic Upay Selection</h2>
+                <div class="stage-sub">Applicant browses Vedic Sadhana catalog and karmic remedies based on gotra diagnostics and spiritual aspiration</div>
+              </div>
+            </div>
+            <span class="stage-sla bb-purple">Catalog Browser &bull; Wizard Step 1</span>
+          </div>
+
+          <div class="flow-row">
+            <!-- Node 1.1 -->
+            <div class="wf-node" onclick="openSpecDrawer('1.1', 'Catalog Classification & Diagnostics', 'User navigates dual curriculum paths: Vedic Sadhana (Spiritual ascension, Chandi, Gayatri, Mahamrityunjaya) vs Karmic Upay (Pitra Dosh, Griha Shuddhi, Vastu).')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">📖</span>
+                  <span class="node-title">Curriculum Path Explorer</span>
+                </div>
+                <span class="node-type-badge badge-process">CATALOG</span>
+              </div>
+              <p class="node-desc">Filters items from dynamic config settings (<code>appConfig.sk_sadhana_remedy_config</code>) based on seeker intent.</p>
+              <ul class="node-attrs">
+                <li>📿 Vedic Sadhanas: Navarna Chandi, Mahamrityunjaya, Gayatri</li>
+                <li>🌿 Sacred Remedies: Pitra Dosh Shanti, Griha Shuddhi, Vastu Upay</li>
+                <li>Mala Multiplier &amp; Baseline Count (11, 21, 51 Malas)</li>
+              </ul>
+              <div class="node-code">SadhanaRemedyModel.getConfig(contextType)</div>
+            </div>
+
+            <!-- Node 1.2 -->
+            <div class="wf-node" onclick="openSpecDrawer('1.2', 'Cycle Duration & Muhurta Calibration', 'Seeker selects targeted anushthan duration (11, 21, 41, 108 Days) and auspicious Muhurta slot.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">⏱️</span>
+                  <span class="node-title">Cycle &amp; Muhurta Schedule</span>
+                </div>
+                <span class="node-type-badge badge-process">TIMING</span>
+              </div>
+              <p class="node-desc">Assigns daily practice time window according to planetary hours and devotee work schedules.</p>
+              <ul class="node-attrs">
+                <li>🌅 Brahma Muhurta: 04:00 &ndash; 06:00 (High Efficacy)</li>
+                <li>☀️ Pratah Kaal: 06:00 &ndash; 08:00 (Standard)</li>
+                <li>🌆 Sandhya Kaal: 18:00 &ndash; 19:30 (Pitra/Devi Upay)</li>
+                <li>🌙 Nishita Kaal: 23:30 &ndash; 01:00 (Tapasya)</li>
+              </ul>
+              <div class="node-code">formData.scheduleSlot = selectedMuhurta</div>
+            </div>
+          </div>
+
+          <!-- Stage 1 Telemetry Banner -->
+          <div class="telemetry-banner">
+            <div class="telemetry-header">
+              <div class="telemetry-title-wrap">
+                <span>📡</span>
+                <span class="telemetry-title">Stage 1 Telemetry &amp; Notification Telemetry</span>
+              </div>
+              <div class="telemetry-channels">
+                <span class="channel-pill">HTTP GET /api/sadhana-catalog</span>
+                <span class="channel-pill">Form State Sync</span>
+              </div>
+            </div>
+            <div class="telemetry-grid">
+              <div class="tg-item">
+                <div class="tg-label">Information Exchange</div>
+                <div class="tg-content">Catalog metadata retrieved; UI dynamically populates dropdowns, requirements, and dietary pledges.</div>
+              </div>
+              <div class="tg-item">
+                <div class="tg-label">Telemetry Log</div>
+                <div class="tg-content"><code>PRACTICE_SELECTED</code> &bull; Seeker initiated practice selection draft.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             STAGE 2: SANKALP, PLEDGES & DIGITAL SIGNATURE
+             ============================================================== -->
+        <section class="stage-block" id="stage-2">
+          <div class="stage-header">
+            <div class="stage-badge-group">
+              <div class="stage-number sn-2">2</div>
+              <div>
+                <h2 class="stage-title">Sacred Commitments, Sankalp &amp; Digital Oath</h2>
+                <div class="stage-sub">Devotee records personal intention statement, accepts dietary restrictions, and signs sacred digital pledge</div>
+              </div>
+            </div>
+            <span class="stage-sla bb-green">Commitment Oath &bull; Wizard Steps 2&ndash;4</span>
+          </div>
+
+          <div class="flow-row">
+            <!-- Node 2.1 -->
+            <div class="wf-node" onclick="openSpecDrawer('2.1', 'Sacred Dietary & Conduct Switches', 'User must affirmatively toggle all strict Vedic commitments: Sattvic Diet (no onion/garlic/alcohol), Daily Diya Discipline, and Brahmacharya during cycle.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">🛡️</span>
+                  <span class="node-title">Sacred Commitments Verification</span>
+                </div>
+                <span class="node-type-badge badge-decision">PLEDGE</span>
+              </div>
+              <p class="node-desc">Rigorous validation: all commitment switches must be checked before applicant can proceed.</p>
+              <ul class="node-attrs">
+                <li>Strict Sattvic Diet Verified</li>
+                <li>Daily Diya Discipline Accepted</li>
+                <li>Brahmacharya during cycle confirmed</li>
+              </ul>
+              <div class="node-code">if (!allSwitchesChecked) return showError();</div>
+            </div>
+
+            <!-- Node 2.2 -->
+            <div class="wf-node" onclick="openSpecDrawer('2.2', 'Sankalp Statement & Digital Signature', 'Devotee crafts written intention (min 10 characters) and submits typed full name digital oath.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">✍️</span>
+                  <span class="node-title">Sankalp &amp; Digital Signature</span>
+                </div>
+                <span class="node-type-badge badge-approval">SIGNATURE</span>
+              </div>
+              <p class="node-desc">Cryptographic binding of intention to seeker reference key and timestamp.</p>
+              <ul class="node-attrs">
+                <li>Written Sankalp text validated</li>
+                <li>Full name digital signature recorded</li>
+                <li>Submission timestamp &amp; SLA clock started</li>
+              </ul>
+              <div class="node-code">SadhanaRemedyController.submitFinal()</div>
+            </div>
+          </div>
+
+          <!-- Stage 2 Telemetry Banner -->
+          <div class="telemetry-banner">
+            <div class="telemetry-header">
+              <div class="telemetry-title-wrap">
+                <span>📡</span>
+                <span class="telemetry-title">Stage 2 Telemetry &amp; Outbound Notification Dispatch</span>
+              </div>
+              <div class="telemetry-channels">
+                <span class="channel-pill">POST /api/sadhana/apply</span>
+                <span class="channel-pill">BroadcastChannel</span>
+                <span class="channel-pill">Mentor Push Notification</span>
+                <span class="channel-pill">In-App Notification Center</span>
+              </div>
+            </div>
+            <div class="telemetry-grid">
+              <div class="tg-item">
+                <div class="tg-label">Outbound Notification Event</div>
+                <div class="tg-content"><code>NEW_SADHANA_APPLICATION</code> &bull; Dispatched to Lineage Mentor &amp; Master Admin Queue: "📿 New initiation request for [Item Title] submitted by [Seeker Name]."</div>
+              </div>
+              <div class="tg-item">
+                <div class="tg-label">Queue Increment</div>
+                <div class="tg-content">Badge on "📿 Sadhana &amp; Remedy Queue" increments in real time. Drawer state refreshed.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             STAGE 3: MENTOR / MASTER HEALER REVIEW GATE
+             ============================================================== -->
+        <section class="stage-block" id="stage-3">
+          <div class="stage-header">
+            <div class="stage-badge-group">
+              <div class="stage-number sn-3">3</div>
+              <div>
+                <h2 class="stage-title">Mentor Review Gate &bull; Pending Seeker Approvals Drawer</h2>
+                <div class="stage-sub">Mentor inspects applicant dossier in Tab 2 (Sadhana &amp; Remedy Queue), tunes daily mala prescription, and decides</div>
+              </div>
+            </div>
+            <span class="stage-sla bb-gold">Mentor Action Gate &bull; 24h SLA Window</span>
+          </div>
+
+          <div class="flow-row">
+            <!-- Node 3.1 -->
+            <div class="wf-node" onclick="openSpecDrawer('3.1', 'Pending Approvals Drawer Tab 2 Inspection', 'Mentor opens the right slide-out drawer, navigates to Tab 2 (Sadhana & Remedy Queue), and examines applicant sankalp and commitments.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">📋</span>
+                  <span class="node-title">Dossier Inspection (Tab 2)</span>
+                </div>
+                <span class="node-type-badge badge-entry">INSPECTION</span>
+              </div>
+              <p class="node-desc">Comprehensive review of seeker gotra, previous sadhana telemetry, and written sankalp.</p>
+              <ul class="node-attrs">
+                <li>Tab 1: 📝 Registration Queue (Devotee Onboarding)</li>
+                <li>Tab 2: 📿 Sadhana &amp; Remedy Queue (Active Initiations)</li>
+                <li>Live Filter: All, Sadhanas, Remedies, Pending Only</li>
+              </ul>
+              <div class="node-code">ProfileView.openPendingApprovalsDrawer(..., 'sadhana-remedy')</div>
+            </div>
+
+            <!-- Node 3.2 -->
+            <div class="wf-node" onclick="openSpecDrawer('3.2', 'Mentor Prescription Adjustment & Decision', 'Mentor has authority to adjust mala count (5, 11, 21, 51, 108 malas), modify Muhurta slot, write guidance notes, and choose approval, revision, or rejection.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">⚖️</span>
+                  <span class="node-title">Prescription &amp; Decision Gate</span>
+                </div>
+                <span class="node-type-badge badge-decision">DECISION</span>
+              </div>
+              <p class="node-desc">3 Closed-Loop Action Branches for the Mentor:</p>
+              <div class="branch-container">
+                <div class="branch-pass">
+                  <div class="branch-pass-title">✓ APPROVE &amp; GRANT DEEKSHA</div>
+                  Issues Initiation Token, activates tracking calendar in devotee portal.
+                </div>
+                <div class="branch-fail">
+                  <div class="branch-fail-title">📝 REVISION / ADJUSTMENT</div>
+                  Prescribes modified malas or asks clarification.
+                  <span class="loop-tag">↩ FEEDBACK LOOP: Devotee Portal Revision Alert</span>
+                </div>
+              </div>
+              <div class="node-code">ProfileModel.approveSadhanaRemedyApplication(id, notes, malas, slot)</div>
+            </div>
+          </div>
+
+          <!-- Stage 3 Telemetry Banner -->
+          <div class="telemetry-banner">
+            <div class="telemetry-header">
+              <div class="telemetry-title-wrap">
+                <span>📡</span>
+                <span class="telemetry-title">Stage 3 Multi-Stage Notification &amp; Information Exchange</span>
+              </div>
+              <div class="telemetry-channels">
+                <span class="channel-pill">BroadcastChannel</span>
+                <span class="channel-pill">Devotee In-App Alert</span>
+                <span class="channel-pill">Mentor Guidance Notes</span>
+              </div>
+            </div>
+            <div class="telemetry-grid">
+              <div class="tg-item">
+                <div class="tg-label">If Revision Requested</div>
+                <div class="tg-content"><code>SADHANA_REVISION_REQUESTED</code> &bull; Notifies devotee: "Mentor notes: '[Guidance]'. Please adjust practice parameters in Sadhana portal."</div>
+              </div>
+              <div class="tg-item">
+                <div class="tg-label">If Rejected</div>
+                <div class="tg-content"><code>SADHANA_APPLICATION_REJECTED</code> &bull; Notifies devotee: "Initiation not approved at this time. Reason: '[Reason]'. Continue daily diya foundation."</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             STAGE 4: DEEKSHA BLESSING & TOKEN MINTING
+             ============================================================== -->
+        <section class="stage-block" id="stage-4">
+          <div class="stage-header">
+            <div class="stage-badge-group">
+              <div class="stage-number sn-4">4</div>
+              <div>
+                <h2 class="stage-title">Deeksha Blessing &amp; Cryptographic Token Minting</h2>
+                <div class="stage-sub">System mints unique Initiation Token, binds active practice to Devotee profile, and unlocks practice tracker</div>
+              </div>
+            </div>
+            <span class="stage-sla bb-green">Initiation Granted &bull; Active Practice</span>
+          </div>
+
+          <div class="flow-row">
+            <!-- Node 4.1 -->
+            <div class="wf-node" onclick="openSpecDrawer('4.1', 'Token Minting & Profile Elevation', 'Generates unique cryptographic token (e.g. IN-SADH-9K24M), writes active sadhana into devotee profile activeSadhanas array, and persists to local and server storage.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">🔑</span>
+                  <span class="node-title">Cryptographic Token Minting</span>
+                </div>
+                <span class="node-type-badge badge-token">TOKEN</span>
+              </div>
+              <p class="node-desc">Permanent initiation credential registered on Sansthan lineage ledger.</p>
+              <ul class="node-attrs">
+                <li>Token: <code>IN-SADH-XXXXX</code> or <code>IN-REMD-XXXXX</code></li>
+                <li>Target Malas &amp; Auspicious Slot Confirmed</li>
+                <li>Mentor Guidance Note attached permanently</li>
+              </ul>
+              <div class="node-code">initiationToken = "IN-SADH-" + hash.toUpperCase()</div>
+            </div>
+
+            <!-- Node 4.2 -->
+            <div class="wf-node" onclick="openSpecDrawer('4.2', 'Active Tracker Activation', 'Devotee dashboard immediately unlocks the interactive 108-bead Japa counter, mantra player, and Sandhya Muhurta timer.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">📲</span>
+                  <span class="node-title">Practice Tracker Activation</span>
+                </div>
+                <span class="node-type-badge badge-process">TRACKER</span>
+              </div>
+              <p class="node-desc">Real-time bi-directional sync activates spiritual practice dashboard.</p>
+              <ul class="node-attrs">
+                <li>108-Bead Interactive Mala Counter Unlocked</li>
+                <li>Daily Target Progress Bar Initialized (0/21 Days)</li>
+                <li>Muhurta Reminders Configured</li>
+              </ul>
+              <div class="node-code">profile.activeSadhanas.push(initiatedPractice)</div>
+            </div>
+          </div>
+
+          <!-- Stage 4 Telemetry Banner -->
+          <div class="telemetry-banner">
+            <div class="telemetry-header">
+              <div class="telemetry-title-wrap">
+                <span>📡</span>
+                <span class="telemetry-title">Stage 4 Information Exchange &amp; Notification Telemetry</span>
+              </div>
+              <div class="telemetry-channels">
+                <span class="channel-pill">SADHANA_INITIATION_APPROVED</span>
+                <span class="channel-pill">Floating Toast Alert</span>
+                <span class="channel-pill">Lineage Sync</span>
+              </div>
+            </div>
+            <div class="telemetry-grid">
+              <div class="tg-item">
+                <div class="tg-label">Devotee Notification</div>
+                <div class="tg-content"><code>SADHANA_INITIATION_APPROVED</code> &bull; "📿 Deeksha Granted! Your [Item Title] is active. Token: [Token]. Daily practice tracker initialized."</div>
+              </div>
+              <div class="tg-item">
+                <div class="tg-label">Mentor &amp; Master Telemetry</div>
+                <div class="tg-content">Card in Tab 2 updates to <code>🟢 Active &amp; Initiated</code>. Counter badges updated across all portals.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             STAGE 5: DAILY PRACTICE TELEMETRY & JAPA MALAS
+             ============================================================== -->
+        <section class="stage-block" id="stage-5">
+          <div class="stage-header">
+            <div class="stage-badge-group">
+              <div class="stage-number sn-5">5</div>
+              <div>
+                <h2 class="stage-title">Daily Practice Telemetry &amp; Bead Counter Tracking</h2>
+                <div class="stage-sub">Devotee logs daily malas, bead telemetry, and Muhurta compliance; mentor monitors streak progress</div>
+              </div>
+            </div>
+            <span class="stage-sla bb-blue">Telemetry Stream &bull; Daily Logging</span>
+          </div>
+
+          <div class="flow-row">
+            <!-- Node 5.1 -->
+            <div class="wf-node" onclick="openSpecDrawer('5.1', 'Interactive Japa Bead Telemetry', 'Captures bead clicks, chanting velocity, and completion of prescribed daily malas quota.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">📿</span>
+                  <span class="node-title">Japa Mala Bead Telemetry</span>
+                </div>
+                <span class="node-type-badge badge-process">JAPA</span>
+              </div>
+              <p class="node-desc">Live bead count calculation (1 Mala = 108 beads). Validates against minimum chanting duration.</p>
+              <ul class="node-attrs">
+                <li>Touch/Keyboard Bead Increment Tracking</li>
+                <li>Daily Malas Target Verification (e.g. 11 Malas)</li>
+                <li>Muhurta Timestamp Accuracy Check</li>
+              </ul>
+              <div class="node-code">activePractice.dailyMalasDone += 1</div>
+            </div>
+
+            <!-- Node 5.2 -->
+            <div class="wf-node" onclick="openSpecDrawer('5.2', 'Lapse Detection & Streak Maintenance', 'Detects unbroken practice streaks and triggers alert to mentor if practice is interrupted for &gt; 24 hours.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">📊</span>
+                  <span class="node-title">Streak &amp; Lapse Monitor</span>
+                </div>
+                <span class="node-type-badge badge-decision">MONITOR</span>
+              </div>
+              <p class="node-desc">Closed-loop adherence guard to prevent break in spiritual anushthan.</p>
+              <div class="branch-container">
+                <div class="branch-pass">
+                  <div class="branch-pass-title">✓ STREAK MAINTAINED</div>
+                  Day verified. Daily log sent to mentor scorecard.
+                </div>
+                <div class="branch-fail">
+                  <div class="branch-fail-title">⚠️ LAPSE DETECTED</div>
+                  &gt; 24h without telemetry log.
+                  <span class="loop-tag">↩ FEEDBACK LOOP: Stage 7 Prayaschitta Branch</span>
+                </div>
+              </div>
+              <div class="node-code">if (hoursSinceLastLog &gt; 28) triggerDisciplineAlert()</div>
+            </div>
+          </div>
+
+          <!-- Stage 5 Telemetry Banner -->
+          <div class="telemetry-banner">
+            <div class="telemetry-header">
+              <div class="telemetry-title-wrap">
+                <span>📡</span>
+                <span class="telemetry-title">Stage 5 Daily Telemetry Telemetry</span>
+              </div>
+              <div class="telemetry-channels">
+                <span class="channel-pill">POST /api/telemetry/daily</span>
+                <span class="channel-pill">Milestone Badges</span>
+              </div>
+            </div>
+            <div class="telemetry-grid">
+              <div class="tg-item">
+                <div class="tg-label">Milestone Notifications</div>
+                <div class="tg-content">Celebration notifications triggered at Day 7, Day 14, and Day 21 completions with spiritual blessing quotes.</div>
+              </div>
+              <div class="tg-item">
+                <div class="tg-label">Mentor Scorecard Sync</div>
+                <div class="tg-content">Mentor lineage dashboard reflects live disciple chanting statistics without page reload.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             STAGE 6: PURNAAHUTI & COMPLETION BLESSING
+             ============================================================== -->
+        <section class="stage-block" id="stage-6">
+          <div class="stage-header">
+            <div class="stage-badge-group">
+              <div class="stage-number sn-6">6</div>
+              <div>
+                <h2 class="stage-title">Anushthan Purnaahuti &amp; Mentor Sign-Off</h2>
+                <div class="stage-sub">Culmination of cycle (21/41/108 days), hawan/offering ceremony, and elevation to higher lineage role</div>
+              </div>
+            </div>
+            <span class="stage-sla bb-gold">Anushthan Completion &bull; Level Ascension</span>
+          </div>
+
+          <div class="flow-row">
+            <!-- Node 6.1 -->
+            <div class="wf-node" onclick="openSpecDrawer('6.1', 'Purnaahuti Hawan & Upay Offering', 'Devotee completes concluding offering checklist: final Gayatri/Navarna ahuti, charity to needy, or kuldevi coconuts offering.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">🔥</span>
+                  <span class="node-title">Purnaahuti Hawan Checklist</span>
+                </div>
+                <span class="node-type-badge badge-process">CONCLUDING</span>
+              </div>
+              <p class="node-desc">Final spiritual closure seals anushthan energy and karmic resolution.</p>
+              <ul class="node-attrs">
+                <li>Final Malas offering count verified</li>
+                <li>Purnaahuti offering photograph submitted</li>
+                <li>Devotee completion feedback recorded</li>
+              </ul>
+              <div class="node-code">activePractice.status = "COMPLETED"</div>
+            </div>
+
+            <!-- Node 6.2 -->
+            <div class="wf-node" onclick="openSpecDrawer('6.2', 'Mentor Completion Sign-off & Role Ascension', 'Mentor evaluates complete telemetry log, signs digital completion certificate, and qualifies devotee for Trainee Sadhak / Certified Healer elevation.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">🏆</span>
+                  <span class="node-title">Lineage Ascension Blessing</span>
+                </div>
+                <span class="node-type-badge badge-approval">ASCENSION</span>
+              </div>
+              <p class="node-desc">Successful devotee ascends in lineage tier with verified accomplishment certificate.</p>
+              <ul class="node-attrs">
+                <li>Level 3 Trainee Sadhak Badge awarded</li>
+                <li>Eligible to apply for Tier 2 Certified Healer</li>
+                <li>Completion Certificate minted on platform</li>
+              </ul>
+              <div class="node-code">ProfileModel.elevateProfileTier(profileId, "TRAINEE")</div>
+            </div>
+          </div>
+
+          <!-- Stage 6 Telemetry Banner -->
+          <div class="telemetry-banner">
+            <div class="telemetry-header">
+              <div class="telemetry-title-wrap">
+                <span>📡</span>
+                <span class="telemetry-title">Stage 6 Completion Notification &amp; Ledger Minting</span>
+              </div>
+              <div class="telemetry-channels">
+                <span class="channel-pill">ANUSHTHAN_COMPLETED</span>
+                <span class="channel-pill">Ascension Certificate</span>
+                <span class="channel-pill">Sangha Broadcast</span>
+              </div>
+            </div>
+            <div class="telemetry-grid">
+              <div class="tg-item">
+                <div class="tg-label">Sangha Celebration Broadcast</div>
+                <div class="tg-content"><code>SADHANA_PURNAAHUTI_ACHIEVED</code> &bull; "Devotee [Name] has successfully completed 21-Day [Practice Title]! Awarded Trainee Sadhak credentials."</div>
+              </div>
+              <div class="tg-item">
+                <div class="tg-label">Certificate Generation</div>
+                <div class="tg-content">Digital certificate stored in devotee dossier; printable PDF generated with QR validation.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             STAGE 7: CLOSED-LOOP PRAYASCHITTA PROTOCOLS
+             ============================================================== -->
+        <section class="stage-block" id="stage-7">
+          <div class="stage-header">
+            <div class="stage-badge-group">
+              <div class="stage-number sn-7">7</div>
+              <div>
+                <h2 class="stage-title">Closed-Loop Prayaschitta &amp; Discipline Recovery</h2>
+                <div class="stage-sub">Automated recovery and penance protocols if anushthan is interrupted, ensuring zero open logic loops</div>
+              </div>
+            </div>
+            <span class="stage-sla bb-purple">Closed-Loop Feedback &bull; Convergence</span>
+          </div>
+
+          <div class="flow-row">
+            <!-- Node 7.1 -->
+            <div class="wf-node" onclick="openSpecDrawer('7.1', 'Interruption Classification', 'Distinguishes between Minor Inadvertent Lapse (&lt; 2 missed days, unavoidable travel) vs Major Willful Violation (broken vows, severe diet violation).')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">⚖️</span>
+                  <span class="node-title">Interruption Classification</span>
+                </div>
+                <span class="node-type-badge badge-decision">DIAGNOSTIC</span>
+              </div>
+              <p class="node-desc">Evaluates lapse telemetry against compassionate Vedic penance jurisprudence.</p>
+              <div class="branch-container">
+                <div class="branch-pass">
+                  <div class="branch-pass-title">MINOR LAPSE (&lt; 2 Days)</div>
+                  Prescribes 3 compensatory malas for missed count.
+                  <span class="loop-tag">↩ CONVERGES BACK TO: Stage 5 Daily Japa</span>
+                </div>
+                <div class="branch-fail">
+                  <div class="branch-fail-title">MAJOR VIOLATION</div>
+                  Reset cycle with new Sankalp ceremony.
+                  <span class="loop-tag">↩ CONVERGES BACK TO: Stage 2 Sankalp Oath</span>
+                </div>
+              </div>
+              <div class="node-code">PrayaschittaEngine.evaluateLapse(lapseData)</div>
+            </div>
+
+            <!-- Node 7.2 -->
+            <div class="wf-node" onclick="openSpecDrawer('7.2', 'Closed-Loop Lineage Reintegration', 'Disciple completes remedial prayaschitta, mentor reviews and approves reinstatement, closing the loop back into main lineage stream.')">
+              <div class="node-header">
+                <div class="node-title-wrap">
+                  <span class="node-icon">🔄</span>
+                  <span class="node-title">Closed-Loop Reintegration</span>
+                </div>
+                <span class="node-type-badge badge-approval">CLOSED LOOP</span>
+              </div>
+              <p class="node-desc">Guarantees no dead ends: every branch returns to active practice or verified closure.</p>
+              <ul class="node-attrs">
+                <li>Compensatory Malas verified by mentor</li>
+                <li>Discipline score updated with repentance factor</li>
+                <li>Full lineage harmony restored</li>
+              </ul>
+              <div class="node-code">activePractice.status = "REINSTATED"</div>
+            </div>
+          </div>
+
+          <!-- Stage 7 Telemetry Banner -->
+          <div class="telemetry-banner">
+            <div class="telemetry-header">
+              <div class="telemetry-title-wrap">
+                <span>📡</span>
+                <span class="telemetry-title">Stage 7 Feedback Notification Telemetry</span>
+              </div>
+              <div class="telemetry-channels">
+                <span class="channel-pill">PRAYASCHITTA_PRESCRIBED</span>
+                <span class="channel-pill">Mentor Guidance Alert</span>
+              </div>
+            </div>
+            <div class="telemetry-grid">
+              <div class="tg-item">
+                <div class="tg-label">Recovery Notification</div>
+                <div class="tg-content"><code>DISCIPLINE_RECOVERY_ACCEPTED</code> &bull; "Your remedial penance has been validated by Mentor. Your anushthan is restored to compliant standing."</div>
+              </div>
+              <div class="tg-item">
+                <div class="tg-label">Closed Loop Verification</div>
+                <div class="tg-content">Zero dangling state: all exceptions resolve back into verified database models.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT SIDEBAR: SPECIFICATIONS & METRICS -->
+      <aside class="sidebar">
+        <!-- OOPS MVC ARCHITECTURE SUMMARY -->
+        <div class="side-card">
+          <h3 class="side-card-title"><span>🏛️</span> OOPS MVC System Model</h3>
+          <div class="stat-row">
+            <span style="color: var(--txt-muted);">Model Layer:</span>
+            <span class="stat-val" style="color: var(--gold);">ProfileModel &bull; SadhanaRemedyModel</span>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--txt-muted);">View Layer:</span>
+            <span class="stat-val" style="color: #38bdf8;">ProfileView &bull; SadhanaRemedyView</span>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--txt-muted);">Controller Layer:</span>
+            <span class="stat-val" style="color: #a855f7;">ProfileController &bull; SadhanaRemedyController</span>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--txt-muted);">Backend API:</span>
+            <span class="stat-val" style="color: #10b981;">/api/sadhana/apply &bull; /approve</span>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--txt-muted);">Sync Bus:</span>
+            <span class="stat-val" style="color: #f59e0b;">BroadcastChannel ('spiritual_karim_sync')</span>
+          </div>
+        </div>
+
+        <!-- NOTIFICATION TELEMETRY SUMMARY -->
+        <div class="side-card">
+          <h3 class="side-card-title"><span>🔔</span> Notification Matrix</h3>
+          <div class="stat-row">
+            <span style="color: var(--txt-muted);">Stage 0:</span>
+            <span class="stat-val">FOUNDATION_DISCIPLINE_VERIFIED</span>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--txt-muted);">Stage 2:</span>
+            <span class="stat-val" style="color: #f59e0b;">NEW_SADHANA_APPLICATION</span>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--txt-muted);">Stage 3:</span>
+            <span class="stat-val" style="color: #f87171;">SADHANA_REVISION_REQUESTED</span>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--txt-muted);">Stage 4:</span>
+            <span class="stat-val" style="color: #10b981;">SADHANA_INITIATION_APPROVED</span>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--txt-muted);">Stage 6:</span>
+            <span class="stat-val" style="color: var(--gold);">ANUSHTHAN_COMPLETED</span>
+          </div>
+          <div class="stat-row">
+            <span style="color: var(--txt-muted);">Stage 7:</span>
+            <span class="stat-val" style="color: #c084fc;">PRAYASCHITTA_RESOLVED</span>
+          </div>
+        </div>
+
+        <!-- 2-TAB PENDING DRAWER SUMMARY -->
+        <div class="side-card">
+          <h3 class="side-card-title"><span>📂</span> Pending Approvals 2 Tabs</h3>
+          <div style="font-size: 0.74rem; color: var(--txt-muted); line-height: 1.45; margin-bottom: 0.65rem;">
+            The Right Slide-out Drawer (<code>#pending-approval-drawer</code>) features dedicated queues:
+          </div>
+          <div style="padding: 0.65rem; background: var(--bg-subtle); border-radius: 6px; margin-bottom: 0.5rem; border: 1px solid var(--border);">
+            <strong style="color: #ffffff; font-size: 0.78rem;">Tab 1: 📝 Registration Queue</strong><br>
+            <span style="font-size: 0.7rem; color: var(--txt-muted);">Pairing verification, KYC documents lightbox, tier role assignment (Devotee, Trainee, Healer, Master).</span>
+          </div>
+          <div style="padding: 0.65rem; background: var(--bg-subtle); border-radius: 6px; border: 1px solid var(--border-gold);">
+            <strong style="color: var(--gold); font-size: 0.78rem;">Tab 2: 📿 Sadhana &amp; Remedy Queue</strong><br>
+            <span style="font-size: 0.7rem; color: var(--txt-muted);">Sadhana initiation review, mala adjustment, Muhurta confirmation, and Deeksha token generation.</span>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- INTERACTIVE SPECIFICATION SLIDE-OUT DRAWER -->
+    <div id="spec-drawer" aria-hidden="true">
+      <div class="spec-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">📖</span>
+          <div>
+            <h3 id="spec-node-id" style="margin: 0; font-size: 1.05rem; color: var(--gold);">Node Specification</h3>
+            <span id="spec-node-title" style="font-size: 0.72rem; color: var(--txt-muted); font-weight: 600;">Technical Blueprint</span>
+          </div>
+        </div>
+        <button type="button" class="spec-close-btn" onclick="closeSpecDrawer()">&times;</button>
+      </div>
+      <div id="spec-drawer-body" class="spec-body">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+
+    <!-- CLIENT SCRIPT -->
+    <script>
+      function openSpecDrawer(nodeId, title, description) {
+        const drawer = document.getElementById("spec-drawer");
+        const titleEl = document.getElementById("spec-node-title");
+        const idEl = document.getElementById("spec-node-id");
+        const bodyEl = document.getElementById("spec-drawer-body");
+
+        if (idEl) idEl.textContent = "Node " + nodeId;
+        if (titleEl) titleEl.textContent = title;
+        if (bodyEl) {
+          bodyEl.innerHTML = `
+            <div style="background: rgba(212,175,55,0.1); border: 1px solid var(--border-gold); padding: 0.85rem; border-radius: 8px; margin-bottom: 1rem;">
+              <strong style="color: var(--gold); font-size: 0.95rem; display: block; margin-bottom: 0.25rem;">${title}</strong>
+              <p style="color: #e2e8f0; margin: 0;">${description}</p>
+            </div>
+            <h4 style="color: #ffffff; margin-bottom: 0.45rem; font-size: 0.82rem; text-transform: uppercase;">Information Exchange &amp; Notification Telemetry</h4>
+            <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; font-family: monospace; font-size: 0.72rem; color: #7dd3fc;">
+              Event: NODE_${nodeId.replace('.', '_')}_TELEMETRY<br>
+              Status: ACTIVE &bull; Synchronous Handshake<br>
+              Channel: BroadcastChannel('spiritual_karim_sync')<br>
+              Payload: { nodeId: "${nodeId}", timestamp: ${Date.now()}, closedLoop: true }
+            </div>
+            <h4 style="color: #ffffff; margin-bottom: 0.45rem; font-size: 0.82rem; text-transform: uppercase;">Closed Loop Convergence</h4>
+            <p style="color: var(--txt-muted); font-size: 0.78rem;">
+              This step guarantees closed-loop state convergence with no dangling logic. Any exception or failure in this node automatically triggers a feedback loop back to the preceding verification gate.
+            </p>
+          `;
+        }
+        if (drawer) drawer.classList.add("open");
+      }
+
+      function closeSpecDrawer() {
+        const drawer = document.getElementById("spec-drawer");
+        if (drawer) drawer.classList.remove("open");
+      }
+
+      function filterWorkflowNodes(query) {
+        const q = (query || "").toLowerCase().trim();
+        const nodes = document.querySelectorAll(".wf-node");
+        nodes.forEach(node => {
+          const text = (node.textContent || "").toLowerCase();
+          node.style.display = (!q || text.includes(q)) ? "block" : "none";
+        });
+      }
+    </script>
+  </body>
+</html>

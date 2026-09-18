@@ -84,6 +84,16 @@ class FirebaseService {
     return this.saveLocalData(data);
   }
 
+  deletePairingInvite(inviteId) {
+    const data = this.getLocalData();
+    if (Array.isArray(data.pairing_invites)) {
+      data.pairing_invites = data.pairing_invites.filter(i => i.id !== inviteId);
+    } else if (typeof data.pairing_invites === 'object' && data.pairing_invites) {
+      delete data.pairing_invites[inviteId];
+    }
+    return this.saveLocalData(data);
+  }
+
   getSystemConfig() {
     const data = this.getLocalData();
     return data.system_config || {

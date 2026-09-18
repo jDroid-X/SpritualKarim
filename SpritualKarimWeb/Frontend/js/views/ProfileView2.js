@@ -830,8 +830,13 @@ ProfileView.prototype.renderInBodyHierarchyTree = function(profiles = [], focusT
       }
 
       const name = p.name || (isRoot ? 'Founder (Karim Ji)' : 'Seeker');
-      const isMatch = cleanQuery && name.toLowerCase().includes(cleanQuery);
-      const isDimmed = (cleanQuery && !isMatch) || (focusTier && focusTier !== tier);
+      const tokens = cleanQuery ? cleanQuery.split(/\s+/).filter(Boolean) : [];
+      const treeSearchTarget = [
+        p.name, p.fullName, p.referenceCode, p.city, p.gotra, p.phone,
+        isRoot ? 'founder karim ji master' : ''
+      ].filter(Boolean).join(' ').toLowerCase();
+      const isMatch = tokens.length > 0 && tokens.every(tok => treeSearchTarget.includes(tok));
+      const isDimmed = (tokens.length > 0 && !isMatch) || (focusTier && focusTier !== tier);
 
       return `
         <div class="spiderweb-node spiderweb-node-tier-${tier} ${isRoot ? 'is-root-node' : ''} ${isMatch ? 'search-match' : ''} ${isDimmed ? 'dimmed' : ''}"
@@ -1722,28 +1727,44 @@ ProfileView.prototype.renderTreeProfileDrawer = function(profile) {
 };
 
 ProfileView.prototype.renderAndroidHealersHub = function(scopedProfiles = [], activeProfile = null, roleMode = 'MASTER') {
-    // 1. Summary Metrics
-    const isMaster = roleMode === 'MASTER' || roleMode === 'ADMIN';
-    const isHealer = roleMode === 'HEALER';
-    const isTrainee = roleMode === 'TRAINEE';
-    const isDevotee = roleMode === 'DEVOTEE';
+    // 1. Summary Metrics from SSOT MetadataCountEngine
+    let hub = null;
+    if (typeof window !== 'undefined' && window.MetadataCountEngine && typeof window.MetadataCountEngine.computeHealerHubMetrics === 'function') {
+      hub = window.MetadataCountEngine.computeHealerHubMetrics(scopedProfiles);
+    } else {
+      const cleanProfiles = Array.isArray(scopedProfiles) ? scopedProfiles : [];
+      const adminCount = cleanProfiles.filter(p => (p.profileType || "").toUpperCase() === "ADMIN" || p.level === 1).length;
+      const healersCount = cleanProfiles.filter(p => ((p.profileType || "").toUpperCase() === "HEALER" || p.level === 2) && p.level !== 1).length;
+      const traineesCount = cleanProfiles.filter(p => ((p.profileType || "").toUpperCase() === "TRAINEE" || p.level === 3) && p.level !== 1 && p.level !== 2 && (p.profileType || "").toUpperCase() !== "DEVOTEE").length;
+      const devoteesCount = cleanProfiles.filter(p => ((p.profileType || "").toUpperCase() === "DEVOTEE" || p.level === 4 || p.level === 5) && (p.profileType || "").toUpperCase() !== "ADMIN" && (p.profileType || "").toUpperCase() !== "HEALER" && (p.profileType || "").toUpperCase() !== "TRAINEE").length;
 
-    const rawAdmin = scopedProfiles.filter(p => p.profileType === 'ADMIN' || p.level === 1).length;
-    const rawHealers = scopedProfiles.filter(p => p.profileType === 'HEALER' || p.level === 2 || p.level === 3).length;
-    const rawTrainees = scopedProfiles.filter(p => p.profileType === 'TRAINEE' || p.level === 4).length;
-    const rawDevotees = scopedProfiles.filter(p => p.profileType === 'DEVOTEE' || p.level === 5).length;
+      hub = {
+        total: adminCount + healersCount + traineesCount + devoteesCount,
+        admin: adminCount,
+        healers: healersCount,
+        trainees: traineesCount,
+        devotees: devoteesCount
+      };
+    }
 
-    const adminCount = isMaster ? rawAdmin : 0;
-    const healersCount = (isMaster || isHealer) ? rawHealers : 0;
-    const traineesCount = (isMaster || isHealer || isTrainee) ? rawTrainees : 0;
-    const devoteesCount = rawDevotees;
-    const totalCount = adminCount + healersCount + traineesCount + devoteesCount;
+    const totalCount = hub.total;
+    const adminCount = hub.admin;
+    const healersCount = hub.healers;
+    const traineesCount = hub.trainees;
+    const devoteesCount = hub.devotees;
 
-    if (this.hubMetricTotal) this.hubMetricTotal.textContent = totalCount;
-    if (this.hubMetricAdmin) this.hubMetricAdmin.textContent = adminCount;
-    if (this.hubMetricHealers) this.hubMetricHealers.textContent = healersCount;
-    if (this.hubMetricTrainees) this.hubMetricTrainees.textContent = traineesCount;
-    if (this.hubMetricDevotees) this.hubMetricDevotees.textContent = devoteesCount;
+    // Direct DOM element resolution for the top strip cards
+    const elTotal = document.getElementById('hub-metric-total');
+    const elAdmin = document.getElementById('hub-metric-admin');
+    const elHealers = document.getElementById('hub-metric-healers');
+    const elTrainees = document.getElementById('hub-metric-trainees');
+    const elDevotees = document.getElementById('hub-metric-devotees');
+
+    if (elTotal) elTotal.textContent = totalCount;
+    if (elAdmin) elAdmin.textContent = adminCount;
+    if (elHealers) elHealers.textContent = healersCount;
+    if (elTrainees) elTrainees.textContent = traineesCount;
+    if (elDevotees) elDevotees.textContent = devoteesCount;
 
     // 2. Category Filter Chip Counts
     const setChipText = (id, count) => {
@@ -1758,16 +1779,16 @@ ProfileView.prototype.renderAndroidHealersHub = function(scopedProfiles = [], ac
 
     // 3. Filter List by Category & Search Query
     const query = (this.healersSearchQuery || '').trim().toLowerCase();
+    const tokens = query ? query.split(/\s+/).filter(Boolean) : [];
     const category = this.healersSelectedCategory || 'ALL';
 
     const filtered = scopedProfiles.filter(p => {
       const matchesCategory = category === 'ALL' || p.profileType === category;
-      const matchesQuery = !query ||
-        (p.name && p.name.toLowerCase().includes(query)) ||
-        (p.referenceCode && p.referenceCode.toLowerCase().includes(query)) ||
-        (p.phone && p.phone.includes(query)) ||
-        (p.city && p.city.toLowerCase().includes(query)) ||
-        (p.level && p.level.toString() === query);
+      const searchTarget = [
+        p.name, p.fullName, p.referenceCode, p.phone, p.city, p.state, p.gotra,
+        p.profileType, p.role, p.level !== undefined ? ('level ' + p.level + ' ' + p.level) : ''
+      ].filter(Boolean).join(' ').toLowerCase();
+      const matchesQuery = tokens.length === 0 || tokens.every(tok => searchTarget.includes(tok));
       return matchesCategory && matchesQuery;
     });
 
@@ -1804,7 +1825,16 @@ ProfileView.prototype.renderAndroidHealersHub = function(scopedProfiles = [], ac
             </tr>
           </thead>
           <tbody>
-            ${filtered.map(p => `
+            ${filtered.map(p => {
+              const pendingSubmissions = [];
+              if (p.traineeSadhanas) {
+                p.traineeSadhanas.forEach(ts => {
+                  if (ts.pendingSubmissions && ts.pendingSubmissions.length > 0) {
+                    ts.pendingSubmissions.forEach(sub => { if (sub.status === 'PENDING_REVIEW') pendingSubmissions.push({...sub, sadhanaId: ts.id, sadhanaTitle: ts.title}); });
+                  }
+                });
+              }
+              return `
               <tr class="healer-table-row" data-id="${p.id}">
                 <td>
                   <div style="display: flex; align-items: center; gap: 0.6rem;">
@@ -1819,10 +1849,12 @@ ProfileView.prototype.renderAndroidHealersHub = function(scopedProfiles = [], ac
                 <td>${escapeHtmlUtil(p.city || 'N/A')}</td>
                 <td><span class="stamp-badge ${p.paymentStatus === 'PAID' ? 'stamp-paid' : 'stamp-free'}">${p.paymentStatus || 'PAID'}</span></td>
                 <td style="text-align: right;">
+                  ${pendingSubmissions.length > 0 ? `<button type="button" class="btn btn-xs btn-hub-approve-progress" style="background: var(--gold-500); color: black;" data-seeker-id="${p.id}" data-sadhana-id="${pendingSubmissions[0].sadhanaId}" data-sub-id="${pendingSubmissions[0].submissionId}">✓ Approve Progress</button>` : ''}
                   <button type="button" class="btn btn-xs btn-gold btn-hub-select-profile" data-id="${p.id}">View Profile</button>
                 </td>
               </tr>
-            `).join('')}
+            `;
+            }).join('')}
           </tbody>
         </table>
       `;
@@ -1877,6 +1909,14 @@ ProfileView.prototype.renderAndroidHealersHub = function(scopedProfiles = [], ac
     this.healersHubCardsContainer.innerHTML = filtered.map(p => {
       const remediesCount = (p.selectedRemedies || []).length;
       const isCurrentActive = activeProfile && activeProfile.id === p.id;
+      const pendingSubmissions = [];
+      if (p.traineeSadhanas) {
+        p.traineeSadhanas.forEach(ts => {
+          if (ts.pendingSubmissions && ts.pendingSubmissions.length > 0) {
+            ts.pendingSubmissions.forEach(sub => { if (sub.status === 'PENDING_REVIEW') pendingSubmissions.push({...sub, sadhanaId: ts.id, sadhanaTitle: ts.title}); });
+          }
+        });
+      }
 
       return `
         <div class="healer-member-card ${isCurrentActive ? 'active-member-card' : ''}" data-profile-id="${p.id}" style="${isCurrentActive ? 'border-color: var(--gold-400); background: rgba(212, 175, 55, 0.08);' : ''}">
@@ -1914,7 +1954,8 @@ ProfileView.prototype.renderAndroidHealersHub = function(scopedProfiles = [], ac
           </div>
 
           <!-- 3-Dots Action Menu Trigger -->
-          <div style="position: relative;">
+          <div style="position: relative; display: flex; align-items: center; gap: 0.5rem;">
+            ${pendingSubmissions.length > 0 ? `<button type="button" class="btn btn-xs btn-hub-approve-progress" style="background: var(--gold-500); color: black; border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.7rem; font-weight: 600;" data-seeker-id="${p.id}" data-sadhana-id="${pendingSubmissions[0].sadhanaId}" data-sub-id="${pendingSubmissions[0].submissionId}">✓ Approve</button>` : ''}
             <button type="button" class="healer-card-actions-menu-btn btn-member-quick-opts" data-profile-id="${p.id}" title="Member Actions">
               ⋮
             </button>
@@ -2261,12 +2302,15 @@ ProfileView.prototype._generateRtdbRowHtml = function(key, value, currentPath, d
 
     // Search query matching
     const search = (this.rtdbSearchQuery || '').toLowerCase().trim();
-    if (search) {
-      const matchesKey = key.toLowerCase().includes(search);
-      const matchesPath = currentPath.toLowerCase().includes(search);
-      const matchesVal = !isObject && String(value).toLowerCase().includes(search);
-      const matchesChild = isObject && JSON.stringify(value).toLowerCase().includes(search);
-      if (!matchesKey && !matchesPath && !matchesVal && !matchesChild) {
+    const rtdbTokens = search ? search.split(/\s+/).filter(Boolean) : [];
+    if (rtdbTokens.length > 0) {
+      const rtdbTarget = [
+        key,
+        currentPath,
+        !isObject ? String(value) : '',
+        isObject ? JSON.stringify(value) : ''
+      ].filter(Boolean).join(' ').toLowerCase();
+      if (!rtdbTokens.every(tok => rtdbTarget.includes(tok))) {
         return '';
       }
     }
@@ -2498,11 +2542,14 @@ ProfileView.prototype.renderRichListBox = function(containerId, config = {}) {
 
     const renderItems = (filterText = '') => {
       const q = filterText.toLowerCase().trim();
+      const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
       const filtered = items.filter(it => {
-        if (!q) return true;
-        const t = (it.title || it.name || it.label || '').toLowerCase();
-        const s = (it.subtitle || it.category || it.role || it.referenceCode || '').toLowerCase();
-        return t.includes(q) || s.includes(q);
+        if (tokens.length === 0) return true;
+        const target = [
+          it.title, it.name, it.label, it.subtitle, it.category, it.role,
+          it.referenceCode, it.phone, it.details, it.description
+        ].filter(Boolean).join(' ').toLowerCase();
+        return tokens.every(tok => target.includes(tok));
       });
 
       if (countBadge) countBadge.textContent = filtered.length;
@@ -2667,7 +2714,9 @@ ProfileView.prototype.openSadhanaExplorerModal = function(initialKey) {
           </div>
         </div>
         <div>
-          <button type="button" class="btn btn-gold btn-sm btn-enroll-sadhana-action" data-sadhana-id="${item.id}">📿 Enroll in Sadhana</button>
+          <button type="button" class="btn btn-gold btn-sm btn-apply-sadhana-initiation" data-sadhana="${item.id}" data-sadhana-id="${item.id}" title="Apply for Sacred Sadhana Initiation and request upgrade to Trainee Sadhak">
+            📿 Apply for Sadhana Initiation
+          </button>
         </div>
       </div>
 
@@ -2730,10 +2779,17 @@ ProfileView.prototype.openSadhanaExplorerModal = function(initialKey) {
       };
     }
 
-    const enrollBtn = detailContainer.querySelector('.btn-enroll-sadhana-action');
-    if (enrollBtn) {
-      enrollBtn.onclick = () => {
-        if (this.showSlideToast) this.showSlideToast("Sadhana Enrolled", `📿 Active Devotee successfully enrolled in: ${item.title}`, "success", 3500);
+    const applyBtn = detailContainer.querySelector('.btn-apply-sadhana-initiation, .btn-enroll-sadhana-action');
+    if (applyBtn) {
+      applyBtn.onclick = (e) => {
+        e.preventDefault();
+        const sKey = item.id;
+        const ctrl = window.ProfileControllerInstance || this.controller;
+        if (ctrl && typeof ctrl.handleSadhanaInitiation === 'function') {
+          ctrl.handleSadhanaInitiation(sKey);
+        } else if (typeof ProfileController !== 'undefined' && typeof ProfileController.prototype.handleSadhanaInitiation === 'function') {
+          ProfileController.prototype.handleSadhanaInitiation.call(ctrl || this, sKey);
+        }
       };
     }
   };
@@ -2741,9 +2797,13 @@ ProfileView.prototype.openSadhanaExplorerModal = function(initialKey) {
   const renderList = () => {
     if (!listContainer) return;
     const q = searchQuery.toLowerCase().trim();
+    const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
     const filtered = sadhanas.filter(item => {
       const matchFilter = activeFilter === 'ALL' || (item.levelScope && item.levelScope.includes(activeFilter)) || (item.category && item.category.includes(activeFilter));
-      const matchSearch = !q || (item.title && item.title.toLowerCase().includes(q)) || (item.summary && item.summary.toLowerCase().includes(q));
+      const target = [
+        item.title, item.summary, item.category, item.levelScope, item.mantra, item.deity, item.description
+      ].filter(Boolean).join(' ').toLowerCase();
+      const matchSearch = tokens.length === 0 || tokens.every(tok => target.includes(tok));
       return matchFilter && matchSearch;
     });
 
@@ -2941,9 +3001,13 @@ ProfileView.prototype.openRemedyHubModal = function(initialKey) {
   const renderList = () => {
     if (!listContainer) return;
     const q = searchQuery.toLowerCase().trim();
+    const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
     const filtered = remedies.filter(item => {
       const matchFilter = activeFilter === 'ALL' || (item.domain && item.domain.includes(activeFilter)) || (item.category && item.category.includes(activeFilter)) || (item.title && item.title.toLowerCase().includes(activeFilter.toLowerCase()));
-      const matchSearch = !q || (item.title && item.title.toLowerCase().includes(q)) || (item.summary && item.summary.toLowerCase().includes(q)) || (item.category && item.category.toLowerCase().includes(q));
+      const target = [
+        item.title, item.summary, item.category, item.domain, item.affliction, item.procedure, item.mantra, item.targetDosha
+      ].filter(Boolean).join(' ').toLowerCase();
+      const matchSearch = tokens.length === 0 || tokens.every(tok => target.includes(tok));
       return matchFilter && matchSearch;
     });
 
@@ -3008,6 +3072,92 @@ ProfileView.prototype.openRemedyHubModal = function(initialKey) {
 
   renderList();
   renderDetail(selectedKey);
+};
+
+ProfileView.prototype.showToast = function(title, message, type = 'success', duration = 4000, actionBtn = null) {
+  if (typeof this.showSlideToast === 'function') {
+    return this.showSlideToast(title, message, type, duration, actionBtn);
+  }
+};
+ProfileView.prototype.renderDevoteeApplications = function(activeProfile, model) {
+  const container = document.getElementById('devotee-applications-container');
+  if (!container || !activeProfile || !model) return;
+
+  // Retrieve applications matching the current devotee
+  let apps = [];
+  if (typeof model.getSadhanaRemedyApplications === 'function') {
+    apps = model.getSadhanaRemedyApplications();
+  }
+  
+  // Filter for this devotee
+  const myApps = apps.filter(a => 
+    a.devoteeCode === activeProfile.referenceCode || 
+    (a.seekerPhone && a.seekerPhone === activeProfile.phone) ||
+    (a.seekerId && a.seekerId === activeProfile.id)
+  );
+
+  if (myApps.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem; background: var(--bg-surface, #f8fafc); border-radius: 8px; border: 1.5px dashed var(--border-color, #cbd5e1);">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;">📿</div>
+        <div style="font-weight: 600; color: var(--text-muted, #64748b);">No Pending Applications</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted, #64748b); margin-top: 0.25rem;">Explore the Sadhana Catalog to apply for an initiation.</div>
+      </div>
+    `;
+    return;
+  }
+
+  // Sort by date (newest first)
+  myApps.sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
+
+  container.innerHTML = myApps.map(app => {
+    const status = (app.status || 'PENDING').toUpperCase();
+    let statusColor, statusIcon, statusLabel;
+    
+    if (status === 'APPROVED') {
+      statusColor = '#10b981'; // emerald
+      statusIcon = '✅';
+      statusLabel = 'Approved';
+    } else if (status === 'REJECTED') {
+      statusColor = '#ef4444'; // red
+      statusIcon = '❌';
+      statusLabel = 'Rejected';
+    } else {
+      statusColor = '#f59e0b'; // amber
+      statusIcon = '⏳';
+      statusLabel = 'Pending Review';
+    }
+
+    const title = app.sadhanaTitle || app.itemTitle || app.title || 'Sacred Sadhana';
+    const type = app.contextType === 'remedy' ? '🌿 Spiritual Remedy' : '🕉️ Sadhana Initiation';
+    
+    const dateStr = app.createdAtMs ? new Date(app.createdAtMs).toLocaleDateString() : 'Just Now';
+
+    return `
+      <div class="dashboard-card" style="border-left: 3px solid ${statusColor}; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; right: 0; padding: 0.25rem 0.6rem; font-size: 0.7rem; font-weight: 700; color: #fff; background: ${statusColor}; border-bottom-left-radius: 6px;">
+          ${statusIcon} ${statusLabel}
+        </div>
+        
+        <div style="font-size: 0.75rem; font-weight: 600; color: var(--gold-500); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.3rem;">
+          ${type}
+        </div>
+        
+        <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.3rem;">
+          ${title}
+        </div>
+        
+        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.8rem; line-height: 1.4;">
+          Sent to Mentor: <strong>${app.mentorCode || app.sponsorCode || 'Default'}</strong><br>
+          Date: ${dateStr}
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.03); padding: 0.5rem; border-radius: 4px; font-size: 0.75rem; color: var(--text-muted); font-style: italic;">
+          "${app.intention || app.notes || 'Seeking spiritual guidance and initiation.'}"
+        </div>
+      </div>
+    `;
+  }).join('');
 };
 
 if (typeof module !== 'undefined' && module.exports) {

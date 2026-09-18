@@ -608,38 +608,23 @@ ProfileController.prototype._bindEventsPart2 = function () {
       const btnApply = e.target.closest(".btn-apply-sadhana-initiation");
       if (btnApply) {
         const sKey = btnApply.getAttribute("data-sadhana");
-        const p = this.model.getActiveProfile();
-        const catalogItem = typeof SADHANA_CATALOG !== "undefined" && SADHANA_CATALOG[sKey] ? SADHANA_CATALOG[sKey] : { title: sKey };
-        if (confirm(`Apply for Sacred Sadhana Initiation into "${catalogItem.title}"?\n\nThis sends an approval request to your Mentor/Healer and initiates your upgrade to Trainee Sadhak upon approval.`)) {
-          const defaultMentor = (this.model && typeof this.model.getDefaultMentorCode === "function") ? this.model.getDefaultMentorCode() : ((typeof appConfig !== "undefined" && appConfig.defaultMentorCode) || "SKHM-ADM1-7788-9900");
-          const invites = this.model.getPairingInvites();
-          const newReq = {
-            id: "req-sadhana-" + Date.now().toString(36),
-            sponsorCode: p.referredByCode || defaultMentor,
-            devoteeCode: p.referenceCode,
-            seekerName: p.name || "Seeker Applicant",
-            seekerPhone: p.phone || "+91 98000 00000",
-            seekerDeviceModel: "Web Seeker Portal",
-            hardwareNonce: p.referenceCode,
-            type: "SADHANA_APPLICATION",
-            sadhanaId: sKey,
-            sadhanaTitle: catalogItem.title,
-            seekerId: p.id,
-            assignedRole: "TRAINEE",
-            createdAtMs: Date.now(),
-            expiresAtMs: Date.now() + 24 * 60 * 60 * 1000,
-            status: "PENDING",
-            formattedCreatedTime: "Just Now",
-          };
-          invites.unshift(newReq);
-          this.model.savePairingInvites(invites);
-          this.view.showSlideToast(
-            "Sadhana Application Sent",
-            `📿 Application for "${catalogItem.title}" submitted to Mentor for approval.`,
-            "success",
-            4000
-          );
-          this._renderCurrentState();
+        if (window.sadhanaRemedyController) {
+          const contextType = (sKey && sKey.toLowerCase().includes('remedy')) ? 'remedy' : 'sadhana';
+          window.sadhanaRemedyController.initiateFlow(contextType);
+          
+          // Try to pre-select the specific sadhana in the modal's dropdown
+          setTimeout(() => {
+            if (window.sadhanaRemedyController.view && window.sadhanaRemedyController.view.selectItem) {
+              const selectEl = window.sadhanaRemedyController.view.selectItem;
+              // Check if option exists before setting
+              const optionExists = Array.from(selectEl.options).some(opt => opt.value === sKey);
+              if (optionExists) {
+                selectEl.value = sKey;
+              }
+            }
+          }, 50);
+        } else {
+          console.error("sadhanaRemedyController is not initialized.");
         }
         return;
       }
@@ -989,10 +974,11 @@ ProfileController.prototype._bindEventsPart2 = function () {
 
     let filtered = (this.view.currentTierProfiles || []).filter((p) => {
       // 1. Text search match
-      const matchesQuery =
-        !q ||
-        (p.name && p.name.toLowerCase().includes(q)) ||
-        (p.referenceCode && p.referenceCode.toLowerCase().includes(q));
+      const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
+      const searchTarget = [
+        p.name, p.fullName, p.referenceCode, p.gotra, p.city, p.phone, p.role, p.profileType
+      ].filter(Boolean).join(" ").toLowerCase();
+      const matchesQuery = tokens.length === 0 || tokens.every((tok) => searchTarget.includes(tok));
 
       if (!matchesQuery) return false;
 
@@ -2784,6 +2770,391 @@ ProfileController.prototype.initInteractiveComponentShowcase = function() {
   }
 };
 
+/**
+ * Renders the Sadhana Applied Box and Remedy Applied Box
+ * for Devotee and Trainee portals below the Current Events in Progress panel.
+ */
+ProfileController.prototype.renderMyApplications = function(activeProfile, roleMode) {
+  const sadhanaRow = document.getElementById("devotee-sadhana-tiles-row");
+  const remedyRow = document.getElementById("devotee-remedy-tiles-row");
+  const sadhanaStrip = document.getElementById("devotee-sadhana-applied-strip");
+  const remedyStrip = document.getElementById("devotee-remedy-applied-strip");
+  const sadhanaBadge = document.getElementById("devotee-sadhana-count-badge");
+  const remedyBadge = document.getElementById("devotee-remedy-count-badge");
+
+  if (!sadhanaRow || !remedyRow) return;
+
+  const prof = activeProfile || (this.model && typeof this.model.getActiveProfile === "function" ? this.model.getActiveProfile() : null);
+  const currentRole = (roleMode || (this.model && typeof this.model.getRoleMode === "function" ? this.model.getRoleMode() : "DEVOTEE") || "DEVOTEE").toUpperCase();
+
+  // Screen Authorization Matrix check
+  const matrix = (this.model && typeof this.model.getAuthMatrix === "function") 
+    ? this.model.getAuthMatrix() 
+    : (typeof ScreenAuthMatrix !== "undefined" ? ScreenAuthMatrix.getAuthMatrix() : []);
+
+  const isStripVisible = (stripId, defaultVisible) => {
+    const item = Array.isArray(matrix) ? matrix.find(x => x && x.id === stripId) : null;
+    if (!item) return defaultVisible;
+    if (item.roles && item.roles[currentRole] !== undefined) return Boolean(item.roles[currentRole]);
+    if (item[currentRole] !== undefined) return Boolean(item[currentRole]);
+    return defaultVisible;
+  };
+
+  const showSadhanaStrip = isStripVisible("devotee_sadhana_applied_strip", currentRole === "DEVOTEE" || currentRole === "TRAINEE");
+  const showRemedyStrip = isStripVisible("devotee_remedy_applied_strip", currentRole === "DEVOTEE" || currentRole === "TRAINEE");
+
+  if (sadhanaStrip) {
+    sadhanaStrip.style.display = showSadhanaStrip ? "block" : "none";
+  }
+  if (remedyStrip) {
+    remedyStrip.style.display = showRemedyStrip ? "block" : "none";
+  }
+
+  if (!showSadhanaStrip && !showRemedyStrip) return;
+
+  // Retrieve applications from Single Source of Truth
+  const sadhanaApps = (this.model && typeof this.model.getMySadhanaApplications === "function")
+    ? this.model.getMySadhanaApplications(prof)
+    : [];
+
+  const remedyApps = (this.model && typeof this.model.getMyRemedyApplications === "function")
+    ? this.model.getMyRemedyApplications(prof)
+    : [];
+
+  // Update Badges
+  if (sadhanaBadge) {
+    const activeCount = sadhanaApps.filter(a => (a.status || "").toUpperCase() === "APPROVED" || (a.status || "").toUpperCase() === "ONGOING").length;
+    sadhanaBadge.textContent = `${sadhanaApps.length} Applied${activeCount > 0 ? ` (${activeCount} Active)` : ''}`;
+  }
+  if (remedyBadge) {
+    const activeCount = remedyApps.filter(a => (a.status || "").toUpperCase() === "APPROVED" || (a.status || "").toUpperCase() === "ONGOING").length;
+    remedyBadge.textContent = `${remedyApps.length} Applied${activeCount > 0 ? ` (${activeCount} Active)` : ''}`;
+  }
+
+  // Render Tiles
+  this._renderAppliedTiles(sadhanaRow, sadhanaApps, 'sadhana');
+  this._renderAppliedTiles(remedyRow, remedyApps, 'remedy');
+
+  // Bind Events
+  this._bindMyApplicationsEvents();
+};
+
+ProfileController.prototype._renderAppliedTiles = function(container, apps, type) {
+  if (!container) return;
+
+  if (!apps || apps.length === 0) {
+    const isSadhana = type === 'sadhana';
+    container.innerHTML = `
+      <div class="devotee-empty-state-tile" style="width: 100%;">
+        <span style="font-size: 1.25rem;">${isSadhana ? '📿' : '🌿'}</span>
+        <div>
+          <div style="font-weight: 600; color: var(--gold-300, #fef08a);">No ${isSadhana ? 'Sadhana Initiations' : 'Remedy Upayas'} Applied Yet</div>
+          <div style="font-size: 0.76rem; color: var(--text-secondary, #94a3b8); margin-top: 2px;">
+            Choose a sanctified ${isSadhana ? 'Vedic sadhana practice' : 'astrological remedial upay'} to begin spiritual guidance.
+          </div>
+        </div>
+        <button type="button" class="btn-add-event-cta" onclick="if(window.sadhanaRemedyController) (window.sadhanaRemedyController.initiateFlow || window.sadhanaRemedyController.openWizard).call(window.sadhanaRemedyController, '${type}')" style="margin-top: 4px;">
+          ＋ Apply for ${isSadhana ? 'Sadhana Initiation' : 'Remedy / Upay'}
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  const html = apps.map(app => {
+    const status = (app.status || "PENDING").toUpperCase();
+    const isApproved = status === "APPROVED" || status === "ACTIVE" || status === "ONGOING";
+    const isPending = status === "PENDING";
+    const isRevision = status === "REVISION_REQUIRED" || status === "REVISION_REQUESTED";
+    const isRejected = status === "REJECTED" || isRevision;
+
+    let badgeClass = "badge-upcoming";
+    let badgeStyle = "background: rgba(234, 179, 8, 0.18); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4);";
+    let badgeText = "⏳ Awaiting Approval";
+    let progressFillClass = "bar-upcoming";
+    let progressPct = 25;
+    let progressLabel = "Under Mentor Review";
+    let daysInfo = "In Queue";
+    let tileModifier = "tile-event-upcoming";
+    let icon = type === 'remedy' ? '🌿' : '🪔';
+
+    if (isApproved) {
+      badgeClass = "badge-ongoing";
+      badgeStyle = "background: rgba(34, 197, 94, 0.18); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4);";
+      badgeText = "● Approved & Active";
+      progressFillClass = "bar-ongoing";
+      progressPct = 100;
+      progressLabel = app.initiationToken ? `Token: ${app.initiationToken}` : "Sanctioned";
+      daysInfo = `${app.cycleDays || 21} Days Cycle`;
+      tileModifier = "tile-event-ongoing";
+      icon = type === 'remedy' ? '✨' : '🔥';
+    } else if (isRejected) {
+      badgeClass = "badge-completed";
+      badgeStyle = isRevision ? "background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);" : "background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);";
+      badgeText = isRevision ? "📝 Revision Required" : "✕ Rejected";
+      progressFillClass = "bar-completed";
+      progressPct = isRevision ? 15 : 0;
+      progressLabel = isRevision ? "Mentor Feedback Attached" : "Closed / Declined";
+      daysInfo = isRevision ? "Needs Update" : "Discontinued";
+      tileModifier = "tile-event-completed";
+      icon = isRevision ? '📝' : '✕';
+    }
+
+    const title = app.itemTitle || app.title || (type === 'remedy' ? 'Navgraha Shanti Upay' : 'Vedic Sadhana Practice');
+    const targetMalas = app.targetMalas ? `${app.targetMalas} Malas/day` : 'Daily Ritual';
+    const cycleDays = app.cycleDays ? `${app.cycleDays} Days` : '21 Days';
+    const slot = app.scheduleSlot ? app.scheduleSlot.split('(')[0].trim() : 'Brahma Muhurta';
+    const mentor = app.mentorName || 'Pujya Gurudev';
+
+    return `
+      <div class="current-event-tile ${tileModifier} devotee-applied-tile"
+           data-app-id="${app.id}"
+           data-app-type="${type}"
+           role="article"
+           tabindex="0"
+           title="${title} — ${badgeText}">
+        <div class="event-tile-header">
+          <div class="event-tile-icon-wrap">${icon}</div>
+          <div class="event-tile-meta" style="flex: 1; min-width: 0;">
+            <span class="event-tile-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;" title="${title}">${title}</span>
+            <span class="event-tile-badge ${badgeClass}" style="${badgeStyle}">${badgeText}</span>
+          </div>
+          <div class="event-tile-actions">
+            <button type="button" class="btn-event-options btn-app-details" data-app-id="${app.id}" title="View Application Details" aria-label="View Details">ℹ️</button>
+          </div>
+        </div>
+        <div class="event-tile-details">
+          <div class="event-detail-row">
+            <span class="event-detail-label">🎯 Target Practice</span>
+            <span class="event-detail-value">${targetMalas}</span>
+          </div>
+          <div class="event-detail-row">
+            <span class="event-detail-label">⏳ Cycle Duration</span>
+            <span class="event-detail-value">${cycleDays}</span>
+          </div>
+          <div class="event-detail-row">
+            <span class="event-detail-label">⏰ Schedule Slot</span>
+            <span class="event-detail-value" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;" title="${app.scheduleSlot || slot}">${slot}</span>
+          </div>
+          <div class="event-detail-row">
+            <span class="event-detail-label">👑 Mentor / Guide</span>
+            <span class="event-detail-value" style="color: var(--gold-400);">${mentor}</span>
+          </div>
+        </div>
+        <div class="event-tile-progress-wrap">
+          <div class="event-progress-bar-track">
+            <div class="event-progress-bar-fill ${progressFillClass}" style="width: ${progressPct}%;"></div>
+          </div>
+          <div class="event-progress-labels">
+            <span class="event-progress-pct" style="font-size: 0.72rem;">${progressLabel}</span>
+            <span class="event-progress-days" style="color: var(--gold-300); font-size: 0.72rem;">${daysInfo}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = html;
+};
+
+ProfileController.prototype._bindMyApplicationsEvents = function() {
+  if (this._myAppsEventsBound) return;
+  this._myAppsEventsBound = true;
+
+  // 1. Header Slide Out / In Toggle Buttons
+  const bindToggleStrip = (btnId, stripId) => {
+    const btn = document.getElementById(btnId);
+    const strip = document.getElementById(stripId);
+    if (btn && strip) {
+      // Default to collapsed state
+      strip.classList.add("is-collapsed");
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("title", "Slide In / Expand Details");
+
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isCollapsed = strip.classList.toggle("is-collapsed");
+        btn.setAttribute("aria-expanded", !isCollapsed);
+        btn.setAttribute("title", isCollapsed ? "Slide In / Expand Details" : "Slide Out / Hide Details");
+      };
+    }
+  };
+
+  bindToggleStrip("btn-toggle-sadhana-applied", "devotee-sadhana-applied-strip");
+  bindToggleStrip("btn-toggle-remedy-applied", "devotee-remedy-applied-strip");
+
+  // Backward compatibility fallback for any older Apply buttons
+  const btnApplySadhana = document.getElementById("btn-apply-more-sadhana");
+  if (btnApplySadhana) {
+    btnApplySadhana.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (window.sadhanaRemedyController) {
+        if (typeof window.sadhanaRemedyController.initiateFlow === "function") {
+          window.sadhanaRemedyController.initiateFlow("sadhana");
+        } else if (typeof window.sadhanaRemedyController.openWizard === "function") {
+          window.sadhanaRemedyController.openWizard("sadhana");
+        }
+      }
+    };
+  }
+
+  const btnApplyRemedy = document.getElementById("btn-apply-more-remedy");
+  if (btnApplyRemedy) {
+    btnApplyRemedy.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (window.sadhanaRemedyController) {
+        if (typeof window.sadhanaRemedyController.initiateFlow === "function") {
+          window.sadhanaRemedyController.initiateFlow("remedy");
+        } else if (typeof window.sadhanaRemedyController.openWizard === "function") {
+          window.sadhanaRemedyController.openWizard("remedy");
+        }
+      }
+    };
+  }
+
+  // 2. Delegated Click on Tiles to view full Details
+  document.addEventListener("click", (e) => {
+    const tile = e.target.closest(".devotee-applied-tile");
+    if (!tile) return;
+
+    const appId = tile.getAttribute("data-app-id");
+    if (!appId) return;
+
+    const allApps = (this.model && typeof this.model.getSadhanaRemedyApplications === "function")
+      ? this.model.getSadhanaRemedyApplications()
+      : [];
+    const pairingInvites = (this.model && typeof this.model.getPairingInvites === "function")
+      ? this.model.getPairingInvites()
+      : [];
+    const target = allApps.find(a => a.id === appId) || pairingInvites.find(i => i.id === appId);
+    if (target) {
+      this.showApplicationDetailsModal(target);
+    }
+  });
+
+  // 3. Multi-Tab & Realtime Sync Listeners
+  try {
+    if (typeof BroadcastChannel !== "undefined") {
+      const syncChan = new BroadcastChannel("spiritual_karim_sync");
+      syncChan.onmessage = (evt) => {
+        const type = evt?.data?.type;
+        if (
+          type === "NEW_SADHANA_APPLICATION" ||
+          type === "SADHANA_APPLICATIONS_UPDATED" ||
+          type === "SADHANA_INITIATION_APPROVED" ||
+          type === "SADHANA_APPLICATION_REJECTED" ||
+          type === "PAIRING_INVITES_UPDATED"
+        ) {
+          const active = this.model && typeof this.model.getActiveProfile === "function" ? this.model.getActiveProfile() : null;
+          const role = this.model && typeof this.model.getRoleMode === "function" ? this.model.getRoleMode() : "DEVOTEE";
+          this.renderMyApplications(active, role);
+        }
+      };
+
+      const matrixChan = new BroadcastChannel("sk_matrix_channel");
+      matrixChan.onmessage = () => {
+        const active = this.model && typeof this.model.getActiveProfile === "function" ? this.model.getActiveProfile() : null;
+        const role = this.model && typeof this.model.getRoleMode === "function" ? this.model.getRoleMode() : "DEVOTEE";
+        this.renderMyApplications(active, role);
+      };
+    }
+  } catch (err) {
+    console.warn("BroadcastChannel sync error in ProfileController2:", err);
+  }
+
+  window.addEventListener("sadhana_application_submitted", () => {
+    const active = this.model && typeof this.model.getActiveProfile === "function" ? this.model.getActiveProfile() : null;
+    const role = this.model && typeof this.model.getRoleMode === "function" ? this.model.getRoleMode() : "DEVOTEE";
+    this.renderMyApplications(active, role);
+  });
+};
+
+ProfileController.prototype.showApplicationDetailsModal = function(app) {
+  if (!app) return;
+  const isRemedy = app.type === 'REMEDY_APPLICATION' || app.contextType === 'remedy';
+  const status = (app.status || "PENDING").toUpperCase();
+  const statusColor = status === "APPROVED" ? "#4ade80" : status === "REJECTED" ? "#f87171" : "#facc15";
+
+  const messageHtml = `
+    <div style="font-family: inherit; font-size: 0.88rem; line-height: 1.5; color: var(--text-primary, #f8fafc); text-align: left;">
+      <div style="padding: 10px; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid rgba(212,175,55,0.2); margin-bottom: 12px;">
+        <div style="font-size: 1.05rem; font-weight: 700; color: var(--gold-300, #fef08a); margin-bottom: 4px;">
+          ${isRemedy ? '🌿' : '🕉️'} ${app.itemTitle || app.title || 'Sacred Application'}
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px; flex-wrap: wrap;">
+          <span style="font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; background: rgba(255,255,255,0.08); font-weight: 600;">ID: ${app.id}</span>
+          <span style="font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 700; color: ${statusColor}; border: 1px solid ${statusColor};">
+            ● ${status}
+          </span>
+          ${app.initiationToken ? `<span style="font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; background: rgba(212,175,55,0.2); color: #fef08a; font-weight: 700;">Token: ${app.initiationToken}</span>` : ''}
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+        <div style="padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+          <span style="font-size: 0.72rem; color: var(--text-secondary, #94a3b8); display: block;">Applicant Name</span>
+          <strong>${app.seekerName || 'Devotee'}</strong>
+        </div>
+        <div style="padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+          <span style="font-size: 0.72rem; color: var(--text-secondary, #94a3b8); display: block;">Assigned Mentor</span>
+          <strong style="color: var(--gold-400);">${app.mentorName || 'Pujya Gurudev'}</strong>
+        </div>
+        <div style="padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+          <span style="font-size: 0.72rem; color: var(--text-secondary, #94a3b8); display: block;">Daily Practice</span>
+          <strong>${app.targetMalas || 11} Malas / Day</strong>
+        </div>
+        <div style="padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+          <span style="font-size: 0.72rem; color: var(--text-secondary, #94a3b8); display: block;">Cycle Duration</span>
+          <strong>${app.cycleDays || 21} Sacred Days</strong>
+        </div>
+        <div style="padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px; grid-column: span 2;">
+          <span style="font-size: 0.72rem; color: var(--text-secondary, #94a3b8); display: block;">Sanctified Schedule Slot</span>
+          <strong>${app.scheduleSlot || 'Brahma Muhurta (04:00 - 06:00)'}</strong>
+        </div>
+      </div>
+
+      ${app.intention ? `
+        <div style="margin-bottom: 10px;">
+          <span style="font-size: 0.72rem; color: var(--text-secondary, #94a3b8); display: block;">Spiritual Intention (Sankalpa)</span>
+          <div style="font-size: 0.82rem; font-style: italic; color: #cbd5e1; padding: 6px 8px; background: rgba(255,255,255,0.02); border-left: 2px solid var(--gold-400); border-radius: 4px;">
+            "${app.intention}"
+          </div>
+        </div>
+      ` : ''}
+
+      ${app.mentorFeedback ? `
+        <div style="margin-bottom: 10px;">
+          <span style="font-size: 0.72rem; color: #4ade80; font-weight: 700; display: block;">Mentor Deeksha Guidance</span>
+          <div style="font-size: 0.82rem; color: #e2e8f0; padding: 6px 8px; background: rgba(34,197,94,0.06); border-left: 2px solid #4ade80; border-radius: 4px;">
+            ${app.mentorFeedback}
+          </div>
+        </div>
+      ` : ''}
+
+      <div style="font-size: 0.72rem; color: var(--text-secondary, #94a3b8); margin-top: 8px;">
+        Submitted: ${app.date ? new Date(app.date).toLocaleString() : (app.createdAtMs ? new Date(app.createdAtMs).toLocaleString() : 'Recent')}
+      </div>
+    </div>
+  `;
+
+  if (this.view && typeof this.view.openCustomDialog === "function") {
+    this.view.openCustomDialog({
+      title: `${isRemedy ? 'Remedy Upay' : 'Sadhana Initiation'} Details`,
+      message: messageHtml,
+      icon: isRemedy ? '🌿' : '🕉️',
+      options: [
+        { label: "✓ Close", value: true, class: "btn-gold" }
+      ]
+    });
+  } else if (this.view && typeof this.view.showToast === "function") {
+    this.view.showToast(`Application: ${app.itemTitle} (${status})`);
+  }
+};
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = ProfileController;
 }
+

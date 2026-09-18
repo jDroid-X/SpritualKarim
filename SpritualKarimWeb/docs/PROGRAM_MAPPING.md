@@ -23,8 +23,8 @@
 | **UTIL-03** | Utils | `js/utils/ThemeEngine.js` | Divine Gold dark/light theme switching | `appConfig.js` | `index.html`, `css/` | ✅ Active |
 | **UTIL-04** | Utils | `js/utils/retryHelper.js` | Resilient network fetch with exponential backoff | None | `FirebaseSyncEngine.js` | ✅ Active |
 | **BOOT-01** | Bootstrap| `js/profile-admin-bootstrap.js` | Environment polyfills, portal auto-detection & init | All MVC Layers | Browser DOMContentLoaded | ✅ Active |
-| **BACK-01** | Backend | `server.js` | HTTP static file server & dynamic subportal router | Node.js `http`, `fs`, `path` | `routes.js`, all portals | ✅ Active |
-| **BACK-02** | Backend | `Backend/api/routes.js` | REST endpoints (`/api/health`, `/api/config`, etc.) | `FirebaseService.js`, `AuthService.js` | `server.js` | ✅ Active |
+| **BACK-01** | Backend | `server.js` | HTTP static file server & dynamic subportal router (SSOT Port 8085) | Node.js `http`, `fs`, `path`, `appConfig.js` | `routes.js`, all portals | ✅ Active |
+| **BACK-02** | Backend | `Backend/api/routes.js` | REST endpoints (`/api/health`, `/api/config`, etc. on SSOT Port 8085) | `FirebaseService.js`, `AuthService.js` | `server.js` | ✅ Active |
 | **BACK-03** | Backend | `Backend/services/FirebaseService.js` | Cloud RTDB gateway & offline fallback | `firebase-config.json` | `routes.js`, `SyncService.js` | ✅ Active |
 | **SEC-01** | Security| `database/database.rules.json` | Authenticated read/write rules for RTDB | Firebase Rules Engine | Cloud RTDB Instance | ✅ Hardened |
 
@@ -39,6 +39,10 @@
 | `STORAGE_KEY_ROLE_MODE` | `roleModeKey` | `'sk_admin_active_role_mode_v1'` | Active portal role |
 | `STORAGE_KEY_INVITES` | `pairingInvitesKey` | `'sk_pairing_invites'` | 24-hour device pairing queue |
 | `STORAGE_KEY_THEME` | `themeKey` | `'sk_theme_preference'` | UI theme preference |
+| `SERVER_PORT` | `server.port` | `8085` | Single Source of Truth active server port |
+| `SERVER_HOST` | `server.host` | `'0.0.0.0'` | Single Source of Truth network interface |
+| `SERVER_LOCAL_URL` | `server.localUrl` | `'http://localhost:8085'` | Canonical local portal URL |
+| `SERVER_API_URL` | `server.apiUrl` | `'http://localhost:8085/api'` | Canonical REST API endpoint |
 | `FIREBASE_RTDB_URL` | `firebaseUrl` | `'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/'` | Cloud database endpoint |
 | `PAIRING_TIMEOUT_HRS` | `pairingInviteTimeoutHours` | `24` | Device pairing token life |
 | `POWER_LOSS_INTERVAL` | `powerLossCheckIntervalMs` | `15000` | Unsaved data poll timer (ms) |

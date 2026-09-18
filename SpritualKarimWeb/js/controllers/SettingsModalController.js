@@ -284,15 +284,29 @@ class SettingsModalController {
     if (searchInput) {
       searchInput.oninput = () => {
         const q = (searchInput.value || "").toLowerCase().trim();
+        const tokens = q.split(/\s+/).filter(Boolean);
         const rows = document.querySelectorAll("#tbody-rbac-matrix-rows tr.rbac-row");
         const headers = document.querySelectorAll("#tbody-rbac-matrix-rows tr.rbac-category-header");
-        rows.forEach(r => {
-          const text = r.textContent.toLowerCase();
-          r.style.display = (!q || text.includes(q)) ? "" : "none";
+        const visibleCategories = new Set();
+
+        rows.forEach((r) => {
+          const text = (r.textContent || "").toLowerCase();
+          const matches = tokens.length === 0 || tokens.every((t) => text.includes(t));
+          r.style.display = matches ? "" : "none";
+          if (matches) {
+            const cat = r.getAttribute("data-category");
+            if (cat) visibleCategories.add(cat);
+          }
         });
-        if (q) {
-          headers.forEach(h => h.style.display = "");
-        }
+
+        headers.forEach((h) => {
+          if (tokens.length === 0) {
+            h.style.display = "";
+          } else {
+            const cat = h.getAttribute("data-category");
+            h.style.display = visibleCategories.has(cat) ? "" : "none";
+          }
+        });
       };
     }
 
@@ -586,6 +600,11 @@ class SettingsModalController {
       case "catalog-editor":
         this._loadCatalogEditor();
         break;
+      case "archive-restore":
+        this._loadArchiveData();
+        break;
+      case "ui-ux-controls":
+        break;
       case "rbac-admin":
         this._loadRbacAdminFrame();
         break;
@@ -656,30 +675,80 @@ class SettingsModalController {
     const searchEl = document.getElementById("auth-matrix-modal-search");
     const selectedCat = filterEl ? filterEl.value : "ALL";
     const query = searchEl ? searchEl.value.trim().toLowerCase() : "";
+    const tokens = query ? query.split(/\s+/).filter(Boolean) : [];
 
     const roles = ["MASTER", "HEALER", "TRAINEE", "DEVOTEE"];
 
-    // Group items by category
-    const grouped = new Map();
+    // 1. Build lookup map for hierarchy
+    const itemMap = new Map();
+    this._cachedMatrix.forEach((m) => itemMap.set(m.id, m));
+
+    // 2. Identify items that directly match search tokens
+    const directMatches = new Set();
+    const visibleItemIds = new Set();
+
     this._cachedMatrix.forEach((item) => {
       const cat = item.category || "General";
-      if (selectedCat !== "ALL" && cat !== selectedCat) return;
+      const catMatches = selectedCat === "ALL" || cat === selectedCat;
 
-      if (query) {
-        const nameMatch = (item.name || item.label || "").toLowerCase().includes(query);
-        const typeMatch = (item.type || "").toLowerCase().includes(query);
-        const catMatch = cat.toLowerCase().includes(query);
-        const idMatch = (item.id || "").toLowerCase().includes(query);
-        const selectorMatch = (item.selector || "").toLowerCase().includes(query);
-        if (!nameMatch && !typeMatch && !catMatch && !idMatch && !selectorMatch) return;
+      if (tokens.length === 0) {
+        if (catMatches) visibleItemIds.add(item.id);
+        return;
       }
 
+      const searchableText = [
+        item.name,
+        item.label,
+        item.id,
+        cat,
+        item.type,
+        item.selector,
+        item.parent
+      ].filter(Boolean).join(" ").toLowerCase();
+
+      const isMatch = tokens.every((tok) => searchableText.includes(tok));
+      if (isMatch && catMatches) {
+        directMatches.add(item.id);
+        visibleItemIds.add(item.id);
+      }
+    });
+
+    // 3. Hierarchy preservation:
+    // If child matches, ancestors (parent card & screen) must be visible.
+    // If parent matches directly, all its descendants should be visible.
+    if (tokens.length > 0) {
+      // 3A. Upward propagation: Include ancestors
+      directMatches.forEach((id) => {
+        let current = itemMap.get(id);
+        while (current && current.parent) {
+          visibleItemIds.add(current.parent);
+          current = itemMap.get(current.parent);
+        }
+      });
+
+      // 3B. Downward propagation: Include descendants of matching parents
+      this._cachedMatrix.forEach((item) => {
+        if (item.parent && directMatches.has(item.parent)) {
+          visibleItemIds.add(item.id);
+        }
+        const p = itemMap.get(item.parent);
+        if (p && p.parent && directMatches.has(p.parent)) {
+          visibleItemIds.add(item.id);
+        }
+      });
+    }
+
+    // 4. Group items by category
+    const grouped = new Map();
+    this._cachedMatrix.forEach((item) => {
+      if (!visibleItemIds.has(item.id)) return;
+      const cat = item.category || "General";
       if (!grouped.has(cat)) grouped.set(cat, []);
       grouped.get(cat).push(item);
     });
 
     if (grouped.size === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">🔍 No screen elements match the selected filter.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">🔍 No screen elements match the search criteria "${query}".</td></tr>`;
       return;
     }
 
@@ -731,8 +800,9 @@ class SettingsModalController {
         const displayName = item.name || item.label || item.id;
         const typeBadge = `<span class="badge" style="font-size: 0.58rem; padding: 0.05rem 0.35rem; border-radius: 4px; background: rgba(255,255,255,0.06); color: var(--text-muted); margin-left: 0.4rem;">${item.type}</span>`;
         const delBtn = item.isCustom ? `<button type="button" class="auth-matrix-del-btn" data-id="${item.id}" title="Delete Custom Element" style="background: none; border: none; cursor: pointer; font-size: 0.75rem; margin-left: auto; color: var(--danger, #ef4444); opacity: 0.8;">🗑️</button>` : "";
+        const rowSearchText = [displayName, item.id, cat, item.type, item.selector || ""].join(" ").toLowerCase();
 
-        html += `<tr data-item-id="${item.id}" data-category="${cat}" data-level="${item.level !== undefined ? item.level : 2}" data-parent="${item.parent || ''}" class="${rowClass}">
+        html += `<tr data-item-id="${item.id}" data-category="${cat}" data-level="${item.level !== undefined ? item.level : 2}" data-parent="${item.parent || ''}" data-search-text="${rowSearchText}" class="${rowClass}">
           <td style="padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.07));">
             <div style="display: flex; align-items: center;">
               ${branchConnector}
@@ -1001,16 +1071,35 @@ class SettingsModalController {
       const itemId = row.getAttribute("data-item-id");
       const item = this._cachedMatrix.find((m) => m.id === itemId);
       if (item) {
+        item.userCustomized = true;
+        if (!item.roles) item.roles = {};
+        if (!item.portals) item.portals = {};
+        if (!item.portalVisible) item.portalVisible = {};
         const roleCheckboxes = row.querySelectorAll(".matrix-role-check");
         roleCheckboxes.forEach((chk) => {
           const role = chk.getAttribute("data-role");
           if (role) {
             item[role] = chk.checked;
-            if (!item.roles) item.roles = {};
             item.roles[role] = chk.checked;
+            if (role === "MASTER") {
+              item.portals.masters = chk.checked;
+              item.portalVisible.masters = chk.checked;
+            }
+            if (role === "HEALER") {
+              item.portals.healers = chk.checked;
+              item.portalVisible.healers = chk.checked;
+            }
+            if (role === "TRAINEE") {
+              item.portals.trainee = chk.checked;
+              item.portalVisible.trainee = chk.checked;
+            }
             if (role === "DEVOTEE") {
               item.SEEKER = chk.checked;
               item.roles.SEEKER = chk.checked;
+              item.portals.devotee = chk.checked;
+              item.portals.seeker = chk.checked;
+              item.portalVisible.devotee = chk.checked;
+              item.portalVisible.seeker = chk.checked;
             }
           }
         });
@@ -1022,6 +1111,9 @@ class SettingsModalController {
       this._cachedMatrix,
       this.controller.model.getRoleMode(),
     );
+    if (typeof this.controller.view._renderCategorizedTraineeSadhanas === "function") {
+      this.controller.view._renderCategorizedTraineeSadhanas(null, this.controller.model.getActiveProfile());
+    }
     if (typeof this.controller._applyEventPanelRBAC === "function") {
       this.controller._applyEventPanelRBAC();
     }
@@ -1416,6 +1508,91 @@ class SettingsModalController {
     this._loadCurrentSettings();
     this._switchSection(initialSection);
     this.controller.view.toggleSettingsModal(true);
+  }
+
+  _loadArchiveData() {
+    const container = document.getElementById("archive-list-container");
+    if (!container) return;
+    
+    // Fetch deleted applications and invites
+    const model = this.controller && this.controller.model;
+    if (!model) return;
+
+    let apps = [];
+    if (typeof model.getSadhanaRemedyApplications === "function") {
+      apps = model.getSadhanaRemedyApplications().filter(a => a.status === "DELETED");
+    } else {
+      apps = JSON.parse(localStorage.getItem("sk_sadhana_initiations_v1") || "[]").filter(a => a.status === "DELETED");
+    }
+
+    let invites = [];
+    if (typeof model.getPairingInvites === "function") {
+      invites = model.getPairingInvites().filter(i => i.status === "DELETED");
+    }
+
+    if (apps.length === 0 && invites.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.85rem;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;">📭</div>
+          The archive is empty. No deleted applications or invites.
+        </div>
+      `;
+      return;
+    }
+
+    let html = '';
+    
+    const renderCard = (item, type) => {
+      const dateStr = item.deletedAtMs ? new Date(item.deletedAtMs).toLocaleString() : "Unknown Date";
+      return `
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.2rem;">
+              ${type === 'APP' ? (item.itemTitle || item.category || "Application") : "Pairing Invite"} - ${item.seekerName || item.devoteeName || "Unknown"}
+            </div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">
+              ID: ${item.id} &bull; Deleted: ${dateStr}
+            </div>
+          </div>
+          <button class="btn btn-sm btn-gold btn-restore-archive" data-id="${item.id}" data-type="${type}" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600;">
+            ♻️ Restore
+          </button>
+        </div>
+      `;
+    };
+
+    apps.forEach(a => { html += renderCard(a, 'APP'); });
+    invites.forEach(i => { html += renderCard(i, 'INVITE'); });
+
+    container.innerHTML = html;
+
+    // Attach listeners
+    container.querySelectorAll(".btn-restore-archive").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const id = e.currentTarget.getAttribute("data-id");
+        const type = e.currentTarget.getAttribute("data-type");
+        
+        if (type === 'APP') {
+          if (typeof model.restoreSadhanaRemedyApplication === "function") {
+            model.restoreSadhanaRemedyApplication(id);
+          } else if (window.sadhanaRemedyModel) {
+            window.sadhanaRemedyModel.restoreApplication(id);
+          }
+        } else if (type === 'INVITE') {
+          if (typeof model.restorePairingInvite === "function") {
+            model.restorePairingInvite(id);
+          }
+        }
+        
+        // Refresh UI
+        this._loadArchiveData();
+        
+        // Optionally refresh main lists if profile controller exposes it
+        if (this.controller && typeof this.controller.renderPendingApprovalsDrawer === "function") {
+          this.controller.renderPendingApprovalsDrawer();
+        }
+      });
+    });
   }
 }
 

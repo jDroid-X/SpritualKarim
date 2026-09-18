@@ -1155,14 +1155,14 @@ class ScreenAuthMatrix {
       "MASTER": true,
       "HEALER": true,
       "TRAINEE": true,
-      "DEVOTEE": false
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
       "trainee": true,
-      "devotee": false,
-      "seeker": false
+      "devotee": true,
+      "seeker": true
     }
   },
   {
@@ -1177,14 +1177,14 @@ class ScreenAuthMatrix {
       "MASTER": true,
       "HEALER": true,
       "TRAINEE": true,
-      "DEVOTEE": false
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
       "trainee": true,
-      "devotee": false,
-      "seeker": false
+      "devotee": true,
+      "seeker": true
     }
   },
   {
@@ -1199,21 +1199,21 @@ class ScreenAuthMatrix {
       "MASTER": true,
       "HEALER": true,
       "TRAINEE": true,
-      "DEVOTEE": false
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
       "trainee": true,
-      "devotee": false,
-      "seeker": false
+      "devotee": true,
+      "seeker": true
     }
   },
   {
     "id": "trainee_split_workspace",
     "label": "Master-Detail Split Workspace",
     "type": "PANEL",
-    "selector": ".trainee-split-workspace",
+    "selector": ".trainee-split-workspace, #trainee-3panel-workspace",
     "category": "Tab 3: Trainee Sadhak",
     "level": 1,
     "parent": "tab_trainee_sadhak",
@@ -1221,14 +1221,80 @@ class ScreenAuthMatrix {
       "MASTER": true,
       "HEALER": true,
       "TRAINEE": true,
-      "DEVOTEE": false
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
       "trainee": true,
+      "devotee": true,
+      "seeker": true
+    }
+  },
+  {
+    "id": "trainee_team_panel",
+    "label": "1st Slim Panel: Team Members List (Trainee & Devotee)",
+    "type": "PANEL",
+    "selector": "#trainee-team-panel, .trainee-team-panel",
+    "category": "Tab 3: Trainee Sadhak",
+    "level": 2,
+    "parent": "trainee_split_workspace",
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false
+    },
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": false,
       "devotee": false,
       "seeker": false
+    }
+  },
+  {
+    "id": "trainee_practices_panel",
+    "label": "2nd Slim Panel: Member Practices List (Sadhana & Remedy)",
+    "type": "PANEL",
+    "selector": "#trainee-practices-panel, .trainee-practices-panel",
+    "category": "Tab 3: Trainee Sadhak",
+    "level": 2,
+    "parent": "trainee_split_workspace",
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true
+    },
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": true,
+      "devotee": true,
+      "seeker": true
+    }
+  },
+  {
+    "id": "trainee_body_panel",
+    "label": "3rd Body Panel: 2-Column Progress & Feedback Report",
+    "type": "PANEL",
+    "selector": "#trainee-body-panel, .trainee-body-panel",
+    "category": "Tab 3: Trainee Sadhak",
+    "level": 2,
+    "parent": "trainee_split_workspace",
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": true,
+      "DEVOTEE": true
+    },
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": true,
+      "devotee": true,
+      "seeker": true
     }
   },
   {
@@ -1243,14 +1309,14 @@ class ScreenAuthMatrix {
       "MASTER": true,
       "HEALER": true,
       "TRAINEE": true,
-      "DEVOTEE": false
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
       "trainee": true,
-      "devotee": false,
-      "seeker": false
+      "devotee": true,
+      "seeker": true
     }
   },
   {
@@ -1265,14 +1331,14 @@ class ScreenAuthMatrix {
       "MASTER": true,
       "HEALER": true,
       "TRAINEE": true,
-      "DEVOTEE": false
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
       "trainee": true,
-      "devotee": false,
-      "seeker": false
+      "devotee": true,
+      "seeker": true
     }
   },
   {
@@ -1287,14 +1353,14 @@ class ScreenAuthMatrix {
       "MASTER": true,
       "HEALER": true,
       "TRAINEE": true,
-      "DEVOTEE": false
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
       "trainee": true,
-      "devotee": false,
-      "seeker": false
+      "devotee": true,
+      "seeker": true
     }
   },
   {
@@ -1309,14 +1375,14 @@ class ScreenAuthMatrix {
       "MASTER": true,
       "HEALER": true,
       "TRAINEE": true,
-      "DEVOTEE": false
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
       "trainee": true,
-      "devotee": false,
-      "seeker": false
+      "devotee": true,
+      "seeker": true
     }
   },
   {
@@ -1331,14 +1397,14 @@ class ScreenAuthMatrix {
       "MASTER": true,
       "HEALER": true,
       "TRAINEE": true,
-      "DEVOTEE": false
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
       "trainee": true,
-      "devotee": false,
-      "seeker": false
+      "devotee": true,
+      "seeker": true
     }
   },
   {
@@ -1353,14 +1419,14 @@ class ScreenAuthMatrix {
       "MASTER": true,
       "HEALER": true,
       "TRAINEE": true,
-      "DEVOTEE": false
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
       "trainee": true,
-      "devotee": false,
-      "seeker": false
+      "devotee": true,
+      "seeker": true
     }
   },
   {
@@ -1375,14 +1441,14 @@ class ScreenAuthMatrix {
       "MASTER": true,
       "HEALER": true,
       "TRAINEE": true,
-      "DEVOTEE": false
+      "DEVOTEE": true
     },
     "portals": {
       "masters": true,
       "healers": true,
       "trainee": true,
-      "devotee": false,
-      "seeker": false
+      "devotee": true,
+      "seeker": true
     }
   },
   {
@@ -2899,6 +2965,78 @@ class ScreenAuthMatrix {
     }
   },
   {
+    "id": "devotee_sadhana_applied_strip",
+    "label": "🕉️ Sadhana Applied Box (Devotee/Trainee)",
+    "name": "🕉️ Sadhana Applied Box (Devotee/Trainee)",
+    "type": "SECTION",
+    "selector": "#devotee-sadhana-applied-strip",
+    "category": "Global: Header",
+    "level": 1,
+    "parent": "header_division",
+    "roles": {
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": true,
+      "DEVOTEE": true
+    },
+    "MASTER": true,
+    "HEALER": false,
+    "TRAINEE": true,
+    "DEVOTEE": true,
+    "portals": {
+      "masters": false,
+      "healers": false,
+      "trainee": true,
+      "devotee": true,
+      "seeker": false
+    },
+    "portalVisible": {
+      "masters": false,
+      "healers": false,
+      "trainee": true,
+      "devotee": true,
+      "seeker": false,
+      "master": false,
+      "admin": false
+    }
+  },
+  {
+    "id": "devotee_remedy_applied_strip",
+    "label": "🌿 Remedy Applied Box (Devotee/Trainee)",
+    "name": "🌿 Remedy Applied Box (Devotee/Trainee)",
+    "type": "SECTION",
+    "selector": "#devotee-remedy-applied-strip",
+    "category": "Global: Header",
+    "level": 1,
+    "parent": "header_division",
+    "roles": {
+      "MASTER": true,
+      "HEALER": false,
+      "TRAINEE": true,
+      "DEVOTEE": true
+    },
+    "MASTER": true,
+    "HEALER": false,
+    "TRAINEE": true,
+    "DEVOTEE": true,
+    "portals": {
+      "masters": false,
+      "healers": false,
+      "trainee": true,
+      "devotee": true,
+      "seeker": false
+    },
+    "portalVisible": {
+      "masters": false,
+      "healers": false,
+      "trainee": true,
+      "devotee": true,
+      "seeker": false,
+      "master": false,
+      "admin": false
+    }
+  },
+  {
     "id": "tier_profiles_panel",
     "label": "Hierarchy Tier Ribbon & Flyout Panel",
     "type": "PANEL",
@@ -3884,6 +4022,111 @@ class ScreenAuthMatrix {
       "devotee": true,
       "seeker": true
     }
+  },
+  {
+    "id": "sidebar_induction_section",
+    "label": "Stage 3: Induction & Intake",
+    "type": "SECTION",
+    "selector": "#sidebar-induction-section",
+    "category": "Global Application Sidebar",
+    "level": 0,
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false
+    },
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": false,
+      "devotee": false,
+      "seeker": false
+    }
+  },
+  {
+    "id": "sidebar_tools_section",
+    "label": "Stage 6: System Operations",
+    "type": "SECTION",
+    "selector": "#sidebar-tools-section",
+    "category": "Global Application Sidebar",
+    "level": 0,
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false
+    },
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": false,
+      "devotee": false,
+      "seeker": false
+    }
+  },
+  {
+    "id": "sidebar_link_sync_lifecycle",
+    "label": "Online/Offline Lifecycle",
+    "type": "BUTTON",
+    "selector": "#sidebar-link-sync-lifecycle",
+    "category": "Global Application Sidebar",
+    "level": 1,
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false
+    },
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": false,
+      "devotee": false,
+      "seeker": false
+    }
+  },
+  {
+    "id": "sidebar_link_data_structure",
+    "label": "Data Structure Workflow",
+    "type": "BUTTON",
+    "selector": "#sidebar-link-data-structure",
+    "category": "Global Application Sidebar",
+    "level": 1,
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false
+    },
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": false,
+      "devotee": false,
+      "seeker": false
+    }
+  },
+  {
+    "id": "sidebar_link_platform_overview",
+    "label": "Platform Overview",
+    "type": "BUTTON",
+    "selector": "#sidebar-link-platform-overview",
+    "category": "Global Application Sidebar",
+    "level": 1,
+    "roles": {
+      "MASTER": true,
+      "HEALER": true,
+      "TRAINEE": false,
+      "DEVOTEE": false
+    },
+    "portals": {
+      "masters": true,
+      "healers": true,
+      "trainee": false,
+      "devotee": false,
+      "seeker": false
+    }
   }
 ];
   }
@@ -3980,6 +4223,12 @@ class ScreenAuthMatrix {
                 if (def.id === 'admin_current_events_strip' && (!s || !s.userCustomized)) {
                   return true;
                 }
+                if ((def.id === 'devotee_sadhana_applied_strip' || def.id === 'devotee_remedy_applied_strip') && (!s || !s.userCustomized)) {
+                  return (roleKey === 'TRAINEE' || roleKey === 'DEVOTEE');
+                }
+                if (def.id === 'trainee_practices_panel' && (!s || !s.userCustomized)) {
+                  return true;
+                }
                 if (s && s.roles && s.roles[roleKey] !== undefined) return s.roles[roleKey];
                 if (s && s[roleKey] !== undefined) return s[roleKey];
                 if (def.roles && def.roles[roleKey] !== undefined) return def.roles[roleKey];
@@ -3997,8 +4246,9 @@ class ScreenAuthMatrix {
               const sPortals = (s && (s.portalVisible || s.portals)) || {};
               const mergedPortals = { ...defPortals, ...sPortals };
 
-              const finalLabel = (def.id === 'admin_current_events_strip') ? def.label : ((s && s.label) || def.label);
-              const finalName = (def.id === 'admin_current_events_strip') ? def.name : ((s && s.name) || (s && s.label) || def.label);
+              const isSystemFixedLabel = (def.id === 'admin_current_events_strip' || def.id === 'devotee_sadhana_applied_strip' || def.id === 'devotee_remedy_applied_strip');
+              const finalLabel = isSystemFixedLabel ? def.label : ((s && s.label) || def.label);
+              const finalName = isSystemFixedLabel ? def.name : ((s && s.name) || (s && s.label) || def.label);
 
               return {
                 ...def,

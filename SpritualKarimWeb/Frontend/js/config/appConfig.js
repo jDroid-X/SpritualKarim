@@ -22,6 +22,15 @@ root.appConfig = Object.assign(root.appConfig || {}, {
   appVersion: "3.0.0",
   orgName: "Shree Spritual Karim Sansthan",
 
+  // ── Server & Active Port (Single Source of Truth) ────────────────
+  server: {
+    port: 8085,
+    host: '0.0.0.0',
+    localUrl: 'http://localhost:8085',
+    apiUrl: 'http://localhost:8085/api',
+    legacyPortsDeprecated: [8080, 8086, 8087]
+  },
+
   // ── Firebase Realtime Database ───────────────────────────────────
   firebaseUrl: 'https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/',
   firebaseProjectId: 'spritualkarim-7b5fd',
@@ -97,6 +106,42 @@ root.appConfig = Object.assign(root.appConfig || {}, {
 
   // ── UI Copy ──────────────────────────────────────────────────────
   copyrightMarqueeText: '© 2024-2026 Shree Spritual Karim Sansthan • All Sacred Lineage Rights Reserved • Certified ISO/IEC 27001 Secure Node Telemetry • Guided under the divine vision of Spiritual Karim Khan • Real-time Lineage Synchronization Active',
+  
+  // ── Sadhana & Remedy Dynamic Configuration (OOPS MVC) ─────────────
+  sk_sadhana_remedy_config: {
+    sadhana: {
+      type: "SADHANA_APPLICATION",
+      title: "Sadhana Initiation",
+      items: [
+        { id: "three_diya", name: "Three Diya Initiation", minIntentLength: 15 },
+        { id: "panch_diya", name: "Panch Diya Advanced", minIntentLength: 20 }
+      ],
+      defaultSlot: "Brahma Muhurta",
+      defaultMalas: 11,
+      switches: [
+        { id: "satvik", label: "I commit to a strict Satvik diet." },
+        { id: "sunset_diya", label: "I commit to lighting diya at Sandhya Kaal." },
+        { id: "daily_malas", label: "I commit to daily chanting (11 Malas)." },
+        { id: "confidentiality", label: "I vow to maintain absolute confidentiality." }
+      ]
+    },
+    remedy: {
+      type: "REMEDY_APPLICATION",
+      title: "Remedy & Upay Request",
+      items: [
+        { id: "house_cleanse", name: "House Cleansing Level 1", minIntentLength: 10 },
+        { id: "ancestral_karma", name: "Ancestral Karma Release", minIntentLength: 20 },
+        { id: "health_aura", name: "Health Aura Repair", minIntentLength: 15 }
+      ],
+      defaultSlot: "Flexible",
+      defaultMalas: 0,
+      switches: [
+        { id: "faith", label: "I approach this remedy with pure faith." },
+        { id: "patience", label: "I understand that divine remedies require patience." },
+        { id: "guidance", label: "I commit to following the mentor's guidance exactly." }
+      ]
+    }
+  }
 });
 
 var appConfig = root.appConfig;

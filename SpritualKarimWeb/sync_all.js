@@ -4,8 +4,20 @@ const path = require('path');
 const webRoot = path.resolve('c:/Users/jiten/jAnitGravity/SpritualKarim/SpritualKarimWeb');
 const timestamp = Date.now();
 
+// Single Source of Truth (SSOT) Port Configuration
+let appConfig = null;
+try {
+  appConfig = require('./js/config/appConfig');
+} catch (e) {}
+const SSOT_PORT = (appConfig && appConfig.server && appConfig.server.port) || 8085;
+const SSOT_URL = (appConfig && appConfig.server && appConfig.server.localUrl) || `http://localhost:${SSOT_PORT}`;
+console.log(`[SSOT] Synchronizing with active server port: ${SSOT_PORT} (${SSOT_URL})`);
+
 // Read root index.html
 let indexHtml = fs.readFileSync(path.join(webRoot, 'index.html'), 'utf8');
+
+// Ensure unwanted legacy ports are replaced with active SSOT port
+indexHtml = indexHtml.replace(/http:\/\/localhost:(?:8080|8086|8087|8088)\//g, `${SSOT_URL}/`);
 
 // Ensure proper cache-busting query parameter (?v=...)
 indexHtml = indexHtml.replace(/href="css\/profile-admin\.css[•?][^"]*"/g, `href="css/profile-admin.css?v=sk_v5_${timestamp}"`);
@@ -15,12 +27,16 @@ indexHtml = indexHtml.replace(/src="js\/utils\/FormValidator\.js[•?][^"]*"/g, 
 indexHtml = indexHtml.replace(/src="js\/profile-admin-header\.js[•?][^"]*"/g, `src="js/profile-admin-header.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/models\/ScreenAuthMatrix\.js[•?][^"]*"/g, `src="js/models/ScreenAuthMatrix.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/models\/ProfileModel\.js[•?][^"]*"/g, `src="js/models/ProfileModel.js?v=sk_v5_${timestamp}"`);
+indexHtml = indexHtml.replace(/src="js\/models\/MetadataCountEngine\.js[•?][^"]*"/g, `src="js/models/MetadataCountEngine.js?v=sk_v5_${timestamp}"`);
+indexHtml = indexHtml.replace(/src="js\/models\/SadhanaRemedyModel\.js[•?][^"]*"/g, `src="js/models/SadhanaRemedyModel.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/models\/FirebaseSyncEngine\.js[•?][^"]*"/g, `src="js/models/FirebaseSyncEngine.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/views\/ProfileView\.js[•?][^"]*"/g, `src="js/views/ProfileView.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/views\/ProfileView2\.js[•?][^"]*"/g, `src="js/views/ProfileView2.js?v=sk_v5_${timestamp}"`);
+indexHtml = indexHtml.replace(/src="js\/views\/SadhanaRemedyView\.js[•?][^"]*"/g, `src="js/views/SadhanaRemedyView.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/controllers\/ProfileController\.js[•?][^"]*"/g, `src="js/controllers/ProfileController.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/controllers\/ProfileController2\.js[•?][^"]*"/g, `src="js/controllers/ProfileController2.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/controllers\/SettingsModalController\.js[•?][^"]*"/g, `src="js/controllers/SettingsModalController.js?v=sk_v5_${timestamp}"`);
+indexHtml = indexHtml.replace(/src="js\/controllers\/SadhanaRemedyController\.js[•?][^"]*"/g, `src="js/controllers/SadhanaRemedyController.js?v=sk_v5_${timestamp}"`);
 indexHtml = indexHtml.replace(/src="js\/profile-admin-bootstrap\.js[•?][^"]*"/g, `src="js/profile-admin-bootstrap.js?v=sk_v5_${timestamp}"`);
 
 fs.writeFileSync(path.join(webRoot, 'index.html'), indexHtml, 'utf8');
@@ -31,8 +47,8 @@ const portals = [
   { dir: 'Masters', role: 'ADMIN', title: 'Master Admin Portal', badgeClass: 'badge-admin', badgeText: '👑 MASTER CONTROL' },
   { dir: 'Healers', role: 'HEALER', title: 'Healers Portal', badgeClass: 'badge-healer', badgeText: '🛡️ CERTIFIED HEALER' },
   { dir: 'Trainee', role: 'TRAINEE', title: 'Trainee Sadhak Portal', badgeClass: 'badge-trainee', badgeText: '📿 TRAINEE SADHAK' },
-  { dir: 'Devotee', role: 'DEVOTEE', title: 'Devotee Portal', badgeClass: 'badge-devotee', badgeText: '🌟 DEVOTEE / SEEKER' },
-  { dir: 'Seeker', role: 'DEVOTEE', title: 'Seeker Portal', badgeClass: 'badge-devotee', badgeText: '🌟 DEVOTEE / SEEKER' }
+  { dir: 'Devotee', role: 'DEVOTEE', title: 'Devotee Portal', badgeClass: 'badge-devotee', badgeText: '🌟 DEVOTEE' },
+  { dir: 'Seeker', role: 'DEVOTEE', title: 'Seeker Portal', badgeClass: 'badge-devotee', badgeText: '🔍 SEEKER' }
 ];
 
 portals.forEach(p => {

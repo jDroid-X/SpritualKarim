@@ -140,7 +140,18 @@ function handleApiRequest(req, res, pathname, queryParams) {
 
   // 6. Pairing Invites
   if (pathname === '/api/pairing-invites') {
-    if (req.method === 'POST') {
+    if (req.method === 'DELETE') {
+      const inviteId = queryParams ? queryParams.get('id') : null;
+      if (inviteId && typeof fb.deletePairingInvite === 'function') {
+        fb.deletePairingInvite(inviteId);
+        res.writeHead(200);
+        res.end(JSON.stringify({ success: true, message: 'Invite deleted from database', id: inviteId }));
+      } else {
+        res.writeHead(400);
+        res.end(JSON.stringify({ success: false, error: 'Missing or invalid invite id' }));
+      }
+      return true;
+    } else if (req.method === 'POST') {
       let body = '';
       req.on('data', chunk => { body += chunk; });
       req.on('end', () => {
@@ -158,6 +169,50 @@ function handleApiRequest(req, res, pathname, queryParams) {
     } else {
       res.writeHead(200);
       res.end(JSON.stringify({ success: true, data: fb.getPairingInvites() }));
+      return true;
+    }
+  }
+
+  // 6b. Sadhana Initiation Application
+  if (pathname === '/api/sadhana/apply') {
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => { body += chunk; });
+      req.on('end', () => {
+        try {
+          const payload = JSON.parse(body);
+          const invites = fb.getPairingInvites();
+          invites.unshift(payload);
+          fb.savePairingInvites(invites);
+          res.writeHead(200);
+          res.end(JSON.stringify({ success: true, message: 'Sadhana application submitted successfully', data: payload }));
+        } catch (e) {
+          res.writeHead(400);
+          res.end(JSON.stringify({ success: false, error: e.message }));
+        }
+      });
+      return true;
+    }
+  }
+
+  // 6c. Sadhana Initiation Approval
+  if (pathname === '/api/sadhana/approve') {
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => { body += chunk; });
+      req.on('end', () => {
+        try {
+          const payload = JSON.parse(body);
+          // payload should have { inviteId, targetRole, mentorNotes, targetMalas, etc. }
+          // The actual elevation logic runs on the client-side model which dual-writes back to /api/profiles and /api/pairing-invites.
+          // This endpoint serves as an alternative backend action handler if required by mobile clients.
+          res.writeHead(200);
+          res.end(JSON.stringify({ success: true, message: 'Approval received by server' }));
+        } catch (e) {
+          res.writeHead(400);
+          res.end(JSON.stringify({ success: false, error: e.message }));
+        }
+      });
       return true;
     }
   }
@@ -350,10 +405,238 @@ function handleApiRequest(req, res, pathname, queryParams) {
     return true;
   }
 
-  // 11. DB Export
-  if (pathname === '/api/db/export') {
+  // 15. Sadhana & Remedy Initiations List
+  if (pathname === '/api/sadhana/initiations') {
+    const data = fb.getLocalData();
+    const list = data.sadhana_initiations || Object.values(data.pairing_invites || {});
     res.writeHead(200);
-    res.end(JSON.stringify(fb.getLocalData(), null, 2));
+    res.end(JSON.stringify({ success: true, count: list.length, data: list }));
+    return true;
+  }
+
+  // 16. Sadhana / Remedy Application (Apply)
+  if (pathname === '/api/sadhana/apply' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body);
+        const data = fb.getLocalData();
+        if (!data.sadhana_initiations) data.sadhana_initiations = [];
+        if (!data.pairing_invites) data.pairing_invites = {};
+
+        const appId = payload.id || `sadh-req-${Date.now().toString(36)}`;
+        payload.id = appId;
+        payload.status = payload.status || 'PENDING';
+        payload.createdAtMs = payload.createdAtMs || Date.now();
+
+        data.sadhana_initiations.unshift(payload);
+        data.pairing_invites[appId] = payload;
+        fb.saveLocalData(data);
+
+        fb.appendAuditLog({
+          action: 'SADHANA_APPLICATION_SUBMITTED',
+          appId: appId,
+          applicantName: payload.applicantName || payload.seekerName,
+          title: payload.title || payload.itemTitle,
+          timestamp: Date.now()
+        });
+
+        res.writeHead(200);
+        res.end(JSON.stringify({ success: true, message: 'Initiation application submitted', data: payload }));
+      } catch (e) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ success: false, error: e.message }));
+      }
+    });
+    return true;
+  }
+
+  // 17. Sadhana / Remedy Mentor Review (Approve, Reject, Revision)
+  if (pathname === '/api/sadhana/review' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body);
+        const { id, status, notes, adjustedMalas, adjustedSlot } = payload;
+        const data = fb.getLocalData();
+        if (!data.sadhana_initiations) data.sadhana_initiations = [];
+
+        let app = data.sadhana_initiations.find(a => a.id === id);
+        if (!app && data.pairing_invites && data.pairing_invites[id]) {
+          app = data.pairing_invites[id];
+        }
+
+        if (app) {
+          app.status = status || 'APPROVED';
+          app.mentorFeedback = notes || '';
+          if (adjustedMalas) app.targetMalas = Number(adjustedMalas);
+          if (adjustedSlot) app.scheduleSlot = adjustedSlot;
+          if (status === 'APPROVED') {
+            app.approvedAtMs = Date.now();
+            app.initiationToken = app.initiationToken || `IN-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+
+            // Update user profile in database
+            if (data.profiles) {
+              const prof = Object.values(data.profiles).find(p => p.id === app.seekerId || p.referenceCode === app.devoteeCode);
+              if (prof) {
+                if (!prof.traineeSadhanas) prof.traineeSadhanas = [];
+                const exist = prof.traineeSadhanas.find(s => s.id === (app.itemId || app.id));
+                if (!exist) {
+                  prof.traineeSadhanas.push({
+                    id: app.itemId || app.id,
+                    title: app.itemTitle || app.title,
+                    category: app.category || 'Sacred Sadhana',
+                    status: 'Active',
+                    targetMalas: app.targetMalas || 11,
+                    cycleDays: app.cycleDays || 21,
+                    scheduleSlot: app.scheduleSlot,
+                    initiationToken: app.initiationToken,
+                    startDate: new Date().toISOString().split('T')[0],
+                    streakDays: 0,
+                    dailyMalasDone: 0
+                  });
+                }
+                // Lineage ascension to Level 3 Trainee
+                if (prof.level === 4 || (prof.profileType && prof.profileType.toUpperCase().includes('DEVOTEE'))) {
+                  prof.level = 3;
+                  prof.profileType = 'TRAINEE';
+                  prof.assignedRole = 'TRAINEE';
+                }
+                prof.activeSadhanas = prof.traineeSadhanas;
+              }
+            }
+          }
+          fb.saveLocalData(data);
+          fb.appendAuditLog({
+            action: `SADHANA_APPLICATION_${status || 'REVIEWED'}`,
+            appId: id,
+            status: app.status,
+            mentorFeedback: notes,
+            timestamp: Date.now()
+          });
+
+          res.writeHead(200);
+          res.end(JSON.stringify({ success: true, message: `Application ${app.status}`, data: app }));
+        } else {
+          res.writeHead(404);
+          res.end(JSON.stringify({ success: false, error: 'Application not found' }));
+        }
+      } catch (e) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ success: false, error: e.message }));
+      }
+    });
+    return true;
+  }
+
+  // 18. Daily Sadhana / Remedy Progress Logging (Pending Review)
+  if (pathname === '/api/sadhana/remedy-progress' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body);
+        const { seekerId, sadhanaId, malasCompleted, date } = payload;
+        const data = fb.getLocalData();
+        const submissionId = `prog-${Date.now().toString(36)}`;
+        if (data.profiles && seekerId) {
+          const prof = Object.values(data.profiles).find(p => p.id === seekerId || p.referenceCode === seekerId);
+          if (prof && prof.traineeSadhanas) {
+            const item = prof.traineeSadhanas.find(s => s.id === sadhanaId || s.sadhanaKey === sadhanaId || s.initiationToken === sadhanaId);
+            if (item) {
+              if (!item.pendingSubmissions) item.pendingSubmissions = [];
+              item.pendingSubmissions.push({
+                submissionId,
+                malasCompleted: Number(malasCompleted) || 1,
+                date: date || new Date().toISOString(),
+                status: 'PENDING_REVIEW'
+              });
+              fb.saveLocalData(data);
+            }
+          }
+        }
+        fb.appendAuditLog({
+          action: 'DAILY_SADHANA_PROGRESS_SUBMITTED',
+          seekerId,
+          sadhanaId,
+          submissionId,
+          malasCompleted,
+          date: date || new Date().toISOString(),
+          timestamp: Date.now()
+        });
+        res.writeHead(200);
+        res.end(JSON.stringify({ success: true, message: 'Progress submitted for healer review', data: { ...payload, submissionId, status: 'PENDING_REVIEW' } }));
+      } catch (e) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ success: false, error: e.message }));
+      }
+    });
+    return true;
+  }
+
+  // 19. Approve Daily Sadhana / Remedy Progress
+  if (pathname === '/api/sadhana/remedy-progress/approve' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body);
+        const { seekerId, sadhanaId, submissionId, healerCode } = payload;
+        const data = fb.getLocalData();
+        let approvedItem = null;
+        if (data.profiles && seekerId) {
+          const prof = Object.values(data.profiles).find(p => p.id === seekerId || p.referenceCode === seekerId);
+          if (prof && prof.traineeSadhanas) {
+            const item = prof.traineeSadhanas.find(s => s.id === sadhanaId || s.sadhanaKey === sadhanaId || s.initiationToken === sadhanaId);
+            if (item && item.pendingSubmissions) {
+              const subIndex = item.pendingSubmissions.findIndex(sub => sub.submissionId === submissionId);
+              if (subIndex !== -1) {
+                const sub = item.pendingSubmissions.splice(subIndex, 1)[0];
+                sub.status = 'APPROVED';
+                sub.approvedBy = healerCode;
+                sub.approvedAtMs = Date.now();
+                
+                if (!item.approvedSubmissions) item.approvedSubmissions = [];
+                item.approvedSubmissions.push(sub);
+                
+                item.dailyMalasDone = (item.dailyMalasDone || 0) + sub.malasCompleted;
+                item.streakDays = (item.streakDays || 0) + 1;
+                
+                // Calculate percentage
+                const target = item.targetMalas || 11;
+                const cycle = item.cycleDays || 21;
+                const totalTarget = target * cycle;
+                item.progressPercent = Math.min(100, Math.round((item.dailyMalasDone / totalTarget) * 100));
+                
+                approvedItem = item;
+                fb.saveLocalData(data);
+              }
+            }
+          }
+        }
+        
+        if (approvedItem) {
+          fb.appendAuditLog({
+            action: 'DAILY_SADHANA_PROGRESS_APPROVED',
+            seekerId,
+            sadhanaId,
+            submissionId,
+            healerCode,
+            timestamp: Date.now()
+          });
+          res.writeHead(200);
+          res.end(JSON.stringify({ success: true, message: 'Progress approved successfully', data: approvedItem }));
+        } else {
+          res.writeHead(404);
+          res.end(JSON.stringify({ success: false, error: 'Submission not found or already approved' }));
+        }
+      } catch (e) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ success: false, error: e.message }));
+      }
+    });
     return true;
   }
 

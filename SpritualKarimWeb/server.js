@@ -6,8 +6,15 @@ try {
   handleApiRequest = require("./Backend/api/routes").handleApiRequest;
 } catch (e) {}
 
-const PORT = process.env.PORT || 8085;
-const ALT_PORT = 8080;
+let appConfig = null;
+try {
+  appConfig = require("./js/config/appConfig");
+} catch (e) {}
+
+// Single Source of Truth (SSOT) Active Port Configuration
+const SSOT_PORT = (appConfig && appConfig.server && appConfig.server.port) || 8085;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : SSOT_PORT;
+const HOST = (appConfig && appConfig.server && appConfig.server.host) || "0.0.0.0";
 const BASE_DIRS = [
   path.resolve(__dirname),
   path.resolve(__dirname, "Frontend"),
@@ -152,20 +159,27 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection in server:', reason);
 });
 
-const serverPrimary = http.createServer(createRequestHandler());
-serverPrimary.on('error', (err) => {
-  console.error(`Primary Server error on port ${PORT}:`, err);
-});
-serverPrimary.listen(PORT, "0.0.0.0", () => {
-  console.log(`Spiritual Karim Primary Server running on http://localhost:${PORT}`);
+const server = http.createServer(createRequestHandler());
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n🚨 [SSOT PORT CONFLICT] Port ${PORT} is already in use by another process!`);
+    console.error(`⚠️  Spiritual Karim architecture strictly requires Port ${PORT} as the Single Source of Truth.`);
+    console.error(`👉  Automatic port hopping to unwanted ports (8086, 8087, etc.) is DISABLED to prevent broken links.`);
+    console.error(`👉  To free port ${PORT}, run: npm run free:port or terminate the lingering Node process.\n`);
+  } else {
+    console.error(`Server error on port ${PORT}:`, err);
+  }
 });
 
-const serverAlt = http.createServer(createRequestHandler());
-serverAlt.on('error', (err) => {
-  console.log(`Alt Server on port ${ALT_PORT} notice: ${err.message}`);
-});
-serverAlt.listen(ALT_PORT, "0.0.0.0", () => {
-  console.log(`Spiritual Karim Alt Server running on http://localhost:${ALT_PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`\n======================================================`);
+  console.log(`  Shree Spritual Karim Sansthan — Unified Server (SSOT)`);
+  console.log(`  Status: ACTIVE`);
+  console.log(`  Listening: http://localhost:${PORT}`);
+  console.log(`  API Routes: http://localhost:${PORT}/api/`);
+  console.log(`  Portals: Masters, Healers, Trainee, Devotee, Seeker, Public`);
+  console.log(`======================================================\n`);
 });
 
 // Explicit keep-alive timer preventing process exit on idle

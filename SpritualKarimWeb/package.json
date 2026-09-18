@@ -3,6 +3,8 @@
   "version": "3.0.0",
   "description": "Shree Spritual Karim Sansthan — Multi-Portal MLM Platform",
   "scripts": {
+    "start": "node server.js",
+    "free:port": "powershell -Command \"Get-NetTCPConnection -LocalPort 8085 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }\"",
     "test": "node scratch/verify_all_standards.js",
     "test:rag": "node scratch/verify_all_standards.js",
     "test:routes": "node scratch/verify_all_pages_and_actions.js",

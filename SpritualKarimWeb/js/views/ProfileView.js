@@ -186,6 +186,24 @@ class ProfileView {
       "trainee-active-sadhana-detail",
     );
     this.selectedTraineeId = null;
+    this.selectedTraineeMemberId = null;
+
+    // 3-Panel Trainee Workspace Elements
+    this.trainee3PanelWorkspace = document.getElementById("trainee-3panel-workspace");
+    this.traineeTeamPanel = document.getElementById("trainee-team-panel");
+    this.traineePracticesPanel = document.getElementById("trainee-practices-panel");
+    this.traineeBodyPanel = document.getElementById("trainee-body-panel");
+    this.listAccordionTrainees = document.getElementById("list-accordion-trainees");
+    this.listAccordionDevotees = document.getElementById("list-accordion-devotees");
+    this.countAccordionTrainees = document.getElementById("count-accordion-trainees");
+    this.countAccordionDevotees = document.getElementById("count-accordion-devotees");
+    this.traineeTeamCountBadge = document.getElementById("trainee-team-count-badge");
+    this.listAccordionSadhanas = document.getElementById("list-accordion-sadhanas");
+    this.listAccordionRemedies = document.getElementById("list-accordion-remedies");
+    this.countAccordionSadhanas = document.getElementById("count-accordion-sadhanas");
+    this.countAccordionRemedies = document.getElementById("count-accordion-remedies");
+    this.practicesMemberName = document.getElementById("practices-member-name");
+    this.traineeSelectedPracticeBanner = document.getElementById("trainee-selected-practice-banner");
 
     this.healerCompletedSadhanasContainer = document.getElementById(
       "healer-completed-sadhanas-container",
@@ -474,7 +492,8 @@ class ProfileView {
     this._renderInterestedSadhanas(profile.interestedSadhanas || []);
 
     // Categorized Trainee Sadhak In-Progress
-    this._renderCategorizedTraineeSadhanas(profile.traineeSadhanas || []);
+    this._renderCategorizedTraineeSadhanas(profile.traineeSadhanas || [], profile);
+    this._updateSadhakProfileIdentity(profile);
 
     // Healer Completed & Network
     const hubProfiles = this.allProfiles || visibleProfiles || [];
@@ -554,6 +573,16 @@ class ProfileView {
     }
   }
 
+  _updateSadhakProfileIdentity(profile) {
+    if (!profile) return;
+    const role = (this.model && typeof this.model.getRoleMode === "function")
+      ? this.model.getRoleMode()
+      : (profile.role || profile.profileType || "MASTER");
+    if (typeof this.renderProfileDisplayBox === "function") {
+      this.renderProfileDisplayBox(profile, role);
+    }
+  }
+
   _renderRoleSelector(roleMode) {
     if (this.selectRoleMode) {
       this.selectRoleMode.value = roleMode;
@@ -619,7 +648,10 @@ class ProfileView {
         icon: "👑",
         badgeBg: "rgba(139, 92, 246, 0.2)",
         borderColor: "#8b5cf6",
-        filter: (p) => p.profileType === "ADMIN" || p.level === 1,
+        filter: (p) => {
+          const role = (p.profileType || "").toUpperCase();
+          return role === "ADMIN" || role === "MASTER" || p.level === 1;
+        },
       },
       {
         tierNumber: 2,
@@ -627,37 +659,33 @@ class ProfileView {
         icon: "🛡️",
         badgeBg: "rgba(16, 185, 129, 0.2)",
         borderColor: "#10b981",
-        filter: (p) => p.profileType === "HEALER" && p.level === 2,
+        filter: (p) => {
+          const role = (p.profileType || "").toUpperCase();
+          return (role === "HEALER" || p.level === 2) && role !== "ADMIN" && role !== "MASTER" && p.level !== 1;
+        },
       },
       {
         tierNumber: 3,
-        title: "Tier 3: Healers In-Progress / Siddhi",
-        icon: "✨",
-        badgeBg: "rgba(236, 72, 153, 0.2)",
-        borderColor: "#ec4899",
-        filter: (p) => p.profileType === "HEALER" && p.level === 3,
+        title: "Tier 3: Trainee Sadhaks",
+        icon: "📿",
+        badgeBg: "rgba(245, 158, 11, 0.2)",
+        borderColor: "#f59e0b",
+        filter: (p) => {
+          const role = (p.profileType || "").toUpperCase();
+          return (role === "TRAINEE" || p.level === 3) && role !== "ADMIN" && role !== "MASTER" && role !== "HEALER" && role !== "DEVOTEE" && role !== "SEEKER";
+        },
       },
       {
         tierNumber: 4,
-        title: "Tier 4: Trainee Sadhaks",
-        icon: "🌿",
-        badgeBg: "rgba(245, 158, 11, 0.2)",
-        borderColor: "#f59e0b",
-        filter: (p) => p.profileType === "TRAINEE" || p.level === 4,
-      },
-      {
-        tierNumber: 5,
-        title: "Tier 5: Devotees & Seekers",
+        title: "Tier 4: Devotees & Seekers",
         icon: "🌟",
         badgeBg: "rgba(59, 130, 246, 0.2)",
         borderColor: "#3b82f6",
-        filter: (p) =>
-          p.profileType === "DEVOTEE" ||
-          p.level === 5 ||
-          (!p.level &&
-            p.profileType !== "ADMIN" &&
-            p.profileType !== "HEALER" &&
-            p.profileType !== "TRAINEE"),
+        filter: (p) => {
+          const role = (p.profileType || "").toUpperCase();
+          const isHigher = role === "ADMIN" || role === "MASTER" || role === "HEALER" || role === "TRAINEE" || (p.level && p.level < 4);
+          return !isHigher || role === "DEVOTEE" || role === "SEEKER";
+        },
       },
     ];
 
@@ -903,6 +931,69 @@ class ProfileView {
     const pName = this.selectedMemberCard.querySelector("#selected-member-name");
     if (pName) pName.textContent = selectedProfile.name || "Selected Member";
 
+    // Update Sadhana Applied below selected member name
+    const pSadhanaLabel = this.selectedMemberCard.querySelector("#selected-member-applied-sadhana-label");
+    const pSadhanaName = this.selectedMemberCard.querySelector("#selected-member-applied-sadhana-name");
+    const pSadhanaStatus = this.selectedMemberCard.querySelector("#selected-member-applied-sadhana-status");
+    const pProgressTile = this.selectedMemberCard.querySelector("#selected-member-progress-tile-container");
+
+    if (pSadhanaName) {
+      let appliedName = "No Sadhana Applied";
+      let appliedStat = "⚪ None";
+      let appliedItem = null;
+
+      if (selectedProfile.activePractices && selectedProfile.activePractices.length > 0) {
+        appliedItem = selectedProfile.activePractices[0];
+        appliedName = appliedItem.itemTitle || appliedItem.title;
+        appliedStat = "🟢 Active & Initiated";
+      } else if (selectedProfile.traineeSadhanas && selectedProfile.traineeSadhanas.length > 0) {
+        appliedItem = selectedProfile.traineeSadhanas[0];
+        appliedName = appliedItem.title;
+        appliedStat = "🟢 In-Progress";
+      }
+
+      if (pSadhanaLabel && appliedItem) {
+         const cat = (appliedItem.category || appliedItem.title || "").toLowerCase();
+         const isRemedy = cat.includes("remedy") || cat.includes("upay") || cat.includes("diya") || cat.includes("court") || cat.includes("business");
+         pSadhanaLabel.innerHTML = isRemedy ? "🪔 Remedy Applied:" : "📿 Sadhana Applied:";
+      }
+
+      pSadhanaName.textContent = appliedName;
+      if (pSadhanaStatus) pSadhanaStatus.textContent = appliedStat;
+
+      // Render progress card metadata tile
+      if (pProgressTile) {
+        if (appliedItem) {
+           const progress = Math.min(100, Math.max(0, parseInt(appliedItem.progressPercent, 10) || 0));
+           const target = appliedItem.dailyTarget || appliedItem.targetMalas || "11 Malas";
+           const cycle = appliedItem.cycleDays || 21;
+           pProgressTile.innerHTML = `
+             <div class="progress-graphics-box" style="margin-top: 0.5rem; background: var(--surface-hover, rgba(255,255,255,0.03)); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-subtle, rgba(255,255,255,0.1));">
+               <div class="progress-metrics-row" style="display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.75rem;">
+                 <span style="color: var(--text-secondary, #9ca3af);">Overall Completion</span>
+                 <span class="progress-percentage-badge" style="color: var(--gold-400, #d4af37); font-weight: 700;">${progress}%</span>
+               </div>
+               <div class="progress-bar-track" style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-bottom: 0.5rem;">
+                 <div class="progress-bar-fill" style="width: ${progress}%; height: 100%; background: var(--gold-500, #c59b27);"></div>
+               </div>
+               <div class="progress-stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                 <div class="progress-stat-card" style="background: rgba(0,0,0,0.2); padding: 0.4rem; border-radius: 4px;">
+                   <div class="progress-stat-label" style="font-size: 0.65rem; color: var(--text-muted, #6b7280);">Daily Target</div>
+                   <div class="progress-stat-val" style="font-size: 0.75rem; font-weight: 600;">${target}</div>
+                 </div>
+                 <div class="progress-stat-card" style="background: rgba(0,0,0,0.2); padding: 0.4rem; border-radius: 4px;">
+                   <div class="progress-stat-label" style="font-size: 0.65rem; color: var(--text-muted, #6b7280);">Cycle Days</div>
+                   <div class="progress-stat-val" style="font-size: 0.75rem; font-weight: 600;">${cycle} Days</div>
+                 </div>
+               </div>
+             </div>
+           `;
+        } else {
+           pProgressTile.innerHTML = "";
+        }
+      }
+    }
+
     const pRoleBadge = this.selectedMemberCard.querySelector("#selected-member-role-badge");
     if (pRoleBadge) {
       pRoleBadge.textContent = `${selectedProfile.profileType || "DEVOTEE"} • LEVEL ${selectedProfile.level || 1}`;
@@ -980,7 +1071,7 @@ class ProfileView {
       this.adminMetricsStrip = document.getElementById("admin-hierarchy-metrics-strip");
     }
     const resolvedRole = (roleMode || "MASTER").toUpperCase() === "ADMIN" ? "MASTER" : (roleMode || "MASTER").toUpperCase();
-    const isAdmin = resolvedRole === "MASTER";
+    const isAdmin = resolvedRole === "MASTER" || resolvedRole === "HEALER";
     if (this.adminMetricsStrip) {
       this.adminMetricsStrip.style.display = isAdmin ? "grid" : "none";
     }
@@ -1645,16 +1736,168 @@ class ProfileView {
   }
 
   /**
+   * Universal Metadata Counter Engine (OOPS MVC View Component)
+   * Synchronizes all status, sum, and count activities across the entire DOM in a single closed loop.
+   * Reads directly from MetadataCountEngine (SSOT) or passed metrics object.
+   */
+  syncAllMetadataCounters(metrics = null) {
+    let m = metrics;
+    if (!m && typeof window !== "undefined" && window.MetadataCountEngine && this.allProfiles) {
+      const invites = typeof this.controller?.model?.getPairingInvites === "function" 
+        ? this.controller.model.getPairingInvites() 
+        : [];
+      const sadhanaApps = typeof this.controller?.model?.getSadhanaRemedyApplications === "function"
+        ? this.controller.model.getSadhanaRemedyApplications()
+        : [];
+      m = window.MetadataCountEngine.computeAll(this.allProfiles, invites, sadhanaApps);
+    }
+    if (!m) return;
+
+    // 1. Pending Approvals Badges (Topbar Bell, Header Button, Sidebar Button, Composite Tile)
+    const pCount = m.pending?.pending ?? m.pendingInvites?.pending ?? 0;
+    const pTotal = m.pending?.total ?? m.pendingInvites?.total ?? pCount;
+    const regCount = m.pending?.registrationPending ?? m.pendingInvites?.registrationPending ?? 0;
+    const sadhanaCount = m.pending?.sadhanaPending ?? m.pendingInvites?.sadhanaPending ?? 0;
+
+    const topbarBell = document.getElementById("approval-notification-count");
+    if (topbarBell) topbarBell.textContent = pCount;
+
+    const notifBanner = document.getElementById("pending-approval-notification-banner");
+    if (notifBanner) {
+      notifBanner.style.display = pCount > 0 ? "inline-flex" : "none";
+    }
+
+    const headerBtnBadge = document.getElementById("header-pending-badge");
+    if (headerBtnBadge) headerBtnBadge.textContent = pCount;
+
+    const btnHeaderApprovals = document.getElementById("btn-header-pending-approvals");
+    if (btnHeaderApprovals) {
+      const currentRole = (this.model ? this.model.getRoleMode() : (this.currentRoleMode || "MASTER")).toUpperCase();
+      const btnText = btnHeaderApprovals.querySelector(".btn-text");
+      if (["ADMIN", "MASTER"].includes(currentRole)) {
+        if (btnText) btnText.innerHTML = `Approvals (<strong id="header-pending-badge">${pCount}</strong>)`;
+        btnHeaderApprovals.title = `Open Lineage Approvals Queue (${pCount} Pending Requests)`;
+      } else if (["HEALER"].includes(currentRole)) {
+        const activeProf = this.model?.getActiveProfile?.();
+        const healerCode = activeProf?.referenceCode;
+        const scopedInvites = (this.allProfiles && healerCode) ? (this.model?.getPairingInvitesForRole?.("HEALER", activeProf) || []) : [];
+        const scopedPending = scopedInvites.filter(i => (i.status || "").toLowerCase() === "pending").length;
+        if (btnText) btnText.innerHTML = `Healer Approvals (<strong id="header-pending-badge">${scopedPending}</strong>)`;
+        btnHeaderApprovals.title = `Review Pending Requests assigned to your Lineage (${scopedPending} Pending)`;
+      } else if (["TRAINEE", "SADHAK"].includes(currentRole)) {
+        if (btnText) btnText.innerHTML = `Sadhana Status (<strong id="header-pending-badge">1 Active</strong>)`;
+        btnHeaderApprovals.title = "View Sadhana Initiation & Sacred Notification Desk";
+      } else {
+        if (btnText) btnText.innerHTML = `Application Status (<strong id="header-pending-badge">1 Pending</strong>)`;
+        btnHeaderApprovals.title = "View Application Status & Sacred Notification Desk";
+      }
+    }
+
+    const sidebarBtnBadge = document.getElementById("sidebar-pending-badge");
+    if (sidebarBtnBadge) sidebarBtnBadge.textContent = pCount;
+
+    const tilePending = document.getElementById("metric-tile-pending-count");
+    if (tilePending) tilePending.textContent = `${pCount} Pending`;
+
+    const pendingDrawerHeader = document.getElementById("pending-drawer-count");
+    if (pendingDrawerHeader) pendingDrawerHeader.textContent = `${pCount} Pending / ${pTotal} Total`;
+
+    const badgeReg = document.getElementById("tab-badge-pending-registration");
+    if (badgeReg) badgeReg.textContent = regCount;
+
+    const badgeSadhana = document.getElementById("tab-badge-pending-sadhana");
+    if (badgeSadhana) badgeSadhana.textContent = sadhanaCount;
+
+    // 2. Sidebar Hierarchy Tier Badges (Stage 2: 1..4)
+    const tierMap = {
+      1: m.hierarchy?.tier1?.total ?? m.tier1?.total ?? m.masters?.total ?? 1,
+      2: m.hierarchy?.tier2?.total ?? m.tier2?.total ?? m.healers?.total ?? 0,
+      3: m.hierarchy?.tier3?.total ?? m.tier3?.total ?? m.trainees?.total ?? 0,
+      4: m.hierarchy?.tier4?.total ?? m.tier4?.total ?? m.devotees?.total ?? 0,
+    };
+    for (let t = 1; t <= 4; t++) {
+      const badge = document.getElementById(`legend-count-tier-${t}`);
+      if (badge) badge.textContent = tierMap[t];
+    }
+
+    // 3. Tab 2 Multilevel Organization Hub Metrics Strip (Always Synchronized)
+    const hub = m.healerHub || (typeof window !== "undefined" && window.MetadataCountEngine ? window.MetadataCountEngine.computeHealerHubMetrics(this.allProfiles || []) : null);
+    if (hub) {
+      const elHubTotal = document.getElementById("hub-metric-total");
+      if (elHubTotal) elHubTotal.textContent = hub.total ?? (this.allProfiles ? this.allProfiles.length : 0);
+
+      const elHubAdmin = document.getElementById("hub-metric-admin");
+      if (elHubAdmin) elHubAdmin.textContent = hub.admin ?? tierMap[1];
+
+      const elHubHealers = document.getElementById("hub-metric-healers");
+      if (elHubHealers) elHubHealers.textContent = hub.healers ?? tierMap[2];
+
+      const elHubTrainees = document.getElementById("hub-metric-trainees");
+      if (elHubTrainees) elHubTrainees.textContent = hub.trainees ?? tierMap[3];
+
+      const elHubDevotees = document.getElementById("hub-metric-devotees");
+      if (elHubDevotees) elHubDevotees.textContent = hub.devotees ?? tierMap[4];
+
+      // Tab 2 Directory Category Filter Chips
+      const chipAll = document.getElementById("chip-cnt-all");
+      if (chipAll) chipAll.textContent = hub.total ?? (this.allProfiles ? this.allProfiles.length : 0);
+
+      const chipAdmin = document.getElementById("chip-cnt-admin");
+      if (chipAdmin) chipAdmin.textContent = hub.admin ?? tierMap[1];
+
+      const chipHealers = document.getElementById("chip-cnt-healers");
+      if (chipHealers) chipHealers.textContent = hub.healers ?? tierMap[2];
+
+      const chipTrainees = document.getElementById("chip-cnt-trainees");
+      if (chipTrainees) chipTrainees.textContent = hub.trainees ?? tierMap[3];
+
+      const chipDevotees = document.getElementById("chip-cnt-devotees");
+      if (chipDevotees) chipDevotees.textContent = hub.devotees ?? tierMap[4];
+    }
+
+    // 4. Admin Live Metrics Strip (Quad Active vs Total)
+    const t1Active = m.hierarchy?.tier1?.active ?? m.tier1?.active ?? m.masters?.active ?? 0;
+    const t1Total = m.hierarchy?.tier1?.total ?? m.tier1?.total ?? m.masters?.total ?? 0;
+    const mActiveTotal = document.getElementById("metric-masters-active-total");
+    if (mActiveTotal) mActiveTotal.innerHTML = `<span class="val-active">${t1Active}</span> / <span class="val-total">${t1Total}</span>`;
+
+    const t2Active = m.hierarchy?.tier2?.active ?? m.tier2?.active ?? m.healers?.active ?? 0;
+    const t2Total = m.hierarchy?.tier2?.total ?? m.tier2?.total ?? m.healers?.total ?? 0;
+    const hActiveTotal = document.getElementById("metric-healers-active-total");
+    if (hActiveTotal) hActiveTotal.innerHTML = `<span class="val-active">${t2Active}</span> / <span class="val-total">${t2Total}</span>`;
+
+    const t3Active = m.hierarchy?.tier3?.active ?? m.tier3?.active ?? m.trainees?.active ?? 0;
+    const t3Total = m.hierarchy?.tier3?.total ?? m.tier3?.total ?? m.trainees?.total ?? 0;
+    const tActiveTotal = document.getElementById("metric-trainees-active-total");
+    if (tActiveTotal) tActiveTotal.innerHTML = `<span class="val-active">${t3Active}</span> / <span class="val-total">${t3Total}</span>`;
+
+    const t4Active = m.hierarchy?.tier4?.active ?? m.tier4?.active ?? m.devotees?.active ?? 0;
+    const t4Total = m.hierarchy?.tier4?.total ?? m.tier4?.total ?? m.devotees?.total ?? 0;
+    const dActiveTotal = document.getElementById("metric-devotees-active-total");
+    if (dActiveTotal) dActiveTotal.innerHTML = `<span class="val-active">${t4Active}</span> / <span class="val-total">${t4Total}</span>`;
+
+    // 5. Total Nodes & Profile Counts
+    const treeTotal = document.getElementById("metric-tree-total-nodes");
+    if (treeTotal) treeTotal.textContent = `${m.totalProfiles || (this.allProfiles ? this.allProfiles.length : 15)} Nodes`;
+
+    const totalEl = document.getElementById("metric-total-profiles") || document.getElementById("metric-total-profiles-count");
+    if (totalEl) totalEl.textContent = m.totalProfiles || (this.allProfiles ? this.allProfiles.length : 0);
+
+    const activeEl = document.getElementById("metric-active-profiles") || document.getElementById("metric-active-profiles-count");
+    if (activeEl) activeEl.textContent = m.activeProfiles || (this.allProfiles ? this.allProfiles.filter(p => p.isActive !== false).length : 0);
+  }
+
+  /**
    * Synchronizes Left Navigation App Hierarchy Tier count badges (#legend-count-tier-1..4)
    * with the underlying single source of truth database metrics.
    */
   updateSidebarTierBadges(metrics) {
     if (!metrics) return;
     const tierMap = {
-      1: metrics.tier1?.total ?? metrics.masters?.total ?? 1,
-      2: metrics.tier2?.total ?? metrics.healers?.total ?? 0,
-      3: metrics.tier3?.total ?? metrics.trainees?.total ?? 0,
-      4: metrics.tier4?.total ?? metrics.devotees?.total ?? 0,
+      1: metrics.hierarchy?.tier1?.total ?? metrics.tier1?.total ?? metrics.masters?.total ?? 1,
+      2: metrics.hierarchy?.tier2?.total ?? metrics.tier2?.total ?? metrics.healers?.total ?? 0,
+      3: metrics.hierarchy?.tier3?.total ?? metrics.tier3?.total ?? metrics.trainees?.total ?? 0,
+      4: metrics.hierarchy?.tier4?.total ?? metrics.tier4?.total ?? metrics.devotees?.total ?? 0,
     };
 
     for (let t = 1; t <= 4; t++) {
@@ -1667,7 +1910,7 @@ class ProfileView {
 
   /**
    * Master Closed-Loop Refresh Engine:
-   * Synchronizes all 13 screen metadata elements across the interface in real time
+   * Synchronizes all screen metadata elements across the interface in real time
    * whenever profiles are created, updated, approved, or deleted.
    */
   _renderBasicFields(activeProfile) {
@@ -1680,8 +1923,8 @@ class ProfileView {
   }
 
   updateAllScreenMetadata(metrics, activeProfile, profilesList, roleMode = "MASTER") {
-    // 1. Sidebar Hierarchy Badges
-    this.updateSidebarTierBadges(metrics);
+    // 1. Unified Closed-Loop Metadata Synchronization across all UI counters
+    this.syncAllMetadataCounters(metrics);
 
     // 2. Center Admin Hierarchy Metric Cards
     this.renderAdminMetricsTiles(metrics, roleMode);
@@ -1696,21 +1939,7 @@ class ProfileView {
       this._renderBasicFields(activeProfile);
     }
 
-    // 5. Total Profiles, Active Profiles, and Pending counts
-    if (metrics) {
-      const totalEl = document.getElementById("metric-total-profiles") || document.getElementById("metric-total-profiles-count");
-      if (totalEl) totalEl.textContent = metrics.totalProfiles;
-
-      const activeEl = document.getElementById("metric-active-profiles") || document.getElementById("metric-active-profiles-count");
-      if (activeEl) activeEl.textContent = metrics.activeProfiles;
-
-      const pendingEl = document.getElementById("metric-pending-approvals-count") || document.getElementById("pending-drawer-count");
-      if (pendingEl && metrics.pendingInvites) {
-        pendingEl.textContent = `${metrics.pendingInvites.pending || 0} Pending`;
-      }
-    }
-
-    // 6. Secondary Member Card Visibility check: reset if member was deleted
+    // 5. Secondary Member Card Visibility check: reset if member was deleted
     if (this.currentSelectedTierMember && profilesList) {
       const exists = profilesList.some((p) => p.id === this.currentSelectedTierMember.id);
       if (!exists) {
@@ -2037,112 +2266,276 @@ class ProfileView {
       .join("");
   }
 
-  _renderCategorizedTraineeSadhanas(sadhanas) {
-    if (!sadhanas || sadhanas.length === 0) {
-      const emptyMsg = `<div style="grid-column: 1/-1; color: var(--text-muted); font-size: 0.8rem; font-style: italic; padding: 0.5rem 0;">No active items. Tick any card in Seeker Purpose to add here.</div>`;
-      if (this.traineeGroupSadhanas)
-        this.traineeGroupSadhanas.innerHTML = emptyMsg;
-      if (this.traineeGroupRemedies)
-        this.traineeGroupRemedies.innerHTML = emptyMsg;
-      if (this.traineeGroupCleansing)
-        this.traineeGroupCleansing.innerHTML = emptyMsg;
-      this._renderTraineeActiveDetail(null);
-      return;
-    }
+  /**
+   * Universal Closed-Loop Practices Resolver for Trainee Sadhak
+   * Merges traineeSadhanas, selectedRemedies, interestedSadhanas, and approved applications
+   * @param {Object} selectedMember 
+   * @returns {Array} Complete deduplicated list of active practices
+   */
+  getTraineeMemberPractices(selectedMember) {
+    if (!selectedMember) return [];
+    const catalog = (this.model && typeof this.model.getSadhanaCatalog === "function")
+      ? this.model.getSadhanaCatalog()
+      : {};
 
-    // Set default selected trainee item if none selected or if selected was deleted
-    if (
-      !this.selectedTraineeId ||
-      !sadhanas.some((s) => s.id === this.selectedTraineeId)
-    ) {
-      this.selectedTraineeId = sadhanas[0].id;
-    }
+    const practicesMap = new Map();
 
-    const filterByDomain = (domainKey) =>
-      sadhanas.filter((s) => {
-        if (s.categoryDomain) return s.categoryDomain === domainKey;
-        const cat = (s.category || s.title || "").toLowerCase();
-        if (domainKey === "sadhanas")
-          return (
-            cat.includes("sadhana") ||
-            cat.includes("yantra") ||
-            cat.includes("bhairav") ||
-            cat.includes("chamunda") ||
-            cat.includes("diwali")
-          );
-        if (domainKey === "remedies")
-          return (
-            cat.includes("remedy") ||
-            cat.includes("diya") ||
-            cat.includes("court") ||
-            cat.includes("business") ||
-            cat.includes("trilok") ||
-            cat.includes("havan") ||
-            cat.includes("vastu") ||
-            cat.includes("gopal") ||
-            cat.includes("debt")
-          );
-        return (
-          cat.includes("clean") ||
-          cat.includes("kundalini") ||
-          cat.includes("heal") ||
-          cat.includes("karmic") ||
-          cat.includes("nazar") ||
-          cat.includes("aura")
-        );
-      });
-
-    const renderDomainTiles = (items) => {
-      if (items.length === 0) {
-        return `<div style="grid-column: 1/-1; color: var(--text-muted); font-size: 0.8rem; font-style: italic; padding: 0.5rem 0;">No active items in this category. Tick any card in Seeker Purpose to add here.</div>`;
+    const addPractice = (item) => {
+      if (!item) return;
+      const key = item.sadhanaKey || item.id || item.title || item.name;
+      if (!key) return;
+      if (!practicesMap.has(key)) {
+        practicesMap.set(key, Object.assign({}, item));
+      } else {
+        const existing = practicesMap.get(key);
+        practicesMap.set(key, Object.assign({}, existing, item));
       }
+    };
 
+    // 1. Existing traineeSadhanas
+    if (Array.isArray(selectedMember.traineeSadhanas)) {
+      selectedMember.traineeSadhanas.forEach(addPractice);
+    }
+
+    // 2. Resolve selectedRemedies from Master Catalog
+    if (Array.isArray(selectedMember.selectedRemedies)) {
+      selectedMember.selectedRemedies.forEach((remKey) => {
+        if (!practicesMap.has(remKey)) {
+          const catItem = catalog[remKey] || {};
+          const isSadh = (catItem.domain === "sadhanas" || (catItem.category || "").toLowerCase().includes("sadhana") || remKey.includes("yantra") || remKey.includes("bhairav") || remKey.includes("debts"));
+          addPractice({
+            id: `ts-${(selectedMember.id || "mem").replace("prof-", "")}-${remKey}`,
+            sadhanaKey: remKey,
+            title: catItem.title || remKey.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()),
+            categoryDomain: isSadh ? "sadhanas" : "remedies",
+            isPaid: selectedMember.isPaid !== false && selectedMember.paymentStatus !== "FREE",
+            paymentStatus: selectedMember.paymentStatus || "PAID",
+            level: `Level ${selectedMember.level || 2} — Mantra Diksha`,
+            dailyTarget: isSadh ? "11 Malas & Trataka" : "3 Diyas at Dusk",
+            currentStreak: "14 Days",
+            progressPercent: selectedMember.progressPercent || 75,
+            status: "In Progress",
+            mentorCode: selectedMember.referredByCode || "SKHM-HLR2-3344-5566",
+            mentorName: selectedMember.referredByName || "Acharya Devendra",
+            diaryNotes: `${catItem.title || remKey} active sacred practice.`,
+            initiationToken: `SK-${remKey.toUpperCase().slice(0, 4)}-7788`,
+            verificationStatus: "VERIFIED"
+          });
+        }
+      });
+    }
+
+    // 3. Interested Sadhanas
+    if (Array.isArray(selectedMember.interestedSadhanas)) {
+      selectedMember.interestedSadhanas.forEach((is) => {
+        const k = is.id || is.name;
+        if (k && !practicesMap.has(k)) {
+          const catItem = catalog[k] || {};
+          const isSadh = (catItem.domain === "sadhanas" || (is.category || "").toLowerCase().includes("sadhana") || (is.name || "").toLowerCase().includes("sadhana"));
+          addPractice({
+            id: `ts-${(selectedMember.id || "mem").replace("prof-", "")}-${k}`,
+            sadhanaKey: k,
+            title: is.name || catItem.title || k,
+            categoryDomain: isSadh ? "sadhanas" : "remedies",
+            isPaid: selectedMember.isPaid !== false && selectedMember.paymentStatus !== "FREE",
+            paymentStatus: selectedMember.paymentStatus || "PAID",
+            level: `Level ${selectedMember.level || 2} — Diksha`,
+            dailyTarget: isSadh ? "11 Malas Daily" : "Evening Lamp",
+            currentStreak: "7 Days",
+            progressPercent: 70,
+            status: "In Progress",
+            mentorCode: selectedMember.referredByCode || "SKHM-HLR2-3344-5566",
+            mentorName: selectedMember.referredByName || "Acharya Devendra",
+            diaryNotes: "Enrolled sadhana practice.",
+            initiationToken: `SK-${k.toUpperCase().slice(0, 4)}-ENR`,
+            verificationStatus: "VERIFIED"
+          });
+        }
+      });
+    }
+
+    // 4. Approved or Initiated applications from getSadhanaRemedyApplications()
+    const allApps = (this.model && typeof this.model.getSadhanaRemedyApplications === "function")
+      ? (this.model.getSadhanaRemedyApplications() || [])
+      : [];
+    const memberApps = allApps.filter((a) => {
+      if (!a) return false;
+      const matchId = (a.requesterId && (a.requesterId === selectedMember.id || a.requesterId === selectedMember.referenceCode));
+      const matchCode = (a.requesterCode && (a.requesterCode === selectedMember.referenceCode || a.requesterCode === selectedMember.id));
+      const matchName = (a.requesterName && selectedMember.name && a.requesterName.trim().toLowerCase() === selectedMember.name.trim().toLowerCase());
+      return matchId || matchCode || matchName;
+    });
+
+    memberApps.forEach((app) => {
+      const k = app.sadhanaKey || app.sadhanaId || app.sadhanaName || app.id;
+      if (k && !practicesMap.has(k)) {
+        const catItem = catalog[k] || {};
+        const isSadh = app.type === "sadhana" || catItem.domain === "sadhanas" || (app.sadhanaName || "").toLowerCase().includes("sadhana");
+        addPractice({
+          id: app.id || `app-${k}`,
+          sadhanaKey: k,
+          title: app.sadhanaName || catItem.title || k,
+          categoryDomain: isSadh ? "sadhanas" : "remedies",
+          isPaid: app.isPaid !== false,
+          paymentStatus: app.paymentStatus || "PAID",
+          level: app.level || "Level 2 — Diksha",
+          dailyTarget: app.dailyTarget || (isSadh ? "11 Malas Daily" : "Evening Lamp"),
+          currentStreak: "3 Days",
+          progressPercent: app.progressPercent || 50,
+          status: app.status || "In Progress",
+          mentorCode: app.uplineCode || app.firstApproverCode || selectedMember.referredByCode,
+          mentorName: app.uplineName || app.firstApproverName,
+          diaryNotes: app.intentNotes || "Initiated via application queue.",
+          verificationStatus: app.status === "APPROVED" ? "VERIFIED" : app.status === "PENDING" ? "PENDING_APPROVAL" : "ACTIVE"
+        });
+      }
+    });
+
+    return Array.from(practicesMap.values());
+  }
+
+  _renderTraineeNetworkSlimLists(activeProf) {
+    if (!activeProf) return;
+    const allProfiles = this.allProfiles || (this.model && this.model.profiles) || [];
+    const trainees = allProfiles.filter(p => p.profileType === 'TRAINEE' || p.role === 'TRAINEE');
+    const devotees = allProfiles.filter(p => p.profileType === 'DEVOTEE' || p.role === 'DEVOTEE');
+    if (this.countAccordionTrainees) this.countAccordionTrainees.textContent = trainees.length;
+    if (this.countAccordionDevotees) this.countAccordionDevotees.textContent = devotees.length;
+    if (this.listAccordionTrainees) {
+      this.listAccordionTrainees.innerHTML = trainees.map(t => `<div class="accordion-sub-item" data-id="${t.id}">${t.name || t.id}</div>`).join("");
+    }
+    if (this.listAccordionDevotees) {
+      this.listAccordionDevotees.innerHTML = devotees.map(d => `<div class="accordion-sub-item" data-id="${d.id}">${d.name || d.id}</div>`).join("");
+    }
+  }
+
+  _renderCategorizedTraineeSadhanas(sadhanas, profile = null) {
+    const activeProf = profile || (this.model && typeof this.model.getActiveProfile === 'function' ? this.model.getActiveProfile() : null);
+    this._updateSadhakProfileIdentity(activeProf);
+
+    // 1. Render Left Slim Panel 1: Trainee & Devotee Accordion Lists
+    if (typeof this._renderTraineeNetworkSlimLists === 'function') {
+      this._renderTraineeNetworkSlimLists(activeProf);
+    }
+
+    // Ensure 3-column container is displayed
+    if (this.traineeTeamPanel) {
+      this.traineeTeamPanel.style.setProperty("display", "none", "important");
+    }
+    if (this.traineeSlimPanel) this.traineeSlimPanel.style.display = "flex";
+    if (this.traineePracticesPanel) {
+      this.traineePracticesPanel.style.display = "flex";
+      this.traineePracticesPanel.style.flexShrink = "0";
+    }
+    if (this.traineeBodyPanel) {
+      this.traineeBodyPanel.style.display = "flex";
+      this.traineeBodyPanel.style.flex = "1 1 0";
+      this.traineeBodyPanel.style.width = "100%";
+      this.traineeBodyPanel.style.minWidth = "0";
+    }
+
+    // Bind selected member strictly to activeProf (Single Source of Truth)
+    this.selectedTraineeMemberId = activeProf?.id || null;
+    const selectedMember = activeProf;
+
+    // 2. Render Panel 2: Practices List of Selected Member
+    if (this.practicesMemberName) {
+      this.practicesMemberName.textContent = selectedMember?.name || "Selected Member";
+    }
+
+    const memberPractices = this.getTraineeMemberPractices(selectedMember);
+
+    const catalog = (this.model && typeof this.model.getSadhanaCatalog === "function")
+      ? this.model.getSadhanaCatalog()
+      : {};
+
+    const sadhanasList = memberPractices.filter((s) => {
+      const k = s.sadhanaKey || s.id;
+      const catItem = catalog[k] || {};
+      const catDomain = (s.categoryDomain || s.domain || catItem.domain || "").toLowerCase();
+      if (catDomain === "sadhanas" || catDomain === "sadhana") return true;
+      if (catDomain === "remedies" || catDomain === "remedy") return false;
+
+      const catStr = [s.category, catItem.category, s.title, s.name, catItem.title, k].filter(Boolean).join(" ").toLowerCase();
+      return (
+        catStr.includes("sadhana") ||
+        catStr.includes("shield") ||
+        catStr.includes("suraksha") ||
+        catStr.includes("yantra") ||
+        catStr.includes("kavach") ||
+        catStr.includes("bhairav") ||
+        catStr.includes("chamunda") ||
+        catStr.includes("diwali") ||
+        catStr.includes("diksha") ||
+        catStr.includes("debts") ||
+        catStr.includes("mantra")
+      );
+    });
+
+    const remediesList = memberPractices.filter((s) => !sadhanasList.includes(s));
+
+    if (this.countAccordionSadhanas) this.countAccordionSadhanas.textContent = sadhanasList.length;
+    if (this.countAccordionRemedies) this.countAccordionRemedies.textContent = remediesList.length;
+
+    // Default selected practice
+    if (!this.selectedTraineeId || !memberPractices.some((s) => s.id === this.selectedTraineeId)) {
+      this.selectedTraineeId = sadhanasList[0]?.id || remediesList[0]?.id || memberPractices[0]?.id || null;
+    }
+
+    const renderPracticeList = (items, fallbackDomain = "sadhana") => {
+      if (!items || items.length === 0) {
+        return `<div style="font-size: 0.72rem; color: var(--text-muted); font-style: italic; padding: 0.6rem 0.5rem; text-align: center;">No ${fallbackDomain} items enrolled.</div>`;
+      }
       return items
         .map((ts) => {
-          const isPaid = ts.isPaid !== false && ts.paymentStatus !== "FREE";
           const isSelected = ts.id === this.selectedTraineeId;
           const sadhanaKey = ts.sadhanaKey || ts.id;
-          const catalog = (this.model && typeof this.model.getSadhanaCatalog === 'function') ? this.model.getSadhanaCatalog() : {};
-          const catalogItem = catalog[sadhanaKey] || { icon: "🌿" };
+          const catalogItem = catalog[sadhanaKey] || { icon: fallbackDomain === "sadhana" ? "🕉️" : "🪔" };
+          const progressVal = Math.min(100, Math.max(0, parseInt(ts.progressPercent, 10) || 0));
           return `
-        <div class="trainee-card-tile ${isPaid ? "tile-paid" : "tile-free"} ${isSelected ? "active-selected-tile" : ""}" 
-             data-item-id="${ts.id}" 
-             data-sadhana-key="${sadhanaKey}">
-          <div class="option-content trainee-tile-select-trigger" data-item-id="${ts.id}">
-            <div style="display: flex; align-items: center; gap: 0.4rem;">
-              <span style="font-size: 1.1rem;">${catalogItem.icon || "🌿"}</span>
-              <span class="option-title">${ts.title || "In-Progress Sadhana"}</span>
+            <div class="trainee-practice-item ${isSelected ? "active" : ""}" 
+                 data-item-id="${ts.id}" 
+                 data-member-id="${selectedMember?.id || ""}">
+              <div class="practice-item-info">
+                <div class="practice-item-title">
+                  <span>${catalogItem.icon || (fallbackDomain === "sadhana" ? "🕉️" : "🪔")}</span>
+                  <span>${esc(ts.title || ts.name || "Practice")}</span>
+                </div>
+                <div class="practice-item-meta">
+                  ${ts.level || "Initiation"} &bull; 
+                  <span style="color: ${ts.verificationStatus === "VERIFIED" ? "#10b981" : ts.verificationStatus === "PENDING_APPROVAL" ? "#f59e0b" : "var(--text-muted)"};">
+                    ${ts.verificationStatus === "VERIFIED" ? "Sealed" : ts.verificationStatus === "PENDING_APPROVAL" ? "Pending" : "Active"}
+                  </span>
+                </div>
+              </div>
+              <span class="practice-progress-mini">${progressVal}%</span>
             </div>
-            <span class="option-tag">${ts.level || "Level 1 — Initiation"} &bull; ${ts.progressPercent || 0}%</span>
-          </div>
-
-          <div class="tile-actions-vertical">
-            <input type="checkbox" class="tile-checkbox trainee-item-checkbox" data-item-id="${ts.id}" checked title="Ticked in Trainee In-Progress">
-            <button type="button" class="btn-sadhana-info-trigger" data-sadhana-id="${sadhanaKey}" title="View Full Ritual Guide">👁️</button>
-            <button type="button" class="stamp-indicator ${isPaid ? "stamp-paid" : "stamp-free"} btn-tile-stamp-toggle" data-item-id="${ts.id}" title="Toggle Paid/Free">${isPaid ? "PAID" : "FREE"}</button>
-          </div>
-        </div>
-        `;
+          `;
         })
         .join("");
     };
 
-    if (this.traineeGroupSadhanas)
-      this.traineeGroupSadhanas.innerHTML = renderDomainTiles(
-        filterByDomain("sadhanas"),
-      );
-    if (this.traineeGroupRemedies)
-      this.traineeGroupRemedies.innerHTML = renderDomainTiles(
-        filterByDomain("remedies"),
-      );
-    if (this.traineeGroupCleansing)
-      this.traineeGroupCleansing.innerHTML = renderDomainTiles(
-        filterByDomain("cleansing"),
-      );
+    // Ensure both accordion sections are active and open by default
+    const secSadhanas = document.getElementById("accordion-section-sadhanas");
+    const secRemedies = document.getElementById("accordion-section-remedies");
+    if (secSadhanas) secSadhanas.classList.add("active", "open");
+    if (secRemedies) secRemedies.classList.add("active", "open");
+    if (this.listAccordionSadhanas) {
+      this.listAccordionSadhanas.style.display = "block";
+      this.listAccordionSadhanas.innerHTML = renderPracticeList(sadhanasList, "sadhana");
+    }
+    if (this.listAccordionRemedies) {
+      this.listAccordionRemedies.style.display = "block";
+      this.listAccordionRemedies.innerHTML = renderPracticeList(remediesList, "remedy");
+    }
+    const arrowSadhanas = document.getElementById("arrow-accordion-sadhanas");
+    const arrowRemedies = document.getElementById("arrow-accordion-remedies");
+    if (arrowSadhanas) arrowSadhanas.textContent = "▼";
+    if (arrowRemedies) arrowRemedies.textContent = "▼";
 
-    const activeItem =
-      sadhanas.find((s) => s.id === this.selectedTraineeId) || sadhanas[0];
-    this._renderTraineeActiveDetail(activeItem);
+    // 3. Render 3rd Body: 2-Column Progress & Feedback Report
+    const activeItem = memberPractices.find((s) => s.id === this.selectedTraineeId) || memberPractices[0] || null;
+    this._renderTraineeActiveDetail(activeItem, selectedMember);
   }
 
   renderUniversalMemoBox({
@@ -2170,7 +2563,7 @@ class ProfileView {
         <div class="universal-memo-toolbar">
           <button type="button" class="btn-memo-tool btn-memo-keyboard" title="Toggle Quick Chips & Keyboard Focus" data-target="${textareaId}">⌨️</button>
           <button type="button" class="btn-memo-tool btn-memo-mic" title="Voice-to-Text Input (Microphone)" data-target="${textareaId}">🎤</button>
-          <button type="button" class="btn-memo-tool btn-memo-send" title="Submit Input with Date-Time Stamp" id="btn-add-trainee-memo" data-item-id="${targetItemId}">
+          <button type="button" class="btn-memo-tool btn-memo-send btn-add-trainee-memo" title="Submit Input with Date-Time Stamp" data-item-id="${targetItemId}">
             <svg class="send-vector-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z"/></svg>
           </button>
         </div>
@@ -2182,16 +2575,28 @@ class ProfileView {
     `;
   }
 
-  _renderTraineeActiveDetail(item) {
-    if (!this.traineeActiveDetailContainer) return;
+  _renderTraineeActiveDetail(item, profile = null) {
+    const bannerEl = this.traineeSelectedPracticeBanner || document.getElementById("trainee-selected-practice-banner");
+    const activeProf = profile || (this.model && typeof this.model.getActiveProfile === 'function' ? this.model.getActiveProfile() : null);
+    const profName = activeProf ? (activeProf.name || "Spiritual Karim Khan") : "Spiritual Karim Khan";
+
     if (!item) {
-      this.traineeActiveDetailContainer.innerHTML = `
-        <div class="trainee-detail-card" style="text-align: center; color: var(--text-muted); padding: 3rem 1.5rem;">
-          <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🕉️</div>
-          <h4 style="font-family: var(--font-heading); color: var(--gold-400); margin-bottom: 0.5rem;">No Active Sadhana Selected</h4>
-          <p style="font-size: 0.85rem;">Tick or select any Sadhana, Remedy, or Cleansing tile on the left to view graphical progress, level details, and progress memo notes.</p>
-        </div>
-      `;
+      if (bannerEl) {
+        bannerEl.innerHTML = `
+          <div class="selected-practice-empty-note">
+            <span>🕉️</span> <span>Select any Sadhana or Remedy from the left panel to view live progress, stats &amp; reports.</span>
+          </div>
+        `;
+      }
+      if (this.traineeActiveDetailContainer) {
+        this.traineeActiveDetailContainer.innerHTML = `
+          <div class="trainee-detail-card" style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem 1rem;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🕉️</div>
+            <h4 style="font-family: var(--font-heading); color: var(--gold-400); margin-bottom: 0.35rem;">No Active Sadhana Selected</h4>
+            <p style="font-size: 0.8rem;">Select any Sadhana or Remedy tile from the left practices panel to view graphical progress, level details, and feedback reports.</p>
+          </div>
+        `;
+      }
       return;
     }
 
@@ -2208,6 +2613,13 @@ class ProfileView {
     );
     const vStatus = item.verificationStatus || "UNVERIFIED";
 
+    // Resolve designated upline healer dynamically
+    const profiles = this.model?.profiles || [];
+    const sponsorCode = item.mentorCode || activeProf?.referredByCode || (this.model && typeof this.model.getDefaultMentorCode === "function" ? this.model.getDefaultMentorCode() : "SKHM-ADM1-7788-9900");
+    const mentorObj = profiles.find(p => p.referenceCode === sponsorCode || p.id === sponsorCode);
+    const mentorName = item.mentorName || (mentorObj ? mentorObj.name : null) || activeProf?.referredByName || (this.model && typeof this.model.getSetting === "function" ? this.model.getSetting("defaultMentorName", "Acharya Devendra") : "Acharya Devendra");
+    const mentorRole = mentorObj?.profileType === 'ADMIN' || mentorObj?.level === 0 ? "👑 Founder Master" : "🛡️ Senior Healer (Upline)";
+
     const memos =
       item.memos && item.memos.length > 0
         ? item.memos
@@ -2219,172 +2631,246 @@ class ProfileView {
                   day: "numeric",
                   year: "numeric",
                 }) + " 09:30 AM",
-              author: "Mentor Devendra",
+              author: mentorName,
               text: "Initial attunement completed. Commenced daily sadhana regime.",
             },
           ];
 
+    const currentRole = (this.model && typeof this.model.getRoleMode === 'function') ? this.model.getRoleMode() : 'MASTER';
+    const canApprove = (currentRole === 'MASTER' || currentRole === 'ADMIN' || currentRole === 'HEALER');
+
+    // 1. Render Top Single-Row Banner: Selected Sadhana / Remedy with Progress Graphic Report
+    if (bannerEl) {
+      bannerEl.innerHTML = `
+        <div class="selected-practice-banner-inner">
+          <div class="banner-practice-left">
+            <span class="banner-practice-icon">${catalogItem.icon || "🌿"}</span>
+            <div class="banner-practice-title-group">
+              <div class="banner-title-line">
+                <span class="banner-title-prefix">Selected ${esc(item.categoryDomain || catalogItem.category || "Practice")}:</span>
+                <strong class="banner-title-name">${esc(item.title || item.name || "Sacred Practice")}</strong>
+              </div>
+              <div class="banner-title-subtitle">
+                ✨ Sadhana Mastery &amp; Attunement Progress &bull; Real-Time Mentor Feedback &amp; Verification Analytics
+              </div>
+            </div>
+          </div>
+          <div class="banner-practice-right">
+            <span class="applied-token-chip" title="Initiation Token">Token: ${esc(item.initiationToken || 'IN-SADH-INITIATED')}</span>
+            <span class="role-badge badge-cycle" title="Active Sadhana Cycle">DAY ${item.currentCycleDay || 7} / ${item.cycleDays || 21}</span>
+            <span class="stamp-indicator ${isPaid ? "stamp-paid" : "stamp-free"} btn-tile-stamp-toggle" data-item-id="${item.id}" title="Toggle Paid/Free">
+              ${isPaid ? "PAID" : "FREE"}
+            </span>
+            <div class="banner-progress-meter-wrap">
+              <div class="banner-meter-text">
+                <span>Progress:</span>
+                <strong>${progress}%</strong>
+              </div>
+              <div class="banner-track-bar">
+                <div class="banner-track-fill" style="width: ${progress}%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    if (!this.traineeActiveDetailContainer) return;
+
+    // 2. Render Two Vertically Compact Columns (Col 1: Practitioner Profile, Col 2: Designated Upline Healer)
     this.traineeActiveDetailContainer.innerHTML = `
-      <div class="trainee-detail-card" data-item-id="${item.id}">
-        <!-- Detail Header -->
-        <div class="trainee-detail-header">
+      <!-- COLUMN 1: Practitioner Profile: + respective metadata details vertically compact -->
+      <div class="trainee-detail-card compact-column" data-item-id="${item.id}" id="trainee-col-details">
+        <div class="trainee-detail-header compact-header">
           <div class="trainee-detail-title-wrap">
-            <span class="trainee-detail-icon">${catalogItem.icon || "🌿"}</span>
+            <span class="trainee-detail-icon">👤</span>
             <div>
-              <div class="trainee-detail-title">${item.title}</div>
-              <div style="font-size: 0.75rem; color: var(--text-muted);">${item.categoryDomain || catalogItem.category} &bull; Supervising Mentor: ${item.mentorCode || "SKHM-ADM1-7788-9900"}</div>
-            </div>
-          </div>
-          <span class="stamp-indicator ${isPaid ? "stamp-paid" : "stamp-free"} btn-tile-stamp-toggle" data-item-id="${item.id}" title="Toggle Paid/Free">
-            ${isPaid ? "PAID" : "FREE"}
-          </span>
-        </div>
-
-        <!-- Progress Graphics Box -->
-        <div class="progress-graphics-box">
-          <div class="progress-metrics-row">
-            <span>Overall Spiritual Completion</span>
-            <span class="progress-percentage-badge">${progress}%</span>
-          </div>
-
-          <div class="progress-bar-track">
-            <div class="progress-bar-fill" style="width: ${progress}%;"></div>
-          </div>
-
-          <div class="progress-stats-grid">
-            <div class="progress-stat-card">
-              <div class="progress-stat-label">Daily Target</div>
-              <div class="progress-stat-val">${item.dailyTarget || "11 Malas"}</div>
-            </div>
-            <div class="progress-stat-card">
-              <div class="progress-stat-label">Current Streak</div>
-              <div class="progress-stat-val">${item.currentStreak || "1 Day"}</div>
-            </div>
-            <div class="progress-stat-card">
-              <div class="progress-stat-label">Access Type</div>
-              <div class="progress-stat-val" style="color: ${isPaid ? "#10b981" : "#ef4444"};">${isPaid ? "PAID" : "FREE"}</div>
+              <div class="compact-header-title">
+                <span>Practitioner Profile:</span>
+                <strong style="color: var(--text-primary); font-size: 0.95rem;">${esc(profName)}</strong>
+              </div>
+              <div class="compact-header-meta">
+                <span class="role-badge" style="font-size: 0.68rem;">${esc(activeProf?.profileType || activeProf?.role || "Sadhak")}</span>
+                <span class="font-mono text-muted" style="font-size: 0.7rem;">${esc(activeProf?.referenceCode || "")}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Upline Verification & Approval Seal Card -->
-        <div class="upline-verification-card">
-          <div class="upline-verification-header">
-            <div style="display: flex; align-items: center; gap: 0.4rem;">
-              <span>🛡️</span>
-              <span style="color: var(--text-primary);">Upline Verification &amp; Seal</span>
-            </div>
-            
-            ${
-              vStatus === "VERIFIED"
-                ? `<span class="verification-status-badge status-verified">🟢 Verified &amp; Sealed</span>`
-                : vStatus === "PENDING_APPROVAL"
-                  ? `<span class="verification-status-badge status-pending">⏳ Awaiting Upline Approval</span>`
-                  : `<span class="verification-status-badge status-unverified">⚪ Self-Reported</span>`
-            }
-          </div>
-
-          <div class="verification-actions-row">
-            <div class="verification-info-text">
-              ${
-                vStatus === "VERIFIED"
-                  ? `Officially approved by <strong>${item.verifiedBy || "Master Karim"}</strong> on ${item.verifiedDate || "Recently"}`
-                  : vStatus === "PENDING_APPROVAL"
-                    ? `Request submitted to sponsor <strong>${item.mentorCode || "SKHM-ADM1-7788-9900"}</strong> on ${item.verificationRequestedDate || "Recently"}`
-                    : `Submit this sadhana progress for formal upline verification &amp; mastery seal.`
-              }
-            </div>
-
-            <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
-              ${
-                vStatus === "PENDING_APPROVAL"
-                  ? `
-                  <button type="button" class="btn-verify-approve" data-item-id="${item.id}" title="Approve &amp; issue official seal">
-                    <span>✓</span> Approve &amp; Seal
-                  </button>
-                  <button type="button" class="btn btn-sm btn-danger btn-verify-reject" data-item-id="${item.id}" title="Request revision or extra practice">
-                    <span>✕</span> Revision
-                  </button>
-                `
-                  : vStatus === "VERIFIED"
-                    ? `<button type="button" class="btn-verify-request" data-item-id="${item.id}" title="Submit updated progress for re-verification"><span>🔄</span> Re-Verify</button>`
-                    : `<button type="button" class="btn-verify-request" data-item-id="${item.id}"><span>🛡️</span> Verify / Request Upline Approval</button>`
-              }
-            </div>
-          </div>
-        </div>
-
-        <!-- Interactive Progress Parameters Edit Grid -->
-        <div class="form-grid-2 mt-2">
-          <div class="form-group">
-            <label class="form-label">Advancement Level</label>
-            <select class="form-control active-ts-level-select" data-item-id="${item.id}">
-              <option value="Level 1 — Novice Initiation" ${item.level?.includes("Level 1") ? "selected" : ""}>Level 1 — Initiation</option>
-              <option value="Level 2 — Mantra Diksha" ${item.level?.includes("Level 2") ? "selected" : ""}>Level 2 — Mantra Diksha</option>
-              <option value="Level 3 — Havan & Energy Transmission" ${item.level?.includes("Level 3") ? "selected" : ""}>Level 3 — Havan Transmission</option>
-              <option value="Level 4 — Master Attunement" ${item.level?.includes("Level 4") ? "selected" : ""}>Level 4 — Master Attunement</option>
+        <!-- Practice Parameters 2x2 Grid (Vertically Compact) -->
+        <div class="compact-form-grid">
+          <div class="form-group compact-group">
+            <label class="form-label compact-label">Advancement Level</label>
+            <select class="form-control form-control-sm active-ts-level-select" data-item-id="${item.id}" data-member-id="${activeProf?.id || ''}">
+              <option value="Level 1 — Novice Initiation" ${item.level?.includes("Level 1") ? "selected" : ""}>Level 1 &mdash; Initiation</option>
+              <option value="Level 2 — Mantra Diksha" ${item.level?.includes("Level 2") ? "selected" : ""}>Level 2 &mdash; Diksha</option>
+              <option value="Level 3 — Havan & Energy Transmission" ${item.level?.includes("Level 3") ? "selected" : ""}>Level 3 &mdash; Havan</option>
+              <option value="Level 4 — Master Attunement" ${item.level?.includes("Level 4") ? "selected" : ""}>Level 4 &mdash; Master</option>
             </select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Update Progress Percentage (%)</label>
-            <input type="number" class="form-control active-ts-progress-input" data-item-id="${item.id}" min="0" max="100" value="${progress}">
+          <div class="form-group compact-group">
+            <label class="form-label compact-label">Progress %</label>
+            <input type="number" class="form-control form-control-sm active-ts-progress-input" data-item-id="${item.id}" data-member-id="${activeProf?.id || ''}" min="0" max="100" value="${progress}">
+          </div>
+          <div class="form-group compact-group">
+            <label class="form-label compact-label">Daily Malas</label>
+            <input type="text" class="form-control form-control-sm active-ts-target-input" data-item-id="${item.id}" data-member-id="${activeProf?.id || ''}" value="${item.dailyTarget || "11 Malas"}">
+          </div>
+          <div class="form-group compact-group">
+            <label class="form-label compact-label">Active Streak</label>
+            <input type="text" class="form-control form-control-sm active-ts-streak-input" data-item-id="${item.id}" data-member-id="${activeProf?.id || ''}" value="${item.currentStreak || "1 Day"}">
           </div>
         </div>
 
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label class="form-label">Daily Target Malas / Reps</label>
-            <input type="text" class="form-control active-ts-target-input" data-item-id="${item.id}" value="${item.dailyTarget || "11 Malas Daily"}">
+        <!-- Feedback Request Status Strip & Action (Compact) -->
+        <div class="compact-status-action-row">
+          <div class="status-action-info">
+            <span class="status-action-label">Feedback Status:</span>
+            ${
+              vStatus === "VERIFIED"
+                ? `<span class="verification-status-badge status-verified">🟢 Sealed</span>`
+                : vStatus === "PENDING_APPROVAL"
+                  ? `<span class="verification-status-badge status-pending">⏳ Sent</span>`
+                  : `<span class="verification-status-badge status-unverified">⚪ Self Practice</span>`
+            }
           </div>
-          <div class="form-group">
-            <label class="form-label">Active Practice Streak</label>
-            <input type="text" class="form-control active-ts-streak-input" data-item-id="${item.id}" value="${item.currentStreak || "1 Day"}">
-          </div>
+          <button type="button" class="btn btn-xs btn-gold btn-verify-request" data-item-id="${item.id}" data-member-id="${activeProf?.id || ''}">
+            <span>📤</span> ${vStatus === "PENDING_APPROVAL" ? "Resend Request" : "Send Feedback Request"}
+          </button>
         </div>
 
-        <!-- Feedback & Progress Memo Timeline -->
-        <div class="memo-section-wrap mt-2">
+        <!-- Feedback & Sent Memo Log Timeline (Compact) -->
+        <div class="memo-section-wrap compact-memo-wrap">
           <div class="memo-section-title">
-            <span>💬 Feedback, Vibrations &amp; Progress Memo Log</span>
-            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 400;">(${memos.length} Entries)</span>
+            <span>💬 Feedback &amp; Sent Memo Log (${memos.length})</span>
           </div>
-
-          <div class="memo-timeline-container" id="trainee-memo-timeline">
-            ${memos
-              .map(
-                (m) => `
+          <div class="memo-timeline-container compact-timeline" id="trainee-memo-timeline" style="max-height: 110px; overflow-y: auto;">
+            ${memos.map(m => `
               <div class="memo-timeline-item ${m.type === "VERIFIED" ? "verification-log" : m.type === "PENDING" ? "pending-log" : ""}">
                 <div class="memo-meta">
-                  <strong style="color: ${m.type === "VERIFIED" ? "#10b981" : m.type === "PENDING" ? "#f59e0b" : "var(--gold-400)"};">
-                    ${m.author || "Sadhak / Mentor"}
+                  <strong style="color: ${m.type === "VERIFIED" ? "#10b981" : m.type === "PENDING" ? "#f59e0b" : "var(--gold-400)"}; font-size: 0.72rem;">
+                    ${esc(m.author || "Sadhak / Mentor")}
                   </strong>
-                  <span>📅 ${m.date || "Just now"}</span>
+                  <span style="font-size: 0.66rem;">📅 ${m.date || "Just now"}</span>
                 </div>
-                <div class="memo-text">${m.text || ""}</div>
+                <div class="memo-text" style="font-size: 0.73rem;">${esc(m.text || "")}</div>
               </div>
-            `,
-              )
-              .join("")}
+            `).join("")}
           </div>
-
-          <!-- Universal Memo Box with Keyboard, Speech-to-Text Mic, and Send Submit -->
-          <div class="mt-2">
+          <div class="mt-1">
             ${this.renderUniversalMemoBox({
               textareaId: "trainee-new-memo-text",
               targetItemId: item.id,
-              placeholder:
-                "Enter progress memo, spiritual feedback, or mentor question (Use 🎤 Mic for voice)...",
+              placeholder: "Enter progress note or question for " + mentorName + "...",
               quickChips: [
-                "11 Malas Completed Today",
-                "Sunset 3-Diya Havan Done",
-                "Deep Third Eye Vibration Felt",
-                "All Domestic Heavy Vibes Cleared",
-                "Streak Maintained Unbroken",
-                "Requesting Next Level Diksha",
+                "11 Malas Completed",
+                "Sunset Protocol Done",
+                "Third Eye Vibration Felt",
+                "Obstacles Cleared",
+                "Requesting Next Guidance"
               ],
             })}
           </div>
         </div>
+      </div>
+
+      <!-- COLUMN 2: Designated Upline Healer + respective metadata details vertically compact -->
+      <div class="trainee-detail-card compact-column" data-item-id="${item.id}" id="trainee-col-progress">
+        <div class="trainee-detail-header compact-header">
+          <div class="trainee-detail-title-wrap">
+            <span class="trainee-detail-icon">🛡️</span>
+            <div>
+              <div class="compact-header-title">
+                <span>Designated Upline Healer:</span>
+                <strong style="color: var(--text-primary); font-size: 0.95rem;">${esc(mentorName)}</strong>
+              </div>
+              <div class="compact-header-meta">
+                <span class="role-badge" style="background: rgba(59, 130, 246, 0.15); color: #2563eb; font-size: 0.68rem;">${mentorRole}</span>
+                <span class="font-mono text-muted" style="font-size: 0.7rem;">${sponsorCode}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Metric Tiles Grid (Compact) -->
+        <div class="compact-metrics-quad">
+          <div class="quad-metric-card">
+            <div class="quad-metric-label">Daily Target</div>
+            <div class="quad-metric-val">${item.dailyTarget || "11 Malas"}</div>
+          </div>
+          <div class="quad-metric-card">
+            <div class="quad-metric-label">Active Streak</div>
+            <div class="quad-metric-val" style="color: #10b981;">🔥 ${item.currentStreak || "1 Day"}</div>
+          </div>
+          <div class="quad-metric-card">
+            <div class="quad-metric-label">Mantra Total</div>
+            <div class="quad-metric-val" style="color: var(--gold-400);">${(progress * 108).toLocaleString()}</div>
+          </div>
+          <div class="quad-metric-card">
+            <div class="quad-metric-label">Attunement</div>
+            <div class="quad-metric-val" style="color: ${vStatus === "VERIFIED" ? "#10b981" : vStatus === "PENDING_APPROVAL" ? "#f59e0b" : "var(--text-muted)"};">
+              ${vStatus === "VERIFIED" ? "Sealed" : vStatus === "PENDING_APPROVAL" ? "Pending" : "Active"}
+            </div>
+          </div>
+        </div>
+
+        <!-- 108-Bead Japa Graphical Mala Bead Tracker Strip (Compact) -->
+        <div class="compact-bead-strip">
+          <div class="bead-strip-header">
+            <span>📿 108-Bead Japa Matrix</span>
+            <span>Quadrant Progression (${progress}%)</span>
+          </div>
+          <div class="bead-strip-dots">
+            ${Array.from({ length: 54 }).map((_, idx) => {
+              const beadCompleted = (idx / 54) * 100 <= progress;
+              return `<span class="bead-dot ${beadCompleted ? 'bead-done' : ''}"></span>`;
+            }).join("")}
+          </div>
+        </div>
+
+        <!-- Upline Healer Feedback Received & Seal Card (Compact) -->
+        <div class="feedback-received-seal-card compact-seal-card" style="background: ${vStatus === "VERIFIED" ? "linear-gradient(135deg, rgba(16, 185, 129, 0.06), rgba(212, 175, 55, 0.08))" : "var(--bg-surface, #f8fafc)"}; border: 1.5px solid ${vStatus === "VERIFIED" ? "rgba(16, 185, 129, 0.4)" : "var(--border-subtle, #e2e8f0)"};">
+          <div class="seal-card-header">
+            <span class="seal-header-title" style="font-weight: 700; font-size: 0.78rem;">🛡️ Upline Seal &amp; Guidance</span>
+            ${vStatus === "VERIFIED"
+              ? `<span class="verification-status-badge status-verified" style="font-size: 0.68rem;">SANCTIONED</span>`
+              : vStatus === "PENDING_APPROVAL"
+                ? `<span class="verification-status-badge status-pending" style="font-size: 0.68rem;">AWAITING</span>`
+                : `<span class="verification-status-badge status-unverified" style="font-size: 0.68rem;">NOT SUBMITTED</span>`
+            }
+          </div>
+          ${vStatus === "VERIFIED" ? `
+            <div class="seal-content-box">
+              <div class="seal-meta-line">
+                <span>By: <strong>${esc(item.verifiedBy || mentorName)}</strong></span>
+                <span>Date: <strong>${item.verifiedDate || "Recently"}</strong></span>
+              </div>
+              <div class="seal-quote">
+                "${esc(item.feedbackNotes || item.mentorRemarks || 'Sadhana attunement completed with optimal astral vibration. Initiation seal sanctioned.')}"
+              </div>
+            </div>
+          ` : `
+            <div class="seal-empty-note">
+              ${vStatus === "PENDING_APPROVAL" ? `Feedback request dispatched to ${esc(mentorName)}. Guidance notes &amp; seal will appear here upon review.` : `Click "Send Feedback Request" in Column 1 to submit progress to ${esc(mentorName)}.`}
+            </div>
+          `}
+        </div>
+
+        <!-- Direct Healer Sanction Action Panel (If canApprove) -->
+        ${canApprove ? `
+          <div class="compact-healer-sanction-box">
+            <div class="sanction-box-title"><span>🛡️</span> Upline Healer Sanction Action:</div>
+            <textarea class="form-control form-control-sm healer-feedback-input" id="healer-feedback-text" rows="2" placeholder="Enter mentor guidance notes or feedback for ${esc(activeProf?.name || 'practitioner')}..."></textarea>
+            <div class="sanction-btn-row">
+              <button type="button" class="btn btn-xs btn-success btn-verify-approve" data-item-id="${item.id}" data-member-id="${activeProf?.id || ''}">
+                ✅ ${vStatus === "VERIFIED" ? "Update Seal" : "Sanction & Seal"}
+              </button>
+              <button type="button" class="btn btn-xs btn-outline btn-verify-reject" data-item-id="${item.id}" data-member-id="${activeProf?.id || ''}">
+                📝 Revision
+              </button>
+            </div>
+          </div>
+        ` : ''}
       </div>
     `;
   }
@@ -2844,24 +3330,22 @@ class ProfileView {
   // ==============================================================
   // RIGHT SLIDE-OUT DRAWER: PENDING APPROVALS DOSSIER & ACTIONS
   // ==============================================================
-  openPendingApprovalsDrawer(invites = [], selectedInviteId = null) {
+  openPendingApprovalsDrawer(invites = [], selectedInviteId = null, initialTab = null) {
     const roleMode = (this.model ? this.model.getRoleMode() : (this.currentRoleMode || "MASTER")).toUpperCase();
     
-    // Strict Access Control: Devotee & Trainee have NO ACCESS to approvals queue
-    if (["DEVOTEE", "SEEKER", "TRAINEE", "SADHAK"].includes(roleMode)) {
-      this.closePendingApprovalsDrawer();
-      if (typeof this.showSlideToast === "function") {
-        this.showSlideToast("Access Restricted", "Devotee/Seeker and Trainee/Sadhak do not have approval permissions.", "warning");
-      } else if (typeof this.showToast === "function") {
-        this.showToast("⛔ Access Denied: Seeker application approvals are restricted to Mentors and Admin Masters.", "warning");
-      }
-      return;
-    }
+    // Role Mode Aware: Devotee & Trainee view their personal application status & initiation milestones
+    const isEndUser = ["DEVOTEE", "SEEKER", "TRAINEE", "SADHAK"].includes(roleMode);
 
     const drawer = this.pendingApprovalDrawer || document.getElementById("pending-approval-drawer");
     const backdrop = this.pendingApprovalDrawerBackdrop || document.getElementById("pending-approval-drawer-backdrop");
     const body = this.pendingApprovalDrawerBody || document.getElementById("pending-approval-drawer-body");
     if (!drawer) return;
+
+    if (initialTab) {
+      this.currentPendingDrawerTab = initialTab;
+    } else if (!this.currentPendingDrawerTab) {
+      this.currentPendingDrawerTab = "registration";
+    }
 
     if (!invites || invites.length === 0) {
       if (this.model && typeof this.model.getPairingInvitesForRole === "function") {
@@ -2871,382 +3355,83 @@ class ProfileView {
       }
     }
 
-    if (body) {
-      if (!invites || invites.length === 0) {
-        body.innerHTML = `
-          <div style="text-align: center; padding: 3rem 1.5rem; color: var(--text-muted);">
-            <div style="font-size: 3rem; margin-bottom: 0.75rem;">🌟</div>
-            <h4 style="color: var(--text-primary); margin-bottom: 0.35rem; font-family: var(--font-heading); font-size: 1.15rem;">No Pending Seeker Approvals</h4>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); max-width: 360px; margin: 0 auto 1.25rem;">All devotee applicants have been reviewed and placed into downline lineage. Click below to generate a new direct pairing invite link!</p>
-            <a href="join.html?ref=${(this.activeProfile && this.activeProfile.referenceCode) || ((this.model && typeof this.model.getDefaultMentorCode === 'function') ? this.model.getDefaultMentorCode() : 'SKHM-ADM1-7788-9900')}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1.1rem; background: var(--gold-400, #d4af37); color: #000; font-weight: 800; font-size: 0.82rem; border-radius: 6px; text-decoration: none;">
-              <span>📲 Test Direct Onboarding Link (join.html)</span>
-            </a>
-          </div>
-        `;
+    // Retrieve Sadhana & Remedy applications from Model
+    let sadhanaApps = [];
+    if (this.model && typeof this.model.getSadhanaRemedyApplications === "function") {
+      sadhanaApps = this.model.getSadhanaRemedyApplications();
+    } else {
+      try {
+        sadhanaApps = JSON.parse(localStorage.getItem("sk_sadhana_initiations_v1") || "[]");
+      } catch (e) {
+        sadhanaApps = [];
+      }
+    }
+    // FILTER ARCHIVED OUT OF MAIN VIEWS
+    sadhanaApps = sadhanaApps.filter(a => a.status !== "DELETED");
+
+    // Calculate pending counts for tab badges
+    const inviteTtl = (window.ProfileModel && window.ProfileModel.settings && window.ProfileModel.settings.inviteExpiryHours) ? window.ProfileModel.settings.inviteExpiryHours * 3600 * 1000 : 86400000;
+    const now = Date.now();
+    const activePendingInvites = (invites || []).filter(i => {
+      const remMs = (i.expiresAtMs || ((i.createdAtMs || i.timestamp || Date.now()) + inviteTtl)) - now;
+      return (i.status === "PENDING" || i.status === "PENDING_APPROVAL") && remMs > 0;
+    });
+    const pendingRegCount = activePendingInvites.length;
+    const pendingSadhanaCount = (sadhanaApps || []).filter(a => a.status === "PENDING").length;
+
+    // Update Tab Badges
+    const badgeReg = document.getElementById("tab-badge-pending-registration");
+    if (badgeReg) badgeReg.textContent = pendingRegCount;
+    const badgeSadhana = document.getElementById("tab-badge-pending-sadhana");
+    if (badgeSadhana) badgeSadhana.textContent = pendingSadhanaCount;
+
+    const btnTabReg = document.getElementById("tab-btn-pending-registration");
+    const btnTabSadhana = document.getElementById("tab-btn-pending-sadhana");
+    if (btnTabReg && btnTabSadhana) {
+      if (this.currentPendingDrawerTab === "sadhana-remedy") {
+        btnTabReg.classList.remove("active");
+        btnTabSadhana.classList.add("active");
       } else {
-        const now = Date.now();
-        const inviteTtl = (window.ProfileModel && window.ProfileModel.settings && window.ProfileModel.settings.inviteExpiryHours) ? window.ProfileModel.settings.inviteExpiryHours * 3600 * 1000 : 86400000;
+        btnTabReg.classList.add("active");
+        btnTabSadhana.classList.remove("active");
+      }
 
-        // Sort: Pending accounts first, followed by approved/rejected, then newest
-        const sortedInvites = [...invites].sort((a, b) => {
-          const aIsPending = (a.status === "PENDING" || a.status === "PENDING_APPROVAL") ? 0 : 1;
-          const bIsPending = (b.status === "PENDING" || b.status === "PENDING_APPROVAL") ? 0 : 1;
-          if (aIsPending !== bIsPending) return aIsPending - bIsPending;
-          return (b.createdAtMs || b.timestamp || 0) - (a.createdAtMs || a.timestamp || 0);
-        });
+      btnTabReg.onclick = (e) => {
+        e.preventDefault();
+        this.switchPendingDrawerTab("registration");
+      };
+      btnTabSadhana.onclick = (e) => {
+        e.preventDefault();
+        this.switchPendingDrawerTab("sadhana-remedy");
+      };
+    }
 
-        // Statistics
-        const totalCount = sortedInvites.length;
-        const activePendingInvites = sortedInvites.filter(i => {
-          const remMs = (i.expiresAtMs || ((i.createdAtMs || i.timestamp || Date.now()) + inviteTtl)) - now;
-          return (i.status === "PENDING" || i.status === "PENDING_APPROVAL") && remMs > 0;
-        });
-        const pendingCount = activePendingInvites.length;
-        const approvedCount = sortedInvites.filter(i => i.status === "APPROVED").length;
-        const expiredCount = sortedInvites.filter(i => {
-          const remMs = (i.expiresAtMs || ((i.createdAtMs || i.timestamp || Date.now()) + inviteTtl)) - now;
-          return i.status === "EXPIRED" || i.status === "REVISION" || ((i.status === "PENDING" || i.status === "PENDING_APPROVAL") && remMs <= 0);
-        }).length;
+    if (body) {
+      let regPane = document.getElementById("pending-tab-pane-registration");
+      let sadhanaPane = document.getElementById("pending-tab-pane-sadhana");
 
-        // Grouping
-        const healerGroup = sortedInvites.filter(i => (i.appliedRole === "HEALER" || i.assignedRole === "HEALER" || i.type === "HEALER_APPLICATION") && i.status !== "EXPIRED" && i.status !== "REVISION");
-        const traineeGroup = sortedInvites.filter(i => (i.appliedRole === "TRAINEE" || i.assignedRole === "TRAINEE" || i.type === "SADHANA_APPLICATION") && i.status !== "EXPIRED" && i.status !== "REVISION");
-        const devoteeGroup = sortedInvites.filter(i => {
-          const isHealer = i.appliedRole === "HEALER" || i.assignedRole === "HEALER" || i.type === "HEALER_APPLICATION";
-          const isTrainee = i.appliedRole === "TRAINEE" || i.assignedRole === "TRAINEE" || i.type === "SADHANA_APPLICATION";
-          return !isHealer && !isTrainee && i.status !== "EXPIRED" && i.status !== "REVISION";
-        });
-        const reviewExpiredGroup = sortedInvites.filter(i => i.status === "EXPIRED" || i.status === "REVISION" || i.status === "REJECTED");
-
-        const groups = [
-          { id: "group-healers", icon: "🛡️", title: "Tier 2 • Certified Healer Applications", items: healerGroup, badgeColor: "#38bdf8" },
-          { id: "group-trainees", icon: "📿", title: "Tier 3 • Trainee Sadhak Applications", items: traineeGroup, badgeColor: "#f59e0b" },
-          { id: "group-devotees", icon: "🌟", title: "Tier 4 • Devotee Sangha Applications", items: devoteeGroup, badgeColor: "#10b981" },
-          { id: "group-expired", icon: "⌛", title: "Under Revision / Expired Queue", items: reviewExpiredGroup, badgeColor: "#f43f5e" }
-        ].filter(g => g.items.length > 0);
-
+      if (!regPane || !sadhanaPane) {
         body.innerHTML = `
-          <!-- STATS & SEARCH HEADER BAR -->
-          <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: var(--bg-card, rgba(24,16,36,0.9)); border: 1px solid var(--border-glass-gold, rgba(212,175,55,0.3)); border-radius: 8px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
-              <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; font-weight: 700; color: var(--text-primary); flex-wrap: wrap;">
-                <span>📊 Metadata Summary:</span>
-                <span style="background: rgba(245,158,11,0.2); border: 1px solid #f59e0b; color: #f59e0b; padding: 0.15rem 0.5rem; border-radius: 12px;">⏳ ${pendingCount} Pending Review</span>
-                <span style="background: rgba(56,189,248,0.2); border: 1px solid #38bdf8; color: #38bdf8; padding: 0.15rem 0.5rem; border-radius: 12px;">🛡️ ${healerGroup.length} Healers</span>
-                <span style="background: rgba(245,158,11,0.2); border: 1px solid #f59e0b; color: #f59e0b; padding: 0.15rem 0.5rem; border-radius: 12px;">📿 ${traineeGroup.length} Trainees</span>
-                <span style="background: rgba(16,185,129,0.2); border: 1px solid #10b981; color: #10b981; padding: 0.15rem 0.5rem; border-radius: 12px;">🌟 ${devoteeGroup.length} Devotees</span>
-                ${expiredCount > 0 ? `<span style="background: rgba(244,63,94,0.2); border: 1px solid #f43f5e; color: #f43f5e; padding: 0.15rem 0.5rem; border-radius: 12px;">⌛ ${expiredCount} Revision/Expired</span>` : ''}
-              </div>
-              <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Grouped by Tier • Interactive Role Assignment</span>
-            </div>
-            <div style="margin-top: 0.6rem;">
-              <input type="text" id="input-search-pending-drawer" placeholder="🔍 Instant search pending applicants by name, phone, or gotra..." class="form-control" style="width: 100%; box-sizing: border-box; font-size: 0.8rem; padding: 0.5rem 0.85rem; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass-gold, rgba(212,175,55,0.3)); border-radius: 6px; color: #fff;">
-            </div>
-          </div>
-
-          <!-- GROUPED PENDING APPLICANTS LIST -->
-          <div id="grouped-pending-approvals-list" style="display: flex; flex-direction: column; gap: 1rem;">
-            ${groups.map(group => `
-              <div class="approval-tier-group" id="${group.id}">
-                <div class="approval-tier-group-header">
-                  <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span>${group.icon}</span>
-                    <span>${group.title}</span>
-                  </div>
-                  <span style="background: ${group.badgeColor}22; border: 1px solid ${group.badgeColor}; color: ${group.badgeColor}; padding: 0.12rem 0.5rem; border-radius: 12px; font-size: 0.72rem; font-weight: 800;">
-                    ${group.items.length} Applicant${group.items.length !== 1 ? 's' : ''}
-                  </span>
-                </div>
-
-                <div class="approval-tier-group-body">
-                  ${group.items.map(item => {
-                    const isApproved = item.status === "APPROVED";
-                    const isPending = item.status === "PENDING" || item.status === "PENDING_APPROVAL";
-                    const assignedRole = (item.assignedRole || item.appliedRole || "DEVOTEE").toUpperCase();
-                    const initials = item.seekerName ? item.seekerName.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase() : "SK";
-                    const remainingMs = (item.expiresAtMs || ((item.createdAtMs || item.timestamp || Date.now()) + inviteTtl)) - now;
-                    const isExpired = isPending && remainingMs <= 0;
-                    const hours = Math.max(0, Math.floor(remainingMs / (1000 * 60 * 60)));
-                    const mins = Math.max(0, Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60)));
-                    const isDetailsOpen = selectedInviteId ? (item.id === selectedInviteId) : false;
-
-                    let idProofDoc = null, addrProofDoc = null, photoDoc = null;
-                    try {
-                      const docs = JSON.parse(localStorage.getItem('sk_documents') || '[]');
-                      idProofDoc = docs.find(d => (d.profileId === item.id || d.profileId === item.devoteeCode) && d.docType === 'id_proof') || null;
-                      addrProofDoc = docs.find(d => (d.profileId === item.id || d.profileId === item.devoteeCode) && d.docType === 'address_proof') || null;
-                      photoDoc = docs.find(d => (d.profileId === item.id || d.profileId === item.devoteeCode) && d.docType === 'photo') || null;
-                    } catch(e) {}
-
-                    const photoSrc = photoDoc?.dataUrl || item.documentsUploaded?.photo || "";
-                    const idProofAvailable = Boolean(idProofDoc || item.documentsUploaded?.idProof || item.documents?.idProof);
-                    const addrProofAvailable = Boolean(addrProofDoc || item.documentsUploaded?.addressProof || item.documents?.addressProof);
-                    const photoAvailable = Boolean(photoDoc || item.documentsUploaded?.photo || item.documents?.photo);
-
-                    const cleanBasePath = window.location.pathname.replace(/\/(Masters|Healers|Trainee|Devotee|Seeker|Public|Frontend)\/.*$/i, '').replace(/\/+$/, '');
-                    const rootUrl = window.location.origin + cleanBasePath;
-                    const targetPortal = (assignedRole === "TRAINEE") ? "Trainee" : (assignedRole === "HEALER") ? "Healers" : (assignedRole === "MASTER") ? "Masters" : "Devotee";
-                    const fullJoinUrl = `${rootUrl}/join.html?ref=${item.sponsorCode || ((this.model && typeof this.model.getDefaultMentorCode === 'function') ? this.model.getDefaultMentorCode() : 'SKHM-ADM1-7788-9900')}&pin=${item.activationPin || '140610'}`;
-                    const fullDevoteeUrl = `${rootUrl}/${targetPortal}/index.html?profileId=${encodeURIComponent(item.devoteeCode || item.id)}`;
-
-                    return `
-                      <div class="approval-item-card" data-invite-id="${item.id}">
-                        <!-- Main Summary Bar -->
-                        <div class="approval-item-row-main">
-                          <div class="approval-item-user-info">
-                            <div class="approval-item-avatar">
-                              ${photoSrc ? `<img src="${photoSrc}" alt="${item.seekerName}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : initials}
-                            </div>
-                            <div class="approval-item-meta">
-                              <div class="approval-item-name">${item.seekerName || 'Devotee Applicant'}</div>
-                              <div class="approval-item-subtext">
-                                <span>📱 ${item.seekerPhone || '—'}</span>
-                                <span>•</span>
-                                <span>Applied: <strong style="color: var(--gold-400);">${item.appliedRole || 'Devotee'}</strong></span>
-                                <span>•</span>
-                                <span>${isApproved ? '🟢 Inducted' : isExpired ? '⌛ Expired' : `⏳ ${hours}h ${mins}m left`}</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Multiple Option Assign Roles -->
-                          <div class="approval-role-selector-wrap">
-                            <span class="approval-role-selector-label">Assign Role:</span>
-                            <select class="approval-role-select select-pairing-role" data-invite-id="${item.id}" title="Choose role tier for approval">
-                              <option value="DEVOTEE" ${assignedRole === "DEVOTEE" ? "selected" : ""}>🌟 Devotee (Level 4)</option>
-                              <option value="TRAINEE" ${assignedRole === "TRAINEE" ? "selected" : ""}>📿 Trainee (Level 3)</option>
-                              <option value="HEALER" ${assignedRole === "HEALER" ? "selected" : ""}>🛡️ Healer (Level 2)</option>
-                              <option value="MASTER" ${assignedRole === "MASTER" ? "selected" : ""}>👑 Master (Tier 1)</option>
-                            </select>
-                          </div>
-
-                          <!-- Action Buttons -->
-                          <div class="approval-item-actions">
-                            <button type="button" class="btn-approval-details" data-invite-id="${item.id}" title="Click to view complete applicant details">
-                              <span>${isDetailsOpen ? '▲ Hide Details' : '📋 Details'}</span>
-                            </button>
-                            ${!isApproved ? `
-                              <button type="button" class="btn-approval-quick-approve" data-invite-id="${item.id}" title="Quick Approve and induct with selected role">
-                                <span>✓ Quick Approve</span>
-                              </button>
-                            ` : `
-                              <span style="color:#10b981; font-weight:800; font-size:0.75rem; padding: 0.35rem 0.6rem; background: rgba(16,185,129,0.15); border: 1px solid #10b981; border-radius: 4px;">
-                                ✓ Inducted
-                              </span>
-                            `}
-                          </div>
-                        </div>
-
-                        <!-- On-Click Expandable All Details Pane -->
-                        <div id="details-pane-${item.id}" class="approval-expanded-details-pane ${isDetailsOpen ? 'is-open' : ''}" style="${isDetailsOpen ? 'display: block;' : 'display: none;'}">
-                          
-                          <!-- HERO CARD -->
-                          <div class="dossier-box" style="background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(16,185,129,0.1) 100%); border: 1.5px solid var(--gold-400); border-radius: 10px; padding: 1rem; margin-bottom: 0.85rem;">
-                            <div style="display: flex; gap: 0.9rem; align-items: center;">
-                              <div class="btn-preview-document-image" data-doc-title="${item.seekerName || 'Applicant'} Photo" data-doc-type="photo" data-invite-id="${item.id}" style="width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle, rgba(212,175,55,0.35) 0%, rgba(16,185,129,0.2) 100%); border: 2px solid var(--gold-400); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800; color: var(--gold-400); cursor: pointer; flex-shrink: 0;" title="Click to view full photo">
-                                ${photoSrc ? `<img src="${photoSrc}" alt="Photo" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : initials}
-                              </div>
-                              <div style="flex: 1; min-width: 0;">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.25rem;">
-                                  <h4 style="margin: 0; font-size: 1.1rem; color: var(--text-primary); font-family: var(--font-heading); font-weight: 800;">${item.seekerName || "Applicant Dossier"}</h4>
-                                  <span class="verification-status-badge ${isApproved ? 'status-verified' : isExpired ? 'status-unverified' : 'status-pending'}" style="font-size: 0.72rem; padding: 0.2rem 0.55rem;">
-                                    ${isApproved ? '🟢 Approved' : isExpired ? '⌛ Expired' : '⏳ Pending Approval'}
-                                  </span>
-                                </div>
-                                <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--gold-400); font-weight: 800; margin-top: 0.15rem;">
-                                  ${item.devoteeCode || item.hardwareNonce || "SKDV-PROVISIONED"}
-                                </div>
-                                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">
-                                  Pairing PIN: <strong style="color:#10b981; font-family: var(--font-mono);">${item.activationPin || "140610"}</strong> • 24h Window: <span style="color:#f59e0b; font-weight:700;">${isApproved ? 'Linked' : `${hours}h ${mins}m remaining`}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- FULL HYPERLINK ACCESS -->
-                          <div class="dossier-box" style="background: rgba(56, 189, 248, 0.08); border: 1.5px solid #38bdf8; border-radius: 8px; padding: 0.75rem 0.9rem; margin-bottom: 0.85rem;">
-                            <div style="font-size: 0.72rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
-                              <span>🌐</span> Direct Verification &amp; Testing Hyperlinks
-                            </div>
-                            <div style="display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.75rem;">
-                              <div>
-                                <span style="color: var(--text-muted); font-weight: 600;">Joining Form URL:</span><br>
-                                <a href="${fullJoinUrl}" target="_blank" style="color: #38bdf8; font-family: var(--font-mono); font-weight: 700; word-break: break-all; text-decoration: underline;">
-                                  ${fullJoinUrl} ↗
-                                </a>
-                              </div>
-                              <div>
-                                <span style="color: var(--text-muted); font-weight: 600;">${assignedRole === "TRAINEE" ? "Dedicated Trainee Website" : assignedRole === "HEALER" ? "Dedicated Healer Website" : assignedRole === "MASTER" ? "Master Admin Portal" : "Dedicated Devotee Website"}:</span><br>
-                                <a href="${fullDevoteeUrl}" target="_blank" style="color: #10b981; font-family: var(--font-mono); font-weight: 700; word-break: break-all; text-decoration: underline;">
-                                  ${fullDevoteeUrl} ↗
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- DEMOGRAPHICS DOSSIER -->
-                          <div class="dossier-box" style="background: var(--bg-card, rgba(0,0,0,0.25)); border: 1px solid var(--border-subtle, rgba(255,255,255,0.08)); border-radius: 8px; padding: 0.8rem 0.9rem; margin-bottom: 0.85rem;">
-                            <div style="font-size: 0.72rem; font-weight: 800; color: var(--gold-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.45rem; display: flex; align-items: center; gap: 0.35rem;">
-                              <span>📱</span> Personal Demographics &amp; Contact
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; font-size: 0.76rem;">
-                              <div>
-                                <span style="color: var(--text-muted);">Phone Number:</span><br>
-                                <strong style="color: var(--text-primary); font-family: var(--font-mono);">${item.seekerPhone || "—"}</strong>
-                                <span style="color: #10b981; font-size: 0.68rem; font-weight:700;"> ✓ Verified</span>
-                              </div>
-                              <div>
-                                <span style="color: var(--text-muted);">Email Address:</span><br>
-                                <strong style="color: var(--text-primary);">${item.seekerEmail || "—"}</strong>
-                                <span style="color: #10b981; font-size: 0.68rem; font-weight:700;"> ✓ Verified</span>
-                              </div>
-                              <div>
-                                <span style="color: var(--text-muted);">Date of Birth:</span><br>
-                                <strong style="color: var(--text-secondary);">${item.dob || "—"}</strong>
-                              </div>
-                              <div>
-                                <span style="color: var(--text-muted);">Lineage Sponsor:</span><br>
-                                <strong style="color: var(--gold-400); font-family: var(--font-mono);">${item.sponsorCode || ((this.model && typeof this.model.getDefaultMentorCode === "function") ? this.model.getDefaultMentorCode() : "SKHM-ADM1-7788-9900")}</strong>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- ANCESTRAL ROOTS DOSSIER -->
-                          <div class="dossier-box" style="background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; padding: 0.8rem 0.9rem; margin-bottom: 0.85rem;">
-                            <div style="font-size: 0.72rem; font-weight: 800; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.45rem; display: flex; align-items: center; justify-content: space-between;">
-                              <span style="display: flex; align-items: center; gap: 0.35rem;">
-                                <span>🕉️</span> Pillar 2: Ancestral Roots (Pitru Karma)
-                              </span>
-                              <span style="font-size: 0.65rem; color: #10b981; background: rgba(16,185,129,0.15); border: 1px solid #10b981; border-radius: 3px; padding: 0.05rem 0.35rem; font-weight:700;">Verified</span>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; font-size: 0.76rem;">
-                              <div>
-                                <span style="color: var(--text-muted);">Paternal Gotra:</span><br>
-                                <strong style="color: var(--gold-400); font-size: 0.82rem;">${item.lineage?.paternalGotra || "Not specified"}</strong>
-                              </div>
-                              <div>
-                                <span style="color: var(--text-muted);">Maternal Gotra:</span><br>
-                                <strong style="color: var(--gold-400); font-size: 0.82rem;">${item.lineage?.maternalGotra || "Not specified"}</strong>
-                              </div>
-                              <div>
-                                <span style="color: var(--text-muted);">Kuldevi / Ishtadevata:</span><br>
-                                <strong style="color: #10b981; font-size: 0.82rem;">${item.lineage?.kuldevi || "Not specified"}</strong>
-                              </div>
-                              <div>
-                                <span style="color: var(--text-muted);">Ancestral Village:</span><br>
-                                <strong style="color: #38bdf8; font-size: 0.82rem;">${item.lineage?.village || "Not specified"}</strong>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- SADHANA PROGRESS -->
-                          <div class="dossier-box" style="background: rgba(139, 92, 246, 0.06); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 8px; padding: 0.8rem 0.9rem; margin-bottom: 0.85rem;">
-                            <div style="font-size: 0.72rem; font-weight: 800; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.45rem; display: flex; align-items: center; justify-content: space-between;">
-                              <span style="display: flex; align-items: center; gap: 0.35rem;">
-                                <span>📿</span> Sadhana Telemetry &amp; Discipline Status
-                              </span>
-                              <span style="font-size: 0.65rem; color: #10b981; background: rgba(16,185,129,0.15); border: 1px solid #10b981; border-radius: 3px; padding: 0.05rem 0.35rem; font-weight:700;">Compliant</span>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; font-size: 0.76rem;">
-                              <div>
-                                <span style="color: var(--text-muted);">Daily Diya Completed:</span><br>
-                                <strong style="color: #f59e0b; font-size: 0.82rem;">${item.diyaDays ? `${item.diyaDays} Days Practice` : "14 Days Foundation"}</strong>
-                              </div>
-                              <div>
-                                <span style="color: var(--text-muted);">House Cleanliness:</span><br>
-                                <strong style="color: #10b981; font-size: 0.82rem;">${item.houseCleanVerified !== false ? "✓ Verified Clean" : "In Progress"}</strong>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- KYC DOCUMENT PROOFS -->
-                          <div class="dossier-box" style="background: var(--bg-card, rgba(0,0,0,0.25)); border: 1px solid var(--border-subtle, rgba(255,255,255,0.08)); border-radius: 8px; padding: 0.8rem 0.9rem; margin-bottom: 0.85rem;">
-                            <div style="font-size: 0.72rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
-                              <span style="display: flex; align-items: center; gap: 0.35rem;">
-                                <span>📄</span> KYC Document Proofs &amp; Lightbox
-                              </span>
-                              <span style="font-size: 0.65rem; color: var(--text-muted);">Click card to open Lightbox</span>
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
-                              <div class="btn-preview-document-image" data-doc-title="Government ID Proof" data-doc-type="id_proof" data-invite-id="${item.id}" style="background: var(--bg-primary, rgba(0,0,0,0.45)); border: 1.5px solid ${idProofAvailable ? '#10b981' : 'var(--border-subtle)'}; border-radius: 6px; padding: 0.5rem 0.4rem; text-align: center; cursor: pointer;">
-                                <div style="font-size: 1.2rem; margin-bottom: 0.1rem;">📄</div>
-                                <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-primary);">ID Proof</div>
-                                <div style="font-size: 0.62rem; color: ${idProofAvailable ? '#10b981' : '#f59e0b'}; font-weight: 700;">
-                                  ${idProofAvailable ? '✓ Click View' : '○ Attached'}
-                                </div>
-                              </div>
-
-                              <div class="btn-preview-document-image" data-doc-title="Address Proof Document" data-doc-type="address_proof" data-invite-id="${item.id}" style="background: var(--bg-primary, rgba(0,0,0,0.45)); border: 1.5px solid ${addrProofAvailable ? '#10b981' : 'var(--border-subtle)'}; border-radius: 6px; padding: 0.5rem 0.4rem; text-align: center; cursor: pointer;">
-                                <div style="font-size: 1.2rem; margin-bottom: 0.1rem;">🏠</div>
-                                <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-primary);">Address Proof</div>
-                                <div style="font-size: 0.62rem; color: ${addrProofAvailable ? '#10b981' : 'var(--text-muted)'}; font-weight: 700;">
-                                  ${addrProofAvailable ? '✓ Click View' : '○ Attached'}
-                                </div>
-                              </div>
-
-                              <div class="btn-preview-document-image" data-doc-title="Devotee Passport Photo" data-doc-type="photo" data-invite-id="${item.id}" style="background: var(--bg-primary, rgba(0,0,0,0.45)); border: 1.5px solid ${photoAvailable ? '#10b981' : 'var(--border-subtle)'}; border-radius: 6px; padding: 0.5rem 0.4rem; text-align: center; cursor: pointer;">
-                                <div style="font-size: 1.2rem; margin-bottom: 0.1rem;">📸</div>
-                                <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-primary);">Photo</div>
-                                <div style="font-size: 0.62rem; color: #10b981; font-weight: 700;">
-                                  ✓ Click View
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- DECISION GATE -->
-                          <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid #10b981; border-radius: 10px; padding: 0.95rem;">
-                            <div style="font-size: 0.78rem; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.35rem;">
-                              <span>⚖️</span> Mentor Decision &amp; Induction Gate
-                            </div>
-
-                            ${!isApproved ? `
-                              <div style="margin-bottom: 0.75rem;">
-                                <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; font-weight: 700;">1. Select Induction Role Tier:</label>
-                                <select id="drawer-select-role-${item.id}" class="select-pairing-role" data-invite-id="${item.id}" style="width: 100%; box-sizing: border-box; font-size: 0.82rem; padding: 0.45rem 0.65rem; background: var(--bg-primary, #000); border: 1.5px solid var(--gold-400); color: var(--text-primary); border-radius: 6px; font-weight: 700;">
-                                  <option value="DEVOTEE" ${assignedRole === "DEVOTEE" ? "selected" : ""}>🌟 Devotee (Level 4 — House Clean &amp; Three Diya)</option>
-                                  <option value="TRAINEE" ${assignedRole === "TRAINEE" ? "selected" : ""}>📿 Trainee Sadhak (Level 3 — Initiation Practice)</option>
-                                  <option value="HEALER" ${assignedRole === "HEALER" ? "selected" : ""}>🛡️ Certified Healer (Level 2 — Mentor Guide)</option>
-                                  <option value="MASTER" ${assignedRole === "MASTER" ? "selected" : ""}>👑 Master Founder (Tier 1 — Root Authority)</option>
-                                </select>
-                              </div>
-
-                              <div style="margin-bottom: 0.85rem;">
-                                <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; font-weight: 700;">2. Guidance Notes / Revision Request (Optional):</label>
-                                <textarea id="drawer-mentor-notes-${item.id}" placeholder="Enter specific instructions or guidance for applicant..." style="width: 100%; box-sizing: border-box; height: 50px; font-size: 0.78rem; padding: 0.45rem 0.65rem; background: var(--bg-primary, #000); border: 1px solid var(--border-subtle); border-radius: 6px; color: var(--text-primary); resize: vertical;"></textarea>
-                              </div>
-
-                              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                <button type="button" class="btn btn-sm btn-drawer-approve-induct" data-invite-id="${item.id}" style="flex: 2; min-width: 130px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 800; font-size: 0.82rem; padding: 0.55rem 0.85rem; border: none; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 14px rgba(16,185,129,0.35); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                                  <span>✓</span> <span>Approve &amp; Induct to Lineage</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-drawer-request-revision" data-invite-id="${item.id}" style="flex: 1; min-width: 100px; background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; color: #f59e0b; font-weight: 700; font-size: 0.78rem; padding: 0.55rem 0.75rem; border-radius: 6px; cursor: pointer;">
-                                  📝 Revision
-                                </button>
-                                <button type="button" class="btn btn-sm btn-drawer-reject" data-invite-id="${item.id}" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; font-weight: 700; font-size: 0.78rem; padding: 0.55rem 0.75rem; border-radius: 6px; cursor: pointer;">
-                                  ✕ Reject
-                                </button>
-                              </div>
-                            ` : `
-                              <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 6px; padding: 0.75rem; text-align: center;">
-                                <div style="color: #10b981; font-weight: 800; font-size: 0.9rem; margin-bottom: 0.2rem;">
-                                  ✓ Application Approved &amp; Inducted!
-                                </div>
-                                <div style="font-size: 0.75rem; color: var(--text-secondary);">
-                                  Applicant is officially bound to your downline lineage as <strong>${item.assignedRole || "Devotee"}</strong>.
-                                </div>
-                              </div>
-                            `}
-                          </div>
-                        </div>
-                      </div>
-                    `;
-                  }).join('')}
-                </div>
-              </div>
-            `).join('')}
-          </div>
+          <div id="pending-tab-pane-registration" class="pending-tab-pane" style="display: block;"></div>
+          <div id="pending-tab-pane-sadhana" class="pending-tab-pane" style="display: none;"></div>
         `;
+        regPane = document.getElementById("pending-tab-pane-registration");
+        sadhanaPane = document.getElementById("pending-tab-pane-sadhana");
+      }
+
+      // Render Tab 1: Registration (100% existing functionality intact)
+      this.renderRegistrationApprovalsTab(invites, selectedInviteId, regPane);
+
+      // Render Tab 2: Sadhana & Remedy (complete metadata and actions)
+      this.renderSadhanaRemedyApprovalsTab(sadhanaApps, selectedInviteId, sadhanaPane);
+
+      // Show/Hide active pane
+      if (this.currentPendingDrawerTab === "sadhana-remedy") {
+        if (regPane) regPane.style.display = "none";
+        if (sadhanaPane) sadhanaPane.style.display = "block";
+      } else {
+        if (regPane) regPane.style.display = "block";
+        if (sadhanaPane) sadhanaPane.style.display = "none";
       }
     }
 
@@ -3272,6 +3457,745 @@ class ProfileView {
         this.closePendingApprovalsDrawer();
       };
     }
+  }
+
+  switchPendingDrawerTab(tabName) {
+    this.currentPendingDrawerTab = tabName;
+    const btnTabReg = document.getElementById("tab-btn-pending-registration");
+    const btnTabSadhana = document.getElementById("tab-btn-pending-sadhana");
+    const regPane = document.getElementById("pending-tab-pane-registration");
+    const sadhanaPane = document.getElementById("pending-tab-pane-sadhana");
+
+    if (tabName === "sadhana-remedy") {
+      if (btnTabReg) btnTabReg.classList.remove("active");
+      if (btnTabSadhana) btnTabSadhana.classList.add("active");
+      if (regPane) regPane.style.display = "none";
+      if (sadhanaPane) sadhanaPane.style.display = "block";
+    } else {
+      if (btnTabReg) btnTabReg.classList.add("active");
+      if (btnTabSadhana) btnTabSadhana.classList.remove("active");
+      if (regPane) regPane.style.display = "block";
+      if (sadhanaPane) sadhanaPane.style.display = "none";
+    }
+  }
+
+  renderRegistrationApprovalsTab(invites = [], selectedInviteId = null, targetContainer = null) {
+    const container = targetContainer || document.getElementById("pending-tab-pane-registration");
+    if (!container) return;
+
+    if (!invites || invites.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 3rem 1.5rem; color: var(--text-muted);">
+          <div style="font-size: 3rem; margin-bottom: 0.75rem;">🌟</div>
+          <h4 style="color: var(--text-primary); margin-bottom: 0.35rem; font-family: var(--font-heading); font-size: 1.15rem;">No Pending Registration Approvals</h4>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); max-width: 360px; margin: 0 auto 1.25rem;">All devotee applicants have been reviewed and placed into downline lineage. Click below to generate a new direct pairing invite link!</p>
+          <a href="join.html?ref=${(this.activeProfile && this.activeProfile.referenceCode) || ((this.model && typeof this.model.getDefaultMentorCode === 'function') ? this.model.getDefaultMentorCode() : 'SKHM-ADM1-7788-9900')}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1.1rem; background: var(--gold-400, #d4af37); color: #000; font-weight: 800; font-size: 0.82rem; border-radius: 6px; text-decoration: none;">
+            <span>📲 Test Direct Onboarding Link (join.html)</span>
+          </a>
+        </div>
+      `;
+      return;
+    }
+
+    const now = Date.now();
+    const inviteTtl = (window.ProfileModel && window.ProfileModel.settings && window.ProfileModel.settings.inviteExpiryHours) ? window.ProfileModel.settings.inviteExpiryHours * 3600 * 1000 : 86400000;
+
+    // Strict separation of concerns: Filter strictly for Registration & Onboarding pairing invites.
+    // Sadhana & Trainee Sadhak elevation applications belong exclusively to the "Sadhana & Remedies" tab.
+    const regOnlyInvites = (invites || []).filter(i => 
+      i &&
+      i.type !== "SADHANA_APPLICATION" && 
+      i.type !== "REMEDY_APPLICATION" && 
+      i.contextType !== "sadhana" && 
+      i.contextType !== "remedy" &&
+      !i.id?.startsWith("sadhana-") &&
+      !i.id?.startsWith("remedy-")
+    );
+
+    // Sort: Pending accounts first, followed by approved/rejected, then newest
+    const sortedInvites = [...regOnlyInvites].sort((a, b) => {
+      const aIsPending = (a.status === "PENDING" || a.status === "PENDING_APPROVAL") ? 0 : 1;
+      const bIsPending = (b.status === "PENDING" || b.status === "PENDING_APPROVAL") ? 0 : 1;
+      if (aIsPending !== bIsPending) return aIsPending - bIsPending;
+      return (b.createdAtMs || b.timestamp || 0) - (a.createdAtMs || a.timestamp || 0);
+    });
+
+    // Statistics strictly for Registration queue
+    const totalCount = sortedInvites.length;
+    const activePendingInvites = sortedInvites.filter(i => {
+      const remMs = (i.expiresAtMs || ((i.createdAtMs || i.timestamp || Date.now()) + inviteTtl)) - now;
+      return (i.status === "PENDING" || i.status === "PENDING_APPROVAL") && remMs > 0;
+    });
+    const pendingCount = activePendingInvites.length;
+    const approvedCount = sortedInvites.filter(i => i.status === "APPROVED").length;
+    const expiredCount = sortedInvites.filter(i => {
+      const remMs = (i.expiresAtMs || ((i.createdAtMs || i.timestamp || Date.now()) + inviteTtl)) - now;
+      return i.status === "EXPIRED" || i.status === "REVISION" || ((i.status === "PENDING" || i.status === "PENDING_APPROVAL") && remMs <= 0);
+    }).length;
+
+    // Grouping strictly for Registration tiers: Tier 2 (Certified Healers) & Tier 4 (Devotee Sangha).
+    // Trainee Sadhak is an internal spiritual elevation tier handled exclusively in the Sadhana & Remedies tab.
+    const healerGroup = sortedInvites.filter(i => (i.appliedRole === "HEALER" || i.assignedRole === "HEALER" || i.type === "HEALER_APPLICATION") && i.status !== "EXPIRED" && i.status !== "REVISION");
+    const devoteeGroup = sortedInvites.filter(i => {
+      const isHealer = i.appliedRole === "HEALER" || i.assignedRole === "HEALER" || i.type === "HEALER_APPLICATION";
+      return !isHealer && i.status !== "EXPIRED" && i.status !== "REVISION";
+    });
+    const reviewExpiredGroup = sortedInvites.filter(i => i.status === "EXPIRED" || i.status === "REVISION" || i.status === "REJECTED");
+
+    const groups = [
+      { id: "group-healers", icon: "🛡️", title: "Tier 2 • Certified Healer Applications", items: healerGroup, badgeColor: "#38bdf8" },
+      { id: "group-devotees", icon: "🌟", title: "Tier 4 • Devotee Sangha Applications", items: devoteeGroup, badgeColor: "#10b981" },
+      { id: "group-expired", icon: "⌛", title: "Under Revision / Expired Queue", items: reviewExpiredGroup, badgeColor: "#f43f5e" }
+    ].filter(g => g.items.length > 0);
+
+    container.innerHTML = `
+      <!-- STATS & SEARCH HEADER BAR -->
+      <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: var(--bg-card, rgba(24,16,36,0.9)); border: 1px solid var(--border-glass-gold, rgba(212,175,55,0.3)); border-radius: 8px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; font-weight: 700; color: var(--text-primary); flex-wrap: wrap;">
+            <span>📊 Registration Summary:</span>
+            <span style="background: rgba(245,158,11,0.2); border: 1px solid #f59e0b; color: #f59e0b; padding: 0.15rem 0.5rem; border-radius: 12px;">⏳ ${pendingCount} Pending Review</span>
+            <span style="background: rgba(56,189,248,0.2); border: 1px solid #38bdf8; color: #38bdf8; padding: 0.15rem 0.5rem; border-radius: 12px;">🛡️ ${healerGroup.length} Healers</span>
+            <span style="background: rgba(16,185,129,0.2); border: 1px solid #10b981; color: #10b981; padding: 0.15rem 0.5rem; border-radius: 12px;">🌟 ${devoteeGroup.length} Devotees</span>
+            ${expiredCount > 0 ? `<span style="background: rgba(244,63,94,0.2); border: 1px solid #f43f5e; color: #f43f5e; padding: 0.15rem 0.5rem; border-radius: 12px;">⌛ ${expiredCount} Revision/Expired</span>` : ''}
+          </div>
+          <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Sangha Onboarding • Role Assignment</span>
+        </div>
+
+        <!-- SEARCH BAR -->
+        <div style="margin-top: 0.6rem;">
+          <input type="text" id="input-search-pending-drawer" placeholder="🔍 Instant search pending applicants by name, phone, or gotra..." class="form-control" style="width: 100%; box-sizing: border-box; font-size: 0.8rem; padding: 0.5rem 0.85rem; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass-gold, rgba(212,175,55,0.3)); border-radius: 6px; color: #fff;">
+        </div>
+
+        <!-- DEDICATED CALLOUT TO SADHANA & REMEDIES TAB FOR TRAINEE ELEVATIONS -->
+        <div style="margin-top: 0.65rem; padding: 0.55rem 0.85rem; background: rgba(184,150,12,0.1); border: 1px solid rgba(212,175,55,0.3); border-radius: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 0.76rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.45rem; color: var(--text-primary);">
+            <span style="font-size: 1.1rem;">📿</span>
+            <span><strong>Trainee Sadhak &amp; Sadhana Elevation:</strong> Handled exclusively under the dedicated 2-Tier Deeksha Approval Workflow.</span>
+          </div>
+          <button type="button" class="btn btn-gold btn-xs btn-switch-to-sadhana-tab" style="padding: 0.3rem 0.75rem; font-size: 0.74rem; font-weight: 800; border-radius: 5px; cursor: pointer;">
+            View Sadhana Approvals ➔
+          </button>
+        </div>
+      </div>
+
+      <!-- GROUPED PENDING APPLICANTS LIST -->
+      <div id="grouped-pending-approvals-list" style="display: flex; flex-direction: column; gap: 1rem;">
+        ${groups.map(group => `
+          <div class="approval-tier-group" id="${group.id}">
+            <div class="approval-tier-group-header">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span>${group.icon}</span>
+                <span>${group.title}</span>
+              </div>
+              <span style="background: ${group.badgeColor}22; border: 1px solid ${group.badgeColor}; color: ${group.badgeColor}; padding: 0.12rem 0.5rem; border-radius: 12px; font-size: 0.72rem; font-weight: 800;">
+                ${group.items.length} Applicant${group.items.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+
+            <div class="approval-tier-group-body">
+              ${group.items.map(item => {
+                const isApproved = item.status === "APPROVED";
+                const isPending = item.status === "PENDING" || item.status === "PENDING_APPROVAL";
+                const assignedRole = (item.assignedRole || item.appliedRole || "DEVOTEE").toUpperCase();
+                const initials = item.seekerName ? item.seekerName.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase() : "SK";
+                const remainingMs = (item.expiresAtMs || ((item.createdAtMs || item.timestamp || Date.now()) + inviteTtl)) - now;
+                const isExpired = isPending && remainingMs <= 0;
+                const hours = Math.max(0, Math.floor(remainingMs / (1000 * 60 * 60)));
+                const mins = Math.max(0, Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60)));
+                const isDetailsOpen = selectedInviteId ? (item.id === selectedInviteId) : false;
+
+                let idProofDoc = null, addrProofDoc = null, photoDoc = null;
+                try {
+                  const docs = JSON.parse(localStorage.getItem('sk_documents') || '[]');
+                  idProofDoc = docs.find(d => (d.profileId === item.id || d.profileId === item.devoteeCode) && d.docType === 'id_proof') || null;
+                  addrProofDoc = docs.find(d => (d.profileId === item.id || d.profileId === item.devoteeCode) && d.docType === 'address_proof') || null;
+                  photoDoc = docs.find(d => (d.profileId === item.id || d.profileId === item.devoteeCode) && d.docType === 'photo') || null;
+                } catch(e) {}
+
+                const photoSrc = photoDoc?.dataUrl || item.documentsUploaded?.photo || "";
+                const idProofAvailable = Boolean(idProofDoc || item.documentsUploaded?.idProof || item.documents?.idProof);
+                const addrProofAvailable = Boolean(addrProofDoc || item.documentsUploaded?.addressProof || item.documents?.addressProof);
+                const photoAvailable = Boolean(photoDoc || item.documentsUploaded?.photo || item.documents?.photo);
+
+                const cleanBasePath = window.location.pathname.replace(/\/(Masters|Healers|Trainee|Devotee|Seeker|Public|Frontend)\/.*$/i, '').replace(/\/+$/, '');
+                const rootUrl = window.location.origin + cleanBasePath;
+                const targetPortal = (assignedRole === "TRAINEE") ? "Trainee" : (assignedRole === "HEALER") ? "Healers" : (assignedRole === "MASTER") ? "Masters" : "Devotee";
+                const fullJoinUrl = `${rootUrl}/join.html?ref=${item.sponsorCode || ((this.model && typeof this.model.getDefaultMentorCode === 'function') ? this.model.getDefaultMentorCode() : 'SKHM-ADM1-7788-9900')}&pin=${item.activationPin || '140610'}`;
+                const fullDevoteeUrl = `${rootUrl}/${targetPortal}/index.html?profileId=${encodeURIComponent(item.devoteeCode || item.id)}`;
+
+                return `
+                  <div class="approval-item-card" data-invite-id="${item.id}">
+                    <!-- Main Summary Bar -->
+                    <div class="approval-item-row-main">
+                      <div class="approval-item-user-info">
+                        <div class="approval-item-avatar">
+                          ${photoSrc ? `<img src="${photoSrc}" alt="${item.seekerName}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : initials}
+                        </div>
+                        <div class="approval-item-meta">
+                          <div class="approval-item-name">${item.seekerName || 'Devotee Applicant'}</div>
+                          <div class="approval-item-subtext">
+                            <span>📱 ${item.seekerPhone || '—'}</span>
+                            <span>•</span>
+                            <span>Applied: <strong style="color: var(--gold-400);">${item.appliedRole || 'Devotee'}</strong></span>
+                            <span>•</span>
+                            <span>${isApproved ? '🟢 Inducted' : isExpired ? '⌛ Expired' : `⏳ ${hours}h ${mins}m left`}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Multiple Option Assign Roles -->
+                      <div class="approval-role-selector-wrap">
+                        <span class="approval-role-selector-label">Assign Role:</span>
+                        <select class="approval-role-select select-pairing-role" data-invite-id="${item.id}" title="Choose role tier for approval">
+                          <option value="DEVOTEE" ${assignedRole === "DEVOTEE" ? "selected" : ""}>🌟 Devotee (Level 4)</option>
+                          <option value="TRAINEE" ${assignedRole === "TRAINEE" ? "selected" : ""}>📿 Trainee (Level 3)</option>
+                          <option value="HEALER" ${assignedRole === "HEALER" ? "selected" : ""}>🛡️ Healer (Level 2)</option>
+                          <option value="MASTER" ${assignedRole === "MASTER" ? "selected" : ""}>👑 Master (Tier 1)</option>
+                        </select>
+                      </div>
+
+                      <!-- Action Buttons -->
+                      <div class="approval-item-actions">
+                        <button type="button" class="btn-approval-details" data-invite-id="${item.id}" title="Click to view complete applicant details">
+                          <span>${isDetailsOpen ? '▲ Hide Details' : '📋 Details'}</span>
+                        </button>
+                        ${!isApproved ? `
+                          <button type="button" class="btn-approval-quick-approve" data-invite-id="${item.id}" title="Quick Approve and induct with selected role">
+                            <span>✓ Quick Approve</span>
+                          </button>
+                          <button type="button" class="btn-approval-delete" data-invite-id="${item.id}" title="Delete Approval" style="padding: 0.35rem; background: transparent; border: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); color: #ef4444; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                            <span>🗑️</span>
+                          </button>
+                        ` : `
+                          <span style="color:#10b981; font-weight:800; font-size:0.75rem; padding: 0.35rem 0.6rem; background: rgba(16,185,129,0.15); border: 1px solid #10b981; border-radius: 4px;">
+                            ✓ Inducted
+                          </span>
+                        `}
+                      </div>
+                    </div>
+
+                    <!-- On-Click Expandable All Details Pane -->
+                    <div id="details-pane-${item.id}" class="approval-expanded-details-pane ${isDetailsOpen ? 'is-open' : ''}" style="${isDetailsOpen ? 'display: block;' : 'display: none;'}">
+                      
+                      <!-- HERO CARD -->
+                      <div class="dossier-box" style="background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(16,185,129,0.1) 100%); border: 1.5px solid var(--gold-400); border-radius: 10px; padding: 1rem; margin-bottom: 0.85rem;">
+                        <div style="display: flex; gap: 0.9rem; align-items: center;">
+                          <div class="btn-preview-document-image" data-doc-title="${item.seekerName || 'Applicant'} Photo" data-doc-type="photo" data-invite-id="${item.id}" style="width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle, rgba(212,175,55,0.35) 0%, rgba(16,185,129,0.2) 100%); border: 2px solid var(--gold-400); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800; color: var(--gold-400); cursor: pointer; flex-shrink: 0;" title="Click to view full photo">
+                            ${photoSrc ? `<img src="${photoSrc}" alt="Photo" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : initials}
+                          </div>
+                          <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.25rem;">
+                              <h4 style="margin: 0; font-size: 1.1rem; color: var(--text-primary); font-family: var(--font-heading); font-weight: 800;">${item.seekerName || "Applicant Dossier"}</h4>
+                              <span class="verification-status-badge ${isApproved ? 'status-verified' : isExpired ? 'status-unverified' : 'status-pending'}" style="font-size: 0.72rem; padding: 0.2rem 0.55rem;">
+                                ${isApproved ? '🟢 Approved' : isExpired ? '⌛ Expired' : '⏳ Pending Approval'}
+                              </span>
+                            </div>
+                            <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--gold-400); font-weight: 800; margin-top: 0.15rem;">
+                              ${item.devoteeCode || item.hardwareNonce || "SKDV-PROVISIONED"}
+                            </div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">
+                              Pairing PIN: <strong style="color:#10b981; font-family: var(--font-mono);">${item.activationPin || "140610"}</strong> • 24h Window: <span style="color:#f59e0b; font-weight:700;">${isApproved ? 'Linked' : `${hours}h ${mins}m remaining`}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- FULL HYPERLINK ACCESS -->
+                      <div class="dossier-box" style="background: rgba(56, 189, 248, 0.08); border: 1.5px solid #38bdf8; border-radius: 8px; padding: 0.75rem 0.9rem; margin-bottom: 0.85rem;">
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                          <span>🌐</span> Direct Verification &amp; Testing Hyperlinks
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.75rem;">
+                          <div>
+                            <span style="color: var(--text-muted); font-weight: 600;">Joining Form URL:</span><br>
+                            <a href="${fullJoinUrl}" target="_blank" style="color: #38bdf8; font-family: var(--font-mono); font-weight: 700; word-break: break-all; text-decoration: underline;">
+                              ${fullJoinUrl} ↗
+                            </a>
+                          </div>
+                          <div>
+                            <span style="color: var(--text-muted); font-weight: 600;">${assignedRole === "TRAINEE" ? "Dedicated Trainee Website" : assignedRole === "HEALER" ? "Dedicated Healer Website" : assignedRole === "MASTER" ? "Master Admin Portal" : "Dedicated Devotee Website"}:</span><br>
+                            <a href="${fullDevoteeUrl}" target="_blank" style="color: #10b981; font-family: var(--font-mono); font-weight: 700; word-break: break-all; text-decoration: underline;">
+                              ${fullDevoteeUrl} ↗
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- DEMOGRAPHICS DOSSIER -->
+                      <div class="dossier-box" style="background: var(--bg-card, rgba(0,0,0,0.25)); border: 1px solid var(--border-subtle, rgba(255,255,255,0.08)); border-radius: 8px; padding: 0.8rem 0.9rem; margin-bottom: 0.85rem;">
+                        <div style="font-size: 0.72rem; font-weight: 800; color: var(--gold-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.45rem; display: flex; align-items: center; gap: 0.35rem;">
+                          <span>📱</span> Personal Demographics &amp; Contact
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; font-size: 0.76rem;">
+                          <div>
+                            <span style="color: var(--text-muted);">Phone Number:</span><br>
+                            <strong style="color: var(--text-primary); font-family: var(--font-mono);">${item.seekerPhone || "—"}</strong>
+                            <span style="color: #10b981; font-size: 0.68rem; font-weight:700;"> ✓ Verified</span>
+                          </div>
+                          <div>
+                            <span style="color: var(--text-muted);">Email Address:</span><br>
+                            <strong style="color: var(--text-primary);">${item.seekerEmail || "—"}</strong>
+                            <span style="color: #10b981; font-size: 0.68rem; font-weight:700;"> ✓ Verified</span>
+                          </div>
+                          <div>
+                            <span style="color: var(--text-muted);">Date of Birth:</span><br>
+                            <strong style="color: var(--text-secondary);">${item.dob || "—"}</strong>
+                          </div>
+                          <div>
+                            <span style="color: var(--text-muted);">Lineage Sponsor:</span><br>
+                            <strong style="color: var(--gold-400); font-family: var(--font-mono);">${item.sponsorCode || ((this.model && typeof this.model.getDefaultMentorCode === "function") ? this.model.getDefaultMentorCode() : "SKHM-ADM1-7788-9900")}</strong>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- ANCESTRAL ROOTS DOSSIER -->
+                      <div class="dossier-box" style="background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; padding: 0.8rem 0.9rem; margin-bottom: 0.85rem;">
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.45rem; display: flex; align-items: center; justify-content: space-between;">
+                          <span style="display: flex; align-items: center; gap: 0.35rem;">
+                            <span>🕉️</span> Pillar 2: Ancestral Roots (Pitru Karma)
+                          </span>
+                          <span style="font-size: 0.65rem; color: #10b981; background: rgba(16,185,129,0.15); border: 1px solid #10b981; border-radius: 3px; padding: 0.05rem 0.35rem; font-weight:700;">Verified</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; font-size: 0.76rem;">
+                          <div>
+                            <span style="color: var(--text-muted);">Paternal Gotra:</span><br>
+                            <strong style="color: var(--gold-400); font-size: 0.82rem;">${item.lineage?.paternalGotra || "Not specified"}</strong>
+                          </div>
+                          <div>
+                            <span style="color: var(--text-muted);">Maternal Gotra:</span><br>
+                            <strong style="color: var(--gold-400); font-size: 0.82rem;">${item.lineage?.maternalGotra || "Not specified"}</strong>
+                          </div>
+                          <div>
+                            <span style="color: var(--text-muted);">Kuldevi / Ishtadevata:</span><br>
+                            <strong style="color: #10b981; font-size: 0.82rem;">${item.lineage?.kuldevi || "Not specified"}</strong>
+                          </div>
+                          <div>
+                            <span style="color: var(--text-muted);">Ancestral Village:</span><br>
+                            <strong style="color: #38bdf8; font-size: 0.82rem;">${item.lineage?.village || "Not specified"}</strong>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- SADHANA PROGRESS -->
+                      <div class="dossier-box" style="background: rgba(139, 92, 246, 0.06); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 8px; padding: 0.8rem 0.9rem; margin-bottom: 0.85rem;">
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.45rem; display: flex; align-items: center; justify-content: space-between;">
+                          <span style="display: flex; align-items: center; gap: 0.35rem;">
+                            <span>📿</span> Sadhana Telemetry &amp; Discipline Status
+                          </span>
+                          <span style="font-size: 0.65rem; color: #10b981; background: rgba(16,185,129,0.15); border: 1px solid #10b981; border-radius: 3px; padding: 0.05rem 0.35rem; font-weight:700;">Compliant</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; font-size: 0.76rem;">
+                          <div>
+                            <span style="color: var(--text-muted);">Daily Diya Completed:</span><br>
+                            <strong style="color: #f59e0b; font-size: 0.82rem;">${item.diyaDays ? `${item.diyaDays} Days Practice` : "14 Days Foundation"}</strong>
+                          </div>
+                          <div>
+                            <span style="color: var(--text-muted);">House Cleanliness:</span><br>
+                            <strong style="color: #10b981; font-size: 0.82rem;">${item.houseCleanVerified !== false ? "✓ Verified Clean" : "In Progress"}</strong>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- KYC DOCUMENT PROOFS -->
+                      <div class="dossier-box" style="background: var(--bg-card, rgba(0,0,0,0.25)); border: 1px solid var(--border-subtle, rgba(255,255,255,0.08)); border-radius: 8px; padding: 0.8rem 0.9rem; margin-bottom: 0.85rem;">
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                          <span style="display: flex; align-items: center; gap: 0.35rem;">
+                            <span>📄</span> KYC Document Proofs &amp; Lightbox
+                          </span>
+                          <span style="font-size: 0.65rem; color: var(--text-muted);">Click card to open Lightbox</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+                          <div class="btn-preview-document-image" data-doc-title="Government ID Proof" data-doc-type="id_proof" data-invite-id="${item.id}" style="background: var(--bg-primary, rgba(0,0,0,0.45)); border: 1.5px solid ${idProofAvailable ? '#10b981' : 'var(--border-subtle)'}; border-radius: 6px; padding: 0.5rem 0.4rem; text-align: center; cursor: pointer;">
+                            <div style="font-size: 1.2rem; margin-bottom: 0.1rem;">📄</div>
+                            <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-primary);">ID Proof</div>
+                            <div style="font-size: 0.62rem; color: ${idProofAvailable ? '#10b981' : '#f59e0b'}; font-weight: 700;">
+                              ${idProofAvailable ? '✓ Click View' : '○ Attached'}
+                            </div>
+                          </div>
+
+                          <div class="btn-preview-document-image" data-doc-title="Address Proof Document" data-doc-type="address_proof" data-invite-id="${item.id}" style="background: var(--bg-primary, rgba(0,0,0,0.45)); border: 1.5px solid ${addrProofAvailable ? '#10b981' : 'var(--border-subtle)'}; border-radius: 6px; padding: 0.5rem 0.4rem; text-align: center; cursor: pointer;">
+                            <div style="font-size: 1.2rem; margin-bottom: 0.1rem;">🏠</div>
+                            <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-primary);">Address Proof</div>
+                            <div style="font-size: 0.62rem; color: ${addrProofAvailable ? '#10b981' : 'var(--text-muted)'}; font-weight: 700;">
+                              ${addrProofAvailable ? '✓ Click View' : '○ Attached'}
+                            </div>
+                          </div>
+
+                          <div class="btn-preview-document-image" data-doc-title="Devotee Passport Photo" data-doc-type="photo" data-invite-id="${item.id}" style="background: var(--bg-primary, rgba(0,0,0,0.45)); border: 1.5px solid ${photoAvailable ? '#10b981' : 'var(--border-subtle)'}; border-radius: 6px; padding: 0.5rem 0.4rem; text-align: center; cursor: pointer;">
+                            <div style="font-size: 1.2rem; margin-bottom: 0.1rem;">📸</div>
+                            <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-primary);">Photo</div>
+                            <div style="font-size: 0.62rem; color: #10b981; font-weight: 700;">
+                              ✓ Click View
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- DECISION GATE -->
+                      <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid #10b981; border-radius: 10px; padding: 0.95rem;">
+                        <div style="font-size: 0.78rem; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.35rem;">
+                          <span>⚖️</span> Mentor Decision &amp; Induction Gate
+                        </div>
+
+                        ${!isApproved ? `
+                          <div style="margin-bottom: 0.75rem;">
+                            <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; font-weight: 700;">1. Select Induction Role Tier:</label>
+                            <select id="drawer-select-role-${item.id}" class="select-pairing-role" data-invite-id="${item.id}" style="width: 100%; box-sizing: border-box; font-size: 0.82rem; padding: 0.45rem 0.65rem; background: var(--bg-primary, #000); border: 1.5px solid var(--gold-400); color: var(--text-primary); border-radius: 6px; font-weight: 700;">
+                              <option value="DEVOTEE" ${assignedRole === "DEVOTEE" ? "selected" : ""}>🌟 Devotee (Level 4 — House Clean &amp; Three Diya)</option>
+                              <option value="HEALER" ${assignedRole === "HEALER" ? "selected" : ""}>🛡️ Certified Healer (Level 2 — Mentor Guide)</option>
+                              <option value="MASTER" ${assignedRole === "MASTER" ? "selected" : ""}>👑 Master Founder (Tier 1 — Root Authority)</option>
+                            </select>
+                          </div>
+
+                          <div style="margin-bottom: 0.85rem;">
+                            <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem; font-weight: 700;">2. Guidance Notes / Revision Request (Optional):</label>
+                            <textarea id="drawer-mentor-notes-${item.id}" placeholder="Enter specific instructions or guidance for applicant..." style="width: 100%; box-sizing: border-box; height: 50px; font-size: 0.78rem; padding: 0.45rem 0.65rem; background: var(--bg-primary, #000); border: 1px solid var(--border-subtle); border-radius: 6px; color: var(--text-primary); resize: vertical;"></textarea>
+                          </div>
+
+                          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-sm btn-drawer-approve-induct" data-invite-id="${item.id}" style="flex: 2; min-width: 130px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 800; font-size: 0.82rem; padding: 0.55rem 0.85rem; border: none; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 14px rgba(16,185,129,0.35); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                              <span>✓</span> <span>Approve &amp; Induct to Lineage</span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-drawer-request-revision" data-invite-id="${item.id}" style="flex: 1; min-width: 100px; background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; color: #f59e0b; font-weight: 700; font-size: 0.78rem; padding: 0.55rem 0.75rem; border-radius: 6px; cursor: pointer;">
+                              📝 Revision
+                            </button>
+                            <button type="button" class="btn btn-sm btn-drawer-reject" data-invite-id="${item.id}" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; font-weight: 700; font-size: 0.78rem; padding: 0.55rem 0.75rem; border-radius: 6px; cursor: pointer;">
+                              ✕ Reject
+                            </button>
+                          </div>
+                        ` : `
+                          <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 6px; padding: 0.75rem; text-align: center;">
+                            <div style="color: #10b981; font-weight: 800; font-size: 0.9rem; margin-bottom: 0.2rem;">
+                              ✓ Application Approved &amp; Inducted!
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                              Applicant is officially bound to your downline lineage as <strong>${item.assignedRole || "Devotee"}</strong>.
+                            </div>
+                          </div>
+                        `}
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  renderSadhanaRemedyApprovalsTab(sadhanaApps = [], selectedAppId = null, targetContainer = null) {
+    const roleMode = (this.model ? this.model.getRoleMode() : (this.currentRoleMode || "MASTER")).toUpperCase();
+    const container = targetContainer || document.getElementById("pending-tab-pane-sadhana");
+    if (!container) return;
+
+    if (!sadhanaApps || sadhanaApps.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 3rem 1.5rem; color: var(--text-muted);">
+          <div style="font-size: 3rem; margin-bottom: 0.75rem;">📿</div>
+          <h4 style="color: var(--text-primary); margin-bottom: 0.35rem; font-family: var(--font-heading); font-size: 1.15rem;">No Pending Sadhana or Remedy Requests</h4>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); max-width: 360px; margin: 0 auto 1.25rem;">Devotees submit sacred anushthan and upay initiation requests from their portal. Review requests, assign malas, and grant deeksha here.</p>
+        </div>
+      `;
+      return;
+    }
+
+    const totalCount = sadhanaApps.length;
+    const pendingCount = sadhanaApps.filter(a => a.status === "PENDING").length;
+    const sadhanaCount = sadhanaApps.filter(a => a.contextType === "sadhana" || a.type === "SADHANA_APPLICATION").length;
+    const remedyCount = sadhanaApps.filter(a => a.contextType === "remedy" || a.type === "REMEDY_APPLICATION").length;
+    const approvedCount = sadhanaApps.filter(a => a.status === "APPROVED").length;
+
+    container.innerHTML = `
+      <!-- STATS & FILTER BAR -->
+      <div style="margin-bottom: 1rem; padding: 0.85rem 1rem; background: var(--bg-card, rgba(24,16,36,0.9)); border: 1px solid var(--border-glass-gold, rgba(212,175,55,0.3)); border-radius: 8px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.65rem;">
+          <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; font-weight: 700; color: var(--text-primary); flex-wrap: wrap;">
+            <span>📿 Sadhana &amp; Remedy Metadata:</span>
+            <span style="background: rgba(245,158,11,0.2); border: 1px solid #f59e0b; color: #f59e0b; padding: 0.15rem 0.5rem; border-radius: 12px;">⏳ ${pendingCount} Pending Review</span>
+            <span style="background: rgba(168,85,247,0.2); border: 1px solid #a855f7; color: #c084fc; padding: 0.15rem 0.5rem; border-radius: 12px;">📿 ${sadhanaCount} Sadhanas</span>
+            <span style="background: rgba(16,185,129,0.2); border: 1px solid #10b981; color: #34d399; padding: 0.15rem 0.5rem; border-radius: 12px;">🌿 ${remedyCount} Remedies</span>
+            <span style="background: rgba(56,189,248,0.2); border: 1px solid #38bdf8; color: #38bdf8; padding: 0.15rem 0.5rem; border-radius: 12px;">🟢 ${approvedCount} Active</span>
+          </div>
+          <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Vedic Curriculum • Closed-Loop Telemetry</span>
+        </div>
+
+        <!-- FILTER PILLS -->
+        <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; margin-bottom: 0.65rem;">
+          <button type="button" class="sadhana-filter-pill active" data-sadhana-filter="ALL">All Requests (${totalCount})</button>
+          <button type="button" class="sadhana-filter-pill" data-sadhana-filter="SADHANA">📿 Sadhanas (${sadhanaCount})</button>
+          <button type="button" class="sadhana-filter-pill" data-sadhana-filter="REMEDY">🌿 Remedies &amp; Upay (${remedyCount})</button>
+          <button type="button" class="sadhana-filter-pill" data-sadhana-filter="PENDING">⏳ Pending Review (${pendingCount})</button>
+          <button type="button" class="sadhana-filter-pill" data-sadhana-filter="APPROVED">🟢 Approved (${approvedCount})</button>
+          <button type="button" class="sadhana-filter-pill" data-sadhana-filter="REJECTED">🗑️ Deleted/Rejected (${sadhanaApps.filter(a => a.status === 'REJECTED' || a.status === 'DELETED').length})</button>
+        </div>
+
+        <!-- SEARCH BAR -->
+        <div>
+          <input type="text" id="input-search-sadhana-drawer" placeholder="🔍 Instant search by seeker name, devotee code, or practice title..." class="form-control" style="width: 100%; box-sizing: border-box; font-size: 0.8rem; padding: 0.5rem 0.85rem; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass-gold, rgba(212,175,55,0.3)); border-radius: 6px; color: #fff;">
+        </div>
+      </div>
+
+      <!-- SADHANA APPLICATIONS LIST -->
+      <div id="sadhana-remedy-approvals-list" style="display: flex; flex-direction: column; gap: 0.85rem;">
+        ${sadhanaApps.map(app => {
+          const isApproved = app.status === "APPROVED";
+          const isHealerVerified = app.status === "HEALER_VERIFIED";
+          const isPending = app.status === "PENDING";
+          const isRevision = app.status === "REVISION_REQUIRED";
+          const isRejected = app.status === "REJECTED";
+          const isRemedy = app.contextType === "remedy" || app.type === "REMEDY_APPLICATION";
+          const initials = app.seekerName ? app.seekerName.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase() : "DV";
+          const isDetailsOpen = selectedAppId ? (app.id === selectedAppId) : false;
+
+          // Request Date Time formatting (Metadata)
+          const requestDate = app.createdAtMs ? new Date(app.createdAtMs) : (app.createdAt ? new Date(app.createdAt) : new Date());
+          const formattedDateTime = requestDate.toLocaleString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          });
+
+          // Status Badge
+          let statusBadge = '';
+          if (isApproved) {
+            statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 12px; background: rgba(16,185,129,0.2); border: 1px solid #10b981; color: #10b981; white-space: nowrap;">🟢 Active</span>`;
+          } else if (isHealerVerified) {
+            statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 12px; background: rgba(56,189,248,0.2); border: 1px solid #38bdf8; color: #38bdf8; white-space: nowrap;">🛡️ Healer Verified</span>`;
+          } else if (isRevision) {
+            statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 12px; background: rgba(245,158,11,0.2); border: 1px solid #f59e0b; color: #f59e0b; white-space: nowrap;">📝 Revision</span>`;
+          } else if (isRejected) {
+            statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 12px; background: rgba(239,68,68,0.2); border: 1px solid #ef4444; color: #ef4444; white-space: nowrap;">✕ Rejected</span>`;
+          } else {
+            statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 12px; background: rgba(245,158,11,0.2); border: 1px solid #f59e0b; color: #f59e0b; white-space: nowrap;">⏳ Pending</span>`;
+          }
+
+          // Approval Options & Action buttons
+          let approvalActions = '';
+          if (!isApproved) {
+            const approveBtnLabel = isHealerVerified 
+              ? '👑 Master Sanction' 
+              : (roleMode.includes('HEALER') ? '🛡️ Healer Verify' : '✓ Quick Approve');
+            const approveTitle = isHealerVerified 
+              ? 'Stage 2: Master Final Deeksha Sanction' 
+              : 'Stage 1: Lineage Healer Verification';
+            
+            approvalActions = `
+              <button type="button" class="btn btn-gold btn-xs btn-sadhana-quick-approve" data-sadhana-id="${app.id}" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 800; border-radius: 6px; white-space: nowrap;" title="${approveTitle}">
+                <span>${approveBtnLabel}</span>
+              </button>
+            `;
+          } else {
+            approvalActions = `
+              <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #10b981; font-weight: 800; padding: 0.25rem 0.5rem; background: rgba(16,185,129,0.1); border: 1px solid #10b981; border-radius: 4px; white-space: nowrap;">
+                ${app.initiationToken || 'IN-GRANTED'}
+              </span>
+            `;
+          }
+
+          return `
+            <div class="sadhana-app-card" data-sadhana-id="${app.id}" data-context-type="${isRemedy ? 'remedy' : 'sadhana'}" data-status="${app.status}" style="background: var(--bg-card, rgba(24,16,36,0.9)); border: 1px solid var(--border-glass-gold, rgba(212,175,55,0.25)); border-radius: 8px; padding: 0.75rem 1rem; transition: all 0.2s ease;">
+              
+              <!-- 1 ROW ONLY: Name, Sadhana, Request Date Time, Approval Options, Other Icons -->
+              <div class="sadhana-approval-row" style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: nowrap; overflow-x: auto;">
+                
+                <!-- 1. NAME & SEEKER CODE -->
+                <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 170px; flex-shrink: 0;">
+                  <div style="width: 34px; height: 34px; border-radius: 50%; background: ${isRemedy ? 'rgba(16,185,129,0.2)' : 'rgba(168,85,247,0.2)'}; border: 1.5px solid ${isRemedy ? '#10b981' : '#a855f7'}; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.82rem; color: ${isRemedy ? '#34d399' : '#c084fc'}; flex-shrink: 0;">
+                    ${initials}
+                  </div>
+                  <div style="line-height: 1.25;">
+                    <strong class="sadhana-applicant-name" style="font-size: 0.92rem; font-weight: 800; color: var(--text-primary); display: block; white-space: nowrap;">${app.seekerName}</strong>
+                    <span style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--gold-400, #d97706); font-weight: 700;">${app.devoteeCode || 'Devotee'}</span>
+                  </div>
+                </div>
+
+                <!-- 2. SADHANA / REMEDY -->
+                <div style="min-width: 180px; flex: 1; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  <span style="font-size: 0.7rem; font-weight: 800; color: ${isRemedy ? '#10b981' : '#c084fc'}; margin-right: 0.25rem;">
+                    ${isRemedy ? '🌿 Remedy:' : '📿 Sadhana:'}
+                  </span>
+                  <strong style="font-size: 0.88rem; color: var(--text-primary); font-weight: 700;" title="${app.itemTitle || app.title}">
+                    ${app.itemTitle || app.title || (isRemedy ? 'Sacred Remedy' : 'Sacred Sadhana')}
+                  </strong>
+                </div>
+
+                <!-- 3. REQUEST DATE TIME -->
+                <div style="font-size: 0.75rem; color: var(--text-secondary); min-width: 155px; flex-shrink: 0; display: flex; align-items: center; gap: 0.35rem; white-space: nowrap;">
+                  <span>📅</span>
+                  <span style="font-weight: 600;">${formattedDateTime}</span>
+                </div>
+
+                <!-- 4. STATUS -->
+                <div style="flex-shrink: 0;">
+                  ${statusBadge}
+                </div>
+
+                <!-- 5. APPROVAL OPTIONS & OTHER ICONS -->
+                <div style="display: flex; align-items: center; gap: 0.45rem; flex-shrink: 0;">
+                  ${approvalActions}
+
+                  <button type="button" class="btn btn-outline btn-xs btn-sadhana-details" data-sadhana-id="${app.id}" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; border-radius: 6px; white-space: nowrap;" title="View Sadhana Details Snapshot">
+                    <span>${isDetailsOpen ? '▲ Close' : '📋 Details'}</span>
+                  </button>
+
+                  <button type="button" class="btn-sadhana-delete" data-sadhana-id="${app.id}" title="Delete Application" style="padding: 0.35rem 0.55rem; background: transparent; border: 1px solid var(--border-subtle, rgba(255,255,255,0.1)); color: #ef4444; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem;" aria-label="Delete">🗑️</button>
+                </div>
+              </div>
+
+              <!-- EXPANDABLE SADHNA DETAILS SNAPSHOT (ON CLICK OF DETAILS) -->
+              <div id="sadhana-details-pane-${app.id}" class="approval-expanded-details-pane ${isDetailsOpen ? 'is-open' : ''}" style="${isDetailsOpen ? 'display: block;' : 'display: none;'} margin-top: 0.85rem; border-top: 1px dashed var(--border-subtle, rgba(212,175,55,0.25)); padding-top: 0.85rem;">
+                
+                <!-- SNAPSHOT HEADER STRIP: PARAMETERS & METADATA -->
+                <div class="sadhana-params-strip" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle, rgba(255,255,255,0.08)); border-radius: 6px; padding: 0.6rem 0.85rem; margin-bottom: 0.75rem; display: flex; flex-wrap: wrap; gap: 1rem; font-size: 0.76rem;">
+                  <div>
+                    <span style="color: var(--text-muted);">Daily Target:</span>
+                    <strong style="color: var(--gold-400); margin-left: 0.25rem;">📿 ${app.targetMalas} Malas (${app.targetMalas * 108} Beads)</strong>
+                  </div>
+                  <div>
+                    <span style="color: var(--text-muted);">Cycle Duration:</span>
+                    <strong style="color: #38bdf8; margin-left: 0.25rem;">⏱️ ${app.cycleDays || 21} Days</strong>
+                  </div>
+                  <div>
+                    <span style="color: var(--text-muted);">Muhurta Slot:</span>
+                    <strong style="color: #a78bfa; margin-left: 0.25rem;">🌅 ${app.scheduleSlot}</strong>
+                  </div>
+                  <div>
+                    <span style="color: var(--text-muted);">Lineage Mentor:</span>
+                    <strong style="color: var(--text-secondary); margin-left: 0.25rem;">🛡️ ${app.firstApproverName || app.mentorName || 'Lineage Healer'}</strong>
+                  </div>
+                  <div>
+                    <span style="color: var(--text-muted);">Contact:</span>
+                    <strong style="color: #10b981; margin-left: 0.25rem;">📞 ${app.seekerPhone || 'Not Provided'}</strong>
+                  </div>
+                </div>
+
+                <!-- 2-TIER UPLINE APPROVER TELEMETRY -->
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; font-size: 0.74rem;">
+                  <span style="background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.35); padding: 0.15rem 0.55rem; border-radius: 4px; font-weight: 700;">
+                    🛡️ Stage 1 Approver: ${app.firstApproverName || app.mentorName || 'Lineage Healer'} (${(app.firstApproverStatus === 'APPROVED' || app.status === 'HEALER_VERIFIED' || isApproved) ? '🟢 Verified' : '⏳ Pending'})
+                  </span>
+                  <span style="background: rgba(212,175,55,0.15); color: #fde047; border: 1px solid rgba(212,175,55,0.35); padding: 0.15rem 0.55rem; border-radius: 4px; font-weight: 700;">
+                    👑 Stage 2 Approver: ${app.secondApproverName || 'Spiritual Karim Khan'} (${(app.secondApproverStatus === 'APPROVED' || isApproved) ? '🟢 Sanctioned' : (app.status === 'HEALER_VERIFIED' ? '⏳ Awaiting Master' : '⏳ Pending Stage 1')})
+                  </span>
+                </div>
+                
+                <!-- SEEKER DIAGNOSTICS & INTENTION -->
+                <div class="dossier-box" style="background: rgba(139, 92, 246, 0.08); border: 1.5px solid rgba(139, 92, 246, 0.35); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 0.75rem;">
+                  <div style="font-size: 0.72rem; font-weight: 800; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                    <span>🕉️</span> Seeker Diagnostics &amp; Target Outcome
+                  </div>
+                  <p style="font-size: 0.8rem; font-style: italic; color: var(--text-primary); line-height: 1.4; margin: 0 0 0.85rem 0; border-left: 2px solid #a78bfa; padding-left: 0.75rem;">
+                    "${app.seekerDiagnostics || 'No diagnostics provided.'}"
+                  </p>
+                  
+                  <div style="font-size: 0.72rem; font-weight: 800; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                    <span>🙏</span> Devotee's Sacred Sankalp
+                  </div>
+                  <p style="font-size: 0.8rem; font-style: italic; color: var(--text-primary); line-height: 1.4; margin: 0; border-left: 2px solid #a78bfa; padding-left: 0.75rem;">
+                    "${app.intention || 'Devotee has pledged sincere adherence to Vedic chanting and anushthan discipline.'}"
+                  </p>
+                </div>
+
+                <!-- COMMITMENTS & PLEDGES -->
+                <div class="dossier-box" style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 0.75rem;">
+                  <div style="font-size: 0.72rem; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.45rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span style="display: flex; align-items: center; gap: 0.35rem;">
+                      <span>⚖️</span> Sacred Commitments &amp; Digital Oath
+                    </span>
+                    <span style="font-size: 0.65rem; color: #10b981; background: rgba(16,185,129,0.15); border: 1px solid #10b981; border-radius: 3px; padding: 0.05rem 0.35rem; font-weight: 700;">Oaths Confirmed</span>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.4rem; font-size: 0.75rem;">
+                    <div>✓ Strict Sattvic Diet (No alcohol/onion/garlic)</div>
+                    <div>✓ Daily Three Diya Practice Discipline</div>
+                    <div>✓ Brahmacharya / Celibacy During Cycle</div>
+                    <div>✓ Digital Oath Signed: <strong style="color: var(--gold-400);">${app.signature || app.seekerName}</strong></div>
+                  </div>
+                  <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.4rem;">
+                    Submitted On: <span style="color: var(--text-secondary);">${new Date(app.createdAtMs).toLocaleString()}</span>
+                  </div>
+                </div>
+
+                <!-- MENTOR DECISION & ADJUSTMENT GATE -->
+                <div style="background: var(--bg-primary, rgba(0,0,0,0.5)); border: 1.5px solid ${isApproved ? '#10b981' : 'var(--gold-400)'}; border-radius: 8px; padding: 0.95rem;">
+                  <div style="font-size: 0.78rem; font-weight: 800; color: ${isApproved ? '#10b981' : 'var(--gold-400)'}; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.35rem;">
+                    <span>🛡️</span> Mentor Prescription &amp; Initiation Gate
+                  </div>
+
+                  ${!isApproved ? `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.65rem;">
+                      <div>
+                        <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem; font-weight: 700;">Adjust Daily Malas Count:</label>
+                        <select id="sadhana-select-malas-${app.id}" style="width: 100%; box-sizing: border-box; font-size: 0.78rem; padding: 0.4rem 0.6rem; background: #000; border: 1px solid var(--border-glass-gold); color: #fff; border-radius: 6px; font-weight: 700;">
+                          ${(() => {
+                            const allowed = window.appConfig?.sadhana?.allowedMalas || [5, 11, 21, 51, 108];
+                            return allowed.map(m => {
+                              let label = "";
+                              if (m === 5) label = "Gentle / Beginner — 540 beads";
+                              else if (m === 11) label = "Standard Vedic Anushthan — 1,188 beads";
+                              else if (m === 21) label = "Rigorous / Accelerated — 2,268 beads";
+                              else if (m === 51) label = "Intensive Tapasya — 5,508 beads";
+                              else if (m === 108) label = "Supreme Purna — 11,664 beads";
+                              else label = `${m * 108} beads`;
+                              
+                              const isSelected = (!app.targetMalas && m === 11) || app.targetMalas === m;
+                              return `<option value="${m}" ${isSelected ? 'selected' : ''}>${m} Malas (${label})</option>`;
+                            }).join('');
+                          })()}
+                        </select>
+                      </div>
+                      <div>
+                        <label style="font-size: 0.72rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem; font-weight: 700;">Sanctioned Muhurta Slot:</label>
+                        <select id="sadhana-select-slot-${app.id}" style="width: 100%; box-sizing: border-box; font-size: 0.78rem; padding: 0.4rem 0.6rem; background: #000; border: 1px solid var(--border-glass-gold); color: #fff; border-radius: 6px; font-weight: 700;">
+                          <option value="Brahma Muhurta (04:00 - 06:00)" ${app.scheduleSlot?.includes('04:00') ? 'selected' : ''}>🌅 Brahma Muhurta (04:00 - 06:00)</option>
+                          <option value="Pratah Kaal (06:00 - 08:00)" ${app.scheduleSlot?.includes('06:00') ? 'selected' : ''}>☀️ Pratah Kaal (06:00 - 08:00)</option>
+                          <option value="Madhyahna Kaal (12:00 - 13:30)" ${app.scheduleSlot?.includes('12:00') ? 'selected' : ''}>🌞 Madhyahna Kaal (12:00 - 13:30)</option>
+                          <option value="Sandhya Kaal (18:00 - 19:30)" ${app.scheduleSlot?.includes('18:00') ? 'selected' : ''}>🌆 Sandhya Kaal (18:00 - 19:30)</option>
+                          <option value="Nishita Kaal (23:30 - 01:00)" ${app.scheduleSlot?.includes('23:30') ? 'selected' : ''}>🌙 Nishita Kaal (23:30 - 01:00)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Mentor Guidance Notes moved to Slide-In Dialog -->
+
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                      <button type="button" class="btn btn-sm btn-sadhana-approve-grant" data-sadhana-id="${app.id}" style="flex: 2; min-width: 140px; background: ${app.status === 'HEALER_VERIFIED' ? 'linear-gradient(135deg, #c59b27, #9e7811)' : 'linear-gradient(135deg, #10b981, #059669)'}; color: #fff; font-weight: 800; font-size: 0.82rem; padding: 0.5rem 0.85rem; border: none; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 14px rgba(16,185,129,0.35); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                        <span>${app.status === 'HEALER_VERIFIED' ? '👑' : '🛡️'}</span> <span>${app.status === 'HEALER_VERIFIED' ? 'Stage 2: Master Final Deeksha Sanction' : (roleMode.includes('HEALER') ? 'Stage 1: Healer Verify & Forward to Master' : 'Approve & Grant Initiation')}</span>
+                      </button>
+                      <button type="button" class="btn btn-sm btn-sadhana-request-revision" data-sadhana-id="${app.id}" style="flex: 1; min-width: 110px; background: rgba(245,158,11,0.2); border: 1px solid #f59e0b; color: #f59e0b; font-weight: 700; font-size: 0.78rem; padding: 0.5rem 0.75rem; border-radius: 6px; cursor: pointer;">
+                        📝 Prescribe Revision
+                      </button>
+                      <button type="button" class="btn btn-sm btn-sadhana-reject" data-sadhana-id="${app.id}" style="background: rgba(239,68,68,0.15); border: 1px solid #ef4444; color: #ef4444; font-weight: 700; font-size: 0.78rem; padding: 0.5rem 0.75rem; border-radius: 6px; cursor: pointer;">
+                        ✕ Reject
+                      </button>
+                    </div>
+                  ` : `
+                    <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981; border-radius: 6px; padding: 0.75rem; text-align: center;">
+                      <div style="color: #10b981; font-weight: 800; font-size: 0.88rem; margin-bottom: 0.2rem;">
+                        ✓ Deeksha &amp; Initiation Officially Granted!
+                      </div>
+                      <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                        Initiation Token: <strong style="color: #fff; font-family: var(--font-mono);">${app.initiationToken}</strong> • Target: <strong>${app.targetMalas} Malas (${app.scheduleSlot})</strong>
+                      </div>
+                      ${app.mentorFeedback ? `
+                        <div style="font-size: 0.72rem; color: var(--gold-400); font-style: italic; margin-top: 0.35rem;">
+                          Guidance: "${app.mentorFeedback}"
+                        </div>
+                      ` : ''}
+                    </div>
+                  `}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
   }
 
   showDocumentPreview(title, docType, inviteId, invites = []) {
@@ -3361,6 +4285,63 @@ class ProfileView {
     const duration = options.duration || 4500;
     const actionBtn = options.actionBtn || null;
     return this.showToast(title, message, type, duration, actionBtn);
+  }
+
+  openNotificationDesk(model = null) {
+    const appModel = model || window.profileModel || (window.ProfileControllerInstance && window.ProfileControllerInstance.model);
+    const notifs = (appModel && typeof appModel.getNotifications === "function") ? appModel.getNotifications() : [];
+    
+    let modal = document.getElementById("modal-notification-desk");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "modal-notification-desk";
+      modal.className = "admin-modal admin-modal-overlay";
+      modal.style.cssText = "display: flex; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100000; align-items: center; justify-content: center; backdrop-filter: blur(4px);";
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div style="background: var(--bg-card, #1e1b2e); border: 1.5px solid var(--gold-400, #d4af37); border-radius: 12px; width: 92%; max-width: 580px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); overflow: hidden;">
+        <div style="padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3);">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.3rem;">🔔</span>
+            <div>
+              <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--gold-400, #d4af37);">Sacred Alerts &amp; Notification Desk</h3>
+              <div style="font-size: 0.72rem; color: var(--text-muted, #94a3b8);">Diksha Approvals, Sadhana Milestones &amp; System Telemetry</div>
+            </div>
+          </div>
+          <button type="button" id="btn-close-notif-desk" style="background: none; border: none; font-size: 1.3rem; color: #fff; cursor: pointer;">✕</button>
+        </div>
+        <div style="padding: 1rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 0.75rem;">
+          ${notifs.length === 0 ? `
+            <div style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
+              <div style="font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.5;">📿</div>
+              <p style="font-size: 0.9rem; margin: 0; color: #fff;">No active notifications found.</p>
+              <span style="font-size: 0.75rem; color: #64748b;">All Sadhana initiations, deeksha tokens, and mentor guidance notes will appear here.</span>
+            </div>
+          ` : notifs.map(n => `
+            <div style="padding: 0.85rem 1rem; border-radius: 8px; background: rgba(255,255,255,0.03); border-left: 3px solid ${n.type && n.type.includes('APPROVED') ? '#10b981' : (n.type && n.type.includes('REV') ? '#f59e0b' : '#38bdf8')}; border-top: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem;">
+                <strong style="font-size: 0.88rem; color: #fff;">${n.title || 'Sacred Notification'}</strong>
+                <span style="font-size: 0.68rem; color: var(--text-muted, #94a3b8); font-family: var(--font-mono);">${n.timestamp ? new Date(n.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Recent'}</span>
+              </div>
+              <p style="margin: 0; font-size: 0.78rem; color: #cbd5e1; line-height: 1.4;">${n.message || ''}</p>
+            </div>
+          `).join('')}
+        </div>
+        <div style="padding: 0.75rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end; background: rgba(0,0,0,0.2);">
+          <button type="button" id="btn-dismiss-notif-desk" class="btn btn-sm btn-gold" style="padding: 0.4rem 1rem;">✓ Dismiss</button>
+        </div>
+      </div>
+    `;
+
+    modal.style.display = "flex";
+    const close = () => { modal.style.display = "none"; };
+    const closeBtn = document.getElementById("btn-close-notif-desk");
+    if (closeBtn) closeBtn.onclick = close;
+    const dismissBtn = document.getElementById("btn-dismiss-notif-desk");
+    if (dismissBtn) dismissBtn.onclick = close;
+    modal.onclick = (e) => { if (e.target === modal) close(); };
   }
 
   _renderConfirmDialog(title, message, options = null) {
@@ -4350,7 +5331,7 @@ Installation & Activation Steps:
               el.style.display = shouldShowCard2 ? "block" : "none";
             } else if (el.id === "admin-hierarchy-metrics-strip") {
               el.style.display = isAllowed ? "grid" : "none";
-            } else if (el.id === "admin-current-events-strip") {
+            } else if (el.id === "admin-current-events-strip" || el.id === "devotee-sadhana-applied-strip" || el.id === "devotee-remedy-applied-strip") {
               el.style.display = isAllowed ? "block" : "none";
             } else if (el.id === "sidebar-rtdb-section" || el.classList.contains("sidebar-rtdb-card")) {
               el.style.display = isAllowed ? "" : "none";
@@ -4539,10 +5520,10 @@ Installation & Activation Steps:
         "approval-notification-count",
       );
     }
-    if (!this.pendingApprovalBanner) return;
+    // Even if banner DOM element is not present, badges must always update
 
     const resolvedR = (roleMode || "MASTER").toUpperCase();
-    const isMentor = resolvedR === "MASTER" || resolvedR === "HEALER";
+    const isMentor = resolvedR === "MASTER" || resolvedR === "ADMIN" || resolvedR === "HEALER";
 
     // Devotee and Trainee have no approval notifications
     if (!isMentor || ["DEVOTEE", "SEEKER", "TRAINEE", "SADHAK"].includes(resolvedR)) {
@@ -4556,15 +5537,38 @@ Installation & Activation Steps:
       return;
     }
 
-    // Healers only see counts for their own sponsored applicants
+    // Mentors/Healers see counts for applicants under their lineage
     const activeProf = (this.model && typeof this.model.getActiveProfile === "function") ? this.model.getActiveProfile() : {};
     let roleFiltered = pendingInvites || [];
     if (resolvedR === "HEALER") {
       const healerRef = (activeProf.referenceCode || "").trim();
       roleFiltered = roleFiltered.filter(i => i && (i.sponsorCode === healerRef || i.mentorCode === healerRef));
     }
-    const pendingList = roleFiltered.filter((i) => i.status === "PENDING");
-    const count = pendingList.length;
+    const pendingList = roleFiltered.filter((i) => (i.status || "").toUpperCase() === "PENDING");
+    const regPendingCount = pendingList.length;
+
+    // Fetch Sadhana & Remedy applications
+    let sadhanaApps = [];
+    if (this.model && typeof this.model.getSadhanaRemedyApplications === "function") {
+      sadhanaApps = this.model.getSadhanaRemedyApplications() || [];
+    } else {
+      try {
+        sadhanaApps = JSON.parse(localStorage.getItem("sk_sadhana_initiations_v1") || "[]");
+      } catch (e) { sadhanaApps = []; }
+    }
+    // FILTER ARCHIVED OUT OF MAIN VIEWS
+    sadhanaApps = sadhanaApps.filter(a => a.status !== "DELETED");
+    let roleFilteredSadhana = sadhanaApps || [];
+    if (resolvedR === "HEALER") {
+      const healerRef = (activeProf.referenceCode || "").trim();
+      roleFilteredSadhana = roleFilteredSadhana.filter(a => a && (a.sponsorCode === healerRef || a.mentorCode === healerRef));
+    }
+    const pendingSadhanaList = roleFilteredSadhana.filter(a => (a.status || "").toUpperCase() === "PENDING");
+
+    // Avoid duplicate count if an item exists in both lists
+    const inviteIds = new Set(pendingList.map(i => i.id));
+    const uniqueSadhanaPending = pendingSadhanaList.filter(a => !inviteIds.has(a.id));
+    const count = regPendingCount + uniqueSadhanaPending.length;
 
     const headerCount =
       this.headerPendingApprovalCount ||
@@ -4579,20 +5583,8 @@ Installation & Activation Steps:
     const headerBadge = document.getElementById("header-pending-badge");
     if (headerBadge) headerBadge.textContent = count;
 
-    if (isMentor && count > 0) {
-      if (this.pendingApprovalBanner) {
-        this.pendingApprovalBanner.style.display = "inline-flex";
-        if (this.approvalNotificationText) {
-          this.approvalNotificationText.textContent = `${count} Devotee Application${count > 1 ? "s" : ""} Pending Approval`;
-        }
-        if (this.approvalNotificationCount) {
-          this.approvalNotificationCount.textContent = count;
-        }
-      }
-    } else {
-      if (this.pendingApprovalBanner) {
-        this.pendingApprovalBanner.style.display = "none";
-      }
+    if (this.pendingApprovalBanner) {
+      this.pendingApprovalBanner.style.display = "none";
     }
   }
 
@@ -4901,48 +5893,79 @@ Installation & Activation Steps:
 
       const apply = () => {
         const query = (input.value || "").toLowerCase().trim();
+        const tokens = query ? query.split(/\s+/).filter(Boolean) : [];
         const selectedCat = (catSelect && catSelect.value) ? catSelect.value : "ALL";
 
         const rows = Array.from(tbody.querySelectorAll(".auth-matrix-row"));
         const categoryHeaders = Array.from(tbody.querySelectorAll(".auth-matrix-category-header"));
 
+        // Build item lookup and direct matches
+        const rowMap = new Map();
+        const directMatches = new Set();
+        const visibleIds = new Set();
         const visibleCategories = new Set();
-        const visibleParents = new Set();
 
-        // Pass 1: find directly matching rows
         rows.forEach((row) => {
-          const searchText = (row.getAttribute("data-search-text") || "").toLowerCase();
-          const rowCat = row.getAttribute("data-category") || "";
+          const itemId = row.getAttribute("data-item-id");
           const parentId = row.getAttribute("data-parent");
+          const rowCat = row.getAttribute("data-category") || "";
+          const searchText = (row.getAttribute("data-search-text") || (row.textContent || "")).toLowerCase();
 
-          const matchesQuery = !query || searchText.includes(query);
+          rowMap.set(itemId, { row, parentId, rowCat, searchText });
+
           const matchesCat = selectedCat === "ALL" || rowCat === selectedCat;
+          const isDirect = tokens.length === 0 || tokens.every((tok) => searchText.includes(tok));
 
-          if (matchesQuery && matchesCat) {
+          if (isDirect && matchesCat) {
+            directMatches.add(itemId);
+            visibleIds.add(itemId);
+          }
+        });
+
+        // Bidirectional hierarchy propagation:
+        if (tokens.length > 0) {
+          // A. Upward propagation: Include all ancestors (parents & grandparent screen)
+          directMatches.forEach((id) => {
+            let current = rowMap.get(id);
+            while (current && current.parentId) {
+              visibleIds.add(current.parentId);
+              current = rowMap.get(current.parentId);
+            }
+          });
+
+          // B. Downward propagation: If a parent/card matches directly, include all descendants
+          rows.forEach((row) => {
+            const itemId = row.getAttribute("data-item-id");
+            const parentId = row.getAttribute("data-parent");
+            if (parentId && directMatches.has(parentId)) {
+              visibleIds.add(itemId);
+            }
+            const pInfo = rowMap.get(parentId);
+            if (pInfo && pInfo.parentId && directMatches.has(pInfo.parentId)) {
+              visibleIds.add(itemId);
+            }
+          });
+        }
+
+        // Apply display visibility
+        rows.forEach((row) => {
+          const itemId = row.getAttribute("data-item-id");
+          const rowCat = row.getAttribute("data-category") || "";
+          const matchesCat = selectedCat === "ALL" || rowCat === selectedCat;
+          const isVisible = visibleIds.has(itemId) && matchesCat;
+
+          if (isVisible) {
             row.style.display = "";
             visibleCategories.add(rowCat);
-            if (parentId) visibleParents.add(parentId);
           } else {
             row.style.display = "none";
           }
         });
 
-        // Pass 2: keep parent containers visible if child matches
-        if (query) {
-          rows.forEach((row) => {
-            const itemId = row.getAttribute("data-item-id");
-            if (visibleParents.has(itemId)) {
-              row.style.display = "";
-              const pCat = row.getAttribute("data-category");
-              if (pCat) visibleCategories.add(pCat);
-            }
-          });
-        }
-
-        // Show/hide category headers
+        // Show/hide category headers based on whether visible items exist
         categoryHeaders.forEach((hdr) => {
           const hdrCat = hdr.getAttribute("data-category");
-          hdr.style.display = visibleCategories.has(hdrCat) ? "" : "none";
+          hdr.style.display = (tokens.length === 0 && selectedCat === "ALL") || visibleCategories.has(hdrCat) ? "" : "none";
         });
       };
 
@@ -4982,11 +6005,13 @@ ProfileView.prototype.initTierProfilesPanel = function() {
     this.inputTierPanelSearch._hasTierListener = true;
     this.inputTierPanelSearch.addEventListener("input", (e) => {
       const q = e.target.value.toLowerCase().trim();
+      const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
       const filtered = (this.currentTierProfiles || []).filter(p => {
-        const n = (p.name || "").toLowerCase();
-        const r = (p.referenceCode || "").toLowerCase();
-        const c = (p.city || "").toLowerCase();
-        return n.includes(q) || r.includes(q) || c.includes(q);
+        if (tokens.length === 0) return true;
+        const target = [
+          p.name, p.fullName, p.referenceCode, p.gotra, p.city, p.phone, p.role, p.profileType
+        ].filter(Boolean).join(" ").toLowerCase();
+        return tokens.every(tok => target.includes(tok));
       });
       this.renderTierProfilesList(filtered);
     });
@@ -5540,11 +6565,14 @@ ProfileView.prototype.populateDevoteeDropdown = function(profiles = [], onSelect
   if (filterInput) {
     filterInput.oninput = () => {
       const q = filterInput.value.toLowerCase().trim();
-      const filtered = profiles.filter(p =>
-        (p.name && p.name.toLowerCase().includes(q)) ||
-        (p.referenceCode && p.referenceCode.toLowerCase().includes(q)) ||
-        (p.city && p.city.toLowerCase().includes(q))
-      );
+      const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
+      const filtered = profiles.filter((p) => {
+        if (tokens.length === 0) return true;
+        const target = [
+          p.name, p.fullName, p.referenceCode, p.city, p.phone, p.gotra, p.role, p.profileType
+        ].filter(Boolean).join(" ").toLowerCase();
+        return tokens.every((tok) => target.includes(tok));
+      });
       renderItems(filtered);
     };
   }

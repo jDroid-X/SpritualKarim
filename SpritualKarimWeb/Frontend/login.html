@@ -729,15 +729,18 @@
                 type="text"
                 id="username"
                 class="form-input"
-                placeholder="Username"
+                placeholder="firstname.lastname"
                 required
                 autocomplete="username"
               />
             </div>
           </div>
+          <div class="form-options-row" style="margin-top: -0.4rem;">
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;">Format: <b>firstname.lastname</b> (e.g. amitabh.sen)</span>
+          </div>
 
           <!-- ROW 2: PASSWORD (LABEL + TEXTBOX SAME LINE) -->
-          <div class="form-row">
+          <div class="form-row" style="margin-top: 0.2rem;">
             <label class="form-label" for="password">Password</label>
             <div class="input-field-wrapper">
               <span class="field-icon">🔑</span>
@@ -754,6 +757,9 @@
               </button>
             </div>
           </div>
+          <div class="form-options-row" style="margin-top: -0.4rem;">
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;">Defaults: <b>admin123</b> (Master), <b>healer123</b>, <b>trainee123</b>, <b>devotee123</b></span>
+          </div>
 
           <!-- ROW 3: PORTAL TIER (LABEL + DROPDOWN SAME LINE) -->
           <div class="form-row">
@@ -761,7 +767,7 @@
             <div class="input-field-wrapper">
               <span class="field-icon">🏛️</span>
               <select id="role" class="form-select">
-                <option value="trainee">📿 Trainee Sadhak</option>
+                
                 <option value="devotee">🌟 Devotee</option>
                 <option value="healer">🛡️ Healer</option>
                 <option value="master">👑 Admin Master</option>
@@ -797,11 +803,14 @@
               <label class="form-label" for="regUsername">Username</label>
               <div class="input-field-wrapper">
                 <span class="field-icon">👤</span>
-                <input type="text" id="regUsername" class="form-input" placeholder="Choose Username" required />
+                <input type="text" id="regUsername" class="form-input" placeholder="firstname.lastname" required />
               </div>
             </div>
+            <div class="form-options-row" style="margin-top: -0.4rem;">
+              <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;">Format: <b>firstname.lastname</b> (e.g. amitabh.sen)</span>
+            </div>
 
-            <div class="form-row">
+            <div class="form-row" style="margin-top: 0.2rem;">
               <label class="form-label" for="regPassword">Password</label>
               <div class="input-field-wrapper">
                 <span class="field-icon">🔑</span>
@@ -814,7 +823,7 @@
               <div class="input-field-wrapper">
                 <span class="field-icon">🏛️</span>
                 <select id="regRole" class="form-select">
-                  <option value="trainee">📿 Trainee Sadhak</option>
+                  
                   <option value="devotee">🌟 Devotee</option>
                   <option value="healer">🛡️ Healer</option>
                   <option value="master">👑 Admin Master</option>
@@ -997,7 +1006,8 @@
             roleSlug = "admin";
           }
           const pid = result.session.profileId ? encodeURIComponent(result.session.profileId) : "";
-          const target = targetPortal + "/index.html?role=" + roleSlug + (pid ? "&profileId=" + pid : "") + "#" + roleSlug;
+          const defaultTab = roleSlug === "trainee" ? "tab-trainee-sadhak" : roleSlug === "healer" ? "tab-healer-connect" : roleSlug === "devotee" ? "tab-seeker-purpose" : "tab-devotee-personal";
+          const target = targetPortal + "/index.html?role=" + roleSlug + (pid ? "&profileId=" + pid : "") + "#" + defaultTab;
           window.location.href = target;
         } else {
           errorEl.textContent = result.reason || "Authentication failed. Please verify your credentials.";

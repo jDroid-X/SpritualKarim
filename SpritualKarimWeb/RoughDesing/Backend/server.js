@@ -9,7 +9,14 @@ const fs = require('fs');
 const path = require('path');
 const { handleApiRequest } = require('./api/routes');
 
-const PORT = process.env.PORT || 8080;
+let appConfig = null;
+try {
+  appConfig = require('../../js/config/appConfig');
+} catch (e) {}
+
+// Single Source of Truth (SSOT) Port Configuration (Consolidated from legacy 8080 to 8085)
+const SSOT_PORT = (appConfig && appConfig.server && appConfig.server.port) || 8085;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : SSOT_PORT;
 const ROOT_DIR = path.resolve(__dirname, '..');
 
 const MIME_TYPES = {

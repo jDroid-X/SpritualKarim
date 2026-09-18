@@ -6,8 +6,15 @@ try {
   handleApiRequest = require("./Backend/api/routes").handleApiRequest;
 } catch (e) {}
 
-const PORT = process.env.PORT || 8085;
-const ALT_PORT = 8080;
+let appConfig = null;
+try {
+  appConfig = require("../js/config/appConfig");
+} catch (e) {}
+
+// Single Source of Truth (SSOT) Port Configuration
+const PORT = process.env.PORT || (appConfig && appConfig.server && appConfig.server.port) || 8085;
+// @deprecated ALT_PORT 8080 deactivated to enforce SSOT Port 8085
+const ALT_PORT = null;
 const BASE_DIRS = [
   path.resolve(__dirname),
   path.resolve(__dirname, "Frontend"),
@@ -135,6 +142,9 @@ serverPrimary.listen(PORT, "0.0.0.0", () => {
   console.log(`Spiritual Karim Primary Server running on http://localhost:${PORT}`);
 });
 
+// @deprecated Secondary server on ALT_PORT (8080) deactivated in compliance with SSOT architecture
+// To avoid port collisions and maintain single source of truth, only Port 8085 is used.
+/*
 const serverAlt = http.createServer(createRequestHandler());
 serverAlt.on('error', (err) => {
   console.log(`Alt Server on port ${ALT_PORT} notice: ${err.message}`);
@@ -142,3 +152,4 @@ serverAlt.on('error', (err) => {
 serverAlt.listen(ALT_PORT, "0.0.0.0", () => {
   console.log(`Spiritual Karim Alt Server running on http://localhost:${ALT_PORT}`);
 });
+*/

@@ -35,25 +35,50 @@ function detectAndApplyPortalRole() {
     let badgeText = "👑 MASTER FOUNDER";
     let portalTitle = "Master Admin Portal";
 
+    const session = typeof DemoAuth !== "undefined" && DemoAuth.getSession ? DemoAuth.getSession() : null;
+    const roleRanks = { MASTER: 1, ADMIN: 1, HEALER: 2, TRAINEE: 3, DEVOTEE: 4, SEEKER: 4 };
+
     if (paramRole) {
-      detectedRole = paramRole.toUpperCase();
+      const candidate = paramRole.toUpperCase();
+      if (session && session.role) {
+        const sessionRank = roleRanks[session.role.toUpperCase()] || 4;
+        const candidateRank = roleRanks[candidate] || 4;
+        if (candidateRank < sessionRank) {
+          console.warn(`[BOOTSTRAP] Blocked privilege escalation via URL to ${candidate}. Enforcing ${session.role.toUpperCase()}.`);
+          detectedRole = session.role.toUpperCase();
+        } else {
+          detectedRole = candidate;
+        }
+      } else {
+        detectedRole = candidate;
+      }
     } else if (path.includes("/masters/")) {
       detectedRole = "ADMIN";
+    } else if (path.includes("/healers/")) {
+      detectedRole = "HEALER";
+    } else if (path.includes("/trainee/")) {
+      detectedRole = "TRAINEE";
+    } else if (path.includes("/devotee/") || path.includes("/seeker/")) {
+      detectedRole = "DEVOTEE";
+    } else if (document.body && document.body.getAttribute("data-portal-role")) {
+      detectedRole = document.body.getAttribute("data-portal-role").toUpperCase();
+    } else {
+      detectedRole = "ADMIN";
+    }
+
+    if (detectedRole === "ADMIN" || detectedRole === "MASTER") {
       badgeClass = "badge-admin";
       badgeText = "👑 MASTER FOUNDER";
       portalTitle = "Master Admin Portal";
-    } else if (path.includes("/healers/")) {
-      detectedRole = "HEALER";
+    } else if (detectedRole === "HEALER") {
       badgeClass = "badge-healer";
       badgeText = "🛡️ CERTIFIED HEALER";
       portalTitle = "Healers Portal";
-    } else if (path.includes("/trainee/")) {
-      detectedRole = "TRAINEE";
+    } else if (detectedRole === "TRAINEE") {
       badgeClass = "badge-trainee";
       badgeText = "📿 TRAINEE SADHAK";
       portalTitle = "Trainee Sadhak Portal";
-    } else if (path.includes("/devotee/") || path.includes("/seeker/")) {
-      detectedRole = "DEVOTEE";
+    } else if (detectedRole === "DEVOTEE" || detectedRole === "SEEKER") {
       badgeClass = "badge-devotee";
       badgeText = "🌟 DEVOTEE / SEEKER";
       portalTitle = "Devotee Portal";
@@ -104,6 +129,18 @@ if (typeof document !== "undefined") {
       const model = new ProfileModel();
       const view = new ProfileView();
       const controller = new ProfileController(model, view);
+      window.ProfileControllerInstance = controller;
+      window.profileView = view;
+      window.profileModel = model;
+      
+      if (typeof window.SadhanaRemedyModel !== 'undefined') {
+        const srModel = new window.SadhanaRemedyModel(model);
+        const srController = new window.SadhanaRemedyController(srModel, null);
+        const srView = new window.SadhanaRemedyView(srController);
+        srController.view = srView;
+        window.sadhanaRemedyController = srController;
+      }
+      
       controller.init();
       if (typeof FirebaseSyncEngine !== "undefined" && FirebaseSyncEngine.init) {
         FirebaseSyncEngine.init();

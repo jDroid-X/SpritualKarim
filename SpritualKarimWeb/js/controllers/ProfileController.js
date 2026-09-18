@@ -24,12 +24,13 @@ class ProfileController {
 
   init() {
     this._initTheme();
+    this._handleHashRouting();
     this._renderCurrentState();
     this._bindNavigationTabs();
     this._bindSadhanaCatalogEvents();
     this._bindCurrentEventsPanel();
+    this._bindTraineeWorkspaceEvents();
     this.view.initSadhanaListbox();
-    this._handleHashRouting();
     this._bindEvents();
     this._bindEnhancedUIEvents();
     this._setupPowerLossDetection();
@@ -86,15 +87,91 @@ class ProfileController {
               });
             }
           }
-          if (event.data && event.data.type === "INVITE_SUBMITTED") {
+          if (event.data && (
+            event.data.type === "INVITE_SUBMITTED" || 
+            event.data.type === "NEW_PENDING_APPROVAL" ||
+            event.data.type === "NEW_SADHANA_APPLICATION" ||
+            event.data.type === "SADHANA_APPLICATIONS_UPDATED"
+          )) {
             const freshInvites = this.model.getPairingInvites();
-            this.view.renderPendingApprovalsRows(freshInvites);
+            const currentRole = this.model.getRoleMode() || "MASTER";
+            if (typeof this.view.renderPendingApprovalsRows === "function") {
+              this.view.renderPendingApprovalsRows(freshInvites);
+            }
+            if (typeof this.view.renderPendingApprovalsDrawer === "function") {
+              this.view.renderPendingApprovalsDrawer(freshInvites, currentRole);
+            }
+            if (typeof this.view.renderApprovalNotification === "function") {
+              this.view.renderApprovalNotification(freshInvites, currentRole);
+            }
             this._renderCurrentState();
-            const seekerName = event.data.data?.seekerName || "Seeker";
-            if (typeof this.view.showSlideToast === "function") {
-              this.view.showSlideToast("New Devotee Application", `New induction application received from "${seekerName}"!`, "info");
-            } else {
-              this.view.showToast(`📩 New application received from "${seekerName}"!`);
+
+            if (event.data.type !== "SADHANA_APPLICATIONS_UPDATED") {
+              const seekerName = event.data.data?.seekerName || event.data.invite?.seekerName || "Seeker";
+              const isSadhana = event.data.invite?.type === "SADHANA_APPLICATION" || 
+                                event.data.data?.type === "SADHANA_APPLICATION" || 
+                                event.data.type === "NEW_SADHANA_APPLICATION";
+              const practiceName = event.data.data?.itemTitle || event.data.invite?.sadhanaTitle || event.data.data?.sadhanaTitle || "Sadhana";
+              const msg = isSadhana 
+                ? `📿 Initiation request for "${practiceName}" received from "${seekerName}"!`
+                : `📩 New induction application received from "${seekerName}"!`;
+              if (typeof this.view.showSlideToast === "function") {
+                this.view.showSlideToast(isSadhana ? "Sadhana Initiation Request" : "New Devotee Application", msg, "info", 5000);
+              } else if (typeof this.view.showToast === "function") {
+                this.view.showToast(msg, "info");
+              }
+            }
+          }
+          if (event.data && event.data.type === "SADHANA_INITIATION_APPROVED") {
+            const apprData = event.data.data || {};
+            const activeP = this.model.getActiveProfile();
+            const isTarget = activeP && (activeP.id === apprData.seekerId || activeP.name === apprData.seekerName || activeP.referenceCode === apprData.devoteeCode);
+            this.model.loadProfiles();
+            this._renderCurrentState();
+            if (isTarget) {
+              const itemTitle = apprData.itemTitle || "Sacred Sadhana";
+              const token = apprData.initiationToken || "";
+              if (typeof this.view.showSlideToast === "function") {
+                this.view.showSlideToast("Initiation Granted!", `📿 Divine blessing! Initiation into "${itemTitle}" sanctioned. Token: ${token}`, "success", 8000);
+              } else if (typeof this.view.showToast === "function") {
+                this.view.showToast(`📿 Divine blessing! Initiation into "${itemTitle}" sanctioned. Token: ${token}`, "success");
+              }
+            }
+          }
+          if (event.data && event.data.type === "ROLE_UPGRADED") {
+            const upData = event.data.data || {};
+            const activeP = this.model.getActiveProfile();
+            const isMyProfile = activeP && (activeP.id === upData.profileId || activeP.referenceCode === upData.referenceCode);
+            if (isMyProfile) {
+              const newRole = upData.newRole || "TRAINEE";
+              sessionStorage.setItem("portalRole", newRole);
+              localStorage.setItem("sk_active_portal_role", newRole);
+              localStorage.setItem("sk_admin_active_role_mode_v1", newRole);
+              
+              // Reload profiles from storage
+              this.model.loadProfiles();
+              this._renderCurrentState();
+              
+              const sadhanaName = upData.sadhanaTitle || "Sacred Sadhana";
+              const celebrationHtml = `
+                <div style="text-align: center; padding: 1.5rem 1rem;">
+                  <div style="font-size: 3rem; margin-bottom: 0.75rem;">🎉</div>
+                  <h3 style="color: var(--gold-400, #d4af37); margin: 0 0 0.5rem 0; font-family: 'Cinzel', serif;">Divine Initiation Approved!</h3>
+                  <p style="font-size: 0.9rem; color: var(--text-body, #e2e8f0); line-height: 1.6; margin-bottom: 1.25rem;">
+                    Your mentor has approved your initiation into <strong>${sadhanaName}</strong>.<br>
+                    Your spiritual account is now elevated to <strong>Trainee Sadhak (Level 3)</strong>.
+                  </p>
+                  <button type="button" class="btn btn-gold btn-sm" onclick="this.closest('.admin-modal').remove(); window.location.reload();" style="padding: 0.5rem 1.5rem; font-weight: 700;">
+                    🚀 Enter Trainee Sadhak Workspace
+                  </button>
+                </div>
+              `;
+              const modalEl = document.createElement("div");
+              modalEl.className = "admin-modal admin-modal-overlay is-open open";
+              modalEl.style.display = "flex";
+              modalEl.style.zIndex = "99999";
+              modalEl.innerHTML = `<div class="admin-modal-dialog modal-sm" style="background: var(--bg-card, #1e293b); border: 2px solid var(--gold-400, #d4af37); border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);">${celebrationHtml}</div>`;
+              document.body.appendChild(modalEl);
             }
           }
         };
@@ -154,32 +231,52 @@ class ProfileController {
    */
   _handleHashRouting() {
     try {
-      const hash = window.location.hash || "";
-      if (!hash) return;
-
-      // Tab routing: #tab-devotee-personal, #tab-healer-connect, etc.
-      const tabMatch = hash.match(/^#tab-(.+)$/);
-      if (tabMatch) {
-        const tabId = tabMatch[1];
-        const tabBtn = document.querySelector(
-          `[data-tab-id="${tabId}"], #btn-${tabId}`,
-        );
-        if (tabBtn) {
-          tabBtn.click();
-          return;
-        }
+      const hash = (window.location.hash || "").replace(/^#/, "").trim();
+      if (!hash) {
+        this._dispatchDefaultRoleTab();
+        return;
       }
 
-      // Profile deep-link: #profile=prof-xxx
-      const profileMatch = hash.match(/^#profile=(.+)$/);
+      // Profile deep-link: profile=prof-xxx
+      const profileMatch = hash.match(/^profile=(.+)$/);
       if (profileMatch) {
         const profileId = decodeURIComponent(profileMatch[1]);
         this.model.setActiveProfileId(profileId);
         this._renderCurrentState();
+        return;
       }
+
+      // Tab routing: support #tab-trainee-sadhak, #trainee, #healer, #admin, #devotee
+      let targetTab = hash.startsWith("tab-") ? hash : `tab-${hash}`;
+      if (hash === "trainee") targetTab = "tab-trainee-sadhak";
+      else if (hash === "healer" || hash === "healers") targetTab = "tab-healer-connect";
+      else if (hash === "admin" || hash === "master" || hash === "masters") targetTab = "tab-devotee-personal";
+      else if (hash === "devotee" || hash === "seeker") targetTab = "tab-seeker-purpose";
+
+      const tabBtn = document.querySelector(
+        `[data-main-tab="${targetTab}"], [data-tab-id="${targetTab}"], #btn-${targetTab}`
+      );
+      if (tabBtn) {
+        this.switchMainTab(targetTab);
+        return;
+      }
+      this._dispatchDefaultRoleTab();
     } catch (e) {
       console.warn("Hash routing error:", e);
     }
+  }
+
+  _dispatchDefaultRoleTab() {
+    try {
+      const role = (this.model ? this.model.getRoleMode() : "MASTER").toUpperCase();
+      let targetTab = "tab-devotee-personal";
+      if (role === "TRAINEE") targetTab = "tab-trainee-sadhak";
+      else if (role === "HEALER") targetTab = "tab-healer-connect";
+      else if (role === "DEVOTEE") targetTab = "tab-seeker-purpose";
+      else targetTab = "tab-devotee-personal";
+
+      this.switchMainTab(targetTab);
+    } catch (e) {}
   }
 
   // ==========================================
@@ -272,6 +369,9 @@ class ProfileController {
     const settings = this.model.settings || (typeof this.model.getSettings === "function" ? this.model.getSettings() : {});
     this.view.allProfiles = (roleMode === "MASTER" || roleMode === "ADMIN") ? this.model.profiles : scopedProfiles;
     this.view.render(active, scopedProfiles, roleMode, settings, anchor);
+    if (typeof this.view._renderCategorizedTraineeSadhanas === "function") {
+      this.view._renderCategorizedTraineeSadhanas(active?.traineeSadhanas || [], active);
+    }
     const operatorProfile = typeof this.model.getOperatorProfile === "function" ? this.model.getOperatorProfile() : anchor;
     if (typeof this.view.renderProfileDisplayBox === "function") {
       this.view.renderProfileDisplayBox(operatorProfile, roleMode);
@@ -291,6 +391,10 @@ class ProfileController {
     const operatorRole = roleMode || this.model.getRoleMode() || "MASTER";
     this.view.applyDynamicAuthMatrix(this.model.getAuthMatrix(), operatorRole);
 
+    if (typeof this.view.renderDevoteeApplications === "function") {
+      this.view.renderDevoteeApplications(active, this.model);
+    }
+
     // Render dynamic approval notification under mentor name
     const invites = this.model.getPairingInvites();
     this.view.renderApprovalNotification(invites, roleMode);
@@ -298,6 +402,11 @@ class ProfileController {
     this._enforcePortalVisibility(roleMode);
     this._filterRemedies();
     this._applyEventPanelRBAC();
+
+    // Render Devotee & Trainee Sadhana & Remedy Applied Strips
+    if (typeof this.renderMyApplications === "function") {
+      this.renderMyApplications(active, roleMode);
+    }
   }
 
   /**
@@ -336,6 +445,7 @@ class ProfileController {
   _filterRemedies() {
     const searchInput = document.getElementById("input-search-remedies");
     const query = (searchInput ? searchInput.value : "").toLowerCase().trim();
+    const tokens = query ? query.split(/\s+/).filter(Boolean) : [];
     const activeSeg = document.querySelector(
       '.segmented-control[data-target-section="remedies"] .segmented-item.active',
     );
@@ -354,12 +464,12 @@ class ProfileController {
       const catalogItem = catalog[sadhanaId] || {};
 
       const textContent =
-        `${titleEl ? titleEl.textContent : ""} ${tagEl ? tagEl.textContent : ""} ${catalogItem.summary || ""} ${catalogItem.mantra || ""}`.toLowerCase();
+        `${titleEl ? titleEl.textContent : ""} ${tagEl ? tagEl.textContent : ""} ${catalogItem.summary || ""} ${catalogItem.mantra || ""} ${catalogItem.category || ""}`.toLowerCase();
       const isPaid =
         card.classList.contains("tile-paid") ||
         card.querySelector(".stamp-paid") !== null;
 
-      const matchesSearch = query === "" || textContent.includes(query);
+      const matchesSearch = tokens.length === 0 || tokens.every((tok) => textContent.includes(tok));
       const matchesFilter =
         filterMode === "ALL" ||
         (filterMode === "PAID" && isPaid) ||
@@ -382,9 +492,20 @@ class ProfileController {
     });
   }
 
+  handlePendingApprovalsClick() {
+    const role = (this.model ? this.model.getRoleMode() : "MASTER").toUpperCase();
+    const scopedInvites = (this.model && typeof this.model.getPairingInvitesForRole === "function")
+      ? this.model.getPairingInvitesForRole(role, this.model.getActiveProfile())
+      : (this.model ? this.model.getPairingInvites() : []);
+    const initialTab = ["DEVOTEE", "SEEKER", "TRAINEE", "SADHAK"].includes(role) ? "sadhana-remedy" : "registration";
+    if (this.view && typeof this.view.openPendingApprovalsDrawer === "function") {
+      this.view.openPendingApprovalsDrawer(scopedInvites, null, initialTab);
+    }
+  }
+
   switchMainTab(tabId) {
     if (tabId === "tab-pending-approvals") {
-      this.view.openPendingApprovalsDrawer(this.model.getPairingInvites());
+      this.handlePendingApprovalsClick();
       return;
     }
 
@@ -407,6 +528,13 @@ class ProfileController {
       }
     });
 
+    if (tabId === "tab-trainee-sadhak") {
+      const activeProf = this.model.getActiveProfile();
+      if (typeof this.view._renderCategorizedTraineeSadhanas === "function") {
+        this.view._renderCategorizedTraineeSadhanas(activeProf?.traineeSadhanas || [], activeProf);
+      }
+    }
+
     if (tabId === "tab-firebase-data") {
       this.view.renderFirebaseDataTable(this.model);
     }
@@ -427,6 +555,42 @@ class ProfileController {
           this.view.smartFitInBodyTree();
         }
       }, 100);
+    }
+  }
+
+  openSadhanaExplorerInBody() {
+    this.switchMainTab("tab-seeker-purpose");
+    const subTabBtn = document.querySelector('.sub-tab-btn[data-sub-tab="seeker-sub-sadhanas"]');
+    if (subTabBtn) {
+      subTabBtn.click();
+    } else {
+      const p = document.getElementById("seeker-sub-sadhanas");
+      if (p) {
+        document.querySelectorAll("#tab-seeker-purpose .sub-tab-panel").forEach(el => el.classList.remove("active"));
+        p.classList.add("active");
+      }
+    }
+    const targetEl = document.getElementById("seeker-sub-sadhanas") || document.getElementById("tab-seeker-purpose");
+    if (targetEl && typeof targetEl.scrollIntoView === "function") {
+      targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  openRemedyHubInBody() {
+    this.switchMainTab("tab-seeker-purpose");
+    const subTabBtn = document.querySelector('.sub-tab-btn[data-sub-tab="seeker-sub-purpose"]');
+    if (subTabBtn) {
+      subTabBtn.click();
+    } else {
+      const p = document.getElementById("seeker-sub-purpose");
+      if (p) {
+        document.querySelectorAll("#tab-seeker-purpose .sub-tab-panel").forEach(el => el.classList.remove("active"));
+        p.classList.add("active");
+      }
+    }
+    const targetEl = document.getElementById("input-search-remedies") || document.querySelector('#seeker-sub-purpose .card:nth-child(2)') || document.getElementById("tab-seeker-purpose");
+    if (targetEl && typeof targetEl.scrollIntoView === "function") {
+      targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 
@@ -456,6 +620,211 @@ class ProfileController {
             else p.classList.remove("active");
           });
         }
+      }
+    });
+  }
+
+  _bindTraineeWorkspaceEvents() {
+    document.addEventListener("click", (e) => {
+      // 1. Accordion Header Click: toggle .open and toggle display
+      const accordionHeader = e.target.closest(".trainee-accordion-header");
+      if (accordionHeader) {
+        const section = accordionHeader.closest(".trainee-accordion-section");
+        if (section) {
+          const isOpen = section.classList.toggle("open");
+          section.classList.toggle("active", isOpen);
+          const body = section.querySelector(".trainee-accordion-body");
+          if (body) {
+            body.style.display = isOpen ? "block" : "none";
+          }
+          const arrow = section.querySelector(".accordion-arrow");
+          if (arrow) {
+            arrow.textContent = isOpen ? "▼" : "▶";
+          }
+        }
+        return;
+      }
+
+      // 2. Team Member Item Click in Panel 1
+      const teamItem = e.target.closest(".trainee-team-item");
+      if (teamItem) {
+        const memberId = teamItem.getAttribute("data-member-id");
+        if (memberId) {
+          this.view.selectedTraineeMemberId = memberId;
+          this.view.selectedTraineeId = null; // reset to first practice of this member
+          const targetProf = this.model.getProfileById(memberId) || this.model.getActiveProfile();
+          this.view._renderCategorizedTraineeSadhanas(targetProf?.traineeSadhanas || [], targetProf);
+        }
+        return;
+      }
+
+      // 3. Practice Item Click in Panel 2
+      const practiceItem = e.target.closest(".trainee-practice-item");
+      if (practiceItem) {
+        const itemId = practiceItem.getAttribute("data-item-id");
+        const memberId = practiceItem.getAttribute("data-member-id");
+        if (memberId) this.view.selectedTraineeMemberId = memberId;
+        if (itemId) {
+          this.view.selectedTraineeId = itemId;
+          const targetProf = (this.model.profiles || []).find((p) => p.id === this.view.selectedTraineeMemberId) || this.model.getActiveProfile();
+          const practices = (typeof this.view.getTraineeMemberPractices === "function")
+            ? this.view.getTraineeMemberPractices(targetProf)
+            : ((targetProf?.traineeSadhanas && targetProf.traineeSadhanas.length > 0)
+                ? targetProf.traineeSadhanas
+                : (targetProf?.interestedSadhanas || targetProf?.activeSadhanas || []));
+          const activePractice = practices.find((s) => s.id === itemId) || practices[0];
+          
+          // Update active styles in panel 2
+          document.querySelectorAll(".trainee-practice-item").forEach((el) => {
+            if (el.getAttribute("data-item-id") === itemId) el.classList.add("active");
+            else el.classList.remove("active");
+          });
+
+          this.view._renderTraineeActiveDetail(activePractice, targetProf);
+        }
+        return;
+      }
+
+      // 4. Submit Memo Button in Panel 3
+      const btnAddMemo = e.target.closest(".btn-add-trainee-memo");
+      if (btnAddMemo) {
+        const itemId = btnAddMemo.getAttribute("data-item-id");
+        const input = btnAddMemo.closest(".memo-input-row")?.querySelector(".input-trainee-memo-text") || document.getElementById("trainee-new-memo-text");
+        const text = (input ? input.value : "").trim();
+        if (!text) {
+          if (this.view?.showToast) this.view.showToast("Please enter a note or question before submitting.", "warning");
+          return;
+        }
+
+        const targetMemberId = this.view.selectedTraineeMemberId;
+        const targetProf = (this.model.profiles || []).find((p) => p.id === targetMemberId) || this.model.getActiveProfile();
+        const success = this.model.addTraineeMemo(itemId, text, "GENERAL", targetProf);
+        if (success) {
+          if (this.model._saveProfiles) this.model._saveProfiles();
+          else if (this.model.saveProfiles) this.model.saveProfiles(this.model.profiles);
+          if (input) input.value = "";
+          if (this.view?.showToast) this.view.showToast("✍️ Feedback memo dispatched to Mentor timeline.", "success");
+          this.view._renderCategorizedTraineeSadhanas(targetProf?.traineeSadhanas || [], targetProf);
+        }
+        return;
+      }
+
+      // 5. Quick Chips for Memo
+      const quickChip = e.target.closest(".memo-quick-chip");
+      if (quickChip) {
+        const targetTextareaId = quickChip.getAttribute("data-target") || "trainee-new-memo-text";
+        const textarea = document.getElementById(targetTextareaId) || quickChip.closest(".memo-input-row")?.querySelector(".input-trainee-memo-text");
+        if (textarea) {
+          const chipText = quickChip.textContent.trim();
+          textarea.value = textarea.value ? `${textarea.value} | ${chipText}` : chipText;
+          textarea.focus();
+        }
+        return;
+      }
+
+      // 6. Toggle Quick Chips Visibility
+      const btnMemoKeyboard = e.target.closest(".btn-memo-keyboard");
+      if (btnMemoKeyboard) {
+        const targetId = btnMemoKeyboard.getAttribute("data-target") || "trainee-new-memo-text";
+        const chipsWrap = document.getElementById(`quick-chips-${targetId}`) || btnMemoKeyboard.closest(".memo-input-row")?.nextElementSibling;
+        if (chipsWrap) {
+          chipsWrap.style.display = chipsWrap.style.display === "none" ? "flex" : "none";
+        }
+        return;
+      }
+
+      // 7. Request Verification Button
+      const btnRequestVerify = e.target.closest("#btn-verify-request, .btn-verify-request");
+      if (btnRequestVerify) {
+        const itemId = btnRequestVerify.getAttribute("data-item-id");
+        const memberId = btnRequestVerify.getAttribute("data-member-id") || this.view.selectedTraineeMemberId;
+        const targetProf = (this.model.profiles || []).find((p) => p.id === memberId) || this.model.getActiveProfile();
+        this.model.requestTraineeVerification(itemId, "", targetProf);
+        if (this.model._saveProfiles) this.model._saveProfiles();
+        else if (this.model.saveProfiles) this.model.saveProfiles(this.model.profiles);
+        if (this.view?.showToast) this.view.showToast("📿 Verification request sent to designated Upline Healer!", "info");
+        this.view._renderCategorizedTraineeSadhanas(targetProf?.traineeSadhanas || [], targetProf);
+        return;
+      }
+
+      // 8. Approve Verification Button (Healer / Admin)
+      const btnApproveVerify = e.target.closest("#btn-verify-approve, .btn-verify-approve");
+      if (btnApproveVerify) {
+        const itemId = btnApproveVerify.getAttribute("data-item-id");
+        const memberId = btnApproveVerify.getAttribute("data-member-id") || this.view.selectedTraineeMemberId;
+        const targetProf = (this.model.profiles || []).find((p) => p.id === memberId) || this.model.getActiveProfile();
+        const activeProf = this.model.getActiveProfile();
+        const defaultFounder = (typeof this.model.getSetting === "function" ? this.model.getSetting("defaultMentorName", "Spiritual Karim Khan (Founder)") : "Spiritual Karim Khan (Founder)");
+        const mentorName = this.model.getRoleMode() === "MASTER" ? defaultFounder : (activeProf?.name || "Healer Mentor");
+        const mentorCode = this.model.getRoleMode() === "MASTER" ? (typeof this.model.getSetting === "function" ? this.model.getSetting("defaultMentorCode", "SKHM-ADM1-7788-9900") : "SKHM-ADM1-7788-9900") : (activeProf?.referenceCode || "SKHM-HLR2-3344-5566");
+        this.model.approveTraineeVerification(itemId, mentorName, mentorCode, targetProf);
+        if (this.model._saveProfiles) this.model._saveProfiles();
+        else if (this.model.saveProfiles) this.model.saveProfiles(this.model.profiles);
+        if (this.view?.showToast) this.view.showToast("🕉️ Sadhana Completion Sealed & Verified by Mentor!", "success");
+        this.view._renderCategorizedTraineeSadhanas(targetProf?.traineeSadhanas || [], targetProf);
+        return;
+      }
+
+      // 9. Reject Verification Button (Healer / Admin)
+      const btnRejectVerify = e.target.closest("#btn-verify-reject, .btn-verify-reject");
+      if (btnRejectVerify) {
+        const itemId = btnRejectVerify.getAttribute("data-item-id");
+        const memberId = btnRejectVerify.getAttribute("data-member-id") || this.view.selectedTraineeMemberId;
+        const targetProf = (this.model.profiles || []).find((p) => p.id === memberId) || this.model.getActiveProfile();
+        const activeProf = this.model.getActiveProfile();
+        const defaultFounder = (typeof this.model.getSetting === "function" ? this.model.getSetting("defaultMentorName", "Spiritual Karim Khan (Founder)") : "Spiritual Karim Khan (Founder)");
+        const mentorName = this.model.getRoleMode() === "MASTER" ? defaultFounder : (activeProf?.name || "Healer Mentor");
+        const mentorCode = this.model.getRoleMode() === "MASTER" ? (typeof this.model.getSetting === "function" ? this.model.getSetting("defaultMentorCode", "SKHM-ADM1-7788-9900") : "SKHM-ADM1-7788-9900") : (activeProf?.referenceCode || "SKHM-HLR2-3344-5566");
+        this.model.rejectTraineeVerification(itemId, "Additional disciplined chanting required before seal.", mentorName, mentorCode, targetProf);
+        if (this.model._saveProfiles) this.model._saveProfiles();
+        else if (this.model.saveProfiles) this.model.saveProfiles(this.model.profiles);
+        if (this.view?.showToast) this.view.showToast("Review feedback recorded with remedial instructions.", "warning");
+        this.view._renderCategorizedTraineeSadhanas(targetProf?.traineeSadhanas || [], targetProf);
+        return;
+      }
+
+      // 10. Japa Bead Click
+      const japaBead = e.target.closest(".japa-bead");
+      if (japaBead) {
+        japaBead.classList.toggle("chanted");
+        const beadNum = parseInt(japaBead.getAttribute("data-bead"), 10) || 1;
+        if (this.view?.showToast && beadNum % 27 === 0) {
+          this.view.showToast(`📿 Bead milestone ${beadNum}/108 chanted.`, "info");
+        }
+        return;
+      }
+    });
+
+    // Delegated Change events for active-ts-target-input and active-ts-streak-input
+    document.addEventListener("change", (e) => {
+      const targetInput = e.target.closest(".active-ts-target-input");
+      if (targetInput) {
+        const itemId = targetInput.getAttribute("data-item-id");
+        const memberId = targetInput.getAttribute("data-member-id") || this.view.selectedTraineeMemberId;
+        const targetProf = (this.model.profiles || []).find((p) => p.id === memberId) || this.model.getActiveProfile();
+        const practice = (targetProf?.traineeSadhanas || []).find((s) => s.id === itemId);
+        if (practice) {
+          practice.dailyTarget = targetInput.value;
+          if (this.model._saveProfiles) this.model._saveProfiles();
+          else if (this.model.saveProfiles) this.model.saveProfiles(this.model.profiles);
+          if (this.view?.showToast) this.view.showToast("Target updated.", "info");
+        }
+        return;
+      }
+
+      const streakInput = e.target.closest(".active-ts-streak-input");
+      if (streakInput) {
+        const itemId = streakInput.getAttribute("data-item-id");
+        const memberId = streakInput.getAttribute("data-member-id") || this.view.selectedTraineeMemberId;
+        const targetProf = (this.model.profiles || []).find((p) => p.id === memberId) || this.model.getActiveProfile();
+        const practice = (targetProf?.traineeSadhanas || []).find((s) => s.id === itemId);
+        if (practice) {
+          practice.currentStreak = streakInput.value;
+          if (this.model._saveProfiles) this.model._saveProfiles();
+          else if (this.model.saveProfiles) this.model.saveProfiles(this.model.profiles);
+          if (this.view?.showToast) this.view.showToast("Streak updated.", "info");
+        }
+        return;
       }
     });
   }
@@ -785,7 +1154,7 @@ class ProfileController {
               name: catalogItem.title,
               category: catalogItem.category,
               priority: "High",
-              status: "Enrolled",
+              status: "Pending Approval",
               isPaid:
                 profile.isPaid !== false && profile.paymentStatus !== "FREE",
               paymentStatus:
@@ -795,64 +1164,49 @@ class ProfileController {
             });
           }
 
-          // Auto-sync into Trainee Sadhak In-Progress
+          // Check if already approved in Trainee In-Progress
           const traineeExisting = profile.traineeSadhanas.find(
             (ts) =>
               ts.sadhanaKey === key ||
               (ts.id && ts.id === key) ||
-              ts.title.toLowerCase() === catalogItem.title.toLowerCase(),
+              (ts.title && ts.title.toLowerCase() === catalogItem.title.toLowerCase()),
           );
-          if (!traineeExisting) {
-            const newTraineeItem = {
-              id: "ts-" + Date.now().toString().slice(-4),
-              sadhanaKey: key,
-              title: catalogItem.title,
-              categoryDomain: catalogItem.domain || "sadhanas",
-              isPaid:
-                profile.isPaid !== false && profile.paymentStatus !== "FREE",
-              paymentStatus:
-                profile.isPaid !== false && profile.paymentStatus !== "FREE"
-                  ? "PAID"
-                  : "FREE",
-              level: "Level 1 — Novice Initiation",
-              dailyTarget:
-                catalogItem.domain === "remedies"
-                  ? "Daily Sunset Protocol"
-                  : catalogItem.domain === "cleansing"
-                    ? "Morning / Dusk Routine"
-                    : "11 Malas Daily",
-              currentStreak: "1 Day",
-              progressPercent: 20,
-              status: "In Progress",
-              mentorCode: profile.referredByCode || "SKHM-ADM1-7788-9900",
-              diaryNotes: `Attunement active. Timing: ${catalogItem.timing || "Brahma Muhurta"}. Mantra: ${catalogItem.mantra || "Om Namah Shivaya"}`,
-              memos: [
-                {
-                  date:
-                    new Date().toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    }) +
-                    " " +
-                    new Date().toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }),
-                  author: "Mentor Devendra",
-                  text: `Enrolled into ${catalogItem.title}. Timing: ${catalogItem.timing || "Daily"}. Mantra frequency synchronized.`,
-                },
-              ],
-            };
-            profile.traineeSadhanas.push(newTraineeItem);
-            this.view.selectedTraineeId = newTraineeItem.id;
-          } else {
+          if (traineeExisting) {
             this.view.selectedTraineeId = traineeExisting.id;
+            this.view.showToast(
+              `✓ "${catalogItem.title}" is already active in your Sadhana progress!`,
+            );
+          } else {
+            // Submit formal application for Mentor Diksha approval via SSOST & Backend
+            const appPayload = {
+              contextType: catalogItem.domain === "remedies" ? "remedy" : "sadhana",
+              type: catalogItem.domain === "remedies" ? "REMEDY_APPLICATION" : "SADHANA_APPLICATION",
+              applicantId: profile.id,
+              seekerId: profile.id,
+              applicantName: profile.name,
+              seekerName: profile.name,
+              devoteeCode: profile.referenceCode,
+              seekerPhone: profile.phone,
+              seekerEmail: profile.email,
+              applicantRole: profile.profileType || "Devotee",
+              itemId: key,
+              itemTitle: catalogItem.title,
+              title: catalogItem.title,
+              category: catalogItem.category || "Remedy & Upay",
+              mentorCode: profile.referredByCode || "SKHM-ADM1-7788-9900",
+              sponsorCode: profile.referredByCode || "SKHM-ADM1-7788-9900",
+              intention: `Devotee enrollment request for ${catalogItem.title}.`,
+              status: "PENDING"
+            };
+            if (window.sadhanaRemedyController && window.sadhanaRemedyController.model) {
+              window.sadhanaRemedyController.model.submitApplication(appPayload);
+            } else if (this.model && typeof this.model.submitSadhanaRemedyApplication === "function") {
+              this.model.submitSadhanaRemedyApplication(appPayload);
+            }
+            this.view.showToast(
+              `✓ "${catalogItem.title}" selected! Initiation request submitted for Mentor Diksha approval.`,
+            );
           }
-
-          this.view.showToast(
-            `✓ "${catalogItem.title}" enrolled & added to Trainee In-Progress!`,
-          );
         } else {
           profile.selectedRemedies = profile.selectedRemedies.filter(
             (k) => k !== key,
@@ -861,7 +1215,7 @@ class ProfileController {
             (is) => is.id !== key && is.name !== catalogItem.title,
           );
           this.view.showToast(
-            `Removed "${catalogItem.title}" from Enrolled Queue.`,
+            `Removed "${catalogItem.title}" from Seeker Purpose.`,
           );
         }
 
@@ -1027,18 +1381,61 @@ class ProfileController {
 
     // 7. Global Click Handler for Universal Memo Box (Keyboard, Mic, Send, Quick Chips) & Upline Verification
     document.addEventListener("click", (e) => {
-      // 7A: Keyboard Helper Trigger (Toggles quick chips & focuses textarea)
+      // 7A-1: Trainee Accordion Header Toggle
+      const accordionHeader = e.target.closest(".trainee-accordion-header");
+      if (accordionHeader) {
+        const section = accordionHeader.closest(".trainee-accordion-section");
+        if (section) {
+          const isOpen = section.classList.toggle("open");
+          const body = section.querySelector(".trainee-accordion-body");
+          const arrow = section.querySelector(".accordion-arrow");
+          if (body) {
+            body.style.display = isOpen ? "flex" : "none";
+          }
+          if (arrow) {
+            arrow.textContent = isOpen ? "▼" : "▶";
+          }
+        }
+        return;
+      }
+
+      // 7A-2: Trainee Team Member Select (Panel 1)
+      const teamItem = e.target.closest(".trainee-team-item");
+      if (teamItem) {
+        const memberId = teamItem.getAttribute("data-member-id");
+        if (memberId) {
+          this.view.selectedTraineeMemberId = memberId;
+          this.view.selectedTraineeId = null; // reset practice selection so first practice of this member gets selected
+          this.view._renderCategorizedTraineeSadhanas(null, this.model.getActiveProfile());
+        }
+        return;
+      }
+
+      // 7A-3: Trainee Practice Item Select (Panel 2)
+      const practiceItem = e.target.closest(".trainee-practice-item");
+      if (practiceItem) {
+        const practiceId = practiceItem.getAttribute("data-item-id");
+        const memberId = practiceItem.getAttribute("data-member-id");
+        if (memberId) this.view.selectedTraineeMemberId = memberId;
+        if (practiceId) {
+          this.view.selectedTraineeId = practiceId;
+          this.view._renderCategorizedTraineeSadhanas(null, this.model.getActiveProfile());
+        }
+        return;
+      }
+
+      // 7A-4: Keyboard Helper Trigger (Toggles quick chips & focuses textarea)
       const btnKeyboard = e.target.closest(".btn-memo-keyboard");
       if (btnKeyboard) {
         const targetId = btnKeyboard.getAttribute("data-target");
-        if (targetId) {
-          const textarea = document.getElementById(targetId);
-          if (textarea) textarea.focus();
-          const chipsWrap = document.getElementById(`quick-chips-${targetId}`);
-          if (chipsWrap) {
-            chipsWrap.style.display =
-              chipsWrap.style.display === "none" ? "flex" : "none";
-          }
+        const textarea = (targetId ? document.getElementById(targetId) : null) || btnKeyboard.closest(".memo-input-row")?.querySelector(".input-trainee-memo-text");
+        if (textarea) {
+          textarea.focus();
+        }
+        const chipsWrap = (targetId ? document.getElementById(`quick-chips-${targetId}`) : null) || btnKeyboard.closest(".memo-input-row")?.nextElementSibling;
+        if (chipsWrap) {
+          chipsWrap.style.display =
+            chipsWrap.style.display === "none" ? "flex" : "none";
         }
         return;
       }
@@ -1048,15 +1445,13 @@ class ProfileController {
       if (quickChip) {
         const targetId = quickChip.getAttribute("data-target");
         const chipText = quickChip.textContent.trim();
-        if (targetId && chipText) {
-          const textarea = document.getElementById(targetId);
-          if (textarea) {
-            const currentVal = textarea.value.trim();
-            textarea.value = currentVal
-              ? `${currentVal} ? ${chipText}`
-              : chipText;
-            textarea.focus();
-          }
+        const textarea = (targetId ? document.getElementById(targetId) : null) || quickChip.closest(".memo-input-row")?.querySelector(".input-trainee-memo-text");
+        if (textarea && chipText) {
+          const currentVal = textarea.value.trim();
+          textarea.value = currentVal
+            ? `${currentVal} • ${chipText}`
+            : chipText;
+          textarea.focus();
         }
         return;
       }
@@ -1065,7 +1460,7 @@ class ProfileController {
       const btnMic = e.target.closest(".btn-memo-mic");
       if (btnMic) {
         const targetId = btnMic.getAttribute("data-target");
-        const textarea = document.getElementById(targetId);
+        const textarea = (targetId ? document.getElementById(targetId) : null) || btnMic.closest(".memo-input-row")?.querySelector(".input-trainee-memo-text");
         const recognizer = getSpeechRecognizer();
 
         if (!recognizer) {
@@ -1139,27 +1534,29 @@ class ProfileController {
       }
 
       // 7D: Memo Send / Submit Button Click
-      const btnSend = e.target.closest("#btn-add-trainee-memo");
+      const btnSend = e.target.closest(".btn-add-trainee-memo");
       if (btnSend) {
         const itemId = btnSend.getAttribute("data-item-id");
-        const memoInput = document.getElementById("trainee-new-memo-text");
-        if (memoInput && itemId) {
-          const text = memoInput.value.trim();
+        const input = btnSend.closest(".memo-input-row")?.querySelector(".input-trainee-memo-text") || document.getElementById("trainee-new-memo-text");
+        if (input && itemId) {
+          const text = input.value.trim();
           if (!text) {
             alert("Please enter a note or memo message before submitting.");
             return;
           }
           const activeProf = this.model.getActiveProfile();
+          const targetMember = (this.view.selectedTraineeMemberId && this.model.profiles.find(p => p.id === this.view.selectedTraineeMemberId)) || activeProf;
           const author =
             this.model.getRoleMode() === "MASTER"
-              ? "Master Karim"
+              ? (this.model.getSetting("defaultMentorName", "Karim Ji (Founder)"))
               : this.model.getRoleMode() === "HEALER"
                 ? activeProf.name || "Healer Mentor"
                 : activeProf.name || "Devotee Sadhak";
 
-          const updatedItem = this.model.addTraineeMemo(itemId, text, author);
+          const updatedItem = this.model.addTraineeMemo(itemId, text, author, false, "GENERAL", targetMember);
           if (updatedItem) {
-            this.view._renderTraineeActiveDetail(updatedItem);
+            input.value = "";
+            this.view._renderCategorizedTraineeSadhanas(null, this.model.getActiveProfile());
             this.view._updateJSONPreview(this.model.getActiveProfile());
             this.view.showToast("✓ Progress note added with date-time stamp!");
           }
@@ -1167,31 +1564,35 @@ class ProfileController {
         return;
       }
 
-      // 7E: Upline Verification Request Click
+      // 7E: Upline Verification / Feedback Request Sent Click
       const btnVerifyRequest = e.target.closest(".btn-verify-request");
       if (btnVerifyRequest) {
         const itemId = btnVerifyRequest.getAttribute("data-item-id");
+        const memberId = btnVerifyRequest.getAttribute("data-member-id") || this.view.selectedTraineeMemberId;
+        const targetMember = (memberId && this.model.profiles.find(p => p.id === memberId)) || this.model.getActiveProfile();
         if (itemId) {
-          const updatedItem = this.model.requestTraineeVerification(itemId);
+          const updatedItem = this.model.requestTraineeVerification(itemId, "", targetMember);
           if (updatedItem) {
-            this.view._renderTraineeActiveDetail(updatedItem);
-            this.view._renderCategorizedTraineeSadhanas(
-              this.model.getActiveProfile().traineeSadhanas,
-            );
+            this.view._renderCategorizedTraineeSadhanas(null, this.model.getActiveProfile());
             this.view._updateJSONPreview(this.model.getActiveProfile());
             this.view.showToast(
-              `🛡️ Progress verification request sent to Upline Sponsor (${updatedItem.mentorCode})!`,
+              `🛡️ Feedback request dispatched to Upline Mentor ${updatedItem.mentorName || updatedItem.mentorCode}!`,
             );
           }
         }
         return;
       }
 
-      // 7F: Upline Verification Approve Click
+      // 7F: Upline Verification Approve / Sanction Click
       const btnVerifyApprove = e.target.closest(".btn-verify-approve");
       if (btnVerifyApprove) {
         const itemId = btnVerifyApprove.getAttribute("data-item-id");
+        const memberId = btnVerifyApprove.getAttribute("data-member-id") || this.view.selectedTraineeMemberId;
+        const targetMember = (memberId && this.model.profiles.find(p => p.id === memberId)) || this.model.getActiveProfile();
         if (itemId) {
+          const activeProf = this.model.getActiveProfile();
+          const feedbackInput = document.getElementById("healer-feedback-text");
+          const customFeedback = feedbackInput ? feedbackInput.value.trim() : "";
           const defaultFounder = this.model.getSetting("defaultMentorName", "Spiritual Karim Khan (Founder)");
           const mentorName =
             this.model.getRoleMode() === "MASTER"
@@ -1199,22 +1600,25 @@ class ProfileController {
               : activeProf.name || "Healer Mentor";
           const mentorCode =
             this.model.getRoleMode() === "MASTER"
-              ? "SKHM-ADM1-7788-9900"
+              ? (this.model.getSetting("defaultMentorCode", "SKHM-ADM1-7788-9900"))
               : activeProf.referenceCode || "SKHM-HLR2-3344-5566";
 
           const updatedItem = this.model.approveTraineeVerification(
             itemId,
             mentorName,
             mentorCode,
+            targetMember,
           );
+          if (updatedItem && customFeedback) {
+            updatedItem.feedbackNotes = customFeedback;
+            this.model.addTraineeMemo(itemId, `[MENTOR FEEDBACK] ${customFeedback}`, mentorName, true, "VERIFIED", targetMember);
+            this.model.saveProfiles(this.model.profiles);
+          }
           if (updatedItem) {
-            this.view._renderTraineeActiveDetail(updatedItem);
-            this.view._renderCategorizedTraineeSadhanas(
-              this.model.getActiveProfile().traineeSadhanas,
-            );
+            this.view._renderCategorizedTraineeSadhanas(null, this.model.getActiveProfile());
             this.view._updateJSONPreview(this.model.getActiveProfile());
             this.view.showToast(
-              `✅ Progress approved & verified by ${mentorName}!`,
+              `✅ Progress approved & verified with sacred seal by ${mentorName}!`,
             );
           }
         }
@@ -1225,10 +1629,14 @@ class ProfileController {
       const btnVerifyReject = e.target.closest(".btn-verify-reject");
       if (btnVerifyReject) {
         const itemId = btnVerifyReject.getAttribute("data-item-id");
+        const memberId = btnVerifyReject.getAttribute("data-member-id") || this.view.selectedTraineeMemberId;
+        const targetMember = (memberId && this.model.profiles.find(p => p.id === memberId)) || this.model.getActiveProfile();
         if (itemId) {
+          const feedbackInput = document.getElementById("healer-feedback-text");
+          const promptDefault = feedbackInput && feedbackInput.value.trim() ? feedbackInput.value.trim() : "Complete 11 additional malas daily and re-submit for seal.";
           const reason = prompt(
             "Enter mentor guidance or revision notes for this trainee:",
-            "Complete 11 additional malas daily and re-submit for seal.",
+            promptDefault,
           );
           if (reason !== null) {
             const activeProf = this.model.getActiveProfile();
@@ -1241,12 +1649,10 @@ class ProfileController {
               itemId,
               reason,
               mentorName,
+              targetMember,
             );
             if (updatedItem) {
-              this.view._renderTraineeActiveDetail(updatedItem);
-              this.view._renderCategorizedTraineeSadhanas(
-                this.model.getActiveProfile().traineeSadhanas,
-              );
+              this.view._renderCategorizedTraineeSadhanas(null, this.model.getActiveProfile());
               this.view._updateJSONPreview(this.model.getActiveProfile());
               this.view.showToast("Revision request logged in timeline.");
             }
@@ -1276,8 +1682,9 @@ class ProfileController {
       const itemId = target.getAttribute("data-item-id");
       if (!itemId) return;
 
-      const profile = this.model.getActiveProfile();
-      const item = (profile.traineeSadhanas || []).find(
+      const memberId = target.getAttribute("data-member-id") || this.view.selectedTraineeMemberId;
+      const profile = (memberId && this.model.profiles.find(p => p.id === memberId)) || this.model.getActiveProfile();
+      const item = (profile.traineeSadhanas || profile.activeSadhanas || []).find(
         (ts) => ts.id === itemId,
       );
       if (!item) return;
@@ -1298,7 +1705,7 @@ class ProfileController {
       }
 
       this.model.saveProfiles(this.model.profiles);
-      this.view._renderCategorizedTraineeSadhanas(profile.traineeSadhanas);
+      this.view._renderCategorizedTraineeSadhanas(null, this.model.getActiveProfile());
       this.view._updateJSONPreview(profile);
     });
   }
@@ -1949,16 +2356,12 @@ class ProfileController {
       }
     });
 
-    // 5.5 Enterprise Sacred Knowledge & Upay (Sadhana Explorer & Remedy Hub)
+    // 5.5 Enterprise Sacred Knowledge & Upay (In-Body Navigation: Seeker Purpose Tab)
     const btnSadhanaExp = document.getElementById("sidebar-btn-sadhana-explorer");
     if (btnSadhanaExp) {
       btnSadhanaExp.addEventListener("click", (e) => {
         e.preventDefault();
-        if (typeof this.view.openSadhanaExplorerModal === "function") {
-          this.view.openSadhanaExplorerModal();
-        } else if (typeof ProfileView !== "undefined" && typeof ProfileView.prototype.openSadhanaExplorerModal === "function") {
-          ProfileView.prototype.openSadhanaExplorerModal.call(this.view);
-        }
+        this.openSadhanaExplorerInBody();
       });
     }
 
@@ -1966,11 +2369,7 @@ class ProfileController {
     if (btnRemedyHub) {
       btnRemedyHub.addEventListener("click", (e) => {
         e.preventDefault();
-        if (typeof this.view.openRemedyHubModal === "function") {
-          this.view.openRemedyHubModal();
-        } else if (typeof ProfileView !== "undefined" && typeof ProfileView.prototype.openRemedyHubModal === "function") {
-          ProfileView.prototype.openRemedyHubModal.call(this.view);
-        }
+        this.openRemedyHubInBody();
       });
     }
 
@@ -2088,6 +2487,31 @@ class ProfileController {
         }
       });
     }
+
+    // 6.1.5 Pending Progress Approval (Healer Hub)
+    document.addEventListener("click", (e) => {
+      if (e.target.closest(".btn-hub-approve-progress")) {
+        const btn = e.target.closest(".btn-hub-approve-progress");
+        const seekerId = btn.getAttribute("data-seeker-id");
+        const sadhanaId = btn.getAttribute("data-sadhana-id");
+        const submissionId = btn.getAttribute("data-sub-id");
+        const activeProfile = this.model.getActiveProfile();
+        
+        if (activeProfile && seekerId && sadhanaId && submissionId) {
+          const success = window.sadhanaRemedyController && window.sadhanaRemedyController.model 
+            ? window.sadhanaRemedyController.model.approveProgressSubmission(seekerId, sadhanaId, submissionId, activeProfile.referenceCode || activeProfile.id)
+            : false;
+            
+          if (success) {
+            btn.innerHTML = "✅ Approved";
+            btn.disabled = true;
+            btn.style.background = "var(--surface-hover)";
+            btn.style.color = "var(--text-muted)";
+            this.view.showToast("Progress Approved", "Trainee progress updated successfully.", "success");
+          }
+        }
+      }
+    });
 
     // 6.2 Settings Modal Buttons
     const btnSaveSettingsModal = document.getElementById(
@@ -2538,26 +2962,33 @@ class ProfileController {
         return;
       }
 
-      // Open Sadhana Explorer Modal
+      // Open Sadhana Explorer in Body (Tab 2)
       const btnOpenSadhana = e.target.closest("#sidebar-btn-sadhana-explorer, .btn-open-sadhana-explorer");
       if (btnOpenSadhana) {
         e.preventDefault();
-        if (typeof this.view.openSadhanaExplorerModal === "function") {
-          this.view.openSadhanaExplorerModal();
-        } else if (typeof ProfileView !== "undefined" && typeof ProfileView.prototype.openSadhanaExplorerModal === "function") {
-          ProfileView.prototype.openSadhanaExplorerModal.call(this.view);
-        }
+        this.openSadhanaExplorerInBody();
         return;
       }
 
-      // Open Remedy & Upay Hub Modal
+      // Open Remedy & Upay Hub in Body (Tab 2)
       const btnOpenRemedy = e.target.closest("#sidebar-btn-remedy-hub, .btn-open-remedy-hub");
       if (btnOpenRemedy) {
         e.preventDefault();
-        if (typeof this.view.openRemedyHubModal === "function") {
-          this.view.openRemedyHubModal();
-        } else if (typeof ProfileView !== "undefined" && typeof ProfileView.prototype.openRemedyHubModal === "function") {
-          ProfileView.prototype.openRemedyHubModal.call(this.view);
+        this.openRemedyHubInBody();
+        return;
+      }
+
+      // Apply for Sadhana Initiation (Trainee Sadhak Promotion Request)
+      const btnApplySadhana = e.target.closest(".btn-apply-sadhana-initiation, .btn-enroll-sadhana-action");
+      if (btnApplySadhana) {
+        e.preventDefault();
+        const sKey = btnApplySadhana.getAttribute("data-sadhana") || btnApplySadhana.getAttribute("data-sadhana-id");
+        if (sKey) {
+          if (typeof this.handleSadhanaInitiation === "function") {
+            this.handleSadhanaInitiation(sKey);
+          } else if (typeof ProfileController.prototype.handleSadhanaInitiation === "function") {
+            ProfileController.prototype.handleSadhanaInitiation.call(this, sKey);
+          }
         }
         return;
       }
@@ -2604,20 +3035,9 @@ class ProfileController {
         this.view.toggleSharePairingModal(true);
         return;
       }
-      if (e.target.closest("#pending-approval-notification-banner, #metric-tile-approvals, .tile-composite-down, [data-main-tab='tab-pending-approvals'], #sidebar-btn-pending-approvals, #btn-header-pending-approvals, #btn-sidebar-pending-approvals")) {
+      if (e.target.closest("#pending-approval-notification-banner, #metric-tile-approvals, .tile-composite-down, [data-main-tab='tab-pending-approvals'], #sidebar-btn-pending-approvals, #btn-header-pending-approvals, #btn-sidebar-pending-approvals, #btn-sadhak-view-history")) {
         e.preventDefault();
-        const role = (this.model.getRoleMode() || "MASTER").toUpperCase();
-        // Devotee and Trainee have zero access to approval queue
-        if (["DEVOTEE", "SEEKER", "TRAINEE", "SADHAK"].includes(role)) {
-          if (typeof this.view.showSlideToast === "function") {
-            this.view.showSlideToast("Access Restricted", "Devotee/Seeker and Trainee/Sadhak do not have approval permissions.", "warning");
-          } else {
-            this.view.showToast("⛔ Access Denied: Approvals are restricted to Mentors and Admin Masters.", "warning");
-          }
-          return;
-        }
-        const scopedInvites = this.model.getPairingInvitesForRole(role, this.model.getActiveProfile());
-        this.view.openPendingApprovalsDrawer(scopedInvites);
+        this.handlePendingApprovalsClick();
         return;
       }
       if (e.target.closest("#metric-tile-genealogy, .tile-composite-up, #btn-open-tree-view")) {
@@ -2703,6 +3123,23 @@ class ProfileController {
         if (approved) {
           this.view.showToast(`✅ Seeker "${name}" officially inducted as ${targetRole}!`, "success");
           this.view.openPendingApprovalsDrawer(this.model.getPairingInvites(), id);
+          this._renderCurrentState();
+        }
+        return;
+      }
+
+      // Delete Invite / Registration Approval
+      const btnDeleteInvite = e.target.closest(".btn-approval-delete");
+      if (btnDeleteInvite) {
+        e.preventDefault();
+        e.stopPropagation();
+        const inviteId = btnDeleteInvite.getAttribute("data-invite-id");
+        if (inviteId && typeof this.model.deletePairingInvite === "function") {
+          this.model.deletePairingInvite(inviteId);
+          if (this.view && this.view.showToast) {
+            this.view.showToast("Approval request deleted.", "info");
+          }
+          this.view.openPendingApprovalsDrawer(this.model.getPairingInvites(), null, "registration");
           this._renderCurrentState();
         }
         return;
@@ -2805,6 +3242,326 @@ class ProfileController {
           this.view.renderPendingApprovalsRows(this.model.getPairingInvites());
           this.view.openPendingApprovalsDrawer(this.model.getPairingInvites());
           this.view.showToast("Pairing request rejected.");
+        }
+        return;
+      }
+
+      // ==============================================================
+      // DRAWER TABS & SADHANA/REMEDY QUEUE EVENT DELEGATION
+      // ==============================================================
+      // Tab Switching in Pending Approvals Drawer
+      const btnDrawerTab = e.target.closest(".pending-drawer-tab-btn");
+      if (btnDrawerTab) {
+        e.preventDefault();
+        const tabName = btnDrawerTab.getAttribute("data-tab");
+        if (tabName && typeof this.view.switchPendingDrawerTab === "function") {
+          this.view.switchPendingDrawerTab(tabName);
+        }
+        return;
+      }
+
+      // Switch to Sadhana tab from registration callout button
+      const btnSwitchToSadhana = e.target.closest(".btn-switch-to-sadhana-tab");
+      if (btnSwitchToSadhana) {
+        e.preventDefault();
+        if (typeof this.view.switchPendingDrawerTab === "function") {
+          this.view.switchPendingDrawerTab("sadhana-remedy");
+        }
+        return;
+      }
+
+      // Filter pills in Sadhana/Remedy Queue
+      const btnSadhanaFilter = e.target.closest(".sadhana-filter-pill");
+      if (btnSadhanaFilter) {
+        e.preventDefault();
+        const filter = btnSadhanaFilter.getAttribute("data-sadhana-filter");
+        document.querySelectorAll(".sadhana-filter-pill").forEach(p => p.classList.remove("active"));
+        btnSadhanaFilter.classList.add("active");
+
+        const cards = document.querySelectorAll(".sadhana-app-card");
+        cards.forEach(card => {
+          const type = card.getAttribute("data-context-type");
+          const status = card.getAttribute("data-status");
+          let show = true;
+          if (filter === "SADHANA") show = (type === "sadhana");
+          else if (filter === "REMEDY") show = (type === "remedy");
+          else if (filter === "PENDING") show = (status === "PENDING");
+          else if (filter === "APPROVED") show = (status === "APPROVED");
+          card.style.display = show ? "block" : "none";
+        });
+        return;
+      }
+
+      // Sadhana Details Toggle
+      const btnSadhanaDetails = e.target.closest(".btn-sadhana-details");
+      if (btnSadhanaDetails) {
+        e.preventDefault();
+        const appId = btnSadhanaDetails.getAttribute("data-sadhana-id");
+        const detailsPane = document.getElementById(`sadhana-details-pane-${appId}`);
+        if (detailsPane) {
+          const isOpen = detailsPane.classList.contains("is-open");
+          if (isOpen) {
+            detailsPane.classList.remove("is-open");
+            detailsPane.style.display = "none";
+            btnSadhanaDetails.innerHTML = "<span>📋 Details</span>";
+          } else {
+            detailsPane.classList.add("is-open");
+            detailsPane.style.display = "block";
+            btnSadhanaDetails.innerHTML = "<span>▲ Hide Details</span>";
+          }
+        }
+        return;
+      }
+
+      // Sadhana Quick Approve
+      const btnSadhanaQuick = e.target.closest(".btn-sadhana-quick-approve");
+      if (btnSadhanaQuick) {
+        e.preventDefault();
+        const appId = btnSadhanaQuick.getAttribute("data-sadhana-id");
+        if (appId && typeof this.model.approveSadhanaRemedyApplication === "function") {
+          const operatorProfile = typeof this.model.getOperatorProfile === "function" ? this.model.getOperatorProfile() : this.model.getActiveProfile();
+          const approved = this.model.approveSadhanaRemedyApplication(appId, "Quick initiation sanctioned under lineage mentor.", null, null, operatorProfile);
+          if (approved) {
+            if (approved.status === "HEALER_VERIFIED") {
+              this.view.showToast(`🛡️ Stage 1 Verified by ${approved.firstApprovedBy}! Forwarded to Master for final deeksha sanction.`, "success");
+            } else {
+              this.view.showToast(`✅ Initiation granted for "${approved.itemTitle}" to ${approved.seekerName}! Token: ${approved.initiationToken}`, "success");
+            }
+            this.view.openPendingApprovalsDrawer(this.model.getPairingInvites(), appId, "sadhana-remedy");
+            this._renderCurrentState();
+          }
+        }
+        return;
+      }
+
+      // Sadhana Delete Application
+      const btnSadhanaDelete = e.target.closest(".btn-sadhana-delete");
+      if (btnSadhanaDelete) {
+        e.preventDefault();
+        e.stopPropagation();
+        const appId = btnSadhanaDelete.getAttribute("data-sadhana-id");
+        if (appId) {
+          if (typeof this.model.deleteSadhanaRemedyApplication === "function") {
+            this.model.deleteSadhanaRemedyApplication(appId);
+          } else if (typeof this.model.deletePairingInvite === "function") {
+            this.model.deletePairingInvite(appId);
+          }
+          if (this.view && this.view.showToast) {
+            this.view.showToast("Application deleted from queue.", "info");
+          }
+          const apps = (typeof this.model.getSadhanaRemedyApplications === "function")
+            ? this.model.getSadhanaRemedyApplications()
+            : this.model.getPairingInvites();
+          this.view.openPendingApprovalsDrawer(apps, null, "sadhana-remedy");
+          this._renderCurrentState();
+        }
+        return;
+      }
+
+      // Helper to show Slide-in Notification Dialog for Mentor Actions
+      const showSadhanaActionDialog = (appId, actionType, onConfirm) => {
+        const app = this.model.getPairingInvites().find(i => i.id === appId) || {};
+        let existing = document.getElementById("sadhana-slidein-action-dialog");
+        if (existing) existing.remove();
+
+        const isApprove = actionType === 'APPROVE';
+        const isRevision = actionType === 'REVISION';
+        const title = isApprove ? "Grant Initiation?" : isRevision ? "Request Revision?" : "Reject Application?";
+        const color = isApprove ? "#10b981" : isRevision ? "#f59e0b" : "#ef4444";
+
+        const dialogHTML = `
+          <div id="sadhana-slidein-action-dialog" style="position: fixed; bottom: -400px; right: 24px; width: 340px; background: var(--bg-card, #1e1b2e); border: 2px solid ${color}; border-radius: 12px; padding: 1.25rem; z-index: 99999; box-shadow: 0 10px 40px rgba(0,0,0,0.7); transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <h4 style="color: ${color}; margin: 0 0 0.5rem 0; font-family: var(--font-heading); font-size: 1.1rem; display: flex; align-items: center; justify-content: space-between;">
+              <span>${title}</span>
+              <button id="sadhana-slidein-close" style="background: none; border: none; color: #64748b; font-size: 1.2rem; cursor: pointer;">&times;</button>
+            </h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.4;">
+              ${isApprove ? `You are granting Deeksha to <strong>${app.seekerName}</strong> for <strong>${app.itemTitle}</strong>.<br>Mentor / Upline: <strong>${app.mentorName || 'Shri Karim Ji'}</strong>` : 
+                isRevision ? `Requesting revision from <strong>${app.seekerName}</strong>.` : 
+                `Rejecting application from <strong>${app.seekerName}</strong>.`}
+            </p>
+            <div style="margin-bottom: 1rem;">
+              <label style="font-size: 0.75rem; color: var(--text-primary); display: block; margin-bottom: 0.25rem; font-weight: 700;">
+                ${isRevision ? 'Mandatory Guidance Notes *' : 'Mentor Blessing / Guidance Notes'}
+              </label>
+              <textarea id="sadhana-slidein-notes" rows="3" style="width: 100%; box-sizing: border-box; font-size: 0.8rem; padding: 0.5rem; background: rgba(0,0,0,0.5); border: 1px solid var(--border-subtle); border-radius: 6px; color: #fff; resize: none;"></textarea>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+              <button id="sadhana-slidein-cancel" style="padding: 0.45rem 0.85rem; background: transparent; border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 6px; font-size: 0.8rem; cursor: pointer;">Cancel</button>
+              <button id="sadhana-slidein-confirm" style="padding: 0.45rem 0.85rem; background: ${color}; border: none; color: #fff; font-weight: 700; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">Confirm ${actionType}</button>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', dialogHTML);
+        const dialog = document.getElementById("sadhana-slidein-action-dialog");
+        
+        // Animate in
+        setTimeout(() => { dialog.style.bottom = "24px"; }, 10);
+
+        const closeDialog = () => {
+          dialog.style.bottom = "-400px";
+          setTimeout(() => dialog.remove(), 400);
+        };
+
+        document.getElementById("sadhana-slidein-close").onclick = closeDialog;
+        document.getElementById("sadhana-slidein-cancel").onclick = closeDialog;
+        document.getElementById("sadhana-slidein-confirm").onclick = () => {
+          const notes = document.getElementById("sadhana-slidein-notes").value.trim();
+          if (isRevision && notes.length < 5) {
+            this.view.showToast("Required", "Please provide clear revision instructions.", "error");
+            return;
+          }
+          onConfirm(notes);
+          closeDialog();
+        };
+      };
+
+      // Sadhana Full Approve & Grant Initiation
+      const btnSadhanaGrant = e.target.closest(".btn-sadhana-approve-grant");
+      if (btnSadhanaGrant) {
+        e.preventDefault();
+        const appId = btnSadhanaGrant.getAttribute("data-sadhana-id");
+        if (appId && typeof this.model.approveSadhanaRemedyApplication === "function") {
+          showSadhanaActionDialog(appId, 'APPROVE', (notes) => {
+            const malasSelect = document.getElementById(`sadhana-select-malas-${appId}`);
+            const slotSelect = document.getElementById(`sadhana-select-slot-${appId}`);
+            const targetMalas = malasSelect ? malasSelect.value : 11;
+            const targetSlot = slotSelect ? slotSelect.value : "Brahma Muhurta (04:00 - 06:00)";
+
+            const operatorProfile = typeof this.model.getOperatorProfile === "function" ? this.model.getOperatorProfile() : this.model.getActiveProfile();
+            const approved = this.model.approveSadhanaRemedyApplication(appId, notes, targetMalas, targetSlot, operatorProfile);
+            if (approved) {
+              if (approved.status === "HEALER_VERIFIED") {
+                this.view.showToast(`🛡️ Stage 1 Verified by ${approved.firstApprovedBy}! Forwarded to Master for final deeksha sanction.`, "success");
+              } else {
+                this.view.showToast(`📿 Deeksha & Initiation sanctioned for "${approved.itemTitle}"! Token: ${approved.initiationToken}`, "success");
+              }
+              this.view.openPendingApprovalsDrawer(this.model.getPairingInvites(), appId, "sadhana-remedy");
+              this._renderCurrentState();
+            }
+          });
+        }
+        return;
+      }
+
+      // Sadhana Request Revision
+      const btnSadhanaRevision = e.target.closest(".btn-sadhana-request-revision");
+      if (btnSadhanaRevision) {
+        e.preventDefault();
+        const appId = btnSadhanaRevision.getAttribute("data-sadhana-id");
+        if (appId && typeof this.model.requestRevisionSadhanaRemedy === "function") {
+          showSadhanaActionDialog(appId, 'REVISION', (notes) => {
+            const revised = this.model.requestRevisionSadhanaRemedy(appId, notes);
+            if (revised) {
+              this.view.showToast(`📝 Revision requested for "${revised.itemTitle}"`, "warning");
+              this.view.openPendingApprovalsDrawer(this.model.getPairingInvites(), appId, "sadhana-remedy");
+            }
+          });
+        }
+        return;
+      }
+      
+      // Sadhana Reject
+      const btnSadhanaReject = e.target.closest(".btn-sadhana-reject");
+      if (btnSadhanaReject) {
+        e.preventDefault();
+        const appId = btnSadhanaReject.getAttribute("data-sadhana-id");
+        if (appId && typeof this.model.rejectSadhanaRemedyApplication === "function") {
+          showSadhanaActionDialog(appId, 'REJECT', (notes) => {
+            const rejected = this.model.rejectSadhanaRemedyApplication(appId, notes);
+            if (rejected) {
+              this.view.showToast(`✕ Application rejected.`, "error");
+              this.view.openPendingApprovalsDrawer(this.model.getPairingInvites(), appId, "sadhana-remedy");
+              this._renderCurrentState();
+            }
+          });
+        }
+        return;
+      }
+
+      // Japa Tracker +1 Chant (Bead)
+      const btnJapaChant = e.target.closest(".btn-japa-chant");
+      if (btnJapaChant) {
+        e.preventDefault();
+        const sadhanaId = btnJapaChant.getAttribute("data-sadhana-id");
+        if (sadhanaId) {
+          const profile = this.model.getActiveProfile();
+          if (profile) {
+            const sadhanaList = (profile.traineeSadhanas && profile.traineeSadhanas.length > 0)
+              ? profile.traineeSadhanas
+              : (profile.activeSadhanas || (profile.activeSadhanas = []));
+            const sadhana = sadhanaList.find(s => s && (s.id === sadhanaId || s.sadhanaKey === sadhanaId || s.initiationToken === sadhanaId));
+            if (sadhana) {
+              if (typeof sadhana.currentBeadCount === 'undefined') sadhana.currentBeadCount = 0;
+              sadhana.currentBeadCount++;
+              
+              if (sadhana.currentBeadCount >= 108) {
+                sadhana.currentBeadCount = 0;
+                this.view.showToast("Mala Completed!", `108 Beads chanted! Sent to Healer for Approval.`, "success");
+              }
+              
+              // Keep activeSadhanas in sync for backward compatibility
+              profile.activeSadhanas = profile.traineeSadhanas;
+              this.model.saveProfiles();
+
+              // Telemetry sync
+              if (window.sadhanaRemedyController && window.sadhanaRemedyController.model && typeof window.sadhanaRemedyController.model.logDailyPractice === 'function') {
+                window.sadhanaRemedyController.model.logDailyPractice(sadhana.initiationToken || sadhanaId, sadhana.currentBeadCount);
+              }
+              
+              // Visual update without full re-render
+              const countEl = document.getElementById(`japa-bead-count-${sadhanaId}`);
+              if (countEl) countEl.innerText = sadhana.currentBeadCount;
+              
+              // Fill beads visually
+              const beads = document.querySelectorAll(`.japa-tracker-container .japa-bead`);
+              beads.forEach((bead, i) => {
+                if (i < sadhana.currentBeadCount) {
+                  bead.style.background = 'var(--gold-400)';
+                  bead.style.boxShadow = '0 0 5px var(--gold-400)';
+                } else {
+                  bead.style.background = 'rgba(255,255,255,0.08)';
+                  bead.style.boxShadow = 'none';
+                }
+              });
+            }
+          }
+        }
+        return;
+      }
+
+      // Japa Tracker Submit 1 Mala
+      const btnJapaMala = e.target.closest(".btn-japa-mala-complete");
+      if (btnJapaMala) {
+        e.preventDefault();
+        const sadhanaId = btnJapaMala.getAttribute("data-sadhana-id");
+        if (sadhanaId) {
+          const profile = this.model.getActiveProfile();
+          if (profile) {
+            const sadhanaList = (profile.traineeSadhanas && profile.traineeSadhanas.length > 0)
+              ? profile.traineeSadhanas
+              : (profile.activeSadhanas || (profile.activeSadhanas = []));
+            const sadhana = sadhanaList.find(s => s && (s.id === sadhanaId || s.sadhanaKey === sadhanaId || s.initiationToken === sadhanaId));
+            if (sadhana) {
+              sadhana.currentBeadCount = 0;
+              sadhana.dailyMalasDone = (sadhana.dailyMalasDone || 0) + 1;
+              sadhana.streakDays = (sadhana.streakDays || 1);
+              profile.activeSadhanas = profile.traineeSadhanas;
+              this.model.saveProfiles();
+              this.view.showToast("Mala Submitted", `1 Full Mala Submitted for ${sadhana.title}. Total today: ${sadhana.dailyMalasDone}`, "success");
+              this._renderCurrentState();
+            }
+          }
+        }
+        return;
+      }
+
+      // Japa Tracker Click Individual Bead
+      const bead = e.target.closest(".japa-bead");
+      if (bead) {
+        const chantBtn = document.querySelector(".btn-japa-chant");
+        if (chantBtn) {
+           chantBtn.click();
         }
         return;
       }
@@ -3064,12 +3821,25 @@ class ProfileController {
         this._filterRemedies();
       }
 
-      // Pending Approvals Drawer search filter
+      // Pending Approvals Drawer search filter (Registration tab)
       if (target.id === "input-search-pending-drawer") {
         const q = target.value.toLowerCase().trim();
+        const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
         document.querySelectorAll(".approval-item-card").forEach(card => {
-          const text = card.textContent.toLowerCase();
-          card.style.display = (!q || text.includes(q)) ? "" : "none";
+          const text = (card.textContent || "").toLowerCase();
+          const matches = tokens.length === 0 || tokens.every(tok => text.includes(tok));
+          card.style.display = matches ? "" : "none";
+        });
+      }
+
+      // Pending Approvals Drawer search filter (Sadhana & Remedy tab)
+      if (target.id === "input-search-sadhana-drawer") {
+        const q = target.value.toLowerCase().trim();
+        const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
+        document.querySelectorAll(".sadhana-app-card").forEach(card => {
+          const text = (card.textContent || "").toLowerCase();
+          const matches = tokens.length === 0 || tokens.every(tok => text.includes(tok));
+          card.style.display = matches ? "" : "none";
         });
       }
 
@@ -3592,8 +4362,12 @@ ProfileController.prototype._bindSidebarActions = function() {
           if (guarModal) { guarModal.style.display = "flex"; guarModal.classList.add("is-open", "open"); }
           break;
         case "notifications":
-          const notifBtn = document.getElementById("header-btn-notifications");
-          if (notifBtn) notifBtn.click();
+          if (self.view && typeof self.view.openNotificationDesk === "function") {
+            self.view.openNotificationDesk(self.model);
+          } else {
+            const notifBtn = document.getElementById("header-btn-notifications");
+            if (notifBtn) notifBtn.click();
+          }
           break;
         case "device-health":
           const healthModal = document.getElementById("modal-device-health");
@@ -3863,6 +4637,7 @@ ProfileController.prototype._bindEnhancedUIEvents = function() {
   if (inputTierSearch) {
     const handleSearch = () => {
       const q = inputTierSearch.value.toLowerCase().trim();
+      const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
       if (searchWrap) {
         searchWrap.classList.toggle("has-value", q.length > 0);
       }
@@ -3870,8 +4645,8 @@ ProfileController.prototype._bindEnhancedUIEvents = function() {
       const memberRows = document.querySelectorAll("#tier-panel-profiles-list .tier-panel-profile-card, #tier-panel-profiles-list .tier-member-row-item");
       let visibleCount = 0;
       memberRows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        const match = q === "" || text.includes(q);
+        const text = (row.textContent || "").toLowerCase();
+        const match = tokens.length === 0 || tokens.every(tok => text.includes(tok));
         row.style.display = match ? "" : "none";
         if (match) visibleCount++;
       });
@@ -4365,6 +5140,182 @@ ProfileController.prototype._bindEnhancedUIEvents = function() {
         }
       }, 500);
     });
+  }
+};
+
+/**
+ * Handle Sacred Sadhana Initiation Application (Devotee ➔ Trainee Sadhak upgrade)
+ * @param {string} sadhanaKey
+ */
+ProfileController.prototype.handleSadhanaInitiation = function(sadhanaKey) {
+  const p = this.model.getActiveProfile();
+  if (!p) {
+    if (this.view && this.view.showToast) this.view.showToast("⚠️ No active profile selected.", "warning");
+    return;
+  }
+
+  // If already a Trainee, Healer, or Master: practice or enroll directly
+  if (p.profileType === "TRAINEE" || p.profileType === "HEALER" || p.profileType === "MASTER" || p.profileType === "ADMIN") {
+    if (!Array.isArray(p.traineeSadhanas)) p.traineeSadhanas = [];
+    const isEnrolled = p.traineeSadhanas.some(s => s && (s.id === sadhanaKey || s.title === sadhanaKey));
+    if (isEnrolled) {
+      if (this.view && this.view.showToast) {
+        this.view.showToast("✓ Sadhana is already active in your Trainee workspace!", "info");
+      }
+    } else {
+      const catalog = (this.model && typeof this.model.getSadhanaCatalog === "function") ? this.model.getSadhanaCatalog() : (typeof SADHANA_CATALOG !== "undefined" ? SADHANA_CATALOG : {});
+      const catalogItem = catalog[sadhanaKey] || { title: sadhanaKey, category: "Sacred Sadhana" };
+      p.traineeSadhanas.push({
+        id: sadhanaKey,
+        title: catalogItem.title || sadhanaKey,
+        category: catalogItem.category || "Sacred Sadhana",
+        status: "IN_PROGRESS",
+        dailyMalasDone: 0,
+        targetMalas: 11,
+        streakDays: 0,
+        startDate: new Date().toISOString().split("T")[0]
+      });
+      this.model.saveProfiles(this.model.profiles);
+      if (this.view && this.view.showToast) {
+        this.view.showToast(`📿 "${catalogItem.title || sadhanaKey}" enrolled into your daily Trainee Sadhana practice!`, "success");
+      }
+      this._renderCurrentState();
+    }
+    return;
+  }
+
+  // If Devotee or Seeker: apply for initiation & upgrade to Trainee Sadhak
+  const catalog = (this.model && typeof this.model.getSadhanaCatalog === "function") ? this.model.getSadhanaCatalog() : (typeof SADHANA_CATALOG !== "undefined" ? SADHANA_CATALOG : {});
+  const catalogItem = catalog[sadhanaKey] || { title: sadhanaKey };
+  const sadhanaTitle = catalogItem.title || sadhanaKey;
+
+  // Check if an initiation request is already pending in invites or sadhana applications queue
+  const invites = this.model.getPairingInvites();
+  const sadhanaApps = (typeof this.model.getSadhanaRemedyApplications === "function") 
+    ? this.model.getSadhanaRemedyApplications() 
+    : [];
+  const existingPending = 
+    invites.find(i => 
+      (i.status || "").toUpperCase() === "PENDING" && 
+      (i.devoteeCode === p.referenceCode || (i.seekerPhone && i.seekerPhone === p.phone)) &&
+      (i.type === "SADHANA_APPLICATION" || i.sadhanaId === sadhanaKey || i.itemId === sadhanaKey)
+    ) ||
+    sadhanaApps.find(a =>
+      (a.status || "").toUpperCase() === "PENDING" &&
+      (a.devoteeCode === p.referenceCode || (a.seekerPhone && a.seekerPhone === p.phone)) &&
+      (a.itemId === sadhanaKey || a.sadhanaId === sadhanaKey)
+    );
+
+  if (existingPending) {
+    if (this.view && this.view.showToast) {
+      this.view.showToast(`⏳ Initiation request for "${existingPending.itemTitle || existingPending.sadhanaTitle || sadhanaTitle}" is already waiting for mentor approval in Pending Approvals!`, "warning");
+    }
+    return;
+  }
+
+  const defaultMentor = (this.model && typeof this.model.getDefaultMentorCode === "function") ? this.model.getDefaultMentorCode() : ((typeof appConfig !== "undefined" && appConfig.defaultMentorCode) || "SKHM-ADM1-7788-9900");
+  const sponsorCode = p.referredByCode || defaultMentor;
+  const mentorProfile = (this.model && typeof this.model.getProfileByCode === "function")
+    ? this.model.getProfileByCode(sponsorCode)
+    : (this.model && this.model.profiles ? this.model.profiles.find(pr => pr.referenceCode === sponsorCode) : null);
+  const mentorDisplayName = mentorProfile ? `${mentorProfile.name} (${mentorProfile.profileType || 'Mentor'})` : (sponsorCode === "SKHM-ADM1-7788-9900" ? "Shri Karim Ji (Master Admin)" : sponsorCode);
+
+  if (confirm(`Apply for Sacred Sadhana Initiation into "${sadhanaTitle}"?\n\n` +
+              `• Upline Healer / Lineage Mentor: ${mentorDisplayName} [${sponsorCode}]\n` +
+              `• Applicant Seeker: ${p.name} (${p.referenceCode || 'Devotee'})\n` +
+              `• Required Practice: 11 Daily Malas & Sunset Diya\n\n` +
+              `This sends an approval request to your Mentor. Upon approval, your account will be officially elevated to Trainee Sadhak (Level 3).`)) {
+    const newReqId = "req-sadhana-" + Date.now().toString(36);
+    const newReq = {
+      id: newReqId,
+      sponsorCode: sponsorCode,
+      mentorCode: sponsorCode,
+      devoteeCode: p.referenceCode,
+      seekerName: p.name || "Seeker Applicant",
+      applicantName: p.name || "Seeker Applicant",
+      seekerPhone: p.phone || "+91 98000 00000",
+      seekerEmail: p.email || "",
+      seekerDeviceModel: "Web Devotee Portal",
+      hardwareNonce: p.referenceCode,
+      type: "SADHANA_APPLICATION",
+      contextType: "sadhana",
+      itemId: sadhanaKey,
+      sadhanaId: sadhanaKey,
+      title: sadhanaTitle,
+      itemTitle: sadhanaTitle,
+      sadhanaTitle: sadhanaTitle,
+      seekerName: p.name || "Seeker Applicant",
+      applicantName: p.name || "Seeker Applicant",
+      seekerId: p.id,
+      applicantId: p.id,
+      applicantRole: p.profileType || "DEVOTEE",
+      appliedRole: "TRAINEE",
+      assignedRole: "TRAINEE",
+      targetMalas: 11,
+      cycleDays: 21,
+      scheduleSlot: "Brahma Muhurta (04:00 - 06:00)",
+      notes: `Sacred Sadhana Initiation application into ${sadhanaTitle}`,
+      intention: `Seeking initiation and guidance for ${sadhanaTitle}`,
+      signature: p.name || "Devotee",
+      createdAtMs: Date.now(),
+      expiresAtMs: Date.now() + 24 * 60 * 60 * 1000,
+      status: "PENDING",
+      formattedCreatedTime: "Just Now",
+    };
+
+    // 1. Submit through model's dedicated Sadhana & Remedy Application flow
+    if (this.model && typeof this.model.submitSadhanaRemedyApplication === "function") {
+      this.model.submitSadhanaRemedyApplication(newReq);
+    } else {
+      invites.unshift(newReq);
+      this.model.savePairingInvites(invites);
+    }
+
+    // 2. Push to Firebase RTDB
+    const firebaseUrl = this.model.settings?.firebaseUrl || "https://spritualkarim-7b5fd-default-rtdb.firebaseio.com/";
+    try {
+      fetch(`${firebaseUrl.replace(/\/$/, "")}/pairing_invites/${encodeURIComponent(newReq.id)}.json`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newReq),
+      }).catch(() => {});
+    } catch (e) {}
+
+    // 3. Broadcast real-time cross-tab notification
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const syncChan = new BroadcastChannel("spiritual_karim_sync");
+        syncChan.postMessage({
+          type: "NEW_PENDING_APPROVAL",
+          invite: newReq,
+          data: newReq
+        });
+        syncChan.postMessage({
+          type: "NEW_SADHANA_APPLICATION",
+          data: newReq,
+          invite: newReq
+        });
+        syncChan.postMessage({
+          type: "SADHANA_APPLICATIONS_UPDATED"
+        });
+      } catch (e) {}
+    }
+
+    // Close explorer modal if open
+    const modal = document.getElementById("modal-sadhana-explorer");
+    if (modal) {
+      modal.classList.remove("is-active", "open");
+      modal.setAttribute("aria-hidden", "true");
+      modal.style.display = "none";
+    }
+
+    if (this.view && this.view.showToast) {
+      this.view.showToast(
+        `📿 Sadhana Application Sent! Request for "${sadhanaTitle}" submitted to Mentor for Trainee approval.`,
+        "success"
+      );
+    }
+    this._renderCurrentState();
   }
 };
 
